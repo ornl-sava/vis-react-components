@@ -1,0 +1,77 @@
+// [d3-tip](https://github.com/Caged/d3-tip) styles.
+
+.d3-tip
+  line-height 1.1
+  font-size 15px
+  padding 6px
+  background rgba(0, 0, 0, 0.8)
+  color #fff
+  border-radius 4px
+  pointer-events none
+
+// Usage: <span class="title">some text</span>
+.d3-tip .title
+  color orange
+  font-size 1.1em
+  line-height 1.4
+// Show → after the title
+.d3-tip .title:after
+  color #999
+  content "\00A0\2192\00A0"
+
+/* Creates a small triangle extender for the tooltip */
+.d3-tip:after
+  box-sizing border-box
+  display inline
+  font-size 14px
+  width 100%
+  line-height 1
+  color rgba(0, 0, 0, 0.8)
+  position absolute
+  pointer-events none
+
+/* Northward tooltips */
+.d3-tip.n:after
+  content "\25BC"
+  margin -3px 0 0 0
+  top 100%
+  left 0
+  text-align center
+
+/* Eastward tooltips */
+.d3-tip.e:after
+  content "\25C0"
+  margin -4px 0 0 0
+  top 50%
+  left -8px
+
+/* Southward tooltips */
+.d3-tip.s:after
+  content "\25B2"
+  margin 0 0 1px 0
+  top -12px
+  left 0
+  text-align center
+
+/* Westward tooltips */
+.d3-tip.w:after
+  content "\25B6"
+  margin -4px 0 0 -1px
+  top 50%
+  left 100%
+
+/* Northwest tooltips */
+.d3-tip.nw:after
+  content "\25BC"
+  margin -4px 0 0 0
+  top 100%
+  left 0
+  text-align right
+
+/* Northeast tooltips */
+.d3-tip.ne:after
+  content "\25BC"
+  margin -4px 0 0 0
+  top 100%
+  left 0
+  text-align left

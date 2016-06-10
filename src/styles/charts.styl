@@ -1,0 +1,68 @@
+// d3 charts styles.
+selected-color = #6baed6
+unselected-color = #cdcdcd
+
+g path
+  shape-rendering auto
+
+// Stacked histograms
+.stack-1
+  fill #f0f0f0
+.stack-2
+  fill #d9d9d9
+.stack-3
+  fill unselected-color
+.stack-4
+  fill #969696
+.stack-5
+  fill #525252
+
+.stack-1.selected
+  fill #c6dbef
+.stack-2.selected
+  fill #9ecae1
+.stack-3.selected
+  fill selected-color
+.stack-4.selected
+  fill #4292c6
+.stack-5.selected
+  fill #2171b5
+
+// Filter histograms
+.unselected
+  fill unselected-color
+
+.selected
+  fill selected-color
+
+// Brush in histograms.
+.brush .extent
+  stroke #000
+  fill-opacity .125
+  shape-rendering crispEdges
+
+.brush .resize path
+  fill #eee
+  stroke #666
+
+// Heatmaps
+.heatmap rect
+  shape-rendering crispEdges
+
+// General fields for axes
+.axis path,
+.axis line
+  fill none
+  stroke #666
+  shape-rendering crispEdges
+
+.axis text
+  font-size 12px
+  font-weight 300
+  fill #777
+
+.x.axis.upper
+  text-transform uppercase
+
+.x.axis.lower
+  text-transform lowercase

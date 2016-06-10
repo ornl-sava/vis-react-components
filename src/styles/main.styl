@@ -1,0 +1,60 @@
+@import './nav'
+@import './d3-tooltip'
+@import './settings-menu'
+@import './charts'
+@import './map'
+
+@font-face
+  font-family "MacSystem"
+  src
+    local(".HelveticaNeueDeskInterface-Regular")
+    local(".LucidaGrandeUI")
+
+body
+  font 14px "MacSystem", "Ubuntu", "Droid Sans", "Helvetica Neue", sans-serif
+  margin 0
+
+.chart
+  fill #FFFFFF
+
+
+// OGN not certain how to center SVG with css
+.loading-message
+  text-anchor middle
+  font-size 12px
+  font-weight 300
+  fill #777
+
+.bar.overlay
+  fill #AAAAAA
+  stroke gray
+  stroke-width 1px
+  opacity 0
+
+.bar.overlay:hover
+ opacity 0.2
+
+.bar.one
+  fill #AAAAAA
+  stroke gray
+  stroke-width 1px
+  opacity 0.80
+
+.bar.two
+  fill #6baed6
+  stroke #6baed6
+  stroke-width 1px
+  opacity 0.80
+
+// Override bootstrap default width for horizontal definitions.
+// Orverride overflow for tool tips (hint.css)
+@media (min-width 768px)
+  .dl-horizontal dt
+    width 170px
+    overflow visible
+  .dl-horizontal dd
+    margin-left 185px
+
+// Override bootstrap active btn to tooltips show properly.
+.btn.btn-default.btn-xs.timeScale.active
+  z-index -1
