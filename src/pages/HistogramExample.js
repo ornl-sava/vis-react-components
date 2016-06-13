@@ -43,12 +43,12 @@ class HistogramExample extends React.Component {
     return (
       <div>
         <div>
-          <Chart width={400} height={200} data={exampleData} >
+          <Chart title='Histogram' width={800} height={200} data={exampleData} >
             <Histogram addOverlay={false} />
           </Chart>
         </div>
         <div>
-          <Chart width={400} height={200} data={exampleData} >
+          <Chart title='Stacked Histogram' width={800} height={200} data={exampleData} >
             <Histogram type='stacked' addOverlay={false} />
           </Chart>
         </div>

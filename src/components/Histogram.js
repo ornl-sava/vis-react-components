@@ -63,7 +63,6 @@ class Histogram extends React.Component {
       overlayObj.tooltipData.yPos = barData[i][0].y
       overlayObj.tooltipData.xPos = this.props.xScale(barData[i][0].data.x)
       overlayObj.height = this.props.yScale.range()[0]
-      // console.log(overlayObj)
       barData[i].push(overlayObj)
     }
   }
@@ -97,7 +96,7 @@ class Histogram extends React.Component {
         return this.buildABar(bin, props.data[index].name, props.data[index].type, barHeight, barWidth, yPos)
       })
     }))
-    if (props.addOverlay) {
+    if (props.addOverlay === true) {
       console.log(props.addOverlay)
       this.addOverlay(barData)
     }
@@ -118,9 +117,6 @@ class Histogram extends React.Component {
       let yPos = 0
       let xPos = props.xScale(barData[i][0].data.x)
       if (xPos == null) { // also catches undefined
-        // console.log(props.xScale)
-        // console.log(barData[i][0].data.x)
-        console.warn('No range value for ' + barData[i][0].data.x)
         xPos = 0
       }
       return (
@@ -158,7 +154,6 @@ class Histogram extends React.Component {
   }
 
   render () {
-    console.log(this.props)
     let renderEl = null
     renderEl = this.renderLoadAnimation(this.props)
     if (this.props.data.length > 0) {

@@ -49,17 +49,17 @@ class Chart extends React.Component {
     let rootRect = this.refs.rootElement.getBoundingClientRect()
     let svg = d3.select(this.refs.svgRoot)
     let container = d3.select(this.refs.container)
-    let chartWidth = rootRect.width - props.margin.left - props.margin.right
+    let chartWidth = Math.min((rootRect.width - props.margin.left - props.margin.right), (props.width - props.margin.left - props.margin.right))
     let chartHeight = props.height - props.margin.top - props.margin.bottom
-    svg.attr('width', rootRect.width)
+    this.yScale.range([chartHeight, 0.00001])
+
+    svg.attr('width', props.width)
       .attr('height', props.height)
     svg.call(this.tip)
 
     container.select('.reset')
       .attr('x', chartWidth - 40)
       .attr('y', -props.margin.top + 1)
-    this.yScale.range([chartHeight, 0.00001])
-    this.xScale.range([0, chartWidth])
 
     this.setState({chartWidth, chartHeight})
     this.forceUpdate()

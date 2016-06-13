@@ -15,6 +15,8 @@ class Heatmap extends React.Component {
 }
 
 Heatmap.defaultProps = {
+  chartHeight: 0,
+  chartWidth: 0,
   data: [],
   loading: false,
   status: ''

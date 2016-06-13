@@ -15,6 +15,8 @@ class Scatterplot extends React.Component {
 }
 
 Scatterplot.defaultProps = {
+  chartHeight: 0,
+  chartWidth: 0,
   data: [],
   loading: false,
   status: ''

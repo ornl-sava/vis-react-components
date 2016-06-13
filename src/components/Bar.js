@@ -44,7 +44,7 @@ Bar.defaultProps = {
   width: 0,
   className: 'bar',
   onClick: () => null,
-  tooltipData: {},
+  tooltipData: null,
   y: 0
 }
 

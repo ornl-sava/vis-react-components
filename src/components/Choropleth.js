@@ -15,6 +15,8 @@ class Choropleth extends React.Component {
 }
 
 Choropleth.defaultProps = {
+  chartHeight: 0,
+  chartWidth: 0,
   data: [],
   loading: false,
   status: ''
