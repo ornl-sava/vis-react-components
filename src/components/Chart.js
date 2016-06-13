@@ -94,8 +94,14 @@ class Chart extends React.Component {
               <text y={-props.margin.top + 1} dy='0.71em'>{props.title.replace(/_/g, ' ')}</text>
               <text className='reset' y={-props.margin.top + 1} x={this.state.chartWidth - 20} dy='0.71em'>reset</text>
             </g>
-            <Axis className='y axis' type='y' orient='left' data={props.data} scale={this.yScale} {...this.state} />
-            <Axis className='x axis' type='x' orient='bottom' data={props.data} scale={this.xScale} {...this.state} />
+            {props.xAxis
+              ? <Axis className='x axis' {...props.xAxis} data={props.data} scale={this.xScale} {...this.state} />
+              : undefined
+            }
+            {props.yAxis
+              ? <Axis className='y axis' {...props.yAxis} data={props.data} scale={this.yScale} {...this.state} />
+              : undefined
+            }
           </g>
         </svg>
       </div>
@@ -106,6 +112,14 @@ class Chart extends React.Component {
 Chart.defaultProps = {
   data: [],
   title: '',
+  xAxis: {
+    type: 'x',
+    orient: 'bottom'
+  },
+  yAxis: {
+    type: 'y',
+    orient: 'left'
+  },
   margin: {top: 15, right: 10, bottom: 20, left: 80},
   width: 400,
   height: 250,
@@ -117,8 +131,16 @@ Chart.defaultProps = {
 
 Chart.propTypes = {
   title: PropTypes.string,
+  xAxis: React.PropTypes.oneOfType([
+    React.PropTypes.object,
+    React.PropTypes.bool
+  ]),
+  yAxis: React.PropTypes.oneOfType([
+    React.PropTypes.object,
+    React.PropTypes.bool
+  ]),
   children: PropTypes.any,
-  className: PropTypes.string,
+  className: PropTypes.string.isRequired,
   loading: PropTypes.bool,
   margin: PropTypes.object,
   width: PropTypes.number,

@@ -64,6 +64,10 @@ const common = {
     ],
     loaders: [
       {
+        test: /\.json$/,
+        loader: 'json'
+      },
+      {
         test: /\.styl$/,
         loader: 'style!css!stylus'
       },
