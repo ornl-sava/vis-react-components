@@ -2,14 +2,18 @@ const path = require('path')
 
 const autoprefixer = require('autoprefixer')
 const webpack = require('webpack')
-const CleanPlugin = require('clean-webpack-plugin')
+// const CleanPlugin = require('clean-webpack-plugin')
 const HtmlPlugin = require('html-webpack-plugin')
 const merge = require('webpack-merge')
 
 const PATHS = {
-  app: path.join(__dirname, 'src'),
-  build: path.join(__dirname, 'public')
+  app: path.join(__dirname, 'examples')
 }
+
+// const PATHS = {
+//   app: path.join(__dirname, 'src'),
+//   build: path.join(__dirname, 'public')
+// }
 // `npm run build` to build dist or `npm start` to run dev server.
 const TARGET = process.env.npm_lifecycle_event
 
@@ -20,12 +24,6 @@ var isDev = env === 'development'
 const common = {
   entry: {
     app: PATHS.app
-  },
-  output: {
-    path: PATHS.build,
-    filename: 'bundle.js',
-    // chunkFilename: 'common.js',
-    publicPath: '/'
   },
   debug: isDev,
   devtool: isDev ? 'eval' : false,
@@ -92,9 +90,10 @@ const common = {
 // Default configuration. We will return this if webpack is called outside
 // of npm.
 if (TARGET === 'start' || !TARGET) {
+  console.log('start called')
   module.exports = merge(common, {
     devServer: {
-      contentBase: PATHS.build,
+      contentBase: PATHS.app,
       historyApiFallback: true,
       hot: true,
       compress: true,
@@ -106,23 +105,6 @@ if (TARGET === 'start' || !TARGET) {
     },
     plugins: [
       new webpack.HotModuleReplacementPlugin()
-    ]
-  })
-} else if (TARGET === 'build' || TARGET === 'stats') {
-  module.exports = merge(common, {
-    plugins: [
-      new CleanPlugin(PATHS.build),
-      new webpack.optimize.DedupePlugin(),
-      new webpack.optimize.OccurenceOrderPlugin(),
-      new webpack.optimize.MinChunkSizePlugin({
-        minChunkSize: 51200 // ~50kb
-      }),
-      new webpack.optimize.UglifyJsPlugin({
-        mangle: true,
-        compress: {
-          warnings: false
-        }
-      })
     ]
   })
 }

@@ -1,7 +1,7 @@
 import React from 'react'
 
-import Chart from '../components/Chart'
-import Histogram from '../components/Histogram'
+import Chart from '../src/components/Chart'
+import Histogram from '../src/components/Histogram'
 
 const exampleData = [
   {

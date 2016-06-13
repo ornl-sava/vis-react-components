@@ -1,7 +1,7 @@
 import React from 'react'
 
-import Chart from '../components/Chart'
-import Heatmap from '../components/Heatmap'
+import Chart from '../src/components/Chart'
+import Heatmap from '../src/components/Heatmap'
 
 const exampleData = []
 class HeatmapExample extends React.Component {

@@ -2,8 +2,6 @@ import React from 'react'
 import ReactDom from 'react-dom'
 import routes from './routes'
 
-import './styles/main.styl'
-
 ReactDom.render(
   <div>
     {routes}

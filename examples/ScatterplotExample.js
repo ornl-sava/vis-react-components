@@ -1,7 +1,7 @@
 import React from 'react'
 
-import Scatterplot from '../components/Scatterplot'
-import Chart from '../components/Chart'
+import Scatterplot from '../src/components/Scatterplot'
+import Chart from '../src/components/Chart'
 
 const exampleData = []
 class ScatterplotExample extends React.Component {

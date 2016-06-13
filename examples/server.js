@@ -3,20 +3,20 @@ const process = require('process')
 const express = require('express')
 const compression = require('compression')
 
-const publicDir = 'public'
+const exampleDir = 'examples'
 const port = process.env.PORT || 8080
 
 // Exit if the `public` directory doesnt exist.
 try {
-  fs.statSync(publicDir)
+  fs.statSync(exampleDir)
 } catch (e) {
-  console.log('The ' + publicDir + ' directory does not exist. Create it by running `npm run build`')
+  console.log('The ' + exampleDir + ' directory does not exist.`')
   process.exit(1)
 }
 
 var app = express()
 app.use(compression())
-app.use(express.static(publicDir))
+app.use(express.static(exampleDir))
 
 // Redirect all requests back to /
 app.all('*', function (req, res) {
