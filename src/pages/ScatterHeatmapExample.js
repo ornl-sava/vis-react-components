@@ -28,7 +28,6 @@ class ScatterplotExample extends React.Component {
 
   componentWillUnmount () {
     window.removeEventListener('resize', null)
-    clearInterval(this.state.timer)
   }
 
   componentDidMount () {
