@@ -6,6 +6,7 @@ import HistogramExample from './pages/HistogramExample'
 import HeatmapExample from './pages/HeatmapExample'
 import ScatterplotExample from './pages/ScatterplotExample'
 import ChoroplethExample from './pages/ChoroplethExample'
+import ScatterHeatmapExample from './pages/ScatterHeatmapExample'
 
 const reactRouterRoutes = (
   <Router history={browserHistory}>
@@ -15,6 +16,7 @@ const reactRouterRoutes = (
       <Route path='/heatmap' component={HeatmapExample} />
       <Route path='/scatterplot' component={ScatterplotExample} />
       <Route path='/choropleth' component={ChoroplethExample} />
+      <Route path='/scatterHeatmap' component={ScatterHeatmapExample} />
     </Route>
   </Router>
 )

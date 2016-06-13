@@ -9,7 +9,8 @@ class Nav extends React.Component {
           <li><Link to='/histogram' activeClassName='active'>Histogram</Link></li>
           <li><Link to='/heatmap' activeClassName='active'>Heatmap</Link></li>
           <li><Link to='/scatterplot' activeClassName='active'>Scatterplot</Link></li>
-          <li><Link to='/choropleth' activeClassName='active'>Choropleth map</Link></li>
+          <li><Link to='/choropleth' activeClassName='active'>Choropleth Map</Link></li>
+          <li><Link to='/scatterHeatmap' activeClassName='active'>Scatter Heatmap Hybrid</Link></li>
         </ul>
       </nav>
     )
