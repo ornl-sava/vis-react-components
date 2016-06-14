@@ -1,8 +1,6 @@
 const path = require('path')
 
-const autoprefixer = require('autoprefixer')
 const webpack = require('webpack')
-// const CleanPlugin = require('clean-webpack-plugin')
 const HtmlPlugin = require('html-webpack-plugin')
 const merge = require('webpack-merge')
 
@@ -42,14 +40,6 @@ const common = {
       inject: 'body',
       filename: 'index.html'
     }),
-    new webpack.ProvidePlugin({
-      'fetch': 'imports?this=>global!exports?global.fetch!whatwg-fetch'
-    }),
-    // new webpack.optimize.CommonsChunkPlugin({
-    //   name: 'common',
-    //   children: true,
-    //   minChunks: 2,
-    // }),
     new webpack.NoErrorsPlugin()
   ],
   module: {
@@ -62,29 +52,16 @@ const common = {
     ],
     loaders: [
       {
-        test: /\.styl$/,
-        loader: 'style!css!stylus'
+        test: /\.css$/,
+        loader: 'style!css'
       },
       {
         test: /\.jsx?$/,
-        loader: 'babel?cacheDirectory',
-        include: PATHS.app
-      },
-      {
-        test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-        loader: 'url?limit=10000&mimetype=application/font-woff'
-      },
-      {
-        test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-        loader: 'file'
-      },
-      {
-        test: /\.(png|gif|jpe?g|svg)$/i,
-        loader: 'url?limit=10000'
+        loader: 'babel',
+        exclude: /node_modules/
       }
     ]
-  },
-  postcss: [ autoprefixer({ browsers: ['last 2 versions'] }) ]
+  }
 }
 
 // Default configuration. We will return this if webpack is called outside

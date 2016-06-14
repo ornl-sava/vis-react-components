@@ -1,11 +1,8 @@
-@font-face {
-	font-family: "MacSystem";
-}
 g path {
 	shape-rendering: auto;
 }
 body {
-	font: 14px "MacSystem", "Ubuntu", "Droid Sans", "Helvetica Neue", sans-serif;
+	font: 14px "Helvetica Neue", sans-serif;
 	margin: 0;
 }
 
