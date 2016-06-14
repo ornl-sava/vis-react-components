@@ -5,7 +5,8 @@ const HtmlPlugin = require('html-webpack-plugin')
 const merge = require('webpack-merge')
 
 const PATHS = {
-  app: path.join(__dirname, 'examples')
+  app: path.join(__dirname, 'examples'),
+  build: path.join(__dirname, 'dist')
 }
 
 // const PATHS = {
@@ -22,6 +23,11 @@ var isDev = env === 'development'
 const common = {
   entry: {
     app: PATHS.app
+  },
+  output: {
+    path: PATHS.build,
+    filename: 'bundle.js',
+    publicPath: '/'
   },
   debug: isDev,
   devtool: isDev ? 'eval' : false,
@@ -67,7 +73,6 @@ const common = {
 // Default configuration. We will return this if webpack is called outside
 // of npm.
 if (TARGET === 'start' || !TARGET) {
-  console.log('start called')
   module.exports = merge(common, {
     devServer: {
       contentBase: PATHS.app,
@@ -82,6 +87,22 @@ if (TARGET === 'start' || !TARGET) {
     },
     plugins: [
       new webpack.HotModuleReplacementPlugin()
+    ]
+  })
+} else if (TARGET === 'build' || TARGET === 'stats') {
+  module.exports = merge(common, {
+    plugins: [
+      new webpack.optimize.DedupePlugin(),
+      new webpack.optimize.OccurenceOrderPlugin(),
+      new webpack.optimize.MinChunkSizePlugin({
+        minChunkSize: 51200 // ~50kb
+      }),
+      new webpack.optimize.UglifyJsPlugin({
+        mangle: true,
+        compress: {
+          warnings: false
+        }
+      })
     ]
   })
 }
