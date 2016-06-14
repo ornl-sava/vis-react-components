@@ -122,7 +122,7 @@ body {
 	text-align: left;
 }
 
-// Axis Styles
+/*Axis Styles*/
 .axis path,
 .axis line {
 	fill: none;
@@ -144,7 +144,7 @@ body {
 	text-transform: lowercase;
 }
 
-// Map Styles
+/*Map Styles*/
 .land0 {
 	fill: #999;
 	stroke: #666;
@@ -271,7 +271,7 @@ body {
 	stroke-width: 0.5px;
 }
 
-// Nav Styles
+/*Nav Styles*/
 nav {
 	width: 100%;
 	margin: 0 0 15px 0;

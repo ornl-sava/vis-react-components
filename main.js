@@ -1,15 +1,11 @@
-var Chart = require('./src/components/Chart')
-var Choropleth = require('./src/components/Choropleth')
-var Histogram = require('./src/components/Histogram')
-var Heatmap = require('./src/components/Heatmap')
-var Scatterplot = require('./src/components/Scatterplot')
+import chart from './src/Chart'
+import choropleth from './src/Choropleth'
+import heatmap from './src/Heatmap'
+import histogram from './src/Histogram'
+import scatterplot from './src/Scatterplot'
 
-var SavaReactVisComponents = {
-  Chart: Chart,
-  Choropleth: Choropleth,
-  Histogram: Histogram,
-  Heatmap: Heatmap,
-  Scatterplot: Scatterplot
-}
-
-module.exports = SavaReactVisComponents
+export const Chart = chart
+export const Choropleth = choropleth
+export const Heatmap = heatmap
+export const Histogram = histogram
+export const Scatterplot = scatterplot

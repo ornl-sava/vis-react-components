@@ -1,7 +1,5 @@
 import React from 'react'
-
-import Chart from '../src/components/Chart'
-import Choropleth from '../src/components/Choropleth'
+import { Chart, Choropleth } from '../main'
 
 const exampleData = []
 class ChoroplethExample extends React.Component {
