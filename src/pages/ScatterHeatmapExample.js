@@ -4,14 +4,14 @@ import debounce from 'lodash.debounce'
 import ScatterHeatmapHybrid from '../components/ScatterHeatmapHybrid'
 
 var exampleData = []
-var currentTime = +new Date()
+var now = +new Date()
+var endTime = now - 30 * 1000
 for (let i = 0; i < 1000; i++) {
-  let datum = {
-    time: currentTime - Math.sin(i) * 30 * 1000,
-    score: Math.sin(3 * i) * 6,
+  exampleData.push({
+    time: endTime + Math.sin(i) * 30 * 1000,
+    score: Math.random() * 6,
     id: i
-  }
-  exampleData.push(datum)
+  })
 }
 
 class ScatterplotExample extends React.Component {
@@ -40,7 +40,7 @@ class ScatterplotExample extends React.Component {
         ref='chart'
         minHeatmapColor='#ffffff'
         maxHeatmapColor='#de2d26'
-        startTime={currentTime}
+        startTime={now}
         clsName={'ScatterHeatmapHybrid'}
         height={600}
         idAccessor={'id'}

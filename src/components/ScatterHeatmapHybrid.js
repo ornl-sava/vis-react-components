@@ -123,10 +123,10 @@ export class ScatterHeatmapHybrid extends React.Component {
     // Create color scale for heatmap
     let colors = []
     let tempColorScale = d3.scale.linear()
-      .domain([0, 9])
+      .domain([0, this.props.numColorCat])
       .range([this.props.minHeatmapColor, this.props.maxHeatmapColor])
 
-    d3.range(9).map((d) => {
+    d3.range(this.props.numColorCat).map((d) => {
       colors.push(tempColorScale(d))
     })
 
@@ -533,6 +533,7 @@ ScatterHeatmapHybrid.propTypes = {
   maxScatterColor: PropTypes.any,
   minHeatmapColor: PropTypes.any,
   maxHeatmapColor: PropTypes.any,
+  numColorCat: PropTypes.number,
   yDomain: PropTypes.array.isRequired,
   data: PropTypes.array,
   startTime: PropTypes.number,
@@ -551,6 +552,7 @@ ScatterHeatmapHybrid.defaultProps = {
   updateInterval: 0,
   minHeatmapColor: '#ffffff',
   maxHeatmapColor: '#08306b',
+  numColorCat: 11,
   minScatterColor: '#e5f5e0',
   maxScatterColor: '#00441b',
   margin: {top: 30, right: 5, bottom: 20, left: 50},
