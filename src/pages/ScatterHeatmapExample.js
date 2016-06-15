@@ -38,6 +38,8 @@ class ScatterplotExample extends React.Component {
     return (
       <ScatterHeatmapHybrid
         ref='chart'
+        minHeatmapColor='#ffffff'
+        maxHeatmapColor='#de2d26'
         startTime={currentTime}
         clsName={'ScatterHeatmapHybrid'}
         height={600}
