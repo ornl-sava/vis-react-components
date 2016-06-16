@@ -8,7 +8,6 @@ import Legend from './Legend'
 
 class Chart extends React.Component {
   _onEnter (tooltipData, svgElement) {
-    console.log(tooltipData)
     if (tooltipData) {
       this.tip.show(tooltipData, svgElement)
     }
