@@ -3,6 +3,7 @@ import ReactDom from 'react-dom'
 import routes from './routes'
 import './vis.css'
 
+console.info('Serving examples from vis/examples')
 ReactDom.render(
   <div>{routes}</div>
   , document.getElementById('root')
