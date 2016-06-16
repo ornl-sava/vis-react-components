@@ -34,7 +34,8 @@ var isDev = env === 'development'
 // Common to both starting dev server and building for production.
 const common = {
   entry: {
-    'vis.min': PATHS.lib
+    'vis.min': PATHS.lib,
+    example: PATHS.example
   },
   output: {
     libary: 'ornl-sava-vis',
