@@ -164,7 +164,7 @@ class Histogram extends React.Component {
 }
 
 Histogram.defaultProps = {
-  addOverlay: false,
+  addOverlay: true,
   padding: 0.2,
   outerPadding: 0.4,
   chartHeight: 0,
