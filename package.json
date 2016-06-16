@@ -60,6 +60,7 @@
     "buildLib": "rm -rf ./lib && BABEL_ENV=production ./node_modules/.bin/babel src/ --out-dir ./lib",
     "buildDist": "rm -rf ./dist && NODE_ENV=production webpack --progress --colors",
     "build": "npm run buildDist && npm run buildLib",
-    "lint": "eslint src --ext .js --ext .jsx --ignore-path .gitignore"
+    "lint": "eslint src --ext .js --ext .jsx --ignore-path .gitignore",
+    "postinstall": "rm -rf ./src > /dev/null"
   }
 }
