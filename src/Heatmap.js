@@ -69,6 +69,7 @@ class Heatmap extends React.Component {
       let tempColorScale = d3.scale.linear()
         .domain([0, yMax])
         .range([nextProps.minColor, nextProps.maxColor])
+        .interpolate(d3.interpolateHcl)
 
       let colorDomain = [0, 1]
       let colorRange = [nextProps.minColor]
@@ -79,6 +80,26 @@ class Heatmap extends React.Component {
         colorDomain.push(value)
         colorRange.push(tempColorScale(value))
       }
+
+      // NOTE: Alternate quantile color generation . . .
+      // Generate scale to determine class for coloring
+      // let tempColorScale = d3.scale.linear()
+      //   .domain([0, nextProps.numColorCat])
+      //   .range([nextProps.minColor, nextProps.maxColor])
+      //   .interpolate(d3.interpolateHcl)
+      //
+      // let colorDomain = [0, 1]
+      // nextProps.data.forEach((d) => {
+      //   d.bins.forEach((g) => {
+      //     let datum = g[nextProps.yValueField]
+      //     if (datum > 0) colorDomain.push(datum)
+      //   })
+      // })
+      //
+      // let colorRange = []
+      // d3.range(nextProps.numColorCat).map((i) => {
+      //   colorRange.push(tempColorScale(i))
+      // })
 
       this.state.colorScale
         .domain(colorDomain)
@@ -102,11 +123,11 @@ class Heatmap extends React.Component {
   }
 
   tooltipData (node) {
-    let label = node.getAttribute('data-label')
-    let count = node.getAttribute('data-count')
+    let key = node.getAttribute('data-key')
+    let value = node.getAttribute('data-value')
     return {
-      label,
-      count
+      key,
+      value
     }
   }
 
@@ -116,8 +137,8 @@ class Heatmap extends React.Component {
         {props.data.map((d, i) => {
           return d.bins.map((e, j) => {
             let rectProps = {
-              'data-label': e[props.labelField],
-              'data-count': e[props.xValueField],
+              'data-key': e[props.labelField],
+              'data-value': e[props.xValueField],
               'x': props.xScale(e[props.xKeyField]),
               'y': props.yScale(d[props.yKeyField]),
               'width': props.chartWidth / d.bins.length,
@@ -136,8 +157,8 @@ class Heatmap extends React.Component {
     )
   }
 
-  renderLoadAnimation (props) {
-    let {chartWidth, chartHeight} = props
+  renderLoadAnimation () {
+    let {chartWidth, chartHeight, ...props} = this.props
     let xPos = Math.floor(chartWidth / 2)
     let yPos = Math.floor(chartHeight / 2)
     let messageText = 'Loading data...'
@@ -173,8 +194,6 @@ Heatmap.defaultProps = {
   numColorCat: 11,
   colorPerRow: true,
   labelField: 'label',
-  padding: 0.2,
-  outerPadding: 0.4,
   chartHeight: 0,
   chartWidth: 0,
   className: 'histogram',
@@ -184,10 +203,9 @@ Heatmap.defaultProps = {
   xValueField: 'value',
   yDomain: [],
   yKeyField: 'key',
-  yValueField: 'key',
-  dataLoading: false,
+  yValueField: 'value',
+  loading: false,
   status: '',
-  type: '',
   onClick: () => {},
   onEnter: () => {},
   onLeave: () => {}
@@ -205,18 +223,15 @@ Heatmap.propTypes = {
   yDomain: PropTypes.array,
   yKeyField: PropTypes.string,
   yValueField: PropTypes.string,
-  padding: PropTypes.number.isRequired,
-  outerPadding: PropTypes.number.isRequired,
   chartHeight: PropTypes.number.isRequired,
   chartWidth: PropTypes.number.isRequired,
   className: PropTypes.string.isRequired,
   data: PropTypes.array,
-  dataLoading: PropTypes.bool,
+  loading: PropTypes.bool,
   onClick: PropTypes.func,
   onEnter: PropTypes.func,
   onLeave: PropTypes.func,
   status: PropTypes.string,
-  type: PropTypes.string,
   xScale: PropTypes.any,
   yScale: PropTypes.any
 }

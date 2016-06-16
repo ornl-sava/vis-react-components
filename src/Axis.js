@@ -22,7 +22,7 @@ class Axis extends React.Component {
     this.axis = d3.svg.axis()
       .scale(props.scale)
       .orient(props.orient)
-      .ticks(0)
+      .ticks(props.tickCount ? props.tickCount : 0)
   }
   componentDidMount () {
     this.resizeAxis(this.props)
@@ -46,17 +46,48 @@ class Axis extends React.Component {
     let tickCount = 0
     let tickValues = []
 
-    if (props.data.length > 0) {
-      tickCount = props.type === 'y' ? 3 : props.scale.domain().length
-      tickValues = props.type === 'y' ? null : props.scale.domain()
+    if (props.data.length > 0 && props.scale.domain().length > 0 && props.scale.range().length > 0) {
+      // Use custom tick count if it exist
+      if (props.tickCount) {
+        tickCount = props.tickCount
+      } else {
+        tickCount = props.type === 'y' ? 3 : props.scale.domain().length
+      }
+
+      // Use custom tick value if it exist
+      if (props.tickValues) {
+        tickValues = props.tickValues
+      } else {
+        tickValues = (this.state.scaleType !== 'ordinal') ? null : props.scale.domain()
+      }
+
+      // If scale type is ordinal truncate labels
       if (this.state.scaleType === 'ordinal') {
-        let binWidth = Math.floor((props.scale.range()[tickCount - 1] / tickCount))
-        let maxWidth = Math.floor(binWidth / 8)
+        let maxWidth = 0
+        let fontSize = 12
+        if (props.orient === 'top' || props.orient === 'bottom') {
+          let binWidth = Math.floor((props.scale.range()[tickCount - 1] / tickCount))
+          maxWidth = Math.floor(binWidth / fontSize)
+        } else {
+          if (props.orient === 'left') {
+            maxWidth = props.margin.left
+          } else {
+            maxWidth = props.margin.right
+          }
+        }
         this.axis.tickFormat((d) => {
           return truncateLabel(d, maxWidth)
         })
       }
+
+      // Use custom tickFormatter if it exist
+      if (props.tickFormat) {
+        this.axis.tickFormat((d, i) => {
+          return props.tickFormat(d, i)
+        })
+      }
     }
+
     this.axis.scale(props.scale)
       .orient(props.orient)
       .tickValues(tickValues)
@@ -86,6 +117,9 @@ class Axis extends React.Component {
 Axis.defaultProps = {
   type: 'x',
   orient: 'left',
+  tickValues: false,
+  tickCount: false,
+  tickFormat: false,
   dx: '',
   dy: '',
   label: '',
@@ -96,6 +130,18 @@ Axis.defaultProps = {
 Axis.propTypes = {
   orient: PropTypes.string.isRequired,
   type: PropTypes.string.isRequired,
+  tickValues: React.PropTypes.oneOfType([
+    React.PropTypes.array,
+    React.PropTypes.bool
+  ]),
+  tickCount: React.PropTypes.oneOfType([
+    React.PropTypes.number,
+    React.PropTypes.bool
+  ]),
+  tickFormat: React.PropTypes.oneOfType([
+    React.PropTypes.func,
+    React.PropTypes.bool
+  ]),
   dx: PropTypes.string,
   dy: PropTypes.string,
   label: PropTypes.string,

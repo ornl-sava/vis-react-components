@@ -100,7 +100,6 @@ const exampleData = [{
   }]
 }]
 
-console.log(exampleData)
 class ChoroplethExample extends React.Component {
   render () {
     return (
