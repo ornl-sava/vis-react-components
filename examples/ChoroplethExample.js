@@ -1,15 +1,14 @@
 import React from 'react'
 import d3 from 'd3'
 
-import Chart from '../components/Chart'
-import Choropleth from '../components/Choropleth'
+import { Chart, Choropleth } from '../src'
+import map from './data/world-110.json'
 
-const toolTipFunction = (tooltipData) => {
-  let d = tooltipData
+const toolTipFunction = (d) => {
   var toolTip =
-    '<span class="title">' + d.label + '</span>' +
-    d3.format('n')(d.counts[0]) + ' / ' +
-    d3.format('n')(d.counts[1])
+    '<span class="title">' + d.key + '</span>' +
+    d3.format('n')(d.value[0]) + ' / ' +
+    d3.format('n')(d.value[1])
   return toolTip
 }
 
@@ -101,11 +100,15 @@ const exampleData = [{
   }]
 }]
 
+console.log(exampleData)
 class ChoroplethExample extends React.Component {
   render () {
     return (
-      <Chart width={800} height={600} data={exampleData} tipFunction={toolTipFunction} className='ChoroplethExample' xAxis={false} yAxis={false}>
-        <Choropleth valueField='doc_count' />
+      <Chart width={800} height={600} className='ChoroplethExample'
+        margin={{top: 15, right: 10, bottom: 40, left: 80}}
+        tipFunction={toolTipFunction} data={exampleData}
+        xAxis={false} yAxis={false} legend>
+        <Choropleth valueField='doc_count' map={map} />
       </Chart>
     )
   }

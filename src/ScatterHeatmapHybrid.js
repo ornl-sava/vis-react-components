@@ -22,7 +22,7 @@ const binByNumeric = (data, accessor, range, numBins) => {
 
 // Using file bound var so active heatmaps persist through view changes
 var heatmap
-export class ScatterHeatmapHybrid extends React.Component {
+export class HybridScatterHeatmap extends React.Component {
   constructor (props) {
     super(props)
 
@@ -139,6 +139,7 @@ export class ScatterHeatmapHybrid extends React.Component {
     this.updateAxes()
     this.updateHeatmap()
     this.updateScatter()
+    // console.log(this.state.xScale.domain(), this.state.xScale.range())
   }
 
   updateScatter () {
@@ -171,7 +172,7 @@ export class ScatterHeatmapHybrid extends React.Component {
       .on('mouseout.scatter.' + this.props.clsName, (d, i) => this.props.scatterOnMouseOut(d, i))
 
     // Update
-    points.transition().duration(100)
+    points
       .style('fill', (d, i) => this.state.scatterColorScale(d[this.props.yAccessor]))
       .attr('cx', (d) => this.state.xScale(d[this.props.xAccessor]))
 
@@ -513,7 +514,7 @@ export class ScatterHeatmapHybrid extends React.Component {
   }
 }
 
-ScatterHeatmapHybrid.propTypes = {
+HybridScatterHeatmap.propTypes = {
   clsName: PropTypes.string.isRequired,
   margin: PropTypes.object,
   width: PropTypes.number,
@@ -544,7 +545,7 @@ ScatterHeatmapHybrid.propTypes = {
 }
 
 // Set default props
-ScatterHeatmapHybrid.defaultProps = {
+HybridScatterHeatmap.defaultProps = {
   startTime: +new Date(),
   timeWindow: 20 * 1000,
   heatmapVertDivisions: 4,
@@ -569,4 +570,4 @@ ScatterHeatmapHybrid.defaultProps = {
   heatmapOnMouseOut: () => {}
 }
 
-export default ScatterHeatmapHybrid
+export default HybridScatterHeatmap

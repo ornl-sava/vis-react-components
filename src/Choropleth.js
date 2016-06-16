@@ -2,11 +2,17 @@ import React, { PropTypes } from 'react'
 import d3 from 'd3'
 import topojson from 'topojson'
 
-import map from '../data/world-110.json'
-
-class ChoroplethMap extends React.Component {
+class Choropleth extends React.Component {
   constructor (props) {
     super(props)
+
+    this.state = {
+      colorScale: d3.scale.quantile()
+    }
+
+    this.projection = d3.geo.equirectangular()
+    this.path = d3.geo.path()
+      .projection(this.projection)
 
     this.tooltipData = this.tooltipData.bind(this)
     this.onClick = this.onClick.bind(this)
@@ -17,6 +23,7 @@ class ChoroplethMap extends React.Component {
   }
 
   tooltipData (id) {
+    // Get datum based on id
     let index = -1
     this.props.data[0].bins.forEach((d, i) => {
       if (d[this.props.keyField] === id) {
@@ -24,14 +31,15 @@ class ChoroplethMap extends React.Component {
         return false
       }
     })
+
     let datum0 = this.props.data[0].bins[index]
     let datum1 = this.props.data[1].bins[index]
     let counts = (typeof datum0 === 'undefined' || typeof datum1 === 'undefined')
       ? [0, 0]
       : [datum1[this.props.valueField], datum0[this.props.valueField]]
     let tooltipData = {
-      label: id,
-      counts: counts
+      key: id,
+      value: counts
     }
 
     return tooltipData
@@ -59,40 +67,48 @@ class ChoroplethMap extends React.Component {
   }
 
   renderMap () {
-    let colorScale = d3.scale.quantile()
-    let projection = d3.geo.equirectangular()
-    let path = d3.geo.path()
-      .projection(projection)
+    // Get map bounds and scaling
+    let mapBounds = this.path.bounds(topojson.feature(this.props.map, this.props.map.objects.countries))
+    let mapScale = this.projection.scale()
 
-    let mapBounds = path.bounds(topojson.feature(map, map.objects.countries))
-    let mapScale = projection.scale()
-
+    // Get possible scales based on width / height
     let hscale = mapScale * this.props.chartWidth / (mapBounds[1][0] - mapBounds[0][0])
     let vscale = mapScale * this.props.chartHeight / (mapBounds[1][1] - mapBounds[0][1])
+
+    // Determine which scaling to use
     mapScale = (hscale < vscale) ? hscale : vscale
-    projection
+    this.projection
       .scale(mapScale)
       .translate([this.props.chartWidth / 2, this.props.chartHeight / 2])
 
-    path
-      .projection(projection)
+    this.path
+      .projection(this.projection)
 
     // Generate scale to determine class for coloring
-    let domain = []
+    let tempColorScale = d3.scale.linear()
+      .domain([0, this.props.numColorCat])
+      .range([this.props.minColor, this.props.maxColor])
+      .interpolate(d3.interpolateHcl)
+
+    let colorDomain = [0]
     this.props.data[1].bins
       .forEach((d) => {
         let datum = d[this.props.valueField]
-        if (datum > 0) domain.push(datum)
+        if (datum > 0) colorDomain.push(datum)
       })
 
-    colorScale
-      .domain(domain)
-      .range(d3.range(9).map((i) => {
-        return 'land' + i
-      }))
+    let colorRange = []
+    d3.range(this.props.numColorCat).map((i) => {
+      colorRange.push(tempColorScale(i))
+    })
 
-    // Helper to generate class for map coloring
-    const getClassName = (id) => {
+    this.state.colorScale
+      .domain(colorDomain)
+      .range(colorRange)
+
+    // Helper to get datum and return color
+    const getColor = (id) => {
+      // Find associated datum
       let index = -1
       this.props.data[1].bins.forEach((d, i) => {
         if (d[this.props.keyField] === id) {
@@ -101,37 +117,28 @@ class ChoroplethMap extends React.Component {
         }
       })
       let datum = this.props.data[1].bins[index]
-      let className = 'landN'
+      let color = this.props.minColor
       if (typeof datum !== 'undefined') {
-        // Get color rank
-        let colorVal = datum[this.props.valueField]
-        let colorClass = (colorVal === 0) ? 'landN'
-         : colorScale(colorVal)
-        // Get selected
-        // let selected = (self.selectedModels.empty()) ? true
-        //  : self.selectedModels.has(datum[self.keyField])
-        // let selectedClass = (selected) ? ' selected' : ''
-        let selectedClass = ' selected'
-        className = colorClass + selectedClass
+        color = this.state.colorScale(datum[this.props.valueField])
       }
-      return className
+      return color
     }
 
     return (
       <g>
         <g>
-          {topojson.feature(map, map.objects.countries).features.map((d, i) => {
+          {topojson.feature(this.props.map, this.props.map.objects.countries).features.map((d, i) => {
             return (<path key={i}
               data-id={d.id}
-              d={path(d, i)}
-              className={getClassName(d.id)}
+              d={this.path(d, i)}
+              fill={getColor(d.id)}
               onClick={this.onClick}
               onMouseEnter={this.onEnter}
               onMouseLeave={this.onLeave} />)
           })}
         </g>
         <g>
-          <path d={path(topojson.mesh(map, map.objects.countries, (a, b) => {
+          <path d={this.path(topojson.mesh(this.props.map, this.props.map.objects.countries, (a, b) => {
             return a !== b
           }))} className='boundary' />
         </g>
@@ -169,10 +176,10 @@ class ChoroplethMap extends React.Component {
   }
 }
 
-ChoroplethMap.defaultProps = {
-  addOverlay: true,
-  padding: 0.2,
-  outerPadding: 0.4,
+Choropleth.defaultProps = {
+  minColor: '#eff3ff',
+  maxColor: '#2171b5',
+  numColorCat: 20,
   chartHeight: 0,
   chartWidth: 0,
   className: 'choropleth',
@@ -187,10 +194,11 @@ ChoroplethMap.defaultProps = {
   onLeave: () => {}
 }
 
-ChoroplethMap.propTypes = {
-  addOverlay: PropTypes.bool,
-  padding: PropTypes.number.isRequired,
-  outerPadding: PropTypes.number.isRequired,
+Choropleth.propTypes = {
+  minColor: PropTypes.string,
+  maxColor: PropTypes.string,
+  numColorCat: PropTypes.number,
+  map: PropTypes.object.isRequired,
   chartHeight: PropTypes.number.isRequired,
   chartWidth: PropTypes.number.isRequired,
   className: PropTypes.string.isRequired,
@@ -205,11 +213,11 @@ ChoroplethMap.propTypes = {
 }
 
 // Only required for REST calls
-ChoroplethMap.contextTypes = {
+Choropleth.contextTypes = {
   filterField: PropTypes.string,
   filterType: PropTypes.string,
   params: PropTypes.object,
   updateFilter: PropTypes.func
 }
 
-export default ChoroplethMap
+export default Choropleth

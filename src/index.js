@@ -1,12 +1,5 @@
-import React from 'react'
-import ReactDom from 'react-dom'
-import routes from './routes'
-
-import './styles/main.styl'
-
-ReactDom.render(
-  <div>
-    {routes}
-  </div>
-  , document.getElementById('root')
-)
+export { default as Chart } from './Chart'
+export { default as Choropleth } from './Choropleth'
+export { default as Heatmap } from './Heatmap'
+export { default as Histogram } from './Histogram'
+export { default as Scatterplot } from './Scatterplot'

@@ -1,7 +1,7 @@
 import React from 'react'
 import debounce from 'lodash.debounce'
 
-import ScatterHeatmapHybrid from '../components/ScatterHeatmapHybrid'
+import { ScatterHeatmapHybrid } from '../src'
 
 var exampleData = []
 var now = +new Date()

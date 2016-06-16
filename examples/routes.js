@@ -1,12 +1,12 @@
 import React from 'react'
 import { IndexRedirect, Route, Router, browserHistory } from 'react-router'
 
-import App from './pages/App'
-import HistogramExample from './pages/HistogramExample'
-import HeatmapExample from './pages/HeatmapExample'
-import ScatterplotExample from './pages/ScatterplotExample'
-import ChoroplethExample from './pages/ChoroplethExample'
-import ScatterHeatmapExample from './pages/ScatterHeatmapExample'
+import App from './App'
+import HistogramExample from './HistogramExample'
+import HeatmapExample from './HeatmapExample'
+import ScatterplotExample from './ScatterplotExample'
+import ChoroplethExample from './ChoroplethExample'
+import ScatterHeatmapExample from './ScatterHeatmapExample'
 
 const reactRouterRoutes = (
   <Router history={browserHistory}>
