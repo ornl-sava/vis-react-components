@@ -63,6 +63,7 @@ class Histogram extends React.Component {
       overlayObj.tooltipData.yPos = barData[i][0].y
       overlayObj.tooltipData.xPos = this.props.xScale(barData[i][0].data.x)
       overlayObj.height = this.props.yScale.range()[0]
+      // console.log(overlayObj)
       barData[i].push(overlayObj)
     }
   }
@@ -97,7 +98,6 @@ class Histogram extends React.Component {
       })
     }))
     if (props.addOverlay === true) {
-      console.log(props.addOverlay)
       this.addOverlay(barData)
     }
     let svgBars = barData.map((dataArr, index) => {
@@ -164,14 +164,14 @@ class Histogram extends React.Component {
 }
 
 Histogram.defaultProps = {
-  addOverlay: true,
+  addOverlay: false,
   padding: 0.2,
   outerPadding: 0.4,
   chartHeight: 0,
   chartWidth: 0,
   className: 'histogram',
   data: [],
-  dataLoading: false,
+  loading: false,
   status: '',
   type: '',
   onBarClick: () => {},
@@ -187,7 +187,7 @@ Histogram.propTypes = {
   chartWidth: PropTypes.number.isRequired,
   className: PropTypes.string.isRequired,
   data: PropTypes.array,
-  dataLoading: PropTypes.bool,
+  loading: PropTypes.bool,
   onBarClick: PropTypes.func,
   onEnter: PropTypes.func,
   onLeave: PropTypes.func,

@@ -8,10 +8,15 @@ import Legend from './Legend'
 
 class Chart extends React.Component {
   _onEnter (tooltipData, svgElement) {
-    this.tip.show(tooltipData, svgElement)
+    console.log(tooltipData)
+    if (tooltipData) {
+      this.tip.show(tooltipData, svgElement)
+    }
   }
   _onLeave (tooltipData, svgElement) {
-    this.tip.hide(tooltipData, svgElement)
+    if (tooltipData) {
+      this.tip.hide(tooltipData, svgElement)
+    }
   }
   constructor (props) {
     super(props)
@@ -61,9 +66,9 @@ class Chart extends React.Component {
     let rootRect = this.refs.rootElement.getBoundingClientRect()
     let svg = d3.select(this.refs.svgRoot)
     let container = d3.select(this.refs.container)
-    let chartWidth = rootRect.width - props.margin.left - props.margin.right
+    let chartWidth = Math.min((rootRect.width - props.margin.left - props.margin.right), (props.width - props.margin.left - props.margin.right))
     let chartHeight = props.height - props.margin.top - props.margin.bottom
-    svg.attr('width', rootRect.width)
+    svg.attr('width', props.width)
       .attr('height', props.height)
     svg.call(this.tip)
 
@@ -71,9 +76,9 @@ class Chart extends React.Component {
       .attr('x', chartWidth - 40)
       .attr('y', -props.margin.top + 1)
     if (props.yScaleType === 'ordinal') {
-      this.yScale.rangeRoundBands([chartHeight, 0])
+      this.yScale.range([chartHeight, 0.00001])
     } else {
-      this.yScale.range([chartHeight, 0])
+      this.yScale.range([chartHeight, 0.00001])
     }
 
     if (props.xScaleType === 'ordinal') {
@@ -156,7 +161,7 @@ Chart.defaultProps = {
   rangePadding: 25,
   xScaleType: 'ordinal',
   yScaleType: 'linear',
-  tipFunction: (d) => { console.log(d) }
+  tipFunction: (d) => {}
 }
 
 Chart.propTypes = {
@@ -174,7 +179,7 @@ Chart.propTypes = {
     PropTypes.bool
   ]),
   children: PropTypes.any,
-  className: PropTypes.string.isRequired,
+  className: PropTypes.string,
   loading: PropTypes.bool,
   margin: PropTypes.object,
   width: PropTypes.number,
