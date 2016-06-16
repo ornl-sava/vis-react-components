@@ -4,6 +4,7 @@ import d3 from 'd3'
 import d3Tip from 'd3-tip'
 
 import Axis from './Axis'
+import Legend from './Legend'
 
 class Chart extends React.Component {
   _onEnter (tooltipData, svgElement) {
@@ -14,15 +15,26 @@ class Chart extends React.Component {
   }
   constructor (props) {
     super(props)
-    this.yScale = d3.scale.linear()
+    // Setup yScale
+    if (props.yScaleType === 'ordinal') {
+      this.yScale = d3.scale.ordinal()
+      this.yScale.rangeRoundBands([props.height, 0])
+    } else if (props.yScaleType === 'temporal') {
+      this.yScale = d3.time.scale.utc()
+    } else {
+      this.yScale = d3.scale.linear()
+    }
+
+    // Setup xScale
     if (props.xScaleType === 'ordinal') {
       this.xScale = d3.scale.ordinal()
-      this.xScale.rangeRoundBands([0, props.width])
+      this.xScale.rangeRoundBands([0, props.height])
     } else if (props.xScaleType === 'temporal') {
       this.xScale = d3.time.scale.utc()
     } else {
       this.xScale = d3.scale.linear()
     }
+
     this.onEnter = this._onEnter.bind(this)
     this.onLeave = this._onLeave.bind(this)
     this.tip = d3Tip().attr('class', 'd3-tip').html(props.tipFunction)
@@ -49,17 +61,26 @@ class Chart extends React.Component {
     let rootRect = this.refs.rootElement.getBoundingClientRect()
     let svg = d3.select(this.refs.svgRoot)
     let container = d3.select(this.refs.container)
-    let chartWidth = Math.min((rootRect.width - props.margin.left - props.margin.right), (props.width - props.margin.left - props.margin.right))
+    let chartWidth = rootRect.width - props.margin.left - props.margin.right
     let chartHeight = props.height - props.margin.top - props.margin.bottom
-    this.yScale.range([chartHeight, 0.00001])
-
-    svg.attr('width', props.width)
+    svg.attr('width', rootRect.width)
       .attr('height', props.height)
     svg.call(this.tip)
 
     container.select('.reset')
       .attr('x', chartWidth - 40)
       .attr('y', -props.margin.top + 1)
+    if (props.yScaleType === 'ordinal') {
+      this.yScale.rangeRoundBands([chartHeight, 0])
+    } else {
+      this.yScale.range([chartHeight, 0])
+    }
+
+    if (props.xScaleType === 'ordinal') {
+      this.xScale.rangeRoundBands([0, chartWidth])
+    } else {
+      this.xScale.range([0, chartWidth])
+    }
 
     this.setState({chartWidth, chartHeight})
     this.forceUpdate()
@@ -75,13 +96,16 @@ class Chart extends React.Component {
       chartHeight: this.state.chartHeight,
       ref: 'child',
       xScale: this.xScale,
+      xScaleType: this.props.xScaleType,
       yScale: this.yScale,
+      yScaleType: this.props.yScaleType,
       onEnter: this.onEnter,
       onLeave: this.onLeave
     })
   }
   render () {
     let props = this.props
+    let margin = props.margin
     let left = props.margin.left
     let top = props.margin.top
     let child = this.renderChild()
@@ -94,8 +118,18 @@ class Chart extends React.Component {
               <text y={-props.margin.top + 1} dy='0.71em'>{props.title.replace(/_/g, ' ')}</text>
               <text className='reset' y={-props.margin.top + 1} x={this.state.chartWidth - 20} dy='0.71em'>reset</text>
             </g>
-            <Axis className='y axis' type='y' orient='left' data={props.data} scale={this.yScale} {...this.state} />
-            <Axis className='x axis' type='x' orient='bottom' data={props.data} scale={this.xScale} {...this.state} />
+            {props.xAxis
+              ? <Axis className='x axis' margin={margin} {...props.xAxis} data={props.data} scale={this.xScale} {...this.state} />
+              : undefined
+            }
+            {props.yAxis
+              ? <Axis className='y axis' margin={margin} {...props.yAxis} data={props.data} scale={this.yScale} {...this.state} />
+              : undefined
+            }
+            {props.legend
+              ? <Legend margin={margin} width={this.state.chartWidth} height={this.state.chartHeight} colorScale={this.refs.child.state.colorScale} />
+              : undefined
+            }
           </g>
         </svg>
       </div>
@@ -104,8 +138,18 @@ class Chart extends React.Component {
 }
 
 Chart.defaultProps = {
-  data: [],
+  data: {},
   title: '',
+  xAxis: {
+    type: 'x',
+    orient: 'bottom',
+    tickValues: false
+  },
+  yAxis: {
+    type: 'y',
+    orient: 'left'
+  },
+  legend: false,
   margin: {top: 15, right: 10, bottom: 20, left: 80},
   width: 400,
   height: 250,
@@ -117,8 +161,20 @@ Chart.defaultProps = {
 
 Chart.propTypes = {
   title: PropTypes.string,
+  xAxis: PropTypes.oneOfType([
+    PropTypes.object,
+    PropTypes.bool
+  ]),
+  yAxis: PropTypes.oneOfType([
+    PropTypes.object,
+    PropTypes.bool
+  ]),
+  legend: PropTypes.oneOfType([
+    PropTypes.object,
+    PropTypes.bool
+  ]),
   children: PropTypes.any,
-  className: PropTypes.string,
+  className: PropTypes.string.isRequired,
   loading: PropTypes.bool,
   margin: PropTypes.object,
   width: PropTypes.number,
@@ -127,7 +183,10 @@ Chart.propTypes = {
   xDomain: PropTypes.array,
   yScaleType: PropTypes.string,
   rangePadding: PropTypes.number,
-  data: PropTypes.array,
+  data: PropTypes.oneOfType([
+    React.PropTypes.object,
+    React.PropTypes.array
+  ]),
   status: PropTypes.string,
   tipFunction: PropTypes.func
 }
