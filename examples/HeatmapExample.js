@@ -1,5 +1,5 @@
 import React from 'react'
-import { Chart, Heatmap } from '../main'
+import { Chart, Heatmap } from '../src'
 
 const exampleData = []
 class HeatmapExample extends React.Component {

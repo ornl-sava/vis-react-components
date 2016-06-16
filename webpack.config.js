@@ -5,28 +5,42 @@ const HtmlPlugin = require('html-webpack-plugin')
 const merge = require('webpack-merge')
 
 const PATHS = {
-  app: path.join(__dirname, 'examples'),
-  build: path.join(__dirname, 'dist')
+  lib: path.join(__dirname, 'src'),
+  example: path.join(__dirname, 'examples')
+}
+const EXTERNALS = {
+  react: {
+    root: 'React',
+    commonjs: 'react',
+    commonjs2: 'react',
+    amd: 'react'
+  },
+  'react-dom': {
+    root: 'ReactDOM',
+    commonjs: 'react-dom',
+    commonjs2: 'react-dom',
+    amd: 'react-dom'
+  },
+  d3: 'd3',
+  'd3-tip': 'd3-tip'
 }
 
-// const PATHS = {
-//   app: path.join(__dirname, 'src'),
-//   build: path.join(__dirname, 'public')
-// }
 // `npm run build` to build dist or `npm start` to run dev server.
 const TARGET = process.env.npm_lifecycle_event
 
 var env = process.env.NODE_ENV || 'development'
 var isDev = env === 'development'
-
+// console.log(env)
 // Common to both starting dev server and building for production.
 const common = {
   entry: {
-    app: PATHS.app
+    'vis.min': PATHS.lib
   },
   output: {
-    path: PATHS.build,
-    filename: 'bundle.js',
+    libary: 'ornl-sava-vis',
+    path: 'dist',
+    libraryTarget: 'umd',
+    filename: '[name].js',
     publicPath: '/'
   },
   debug: isDev,
@@ -41,11 +55,6 @@ const common = {
         BABEL_ENV: JSON.stringify(env)
       }
     }),
-    new HtmlPlugin({
-      template: path.join(PATHS.app, 'index-template.html'),
-      inject: 'body',
-      filename: 'index.html'
-    }),
     new webpack.NoErrorsPlugin()
   ],
   module: {
@@ -53,7 +62,10 @@ const common = {
       {
         test: /\.jsx?$/,
         loader: 'eslint',
-        include: PATHS.app
+        include: [
+          PATHS.example,
+          PATHS.lib
+        ]
       }
     ],
     loaders: [
@@ -75,7 +87,7 @@ const common = {
 if (TARGET === 'start' || !TARGET) {
   module.exports = merge(common, {
     devServer: {
-      contentBase: PATHS.app,
+      contentBase: PATHS.example,
       historyApiFallback: true,
       hot: true,
       compress: true,
@@ -86,12 +98,18 @@ if (TARGET === 'start' || !TARGET) {
       port: process.env.PORT || 8080
     },
     plugins: [
+      new HtmlPlugin({
+        template: path.join(PATHS.example, 'index-template.html'),
+        inject: 'body',
+        filename: 'index.html'
+      }),
       new webpack.HotModuleReplacementPlugin()
     ]
   })
-} else if (TARGET === 'build' || TARGET === 'stats') {
+} else if (TARGET === 'buildDist' || TARGET === 'build') {
   module.exports = merge(common, {
     plugins: [
+
       new webpack.optimize.DedupePlugin(),
       new webpack.optimize.OccurenceOrderPlugin(),
       new webpack.optimize.MinChunkSizePlugin({
@@ -103,6 +121,7 @@ if (TARGET === 'start' || !TARGET) {
           warnings: false
         }
       })
-    ]
+    ],
+    externals: EXTERNALS
   })
 }

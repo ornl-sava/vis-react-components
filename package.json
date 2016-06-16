@@ -2,7 +2,7 @@
   "name": "vis",
   "version": "0.0.1",
   "description": "A set of React component for building visualizations.",
-  "main": "main.js",
+  "main": "lib/index.js",
   "author": "Dave Richadson <richardsongd@ornl.gov>",
   "contributors": [
     {
@@ -23,7 +23,7 @@
   },
   "devDependencies": {
     "autoprefixer": "^6.3.6",
-    "babel": "^6.5.2",
+    "babel-cli": "^6.10.1",
     "babel-core": "^6.7.7",
     "babel-loader": "^6.2.4",
     "babel-plugin-syntax-object-rest-spread": "^6.5.0",
@@ -57,7 +57,9 @@
   },
   "scripts": {
     "start": "webpack-dev-server --progress --colors",
-    "build": "webpack --progress --colors",
+    "buildLib": "rm -rf ./lib && BABEL_ENV=production ./node_modules/.bin/babel src/ --out-dir ./lib",
+    "buildDist": "rm -rf ./dist && NODE_ENV=production webpack --progress --colors",
+    "build": "npm run buildDist && npm run buildLib",
     "lint": "eslint src --ext .js --ext .jsx --ignore-path .gitignore"
   }
 }

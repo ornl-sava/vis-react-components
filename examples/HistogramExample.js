@@ -1,5 +1,5 @@
 import React from 'react'
-import { Chart, Histogram } from '../main'
+import { Chart, Histogram } from '../src'
 
 const exampleData = [
   {
