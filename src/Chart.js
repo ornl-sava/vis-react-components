@@ -75,7 +75,7 @@ class Chart extends React.Component {
       .attr('x', chartWidth - 40)
       .attr('y', -props.margin.top + 1)
     if (props.yScaleType === 'ordinal') {
-      this.yScale.range([chartHeight, 0.00001])
+      this.yScale.rangeRoundBands([chartHeight, 0.00001])
     } else {
       this.yScale.range([chartHeight, 0.00001])
     }
@@ -118,9 +118,8 @@ class Chart extends React.Component {
         <svg ref='svgRoot'>
           <g ref='container' className='container' transform={'translate(' + left + ',' + top + ')'}>
             {child}
-            <g className='axis'>
+            <g className='chart-title'>
               <text y={-props.margin.top + 1} dy='0.71em'>{props.title.replace(/_/g, ' ')}</text>
-              <text className='reset' y={-props.margin.top + 1} x={this.state.chartWidth - 20} dy='0.71em'>reset</text>
             </g>
             {props.xAxis
               ? <Axis className='x axis' margin={margin} {...props.xAxis} data={props.data} scale={this.xScale} {...this.state} />

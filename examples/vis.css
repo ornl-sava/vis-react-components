@@ -10,6 +10,11 @@ body {
 	fill: #fff;
 }
 
+.chart-title {
+	font-size: 12px;
+	font-weight: 300;
+	fill: #777;
+}
 .loading-message {
 	text-anchor: middle;
 	font-size: 12px;
@@ -17,14 +22,14 @@ body {
 	fill: #777;
 }
 
-.bar.overlay {
+.bar._overlay {
 	fill: #aaa;
 	stroke: #808080;
 	stroke-width: 1px;
 	opacity: 0;
 }
 
-.bar.overlay:hover {
+.bar._overlay:hover {
 	opacity: 0.2;
 }
 
@@ -42,6 +47,32 @@ body {
 	opacity: 0.8;
 }
 
+.bar.A {
+	fill: #0F6729;
+	stroke: #0F6729;
+	stroke-width: 1px;
+	opacity: 0.8;
+}
+
+.bar.B {
+	fill: #367928;
+	stroke: #367928;
+	stroke-width: 1px;
+	opacity: 0.8;
+}
+.bar.C {
+	fill: #5E8C27;
+	stroke: #5E8C27;
+	stroke-width: 1px;
+	opacity: 0.8;
+}
+
+.bar.D {
+	fill: #7C9B27;
+	stroke: #7C9B27;
+	stroke-width: 1px;
+	opacity: 0.8;
+}
 /* d3-tip styles */
 
 .d3-tip {

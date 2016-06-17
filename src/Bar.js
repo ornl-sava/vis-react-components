@@ -24,11 +24,12 @@ class Bar extends React.Component {
     this._onMouseLeave()
   }
   render () {
-    let { className, data, ...other } = this.props
+    let { className, data, name, ...other } = this.props
     className = 'bar ' + className
     return (
       <rect
         className={className}
+        data-name={name}
         data-x={data.x}
         data-y={data.y}
         {...other}
@@ -40,9 +41,10 @@ class Bar extends React.Component {
 }
 
 Bar.defaultProps = {
-  height: 0,
-  width: 0,
   className: 'bar',
+  height: 0,
+  name: '',
+  width: 0,
   onClick: () => null,
   tooltipData: null,
   y: 0
@@ -52,6 +54,7 @@ Bar.propTypes = {
   className: PropTypes.string.isRequired,
   data: PropTypes.object,
   height: PropTypes.number.isRequired,
+  name: PropTypes.string,
   width: PropTypes.number.isRequired,
   onClick: PropTypes.func,
   onEnter: PropTypes.func,

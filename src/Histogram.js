@@ -54,22 +54,23 @@ class Histogram extends React.Component {
   addOverlay (barData) {
     for (let i = 0; i < barData.length; i++) {
       let overlayObj = Object.assign({}, barData[i][0])
-      overlayObj.className = 'overlay'
+      overlayObj.className = '_overlay'
       overlayObj.key = overlayObj.className + '-' + overlayObj.data.x
       overlayObj.y = 1
       overlayObj.tooltipData = {}
       overlayObj.tooltipData.label = barData[i][0].data.x
-      overlayObj.tooltipData.counts = barData[i].reduce((prev, bar) => { return bar ? [bar.data.y].concat(prev) : [0].concat(prev) }, [])
+      overlayObj.tooltipData.stackNames = barData[i].reduce((prev, bar) => { return bar ? [bar.name].concat(prev) : [''].concat(prev) }, [])
+      overlayObj.tooltipData.stackCounts = barData[i].reduce((prev, bar) => { return bar ? [bar.data.y].concat(prev) : [0].concat(prev) }, [])
       overlayObj.tooltipData.yPos = barData[i][0].y
       overlayObj.tooltipData.xPos = this.props.xScale(barData[i][0].data.x)
       overlayObj.height = this.props.yScale.range()[0]
-      // console.log(overlayObj)
       barData[i].push(overlayObj)
     }
   }
   buildABar (bin, name, type, height, width, y) {
     let keyVal = type.toString() + '-' + bin.x.toString()
     return {
+      name,
       className: type.toString(),
       key: keyVal,
       height: height,
@@ -105,7 +106,7 @@ class Histogram extends React.Component {
         if (!data) { return null }
         // If we are a stacked bar chart we need to reference the previously stored
         // calculation for 'y' in barData. Can't easily calculate this above
-        if (props.type === 'stacked' && barIndex > 0) {
+        if (props.type === 'stacked' && barIndex > 0 && data.className !== '_overlay') {
           data.y = dataArr[barIndex - 1].y - data.height
         }
         return (<Bar {...data} onClick={props.onBarClick} onEnter={props.onEnter} onLeave={props.onLeave} />)
