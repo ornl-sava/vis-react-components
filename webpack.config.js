@@ -30,20 +30,8 @@ const TARGET = process.env.npm_lifecycle_event
 
 var env = process.env.NODE_ENV || 'development'
 var isDev = env === 'development'
-// console.log(env)
 // Common to both starting dev server and building for production.
 const common = {
-  entry: {
-    'vis.min': PATHS.lib,
-    example: PATHS.example
-  },
-  output: {
-    libary: 'ornl-sava-vis',
-    path: 'dist',
-    libraryTarget: 'umd',
-    filename: '[name].js',
-    publicPath: '/'
-  },
   debug: isDev,
   devtool: isDev ? 'eval' : false,
   plugins: [
@@ -91,6 +79,9 @@ const common = {
 // of npm.
 if (TARGET === 'start' || !TARGET) {
   module.exports = merge(common, {
+    entry: {
+      example: PATHS.example
+    },
     devServer: {
       contentBase: PATHS.example,
       historyApiFallback: true,
@@ -113,8 +104,17 @@ if (TARGET === 'start' || !TARGET) {
   })
 } else if (TARGET === 'buildDist' || TARGET === 'build') {
   module.exports = merge(common, {
+    entry: {
+      'vis.min': PATHS.lib
+    },
+    output: {
+      libary: 'ornl-sava-vis',
+      path: 'dist',
+      libraryTarget: 'umd',
+      filename: '[name].js',
+      publicPath: '/'
+    },
     plugins: [
-
       new webpack.optimize.DedupePlugin(),
       new webpack.optimize.OccurenceOrderPlugin(),
       new webpack.optimize.MinChunkSizePlugin({
