@@ -1,6 +1,6 @@
 {
   "name": "vis",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "description": "A set of React component for building visualizations.",
   "main": "lib/index.js",
   "author": "Dave Richadson <richardsongd@ornl.gov>",
@@ -63,7 +63,6 @@
     "buildLib": "rm -rf ./lib && BABEL_ENV=production ./node_modules/.bin/babel src/ --out-dir ./lib",
     "buildDist": "rm -rf ./dist && NODE_ENV=production webpack --progress --colors",
     "build": "npm run buildDist && npm run buildLib",
-    "lint": "eslint src --ext .js --ext .jsx --ignore-path .gitignore",
-    "postinstall": "rm -rf ./src > /dev/null"
+    "lint": "eslint src --ext .js --ext .jsx --ignore-path .gitignore"
   }
 }

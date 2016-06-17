@@ -8,10 +8,14 @@ import Legend from './Legend'
 
 class Chart extends React.Component {
   _onEnter (tooltipData, svgElement) {
-    this.tip.show(tooltipData, svgElement)
+    if (tooltipData) {
+      this.tip.show(tooltipData, svgElement)
+    }
   }
   _onLeave (tooltipData, svgElement) {
-    this.tip.hide(tooltipData, svgElement)
+    if (tooltipData) {
+      this.tip.hide(tooltipData, svgElement)
+    }
   }
   constructor (props) {
     super(props)
@@ -61,9 +65,9 @@ class Chart extends React.Component {
     let rootRect = this.refs.rootElement.getBoundingClientRect()
     let svg = d3.select(this.refs.svgRoot)
     let container = d3.select(this.refs.container)
-    let chartWidth = rootRect.width - props.margin.left - props.margin.right
+    let chartWidth = props.width === 0 ? rootRect.width - props.margin.left - props.margin.right : Math.min((rootRect.width - props.margin.left - props.margin.right), (props.width - props.margin.left - props.margin.right))
     let chartHeight = props.height - props.margin.top - props.margin.bottom
-    svg.attr('width', rootRect.width)
+    svg.attr('width', props.width === 0 ? rootRect.width : props.width)
       .attr('height', props.height)
     svg.call(this.tip)
 
@@ -151,12 +155,12 @@ Chart.defaultProps = {
   },
   legend: false,
   margin: {top: 15, right: 10, bottom: 20, left: 80},
-  width: 400,
+  width: 0,
   height: 250,
   rangePadding: 25,
   xScaleType: 'ordinal',
   yScaleType: 'linear',
-  tipFunction: (d) => { console.log(d) }
+  tipFunction: (d) => {}
 }
 
 Chart.propTypes = {
