@@ -42,7 +42,7 @@ class Chart extends React.Component {
     this.onEnter = this._onEnter.bind(this)
     this.onLeave = this._onLeave.bind(this)
     this.tip = d3Tip().attr('class', 'd3-tip').html(props.tipFunction)
-    this.state = {chartWidth: 0, chartHeight: 0}
+    this.state = {chartWidth: props.width, chartHeight: props.width}
   }
   shouldComponentUpdate (nextProps, nextState) {
     return nextProps.data.length !== this.props.data.length || nextProps.loading !== this.props.loading
@@ -75,9 +75,9 @@ class Chart extends React.Component {
       .attr('x', chartWidth - 40)
       .attr('y', -props.margin.top + 1)
     if (props.yScaleType === 'ordinal') {
-      this.yScale.rangeRoundBands([chartHeight, 0.00001])
+      this.yScale.rangeRoundBands([chartHeight, 0])
     } else {
-      this.yScale.range([chartHeight, 0.00001])
+      this.yScale.range([chartHeight, 0])
     }
 
     if (props.xScaleType === 'ordinal') {
@@ -130,7 +130,7 @@ class Chart extends React.Component {
               : undefined
             }
             {props.legend
-              ? <Legend margin={margin} width={this.state.chartWidth} height={this.state.chartHeight} colorScale={this.refs.child.state.colorScale} />
+              ? <Legend margin={margin} width={this.state.chartWidth} height={this.state.chartHeight} component={this.refs.child} />
               : undefined
             }
           </g>
@@ -141,6 +141,7 @@ class Chart extends React.Component {
 }
 
 Chart.defaultProps = {
+  className: '',
   data: {},
   title: '',
   xAxis: {

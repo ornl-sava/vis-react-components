@@ -1,9 +1,31 @@
 import React, { PropTypes } from 'react'
 import d3 from 'd3'
 
+// Copy pasted from:
+// http://stackoverflow.com/questions/6491463/accessing-nested-javascript-objects-with-string-key
+// Using to easily access nested object of passed in component
+Object.byString = (o, s) => {
+  s = s.replace(/\[(\w+)\]/g, '.$1') // convert indexes to properties
+  s = s.replace(/^\./, '')           // strip a leading dot
+  var a = s.split('.')
+  for (var i = 0, n = a.length; i < n; ++i) {
+    var k = a[i]
+    if (k in o) {
+      o = o[k]
+    } else {
+      return
+    }
+  }
+  return o
+}
+
 class Legend extends React.Component {
   render () {
-    let { colorScale, height, width, margin } = this.props
+    if (this.props.component === null) {
+      return <g />
+    }
+    let { component, scaleAccessor, height, width, margin } = this.props
+    let colorScale = Object.byString(component, scaleAccessor)
     let xPos = 0
     let yPos = height + margin.bottom / 2
     let legendBlockWidth = (width) / colorScale.range().length
@@ -35,14 +57,16 @@ class Legend extends React.Component {
 }
 
 Legend.defaultProps = {
-  colorScale: d3.scale.linear(),
+  component: null,
+  scaleAccessor: 'state.colorScale',
   margin: {top: 0, right: 0, bottom: 0, left: 0},
   height: 0,
   width: 0
 }
 
 Legend.propTypes = {
-  colorScale: PropTypes.any,
+  component: PropTypes.any,
+  scaleAccessor: PropTypes.string,
   margin: PropTypes.object,
   height: PropTypes.number,
   width: PropTypes.number

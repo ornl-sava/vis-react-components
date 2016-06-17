@@ -46,7 +46,7 @@ class Axis extends React.Component {
     let tickCount = 0
     let tickValues = []
 
-    if (props.data.length > 0) {
+    if (props.data.length > 0 && props.scale.domain().length > 0 && props.scale.range().length > 0) {
       // Use custom tick count if it exist
       if (props.tickCount) {
         tickCount = props.tickCount
