@@ -20,7 +20,7 @@ const toolTipFunction = (tooltipData) => {
     '<span class="title">' + d.label + '</span>' +
     '</span>Total: ' + d3.format('n')(total) +
     '<br /><small>'
-  toolTip += d.stackCounts.reduce((prev, count, index) => {
+  toolTip += d.stackCounts.reduceRight((prev, count, index) => {
     return prev + d.stackNames[index] + ' : ' + d3.format('n')(count) + '<br />'
   }, '')
   toolTip += '</small>'
