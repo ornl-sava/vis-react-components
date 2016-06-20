@@ -1,7 +1,8 @@
 import React from 'react'
 import debounce from 'lodash.debounce'
 
-import { ScatterHeatmapHybrid } from '../src'
+// import { ScatterHeatmapHybrid } from '../src'
+import ScatterHeatmapHybrid from '../src/ScatterHeatmapHybrid'
 
 var exampleData = []
 var now = +new Date()
@@ -14,7 +15,7 @@ for (let i = 0; i < 1000; i++) {
   })
 }
 
-class ScatterplotExample extends React.Component {
+class ScatterHeatmapExample extends React.Component {
   constructor (props) {
     super(props)
 
@@ -57,4 +58,4 @@ class ScatterplotExample extends React.Component {
   }
 }
 
-export default ScatterplotExample
+export default ScatterHeatmapExample
