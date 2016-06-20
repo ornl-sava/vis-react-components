@@ -54,7 +54,7 @@ class HistogramExample extends React.Component {
       <div>
         <div></div>
         <div>
-          <Chart yScaleType='log' title='Histogram' width={800} height={200} data={histogramData} tipFunction={toolTipFunction} settings={settings}>
+          <Chart title='Histogram' width={800} height={200} data={histogramData} tipFunction={toolTipFunction} settings={settings}>
             <Histogram addOverlay />
           </Chart>
         </div>
