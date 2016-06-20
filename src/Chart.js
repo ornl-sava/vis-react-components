@@ -41,6 +41,7 @@ class Chart extends React.Component {
 
     this.onEnter = this._onEnter.bind(this)
     this.onLeave = this._onLeave.bind(this)
+    // let tipClass = props.title.length > 0 ? 'd3-tip ' + props.title : 'd3-tip'
     this.tip = d3Tip().attr('class', 'd3-tip').html(props.tipFunction)
     this.state = {chartWidth: props.width, chartHeight: props.width}
   }
@@ -56,6 +57,7 @@ class Chart extends React.Component {
     this._handleResize = debounce(this.resizeChart.bind(this), 500)
     window.addEventListener('resize', this._handleResize, false)
     this.resizeChart()
+    d3.select(this.refs.svgRoot).call(this.tip)
   }
   componentWillUnmount () {
     window.removeEventListener('resize', this._handleResize, false)
@@ -69,7 +71,7 @@ class Chart extends React.Component {
     let chartHeight = props.height - props.margin.top - props.margin.bottom
     svg.attr('width', props.width === 0 ? rootRect.width : props.width)
       .attr('height', props.height)
-    svg.call(this.tip)
+    // svg.call(this.tip)
 
     container.select('.reset')
       .attr('x', chartWidth - 40)
