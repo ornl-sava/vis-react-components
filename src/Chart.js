@@ -75,20 +75,17 @@ class Chart extends React.Component {
     let newYScale = nextState.yScaleType !== this.state.yScaleType
     if (newXScale) {
       this.setXScale(nextState)
+      this.resizeChart()
     }
     if (newYScale) {
       this.setYScale(nextState)
+      this.resizeChart()
     }
     return newData || loading || newYScale
   }
   componentWillUpdate (nextProps) {
   }
   componentWillReceiveProps (nextProps) {
-    if (nextProps.yScaleType !== this.state.yScaleType) {
-      this.setState({
-        yScaleType: nextProps.yScaleType
-      }, () => { this.setYScale(this.state, nextProps) })
-    }
   }
   // React LifeCycle method - called after initial render
   componentDidMount () {
@@ -125,8 +122,7 @@ class Chart extends React.Component {
       this.xScale.range([0, chartWidth])
     }
 
-    this.setState({chartWidth, chartHeight})
-    this.forceUpdate()
+    this.setState({chartWidth, chartHeight}, () => { this.forceUpdate() })
   }
 
   // We can pass down properties from Chart to children React components

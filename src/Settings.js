@@ -21,14 +21,9 @@ class Dropdown extends React.Component {
     return (
       <div>
         <label>{props.label}</label>
-        <select onChange={this.onChange}>
+        <select onChange={this.onChange} value={props.defaultSelected(chart)}>
           {props.options.map((d, i) => {
-            let selected = props.defaultSelected(chart) === d
-            return (
-              <option key={i} value={d} selected={selected}>
-                {d}
-              </option>
-            )
+            return (<option key={i} value={d}>{d}</option>)
           })}
         </select>
       </div>

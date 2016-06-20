@@ -26,8 +26,6 @@ const settings = {
       onChange: (value, chart) => {
         chart.setState({
           yScaleType: value
-        }, () => {
-          chart.resizeChart()
         })
       }
     }
