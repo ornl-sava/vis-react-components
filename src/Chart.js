@@ -20,37 +20,49 @@ class Chart extends React.Component {
   }
   constructor (props) {
     super(props)
-    // Setup xScale
-    if (props.xScaleType === 'ordinal') {
-      this.xScale = d3.scale.ordinal()
-      this.xScale.rangeRoundBands([0, props.width])
-    } else if (props.xScaleType === 'temporal') {
-      this.xScale = d3.time.scale.utc()
-    } else {
-      this.xScale = d3.scale.linear()
-    }
-
     this.onEnter = this._onEnter.bind(this)
     this.onLeave = this._onLeave.bind(this)
     this.tip = d3Tip().attr('class', 'd3-tip').html(props.tipFunction)
+    this.setXScale = this.setXScale.bind(this)
     this.setYScale = this.setYScale.bind(this)
     this.state = {
       chartWidth: props.width,
       chartHeight: props.width,
+      xScaleType: props.xScaleType,
       yScaleType: props.yScaleType
     }
-    this.setYScale(this.state, props)
+
+    this.setXScale(this.state)
+    this.setYScale(this.state)
   }
 
-  setYScale (state, props, domain = null) {
+  setXScale (state) {
+    // Setup xScale
+    if (state.xScaleType === 'ordinal') {
+      this.xScale = d3.scale.ordinal()
+      this.xScale.rangeRoundBands([0, state.chartWidth])
+    } else if (state.xScaleType === 'temporal') {
+      this.xScale = d3.time.scale.utc()
+    } else if (state.xScaleType === 'log') {
+      this.xScale = d3.scale.log()
+    } else if (state.xScaleType === 'power') {
+      this.xScale = d3.scale.pow().exponent(0.5)
+    } else {
+      this.xScale = d3.scale.linear()
+    }
+  }
+
+  setYScale (state) {
     // Setup yScale
     if (state.yScaleType === 'ordinal') {
       this.yScale = d3.scale.ordinal()
-      this.yScale.rangeRoundBands([props.height, 0])
+      this.yScale.rangeRoundBands([state.chartHeight, 0])
     } else if (state.yScaleType === 'temporal') {
       this.yScale = d3.time.scale.utc()
     } else if (state.yScaleType === 'log') {
       this.yScale = d3.scale.log()
+    } else if (state.yScaleType === 'power') {
+      this.yScale = d3.scale.pow().exponent(0.5)
     } else {
       this.yScale = d3.scale.linear()
     }
@@ -59,11 +71,15 @@ class Chart extends React.Component {
   shouldComponentUpdate (nextProps, nextState) {
     let newData = nextProps.data.length !== this.props.data.length
     let loading = nextProps.loading !== this.props.loading
-    let newScale = nextState.yScaleType !== this.state.yScaleType
-    if (newScale) {
-      this.setYScale(nextState, nextProps)
+    let newXScale = nextState.xScaleType !== this.state.xScaleType
+    let newYScale = nextState.yScaleType !== this.state.yScaleType
+    if (newXScale) {
+      this.setXScale(nextState)
     }
-    return newData || loading || newScale
+    if (newYScale) {
+      this.setYScale(nextState)
+    }
+    return newData || loading || newYScale
   }
   componentWillUpdate (nextProps) {
   }

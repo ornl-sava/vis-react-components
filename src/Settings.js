@@ -1,5 +1,8 @@
 import React, { PropTypes } from 'react'
 
+// TODO: Create other various input fields to be used
+
+// Helper to create dropdown options menu
 class Dropdown extends React.Component {
   constructor (props) {
     super(props)
@@ -14,12 +17,18 @@ class Dropdown extends React.Component {
 
   render () {
     let props = this.props
+    let chart = props.chart
     return (
       <div>
         <label>{props.label}</label>
         <select onChange={this.onChange}>
           {props.options.map((d, i) => {
-            return (<option key={i} value={d}>{d}</option>)
+            let selected = props.defaultSelected(chart) === d
+            return (
+              <option key={i} value={d} selected={selected}>
+                {d}
+              </option>
+            )
           })}
         </select>
       </div>

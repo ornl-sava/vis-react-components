@@ -16,12 +16,12 @@ const settings = {
   options: [
     {
       type: 'dropdown',
-      label: 'Y Scale Type: ',
+      label: 'Scale Type: ',
       options: [
-        'linear', 'log'
+        'linear', 'log', 'power'
       ],
       defaultSelected: (chart) => {
-        return chart.props.yScaleType
+        return chart.state.yScaleType
       },
       onChange: (value, chart) => {
         chart.setState({
@@ -56,7 +56,7 @@ class HistogramExample extends React.Component {
       <div>
         <div></div>
         <div>
-          <Chart title='Histogram' width={800} height={200} data={histogramData} tipFunction={toolTipFunction} settings={settings}>
+          <Chart yScaleType='log' title='Histogram' width={800} height={200} data={histogramData} tipFunction={toolTipFunction} settings={settings}>
             <Histogram addOverlay />
           </Chart>
         </div>
