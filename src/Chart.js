@@ -42,7 +42,7 @@ class Chart extends React.Component {
     this.setYScale(this.state, props)
   }
 
-  setYScale (state, props) {
+  setYScale (state, props, domain = null) {
     // Setup yScale
     if (state.yScaleType === 'ordinal') {
       this.yScale = d3.scale.ordinal()

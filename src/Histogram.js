@@ -21,7 +21,8 @@ class Histogram extends React.Component {
     if (nextProps.data.length > 0) {
       let yMax = this.getMaxCount(nextProps.data)
       let xDomain = nextProps.data[0].bins.map((bin) => bin.x.toString())
-      if (yMax !== this.state.yDomain[1]) {
+      if (yMax !== this.props.yScale.domain()[1]) {
+        console.log(this.state.yDomain[0], yMax)
         this.props.yScale.domain([this.state.yDomain[0], yMax])
         this.setState({yDomain: [this.state.yDomain[0], yMax]})
       }
