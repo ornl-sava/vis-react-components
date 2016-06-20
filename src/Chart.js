@@ -5,6 +5,7 @@ import d3Tip from 'd3-tip'
 
 import Axis from './Axis'
 import Legend from './Legend'
+import Settings from './Settings'
 
 class Chart extends React.Component {
   _onEnter (tooltipData, svgElement) {
@@ -19,20 +20,10 @@ class Chart extends React.Component {
   }
   constructor (props) {
     super(props)
-    // Setup yScale
-    if (props.yScaleType === 'ordinal') {
-      this.yScale = d3.scale.ordinal()
-      this.yScale.rangeRoundBands([props.height, 0])
-    } else if (props.yScaleType === 'temporal') {
-      this.yScale = d3.time.scale.utc()
-    } else {
-      this.yScale = d3.scale.linear()
-    }
-
     // Setup xScale
     if (props.xScaleType === 'ordinal') {
       this.xScale = d3.scale.ordinal()
-      this.xScale.rangeRoundBands([0, props.height])
+      this.xScale.rangeRoundBands([0, props.width])
     } else if (props.xScaleType === 'temporal') {
       this.xScale = d3.time.scale.utc()
     } else {
@@ -42,14 +33,46 @@ class Chart extends React.Component {
     this.onEnter = this._onEnter.bind(this)
     this.onLeave = this._onLeave.bind(this)
     this.tip = d3Tip().attr('class', 'd3-tip').html(props.tipFunction)
-    this.state = {chartWidth: props.width, chartHeight: props.width}
+    this.setYScale = this.setYScale.bind(this)
+    this.state = {
+      chartWidth: props.width,
+      chartHeight: props.width,
+      yScaleType: props.yScaleType
+    }
+    this.setYScale(this.state, props)
   }
+
+  setYScale (state, props) {
+    // Setup yScale
+    if (state.yScaleType === 'ordinal') {
+      this.yScale = d3.scale.ordinal()
+      this.yScale.rangeRoundBands([props.height, 0])
+    } else if (state.yScaleType === 'temporal') {
+      this.yScale = d3.time.scale.utc()
+    } else if (state.yScaleType === 'log') {
+      this.yScale = d3.scale.log()
+    } else {
+      this.yScale = d3.scale.linear()
+    }
+  }
+
   shouldComponentUpdate (nextProps, nextState) {
-    return nextProps.data.length !== this.props.data.length || nextProps.loading !== this.props.loading
+    let newData = nextProps.data.length !== this.props.data.length
+    let loading = nextProps.loading !== this.props.loading
+    let newScale = nextState.yScaleType !== this.state.yScaleType
+    if (newScale) {
+      this.setYScale(nextState, nextProps)
+    }
+    return newData || loading || newScale
   }
   componentWillUpdate (nextProps) {
   }
   componentWillReceiveProps (nextProps) {
+    if (nextProps.yScaleType !== this.state.yScaleType) {
+      this.setState({
+        yScaleType: nextProps.yScaleType
+      }, () => { this.setYScale(this.state, nextProps) })
+    }
   }
   // React LifeCycle method - called after initial render
   componentDidMount () {
@@ -114,7 +137,7 @@ class Chart extends React.Component {
     let top = props.margin.top
     let child = this.renderChild()
     return (
-      <div ref='rootElement' className={props.className}>
+      <div ref='rootElement' className={props.className} style={{position: 'relative'}}>
         <svg ref='svgRoot'>
           <g ref='container' className='container' transform={'translate(' + left + ',' + top + ')'}>
             {child}
@@ -135,6 +158,10 @@ class Chart extends React.Component {
             }
           </g>
         </svg>
+        {props.settings
+          ? <Settings settings={props.settings} chart={this} />
+          : undefined
+        }
       </div>
     )
   }
@@ -142,6 +169,7 @@ class Chart extends React.Component {
 
 Chart.defaultProps = {
   className: '',
+  settings: false,
   data: {},
   title: '',
   xAxis: {

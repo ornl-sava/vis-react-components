@@ -384,3 +384,28 @@ nav ul li .active {
   -ms-user-select: none ;
   user-select: none;
 }
+
+.settings-menu {
+	background-color: #f2f2f2;
+	border-radius: 4px;
+	margin-top: -4px;
+	margin-left: 5px;
+	padding: 6px 18px;
+	border: 1px solid #d4d4d4;
+}
+.settings-icon {
+	cursor: pointer;
+	font-size: 3px;
+}
+.settings-option label {
+	font-weight: 400;
+	margin-bottom: 2px;
+}
+.settings-option select {
+	min-width: 100px;
+	margin-bottom: 4px;
+}
+.settings-option select option:hover {
+	background-color: #4677f8;
+	color: #fefefe;
+}

@@ -11,6 +11,29 @@ import d3 from 'd3'
 //    xPos: int
 //    yPos: int
 
+const settings = {
+  title: '',
+  options: [
+    {
+      type: 'dropdown',
+      label: 'Y Scale Type: ',
+      options: [
+        'linear', 'log'
+      ],
+      defaultSelected: (chart) => {
+        return chart.props.yScaleType
+      },
+      onChange: (value, chart) => {
+        chart.setState({
+          yScaleType: value
+        }, () => {
+          chart.resizeChart()
+        })
+      }
+    }
+  ]
+}
+
 const toolTipFunction = (tooltipData) => {
   let d = tooltipData
   let total = tooltipData.stackCounts.reduce((prev, count) => {
@@ -33,7 +56,7 @@ class HistogramExample extends React.Component {
       <div>
         <div></div>
         <div>
-          <Chart title='Histogram' width={800} height={200} data={histogramData} tipFunction={toolTipFunction} >
+          <Chart title='Histogram' width={800} height={200} data={histogramData} tipFunction={toolTipFunction} settings={settings}>
             <Histogram addOverlay />
           </Chart>
         </div>
