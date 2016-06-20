@@ -9,12 +9,12 @@ import Settings from './Settings'
 
 class Chart extends React.Component {
   _onEnter (tooltipData, svgElement) {
-    if (tooltipData) {
+    if (tooltipData && this.tip) {
       this.tip.show(tooltipData, svgElement)
     }
   }
   _onLeave (tooltipData, svgElement) {
-    if (tooltipData) {
+    if (tooltipData && this.tip) {
       this.tip.hide(tooltipData, svgElement)
     }
   }
@@ -22,7 +22,7 @@ class Chart extends React.Component {
     super(props)
     this.onEnter = this._onEnter.bind(this)
     this.onLeave = this._onLeave.bind(this)
-    this.tip = d3Tip().attr('class', 'd3-tip').html(props.tipFunction)
+    this.tip = props.tipFunction ? d3Tip().attr('class', 'd3-tip').html(props.tipFunction) : props.tipFunction
     this.setXScale = this.setXScale.bind(this)
     this.setYScale = this.setYScale.bind(this)
     this.state = {
@@ -92,6 +92,9 @@ class Chart extends React.Component {
     this._handleResize = debounce(this.resizeChart.bind(this), 500)
     window.addEventListener('resize', this._handleResize, false)
     this.resizeChart()
+    if (this.tip) {
+      d3.select(this.refs.svgRoot).call(this.tip)
+    }
   }
   componentWillUnmount () {
     window.removeEventListener('resize', this._handleResize, false)
@@ -100,16 +103,15 @@ class Chart extends React.Component {
     let props = this.props
     let rootRect = this.refs.rootElement.getBoundingClientRect()
     let svg = d3.select(this.refs.svgRoot)
-    let container = d3.select(this.refs.container)
+    // let container = d3.select(this.refs.container)
     let chartWidth = props.width === 0 ? rootRect.width - props.margin.left - props.margin.right : Math.min((rootRect.width - props.margin.left - props.margin.right), (props.width - props.margin.left - props.margin.right))
     let chartHeight = props.height - props.margin.top - props.margin.bottom
     svg.attr('width', props.width === 0 ? rootRect.width : props.width)
       .attr('height', props.height)
-    svg.call(this.tip)
 
-    container.select('.reset')
-      .attr('x', chartWidth - 40)
-      .attr('y', -props.margin.top + 1)
+    // container.select('.reset')
+    //   .attr('x', chartWidth - 40)
+    //   .attr('y', -props.margin.top + 1)
     if (props.yScaleType === 'ordinal') {
       this.yScale.rangeRoundBands([chartHeight, 0])
     } else {
@@ -200,7 +202,7 @@ Chart.defaultProps = {
   rangePadding: 25,
   xScaleType: 'ordinal',
   yScaleType: 'linear',
-  tipFunction: (d) => {}
+  tipFunction: null
 }
 
 Chart.propTypes = {

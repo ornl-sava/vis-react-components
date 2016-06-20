@@ -1,6 +1,6 @@
 import React from 'react'
 import { Chart, Histogram } from '../src'
-import { histogramData, stackedHistogramData } from './exampleData'
+import { histogramData, stackedHistogramData } from './data/exampleData'
 import d3 from 'd3'
 
 // Tooltipdata is an object currently defined in the component
@@ -54,7 +54,7 @@ class HistogramExample extends React.Component {
       <div>
         <div></div>
         <div>
-          <Chart title='Histogram' width={800} height={200} data={histogramData} tipFunction={toolTipFunction} settings={settings}>
+          <Chart title='Histogram' width={800} height={200} data={histogramData} settings={settings}>
             <Histogram addOverlay />
           </Chart>
         </div>
