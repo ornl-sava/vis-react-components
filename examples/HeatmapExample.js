@@ -46,7 +46,7 @@ const chartProps = {
   height: 300,
   data: data,
   xScaleType: 'temporal',
-  yScaleType: 'ordinal',
+  yScaleType: 'ordinalBand',
   yAxis: {
     type: 'y',
     tickValues: yTickValues,
