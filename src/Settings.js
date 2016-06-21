@@ -8,20 +8,21 @@ class Dropdown extends React.Component {
     super(props)
 
     this.onChange = this.onChange.bind(this)
+    this.defaultValue = props.defaultSelected(props.chart)
   }
 
   onChange (event) {
-    let props = this.props
-    props.onChange(event.target.value, props.chart)
+    let value = event.target.value
+    this.defaultValue = value
+    this.props.onChange(value, this.props.chart)
   }
 
   render () {
     let props = this.props
-    let chart = props.chart
     return (
-      <div>
+      <div className='settings-option'>
         <label>{props.label}</label>
-        <select onChange={this.onChange} value={props.defaultSelected(chart)}>
+        <select onChange={this.onChange} value={this.defaultValue}>
           {props.options.map((d, i) => {
             return (<option key={i} value={d}>{d}</option>)
           })}
@@ -29,6 +30,12 @@ class Dropdown extends React.Component {
       </div>
     )
   }
+}
+
+Dropdown.propTypes = {
+  defaultSelected: PropTypes.any,
+  onChange: PropTypes.any,
+  chart: PropTypes.object
 }
 
 class Settings extends React.Component {
@@ -59,7 +66,27 @@ class Settings extends React.Component {
     let chart = props.chart
     let margin = chart.props.margin
     let width = chart.state.chartWidth
-    let height = chart.state.chartHeight
+
+    let longestLen = 0
+    longestLen = settings.options.reduce((a, b) => {
+      let aStringLen = 0
+      let bStringLen = 0
+      if (typeof a.label !== 'undefined') {
+        aStringLen = a.label.length + a.options.reduce((f, g) => {
+          return f.length > g.length ? f.length : g.length
+        }, 0)
+      }
+      if (typeof b.label !== 'undefined') {
+        bStringLen = b.label.length + b.options.reduce((f, g) => {
+          return f.length > g.length ? f.length : g.length
+        }, 0)
+      }
+      return aStringLen > bStringLen ? aStringLen : bStringLen
+    }, 0)
+
+    // NOTE: Currently a bit arbitrary; just need something larger
+    // then font size that also accounts for the dropdown itself
+    let minWidth = longestLen * 11
 
     let containerProps = {
       className: 'settings-container',
@@ -87,10 +114,9 @@ class Settings extends React.Component {
         position: 'absolute',
         display: this.state.menuDisplay,
         zIndex: this.state.menuZIndex,
-        width: (width + margin.left) / 2,
-        height: height,
+        width: (width + margin.left) - (width + margin.left - minWidth),
         top: 0,
-        left: (width + margin.left) / 2
+        left: (width + margin.left - minWidth)
       }
     }
 
@@ -98,7 +124,7 @@ class Settings extends React.Component {
       <div {...containerProps}>
         <span {...iconProps} />
         <div {...menuProps}>
-          <span className='settings-title'>{settings.title}</span>
+          <div className='settings-title'>{settings.title}</div>
           {settings.options.map((d, i) => {
             if (d.type === 'dropdown') {
               return (<Dropdown key={i} chart={chart} {...d} />)

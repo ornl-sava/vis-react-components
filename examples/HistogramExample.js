@@ -1,7 +1,8 @@
 import React from 'react'
+import d3 from 'd3'
+
 import { Chart, Histogram } from '../src'
 import { histogramData, stackedHistogramData } from './data/exampleData'
-import d3 from 'd3'
 
 // Tooltipdata is an object currently defined in the component
 // Properties for Histogram tooltipData are :
@@ -12,21 +13,66 @@ import d3 from 'd3'
 //    yPos: int
 
 const settings = {
-  title: '',
+  title: 'Options',
   options: [
     {
       type: 'dropdown',
       label: 'Scale Type: ',
       options: [
-        'linear', 'log', 'power'
+        'Linear', 'Log', 'Power'
       ],
       defaultSelected: (chart) => {
-        return chart.state.yScaleType
+        let value = chart.state.yScaleType
+        return value.charAt(0).toUpperCase() + value.slice(1)
       },
       onChange: (value, chart) => {
         chart.setState({
-          yScaleType: value
+          yScaleType: value.toLowerCase()
         })
+      }
+    }, {
+      type: 'dropdown',
+      label: 'Sort By: ',
+      options: [
+        'Document Count', 'Key'
+      ],
+      defaultSelected: (chart) => {
+        let histogram = chart.refs.child
+        if (typeof histogram === 'undefined') {
+          return 'Key'
+        }
+        let value = histogram.state.sortBy === 'x'
+          ? 'Key'
+          : 'Document Count'
+        return value
+      },
+      onChange: (value, chart) => {
+        let histogram = chart.refs.child
+        let newValue = value === 'Key'
+          ? 'x'
+          : 'y'
+        histogram.setState({
+          sortBy: newValue
+        }, chart.forceUpdate())
+      }
+    }, {
+      type: 'dropdown',
+      label: 'Sort Order: ',
+      options: [
+        'Ascending', 'Descending'
+      ],
+      defaultSelected: (chart) => {
+        let histogram = chart.refs.child
+        if (typeof histogram === 'undefined') {
+          return 'Key'
+        }
+        return histogram.state.sortOrder
+      },
+      onChange: (value, chart) => {
+        let histogram = chart.refs.child
+        histogram.setState({
+          sortOrder: value
+        }, chart.forceUpdate())
       }
     }
   ]
@@ -54,7 +100,7 @@ class HistogramExample extends React.Component {
       <div>
         <div></div>
         <div>
-          <Chart title='Histogram' width={800} height={200} data={histogramData} settings={settings}>
+          <Chart title='Histogram' width={800} height={200} data={histogramData} settings={settings} tipFunction={toolTipFunction}>
             <Histogram addOverlay />
           </Chart>
         </div>

@@ -1,4 +1,6 @@
 import React, { PropTypes } from 'react'
+import d3 from 'd3'
+
 import Bar from './Bar'
 
 // Copied from http://stackoverflow.com/questions/4492678/swap-rows-with-columns-transposition-of-a-matrix-in-javascript
@@ -13,23 +15,77 @@ class Histogram extends React.Component {
     super(props)
     this.state = {
       xDomain: [],
-      yDomain: [0.00001, 1]
+      yDomain: [0.00001, 1],
+      sortBy: 'x',
+      sortOrder: 'Ascending',
+      sortTypes: []
     }
   }
   // Update the domain for the shared scale
   componentWillReceiveProps (nextProps) {
     if (nextProps.data.length > 0) {
-      let yMax = this.getMaxCount(nextProps.data)
-      let xDomain = nextProps.data[0].bins.map((bin) => bin.x.toString())
-      if (yMax !== this.props.yScale.domain()[1]) {
-        console.log(this.state.yDomain[0], yMax)
-        this.props.yScale.domain([this.state.yDomain[0], yMax])
-        this.setState({yDomain: [this.state.yDomain[0], yMax]})
+      this.updateDomain(nextProps, this.state)
+    }
+  }
+  shouldComponentUpdate (nextProps, nextState) {
+    this.updateDomain(nextProps, nextState)
+    return true
+  }
+  updateDomain (props, state) {
+    this.sortData(props, state)
+
+    let yMax = this.getMaxCount(props.data)
+    let xDomain = props.data[0].bins.map((bin) => bin.x.toString())
+
+    if (yMax !== this.props.yScale.domain()[1]) {
+      this.props.yScale.domain([state.yDomain[0], yMax])
+      this.setState({yDomain: [state.yDomain[0], yMax]})
+    }
+    if (xDomain !== state.xDomain) {
+      this.props.xScale.domain(xDomain)
+      this.setState({xDomain})
+    }
+  }
+  sortData (props, state) {
+    // NOTE: This WILL mutate the prop
+    // Sort first bin and then sort rest of bins accordingly
+    let sortArr = []
+    props.data[0].bins.sort((a, b) => {
+      let i = 0
+      if (state.sortBy === 'x') {
+        i = state.sortOrder === 'Ascending'
+          ? d3.ascending(a.x, b.x)
+          : d3.descending(a.x, b.x)
+      } else {
+        let useBin = (state.sortTypes.indexOf(props.data[0].type) > -1 || state.sortTypes.length === 0)
+        let ya = useBin ? a.y : 0
+        let yb = useBin ? b.y : 0
+        for (let j = 1; j < props.data.length; j++) {
+          let useBin = (state.sortTypes.indexOf(props.data[j].type) > -1 || state.sortTypes.length === 0)
+          if (useBin) {
+            props.data[j].bins.forEach((d, i) => {
+              if (d.x === a.x) {
+                ya += d.y
+              }
+              if (d.x === b.x) {
+                yb += d.y
+              }
+            })
+          }
+        }
+        i = state.sortOrder === 'Ascending'
+          ? ya - yb
+          : yb - ya
       }
-      if (xDomain !== this.state.xDomain) {
-        this.props.xScale.domain(xDomain)
-        this.setState({xDomain})
-      }
+      sortArr.push(i)
+      return i
+    })
+    // Sort rest of bins in same manner
+    for (let i = 1; i < props.data.length; i++) {
+      let j = 0
+      props.data[i].bins.sort((a, b) => {
+        return sortArr[j++]
+      })
     }
   }
   getMaxCount (dataArr) {
