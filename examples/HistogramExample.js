@@ -105,7 +105,7 @@ class HistogramExample extends React.Component {
           </Chart>
         </div>
         <div>
-          <Chart title='Stacked Histogram' width={800} height={200} data={stackedHistogramData} tipFunction={toolTipFunction}>
+          <Chart title='Stacked Histogram' width={800} height={200} data={stackedHistogramData} settings={settings} tipFunction={toolTipFunction}>
             <Histogram type='stacked' addOverlay />
           </Chart>
         </div>
