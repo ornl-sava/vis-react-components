@@ -30,7 +30,7 @@ class Heatmap extends React.Component {
         // must be taken into consideration
         let offset = nextProps.data[0].bins[1][nextProps.xKeyField] -
           nextProps.data[0].bins[0][nextProps.xKeyField]
-        if (nextProps.xScaleType === 'ordinal') {
+        if (nextProps.xScaleType === 'ordinalBand') {
           xDomain = nextProps.data[0].bins.map((d) => d[nextProps.xKeyField])
         } else {
           xDomain = d3.extent(nextProps.data[0].bins, (d) => d[nextProps.xKeyField])
@@ -41,7 +41,7 @@ class Heatmap extends React.Component {
       // If yDomain is not predefined
       let yDomain = nextProps.yDomain
       if (yDomain.length === 0) {
-        if (nextProps.yScaleType === 'ordinal') {
+        if (nextProps.yScaleType === 'ordinalBand') {
           yDomain = nextProps.data.map((d) => d[nextProps.yKeyField])
         } else {
           yDomain = d3.extent(nextProps.data, (d) => d[nextProps.yKeyField])

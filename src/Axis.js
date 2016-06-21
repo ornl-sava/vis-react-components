@@ -14,11 +14,7 @@ const truncateLabel = (d, maxChars) => {
 class Axis extends React.Component {
   constructor (props) {
     super(props)
-    let scaleType = 'linear'
-    if (typeof props.scale.rangePoints === 'function') {
-      scaleType = 'ordinal'
-    }
-    this.state = {range: 0, ticks: 0, scaleType}
+    this.state = {range: 0, ticks: 0}
     this.axis = d3.svg.axis()
       .scale(props.scale)
       .orient(props.orient)
@@ -58,11 +54,11 @@ class Axis extends React.Component {
       if (props.tickValues) {
         tickValues = props.tickValues
       } else {
-        tickValues = (this.state.scaleType !== 'ordinal') ? null : props.scale.domain()
+        tickValues = (!/ordinal+/.test(props.scaleType)) ? null : props.scale.domain()
       }
 
       // If scale type is ordinal truncate labels
-      if (this.state.scaleType === 'ordinal') {
+      if (/ordinal+/.test(props.scaleType)) {
         let maxWidth = 0
         let fontSize = 12
         if (props.orient === 'top' || props.orient === 'bottom') {
@@ -116,6 +112,7 @@ class Axis extends React.Component {
 
 Axis.defaultProps = {
   type: 'x',
+  scaleType: 'linear',
   orient: 'left',
   tickValues: false,
   tickCount: false,
@@ -130,6 +127,7 @@ Axis.defaultProps = {
 Axis.propTypes = {
   orient: PropTypes.string.isRequired,
   type: PropTypes.string.isRequired,
+  scaleType: PropTypes.string,
   tickValues: React.PropTypes.oneOfType([
     React.PropTypes.array,
     React.PropTypes.bool
