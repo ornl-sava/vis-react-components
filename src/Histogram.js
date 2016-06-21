@@ -28,7 +28,9 @@ class Histogram extends React.Component {
     }
   }
   shouldComponentUpdate (nextProps, nextState) {
-    this.updateDomain(nextProps, nextState)
+    if (nextProps.data.length > 0) {
+      this.updateDomain(nextProps, nextState)
+    }
     return true
   }
   updateDomain (props, state) {
