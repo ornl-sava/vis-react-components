@@ -26,13 +26,11 @@ class Chart extends React.Component {
     this.setScale = this.setScale.bind(this)
     this.state = {
       chartWidth: props.width,
-      chartHeight: props.width,
-      xScaleType: props.xScaleType,
-      yScaleType: props.yScaleType
+      chartHeight: props.width
     }
 
-    this.xScale = this.setScale(this.state.xScaleType, [0, this.state.chartWidth])
-    this.yScale = this.setScale(this.state.yScaleType, [this.state.chartHeight, 0])
+    this.xScale = this.setScale(this.props.xScaleType, [0, this.state.chartWidth])
+    this.yScale = this.setScale(this.props.yScaleType, [this.state.chartHeight, 0])
   }
 
   setScale (scaleType, range) {
@@ -60,17 +58,21 @@ class Chart extends React.Component {
   shouldComponentUpdate (nextProps, nextState) {
     let newData = nextProps.data.length !== this.props.data.length
     let loading = nextProps.loading !== this.props.loading
-    let newXScale = nextState.xScaleType !== this.state.xScaleType
-    let newYScale = nextState.yScaleType !== this.state.yScaleType
+    let newSettings = nextProps.settings !== this.props.settings
+    let newSortBy = nextProps.sortBy !== this.props.sortBy
+    let newSortOrder = nextProps.sortOrder !== this.props.sortOrder
+    let newSortTypes = nextProps.sortTypes !== this.props.sortTypes
+    let newXScale = nextProps.xScaleType !== this.props.xScaleType
+    let newYScale = nextProps.yScaleType !== this.props.yScaleType
     if (newXScale) {
-      this.xScale = this.setScale(nextState.xScaleType, [0, nextState.chartWidth])
+      this.xScale = this.setScale(nextProps.xScaleType, [0, nextState.chartWidth])
       this.resizeChart()
     }
     if (newYScale) {
-      this.yScale = this.setScale(nextState.yScaleType, [nextState.chartHeight, 0])
+      this.yScale = this.setScale(nextProps.yScaleType, [nextState.chartHeight, 0])
       this.resizeChart()
     }
-    return newData || loading || newYScale
+    return newData || loading || newYScale || newSettings || newSortBy || newSortOrder || newSortTypes
   }
   componentWillUpdate (nextProps) {
   }
@@ -133,6 +135,9 @@ class Chart extends React.Component {
       xScaleType: this.props.xScaleType,
       yScale: this.yScale,
       yScaleType: this.props.yScaleType,
+      sortBy: this.props.sortBy,
+      sortOrder: this.props.sortOrder,
+      sortTypes: this.props.sortTypes,
       onEnter: this.onEnter,
       onLeave: this.onLeave
     })
@@ -175,6 +180,9 @@ class Chart extends React.Component {
 }
 
 Chart.defaultProps = {
+  sortBy: null,
+  sortOrder: null,
+  sortTypes: [],
   className: '',
   settings: false,
   data: {},
@@ -200,6 +208,22 @@ Chart.defaultProps = {
 
 Chart.propTypes = {
   title: PropTypes.string,
+  sortBy: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.bool
+  ]),
+  sortOrder: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.bool
+  ]),
+  sortTypes: PropTypes.oneOfType([
+    PropTypes.array,
+    PropTypes.bool
+  ]),
+  settings: PropTypes.oneOfType([
+    PropTypes.object,
+    PropTypes.bool
+  ]),
   xAxis: PropTypes.oneOfType([
     PropTypes.object,
     PropTypes.bool

@@ -15,10 +15,7 @@ class Histogram extends React.Component {
     super(props)
     this.state = {
       xDomain: [],
-      yDomain: [0.00001, 1],
-      sortBy: 'y',
-      sortOrder: 'Descending',
-      sortTypes: []
+      yDomain: [0.00001, 1]
     }
   }
   // Update the domain for the shared scale
@@ -28,16 +25,23 @@ class Histogram extends React.Component {
     }
   }
   shouldComponentUpdate (nextProps, nextState) {
-    if (nextProps.data.length > 0) {
+    if (nextProps.data.length > 0 ||
+      nextProps.sortBy !== this.props.sortBy ||
+      nextProps.sortOrder !== this.props.sortOrder ||
+      nextProps.sortTypes !== this.props.sortTypes) {
       this.updateDomain(nextProps, nextState)
     }
     return true
   }
   updateDomain (props, state) {
-    this.sortData(props, state)
+    let domainData = props.data
+    if (props.sortBy !== null && props.sortOrder !== null) {
+      // Simple deep copy of data to prevent mutation of props
+      domainData = this.sortData(JSON.parse(JSON.stringify(props.data)), props, state)
+    }
 
     let yMax = this.getMaxCount(props.data)
-    let xDomain = props.data[0].bins.map((bin) => bin.x.toString())
+    let xDomain = domainData[0].bins.map((bin) => bin.x.toString())
 
     if (yMax !== this.props.yScale.domain()[1]) {
       this.props.yScale.domain([state.yDomain[0], yMax])
@@ -48,24 +52,24 @@ class Histogram extends React.Component {
       this.setState({xDomain})
     }
   }
-  sortData (props, state) {
+  sortData (data, props, state) {
     // NOTE: This WILL mutate the prop
     // Sort first bin and then sort rest of bins accordingly
     let sortArr = []
-    props.data[0].bins.sort((a, b) => {
+    data[0].bins.sort((a, b) => {
       let i = 0
-      if (state.sortBy === 'x') {
-        i = state.sortOrder === 'Ascending'
+      if (props.sortBy === 'x') {
+        i = props.sortOrder === 'Ascending'
           ? d3.ascending(a.x, b.x)
           : d3.descending(a.x, b.x)
       } else {
-        let useBin = (state.sortTypes.indexOf(props.data[0].type) > -1 || state.sortTypes.length === 0)
+        let useBin = (props.sortTypes.indexOf(data[0].type) > -1 || props.sortTypes.length === 0)
         let ya = useBin ? a.y : 0
         let yb = useBin ? b.y : 0
-        for (let j = 1; j < props.data.length; j++) {
-          let useBin = (state.sortTypes.indexOf(props.data[j].type) > -1 || state.sortTypes.length === 0)
+        for (let j = 1; j < data.length; j++) {
+          let useBin = (props.sortTypes.indexOf(data[j].type) > -1 || props.sortTypes.length === 0)
           if (useBin) {
-            props.data[j].bins.forEach((d, i) => {
+            data[j].bins.forEach((d, i) => {
               if (d.x === a.x) {
                 ya += d.y
               }
@@ -75,7 +79,7 @@ class Histogram extends React.Component {
             })
           }
         }
-        i = state.sortOrder === 'Ascending'
+        i = props.sortOrder === 'Ascending'
           ? ya - yb
           : yb - ya
       }
@@ -83,12 +87,13 @@ class Histogram extends React.Component {
       return i
     })
     // Sort rest of bins in same manner
-    for (let i = 1; i < props.data.length; i++) {
+    for (let i = 1; i < data.length; i++) {
       let j = 0
-      props.data[i].bins.sort((a, b) => {
+      data[i].bins.sort((a, b) => {
         return sortArr[j++]
       })
     }
+    return data
   }
   getMaxCount (dataArr) {
     let max = 0
@@ -240,6 +245,18 @@ Histogram.defaultProps = {
 }
 
 Histogram.propTypes = {
+  sortBy: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.bool
+  ]),
+  sortOrder: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.bool
+  ]),
+  sortTypes: PropTypes.oneOfType([
+    PropTypes.array,
+    PropTypes.bool
+  ]),
   addOverlay: PropTypes.bool,
   padding: PropTypes.number.isRequired,
   outerPadding: PropTypes.number.isRequired,
