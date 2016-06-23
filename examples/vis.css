@@ -417,3 +417,18 @@ nav ul li .active {
 	background-color: #4677f8;
 	color: #fefefe;
 }
+
+.node {
+  stroke-width: 1.5px;
+  fill: #648BF7;
+}
+.link {
+  fill: none;
+  stroke: #000;
+  stroke-width: 1.5px;
+}
+.cocentricCircle{
+  stroke: #7f7f7f;
+  stroke-width: 3;
+  fill: none;
+}

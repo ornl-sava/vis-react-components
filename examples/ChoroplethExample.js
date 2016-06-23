@@ -102,6 +102,11 @@ const exampleData = [{
 
 class ChoroplethExample extends React.Component {
   render () {
+    map.objects.countries.geometries.forEach((d, i) => {
+      if (d.id === 'ATA') {
+        map.objects.countries.geometries.splice(i, 1)
+      }
+    })
     return (
       <Chart width={800} height={600} className='ChoroplethExample'
         margin={{top: 15, right: 10, bottom: 40, left: 80}}
