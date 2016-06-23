@@ -19,7 +19,7 @@ class Heatmap extends React.Component {
 
   // Update the domain for the shared scale
   componentWillReceiveProps (nextProps) {
-    if (nextProps.data.length > 0) {
+    if (nextProps.data.length > 0 && nextProps.data[0].bins.length > 0) {
       // If xDomain is not predefined
       // NOTE: When determining domain for x the first bin is Used
       // Each bin should have matching x domain keys
