@@ -40,9 +40,6 @@ class Scatterplot extends React.Component {
         yDomain: yDomain
       })
     }
-
-    console.log(this.props.xScale.domain(), this.props.yScale.range())
-    console.log(this.props.yScale.domain(), this.props.yScale.range())
   }
 
   onClick (event) {
