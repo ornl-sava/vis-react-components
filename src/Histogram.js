@@ -16,8 +16,8 @@ class Histogram extends React.Component {
     this.state = {
       xDomain: [],
       yDomain: [0.00001, 1],
-      sortBy: 'x',
-      sortOrder: 'Ascending',
+      sortBy: 'y',
+      sortOrder: 'Descending',
       sortTypes: []
     }
   }
