@@ -62,8 +62,6 @@ class Chart extends React.Component {
     let loading = nextProps.loading !== this.props.loading
     let newXScale = nextState.xScaleType !== this.state.xScaleType
     let newYScale = nextState.yScaleType !== this.state.yScaleType
-    let newSortOrder = nextState.fieldSortOrder !== this.state.fieldSortOrder
-    let newSortKey = nextState.fieldSortBy !== this.state.fieldSortBy
     if (newXScale) {
       this.xScale = this.setScale(nextState.xScaleType, [0, nextState.chartWidth])
       this.resizeChart()
@@ -72,7 +70,7 @@ class Chart extends React.Component {
       this.yScale = this.setScale(nextState.yScaleType, [nextState.chartHeight, 0])
       this.resizeChart()
     }
-    return newData || loading || newYScale || newSortOrder || newSortKey
+    return newData || loading || newYScale
   }
   componentWillUpdate (nextProps) {
   }
