@@ -23,65 +23,56 @@ class Chart extends React.Component {
     this.onEnter = this._onEnter.bind(this)
     this.onLeave = this._onLeave.bind(this)
     this.tip = props.tipFunction ? d3Tip().attr('class', 'd3-tip').html(props.tipFunction) : props.tipFunction
-    this.setXScale = this.setXScale.bind(this)
-    this.setYScale = this.setYScale.bind(this)
+    this.setScale = this.setScale.bind(this)
     this.state = {
       chartWidth: props.width,
-      chartHeight: props.width,
-      xScaleType: props.xScaleType,
-      yScaleType: props.yScaleType
+      chartHeight: props.width
     }
 
-    this.setXScale(this.state)
-    this.setYScale(this.state)
+    this.xScale = this.setScale(this.props.xScaleType, [0, this.state.chartWidth])
+    this.yScale = this.setScale(this.props.yScaleType, [this.state.chartHeight, 0])
   }
 
-  setXScale (state) {
+  setScale (scaleType, range) {
     // Setup xScale
-    if (state.xScaleType === 'ordinal') {
-      this.xScale = d3.scale.ordinal()
-      this.xScale.rangeRoundBands([0, state.chartWidth])
-    } else if (state.xScaleType === 'temporal') {
-      this.xScale = d3.time.scale.utc()
-    } else if (state.xScaleType === 'log') {
-      this.xScale = d3.scale.log()
-    } else if (state.xScaleType === 'power') {
-      this.xScale = d3.scale.pow().exponent(0.5)
+    let scale = null
+    if (/ordinal/.test(scaleType)) {
+      scale = d3.scale.ordinal()
+      if (scaleType === 'ordinalBand') {
+        scale.rangeRoundBands(range)
+      } else {
+        scale.rangePoints(range)
+      }
+    } else if (scaleType === 'temporal') {
+      scale = d3.time.scale.utc()
+    } else if (scaleType === 'log') {
+      scale = d3.scale.log()
+    } else if (scaleType === 'power') {
+      scale = d3.scale.pow().exponent(0.5)
     } else {
-      this.xScale = d3.scale.linear()
+      scale = d3.scale.linear()
     }
-  }
-
-  setYScale (state) {
-    // Setup yScale
-    if (state.yScaleType === 'ordinal') {
-      this.yScale = d3.scale.ordinal()
-      this.yScale.rangeRoundBands([state.chartHeight, 0])
-    } else if (state.yScaleType === 'temporal') {
-      this.yScale = d3.time.scale.utc()
-    } else if (state.yScaleType === 'log') {
-      this.yScale = d3.scale.log()
-    } else if (state.yScaleType === 'power') {
-      this.yScale = d3.scale.pow().exponent(0.5)
-    } else {
-      this.yScale = d3.scale.linear()
-    }
+    return scale
   }
 
   shouldComponentUpdate (nextProps, nextState) {
     let newData = nextProps.data.length !== this.props.data.length
     let loading = nextProps.loading !== this.props.loading
-    let newXScale = nextState.xScaleType !== this.state.xScaleType
-    let newYScale = nextState.yScaleType !== this.state.yScaleType
+    let newSettings = nextProps.settings !== this.props.settings
+    let newSortBy = nextProps.sortBy !== this.props.sortBy
+    let newSortOrder = nextProps.sortOrder !== this.props.sortOrder
+    let newSortTypes = nextProps.sortTypes !== this.props.sortTypes
+    let newXScale = nextProps.xScaleType !== this.props.xScaleType
+    let newYScale = nextProps.yScaleType !== this.props.yScaleType
     if (newXScale) {
-      this.setXScale(nextState)
+      this.xScale = this.setScale(nextProps.xScaleType, [0, nextState.chartWidth])
       this.resizeChart()
     }
     if (newYScale) {
-      this.setYScale(nextState)
+      this.yScale = this.setScale(nextProps.yScaleType, [nextState.chartHeight, 0])
       this.resizeChart()
     }
-    return newData || loading || newYScale
+    return newData || loading || newYScale || newSettings || newSortBy || newSortOrder || newSortTypes
   }
   componentWillUpdate (nextProps) {
   }
@@ -112,14 +103,18 @@ class Chart extends React.Component {
     // container.select('.reset')
     //   .attr('x', chartWidth - 40)
     //   .attr('y', -props.margin.top + 1)
-    if (props.yScaleType === 'ordinal') {
+    if (props.yScaleType === 'ordinalBand') {
       this.yScale.rangeRoundBands([chartHeight, 0])
+    } else if (props.yScaleType === 'ordinalPoint') {
+      this.yScale.rangePoints([chartHeight, 0])
     } else {
       this.yScale.range([chartHeight, 0])
     }
 
-    if (props.xScaleType === 'ordinal') {
+    if (props.xScaleType === 'ordinalBand') {
       this.xScale.rangeRoundBands([0, chartWidth])
+    } else if (props.xScaleType === 'ordinalPoint') {
+      this.xScale.rangePoints([0, chartWidth])
     } else {
       this.xScale.range([0, chartWidth])
     }
@@ -140,6 +135,9 @@ class Chart extends React.Component {
       xScaleType: this.props.xScaleType,
       yScale: this.yScale,
       yScaleType: this.props.yScaleType,
+      sortBy: this.props.sortBy,
+      sortOrder: this.props.sortOrder,
+      sortTypes: this.props.sortTypes,
       onEnter: this.onEnter,
       onLeave: this.onLeave
     })
@@ -159,11 +157,11 @@ class Chart extends React.Component {
               <text y={-props.margin.top + 1} dy='0.71em'>{props.title.replace(/_/g, ' ')}</text>
             </g>
             {props.xAxis
-              ? <Axis className='x axis' margin={margin} {...props.xAxis} data={props.data} scale={this.xScale} {...this.state} />
+              ? <Axis className='x axis' margin={margin} {...props.xAxis} data={props.data} scale={this.xScale} scaleType={props.xScaleType} {...this.state} />
               : undefined
             }
             {props.yAxis
-              ? <Axis className='y axis' margin={margin} {...props.yAxis} data={props.data} scale={this.yScale} {...this.state} />
+              ? <Axis className='y axis' margin={margin} {...props.yAxis} data={props.data} scale={this.yScale} scaleType={props.yScaleType} {...this.state} />
               : undefined
             }
             {props.legend
@@ -182,6 +180,9 @@ class Chart extends React.Component {
 }
 
 Chart.defaultProps = {
+  sortBy: null,
+  sortOrder: null,
+  sortTypes: [],
   className: '',
   settings: false,
   data: {},
@@ -200,13 +201,29 @@ Chart.defaultProps = {
   width: 0,
   height: 250,
   rangePadding: 25,
-  xScaleType: 'ordinal',
+  xScaleType: 'ordinalBand',
   yScaleType: 'linear',
   tipFunction: null
 }
 
 Chart.propTypes = {
   title: PropTypes.string,
+  sortBy: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.bool
+  ]),
+  sortOrder: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.bool
+  ]),
+  sortTypes: PropTypes.oneOfType([
+    PropTypes.array,
+    PropTypes.bool
+  ]),
+  settings: PropTypes.oneOfType([
+    PropTypes.object,
+    PropTypes.bool
+  ]),
   xAxis: PropTypes.oneOfType([
     PropTypes.object,
     PropTypes.bool

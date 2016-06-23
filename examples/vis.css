@@ -390,22 +390,45 @@ nav ul li .active {
 	border-radius: 4px;
 	margin-top: -4px;
 	margin-left: 5px;
-	padding: 6px 18px;
+	padding: 6px 15px;
 	border: 1px solid #d4d4d4;
 }
 .settings-icon {
 	cursor: pointer;
 	font-size: 3px;
 }
+.settings-title {
+	height: 30px;
+	font-weight: bold;
+}
+.settings-option {
+	margin-bottom: 5px;
+}
+
 .settings-option label {
 	font-weight: 400;
-	margin-bottom: 2px;
 }
 .settings-option select {
+	float: right;
 	min-width: 100px;
-	margin-bottom: 4px;
+	margin-right: 18px;
 }
 .settings-option select option:hover {
 	background-color: #4677f8;
 	color: #fefefe;
+}
+
+.node {
+  stroke-width: 1.5px;
+  fill: #648BF7;
+}
+.link {
+  fill: none;
+  stroke: #000;
+  stroke-width: 1.5px;
+}
+.cocentricCircle{
+  stroke: #7f7f7f;
+  stroke-width: 3;
+  fill: none;
 }

@@ -1,4 +1,6 @@
 import React, { PropTypes } from 'react'
+import d3 from 'd3'
+
 import Bar from './Bar'
 
 // Copied from http://stackoverflow.com/questions/4492678/swap-rows-with-columns-transposition-of-a-matrix-in-javascript
@@ -19,18 +21,79 @@ class Histogram extends React.Component {
   // Update the domain for the shared scale
   componentWillReceiveProps (nextProps) {
     if (nextProps.data.length > 0) {
-      let yMax = this.getMaxCount(nextProps.data)
-      let xDomain = nextProps.data[0].bins.map((bin) => bin.x.toString())
-      if (yMax !== this.props.yScale.domain()[1]) {
-        console.log(this.state.yDomain[0], yMax)
-        this.props.yScale.domain([this.state.yDomain[0], yMax])
-        this.setState({yDomain: [this.state.yDomain[0], yMax]})
-      }
-      if (xDomain !== this.state.xDomain) {
-        this.props.xScale.domain(xDomain)
-        this.setState({xDomain})
-      }
+      this.updateDomain(nextProps, this.state)
     }
+  }
+  shouldComponentUpdate (nextProps, nextState) {
+    if (nextProps.data.length > 0 ||
+      nextProps.sortBy !== this.props.sortBy ||
+      nextProps.sortOrder !== this.props.sortOrder ||
+      nextProps.sortTypes !== this.props.sortTypes) {
+      this.updateDomain(nextProps, nextState)
+    }
+    return true
+  }
+  updateDomain (props, state) {
+    let domainData = props.data
+    if (props.sortBy !== null && props.sortOrder !== null) {
+      // Simple deep copy of data to prevent mutation of props
+      domainData = this.sortData(JSON.parse(JSON.stringify(props.data)), props, state)
+    }
+
+    let yMax = this.getMaxCount(props.data)
+    let xDomain = domainData[0].bins.map((bin) => bin.x.toString())
+
+    if (yMax !== this.props.yScale.domain()[1]) {
+      this.props.yScale.domain([state.yDomain[0], yMax])
+      this.setState({yDomain: [state.yDomain[0], yMax]})
+    }
+    if (xDomain !== state.xDomain) {
+      this.props.xScale.domain(xDomain)
+      this.setState({xDomain})
+    }
+  }
+  sortData (data, props, state) {
+    // NOTE: This WILL mutate the prop
+    // Sort first bin and then sort rest of bins accordingly
+    let sortArr = []
+    data[0].bins.sort((a, b) => {
+      let i = 0
+      if (props.sortBy === 'x') {
+        i = props.sortOrder === 'Ascending'
+          ? d3.ascending(a.x, b.x)
+          : d3.descending(a.x, b.x)
+      } else {
+        let useBin = (props.sortTypes.indexOf(data[0].type) > -1 || props.sortTypes.length === 0)
+        let ya = useBin ? a.y : 0
+        let yb = useBin ? b.y : 0
+        for (let j = 1; j < data.length; j++) {
+          let useBin = (props.sortTypes.indexOf(data[j].type) > -1 || props.sortTypes.length === 0)
+          if (useBin) {
+            data[j].bins.forEach((d, i) => {
+              if (d.x === a.x) {
+                ya += d.y
+              }
+              if (d.x === b.x) {
+                yb += d.y
+              }
+            })
+          }
+        }
+        i = props.sortOrder === 'Ascending'
+          ? ya - yb
+          : yb - ya
+      }
+      sortArr.push(i)
+      return i
+    })
+    // Sort rest of bins in same manner
+    for (let i = 1; i < data.length; i++) {
+      let j = 0
+      data[i].bins.sort((a, b) => {
+        return sortArr[j++]
+      })
+    }
+    return data
   }
   getMaxCount (dataArr) {
     let max = 0
@@ -182,6 +245,18 @@ Histogram.defaultProps = {
 }
 
 Histogram.propTypes = {
+  sortBy: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.bool
+  ]),
+  sortOrder: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.bool
+  ]),
+  sortTypes: PropTypes.oneOfType([
+    PropTypes.array,
+    PropTypes.bool
+  ]),
   addOverlay: PropTypes.bool,
   padding: PropTypes.number.isRequired,
   outerPadding: PropTypes.number.isRequired,
