@@ -48,7 +48,7 @@ export const stackedHistogramData = [
       {x: 'Bin 5', y: 4220},
       {x: 'Bin 6', y: 8690},
       {x: 'Bin 7', y: 5415},
-      {x: 'Bin 6', y: 805},
+      {x: 'Bin 8', y: 805},
       {x: 'Bin 9', y: 1760},
       {x: 'Bin 10', y: 3300}
     ]
