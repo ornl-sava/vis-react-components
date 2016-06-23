@@ -25,7 +25,7 @@ class Bar extends React.Component {
   }
   render () {
     let { className, data, name, ...other } = this.props
-    className = 'bar ' + className
+    className = className ? 'histogram-bar ' + className : 'histogram-bar'
     return (
       <rect
         className={className}
@@ -41,7 +41,6 @@ class Bar extends React.Component {
 }
 
 Bar.defaultProps = {
-  className: 'bar',
   height: 0,
   name: '',
   width: 0,
@@ -51,7 +50,7 @@ Bar.defaultProps = {
 }
 
 Bar.propTypes = {
-  className: PropTypes.string.isRequired,
+  className: PropTypes.string,
   data: PropTypes.object,
   height: PropTypes.number.isRequired,
   name: PropTypes.string,

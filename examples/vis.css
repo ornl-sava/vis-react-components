@@ -22,52 +22,52 @@ body {
 	fill: #777;
 }
 
-.bar._overlay {
+.histogram-bar._overlay {
 	fill: #aaa;
 	stroke: #808080;
 	stroke-width: 1px;
 	opacity: 0;
 }
 
-.bar._overlay:hover {
+.histogram-bar._overlay:hover {
 	opacity: 0.2;
 }
 
-.bar.one {
+.histogram-bar.one {
 	fill: #aaa;
 	stroke: #808080;
 	stroke-width: 1px;
 	opacity: 0.8;
 }
 
-.bar.two {
+.histogram-bar.two {
 	fill: #6baed6;
 	stroke: #6baed6;
 	stroke-width: 1px;
 	opacity: 0.8;
 }
 
-.bar.A {
+.histogram-bar.A {
 	fill: #0F6729;
 	stroke: #0F6729;
 	stroke-width: 1px;
 	opacity: 0.8;
 }
 
-.bar.B {
+.histogram-bar.B {
 	fill: #367928;
 	stroke: #367928;
 	stroke-width: 1px;
 	opacity: 0.8;
 }
-.bar.C {
+.histogram-bar.C {
 	fill: #5E8C27;
 	stroke: #5E8C27;
 	stroke-width: 1px;
 	opacity: 0.8;
 }
 
-.bar.D {
+.histogram-bar.D {
 	fill: #7C9B27;
 	stroke: #7C9B27;
 	stroke-width: 1px;

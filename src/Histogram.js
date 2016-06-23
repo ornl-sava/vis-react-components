@@ -135,7 +135,7 @@ class Histogram extends React.Component {
     let keyVal = type.toString() + '-' + bin.x.toString()
     return {
       name,
-      className: bin.className,
+      className: bin.className ? type + ' ' + bin.className : type,
       key: keyVal,
       height: height,
       data: bin,
