@@ -114,9 +114,9 @@ class Settings extends React.Component {
         position: 'absolute',
         display: this.state.menuDisplay,
         zIndex: this.state.menuZIndex,
-        width: (width + margin.left) - (width + margin.left + margin.right - minWidth),
+        width: minWidth,
         top: 0,
-        transform: 'translate(' + (width + margin.left - minWidth) + 'px,0px)'
+        transform: 'translate(' + (width + margin.left + margin.right - minWidth) + 'px,0px)'
       }
     }
 
