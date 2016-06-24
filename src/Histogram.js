@@ -40,7 +40,7 @@ class Histogram extends React.Component {
       domainData = this.sortData(JSON.parse(JSON.stringify(props.data)), props, state)
     }
 
-    let yMax = this.getMaxCount(props.data)
+    let yMax = this.getMaxCount(props.data) * 1.1
     let xDomain = domainData[0].bins.map((bin) => bin.x)
 
     if (yMax !== this.props.yScale.domain()[1]) {
