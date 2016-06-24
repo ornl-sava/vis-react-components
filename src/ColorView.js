@@ -161,7 +161,7 @@ class ColorView extends React.Component {
         barOverlay = this.addOverlay(bar, index)
       }
       return (
-        <TextBar {...bar} onClick={this.onClick} tooltipData={barOverlay.tooltipData} onEnter={this.onEnter} onLeave={this.onLeave} />
+        <TextBar {...bar} onClick={this.onClick} tooltipData={barOverlay.tooltipData} onEnter={this.onEnter} onLeave={this.onLeave} style={bar.barStyle} />
       )
     })
     let svgBins = colorBars.map((barD, index) => {

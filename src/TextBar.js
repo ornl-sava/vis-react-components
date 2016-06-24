@@ -38,6 +38,14 @@ class TextBar extends React.Component {
     }
     return xPos
   }
+  shouldComponentUpdate (nextProps, nextState) {
+    console.log('updated')
+    // if I put the styleChange check back in, things bog down....
+    // let styleChange = nextProps.barStyle !== this.props.barStyle
+    let selected = this.props.sel
+    // return styleChange || selected
+    return selected
+  }
   componentWillUnmount () {
     this._onMouseLeave()
   }
@@ -63,7 +71,8 @@ TextBar.defaultProps = {
   font: 12,
   textAlign: 'left',
   textStyle: { textAnchor: 'start', fontSize: '12px' },
-  text: ''
+  text: '',
+  sel: false
 }
 
 TextBar.propTypes = {
@@ -80,7 +89,8 @@ TextBar.propTypes = {
   barStyle: PropTypes.object,
   textStyle: PropTypes.object,
   textAlign: PropTypes.string.isRequired,
-  text: PropTypes.string.isRequired
+  text: PropTypes.string.isRequired,
+  sel: PropTypes.bool.isRequired
 }
 
 // Only required for REST calls

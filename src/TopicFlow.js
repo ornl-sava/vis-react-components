@@ -27,12 +27,29 @@ class TopicFlow extends React.Component {
   _onEnter (toolTipData, svgElement) {
     let props = this.props
     props.onEnter(toolTipData, svgElement)
-    this.setState({selectedTopics: this.checkMatch(toolTipData.label)})
+    // this.setState({selectedTopics: this.checkMatch(toolTipData.label)})
+    let newStyle = this.barData.map((d, i) => {
+      let oldStyle = Object.assign({}, d.barStyle)
+      if (d.data[0] === toolTipData.label) {
+        oldStyle.stroke = 'orange'
+      }
+      return oldStyle
+    })
+    // console.log('newStyle', newStyle.length)
+    // this.setState({selectedTopics: toolTipData.label})
+    this.setState({barStyle: newStyle, selectedTopics: toolTipData.label})
   }
   _onLeave (toolTipData, svgElement) {
     let props = this.props
     props.onLeave(toolTipData, svgElement)
-    this.setState({selectedTopics: []})
+    // this.setState({selectedTopics: []})
+    // console.log('dBarStyle', this.barData)
+    let newStyle = this.barData.map((d, i) => {
+      let oldStyle = d.barStyle
+      // oldStyle.stroke = 'green'
+      return oldStyle
+    })
+    this.setState({barStyle: newStyle, selectedTopics: toolTipData.label})
   }
   _onClick () {
     // I thought I could call the other onClick and do something with it
@@ -43,13 +60,16 @@ class TopicFlow extends React.Component {
     this.state = {
       dataUp: 0,
       currentID: [],
-      selectedTopics: []
+      selectedTopics: [],
+      barStyle: {}
     }
     this.onEnter = this._onEnter.bind(this)
     this.onLeave = this._onLeave.bind(this)
     this.statArr = []
     this.prefScale = d3.scale.category20()
     this.bins = []
+    this.lineData = []
+    this.barData = []
   }
   shouldComponentUpdate (nextProps, nextState) {
     if (this.props.data.length <= 0) {
@@ -78,6 +98,7 @@ class TopicFlow extends React.Component {
     // console.log('topFlowPref', nextProps.colorDomain)
     // console.log('nProps', nextProps)
     this.bins = this.initTopics(nextProps)
+    console.log('wRP', this.barData)
   }
   componentWillMount () {
     // console.log('willMountChartHeight', this.props.chartHeight)
@@ -91,25 +112,6 @@ class TopicFlow extends React.Component {
     } */
   }
   componentWillUnmount () {
-  }
-
-  addOverlay (barData) {
-    // console.log('addOverlayBarData', barData)
-    if (barData.data.length <= 0) {
-      barData.data[0] = 'EMPTY'
-    }
-    let overlayObj = Object.assign({}, barData)
-    // console.log('addOverlayBarDataName', barData)
-    overlayObj.className = 'overlay'
-    overlayObj.key = overlayObj.className
-    overlayObj.y = 1
-    overlayObj.tooltipData = {}
-    overlayObj.tooltipData.label = barData.data[0]
-    overlayObj.tooltipData.counts = barData.data.length
-    // console.log(overlayObj)
-    // barData = {0: barData, 1: overlayObj}
-    return overlayObj
-    // console.log('addOverlayBarData', barData)
   }
 
   buildABar (bin, name, text, height, width, x, y, barStyle, txtStyle) {
@@ -153,12 +155,16 @@ class TopicFlow extends React.Component {
     let paddedWidth = props.chartWidth * (1 - props.padding).toFixed(2)
     let barWidth = Math.ceil(paddedWidth / (props.numTData + (props.outerPadding * 2)))
     let barHeight = 20
+    let barStyle = []
+    let barData = []
+    let lineData = []
     // let selLines = []
     // just checking if ordinal without checking
     // might not need to do this, assuming it's always ordinal
     if (typeof props.xScale.rangePoints === 'function') {
       props.xScale.rangeRoundBands([0, props.chartWidth], props.padding, props.outerPadding)
     }
+    console.log
     let svgTopicBars = props.data.map((dataArr, index) => {
       return dataArr.map((data, i) => {
         if (data[0] == null) {
@@ -203,36 +209,27 @@ class TopicFlow extends React.Component {
         let linePath = () => {
           if (dataMatch[0] != null) {
             if (this.props.lineType === 'curved') {
-              return (<path className={cName + ' lineMatch'} d={diagMaker(dataMatch)} style={topicColor}></path>)
-            } else {
-              return (<path className={cName + ' lineMatch'} d={lineMaker(dataMatch)} style={topicColor}></path>)
-            }
-          }
+              return diagMaker(dataMatch)
+            } else { lineMaker(dataMatch) }
+          } else { return null }
         }
         cName += this.statArr[index][i]
         if (this.state.currentID === data[0]) {
           cName += ' Selected'
           topicColor = {stroke: '#e67300'}
-          // comment these out to get rid of the order that the selected line is rendered
-          // still testing cause it is coming out pixelated
-          // selLines.push(linePath())
-          // linePath = () => { }
         }
+        // eventually might want to check if style sheet is handling this
         let text = this.trimText(data[0], barWidth, fontSize)
-        // console.log(text)
         let barTxtStyle = this.buildAText(fontSize.toString() + 'px', 'black')
-        // console.log('barIs', bar)
-        // console.log('namePref', data[0].split(/:|-/, 1))
         let bar = this.buildABar(data, cName, text, barHeight, barWidth, posX, posY, topicColor, barTxtStyle)
-        let barOverlay = null
-        if (props.addOverlay) {
-          barOverlay = this.addOverlay(bar)
-          // console.log('barOverlay', barOverlay)
-        }
+        bar.tooltipData = {label: bar.data[0], counts: bar.data.length}
+        barData.push(bar)
+        lineData.push(linePath())
+        barStyle.push(bar.barStyle)
         return (
           <g>
             <g>
-              <TextBar {...bar} tooltipData={barOverlay.tooltipData} onEnter={this.onEnter} onLeave={this.onLeave} />
+              <TextBar {...bar} selTopic={this.state.selectedTopics} tooltipData={bar.tooltipData} onEnter={this.onEnter} onLeave={this.onLeave} />
             </g>
             <g key={'line_' + index.toString()}>
               {linePath()}
@@ -241,75 +238,39 @@ class TopicFlow extends React.Component {
         )
       })
     })
+    // init gets called twice, can't do this.barData.push in the mapping loop
+    // because it'll be twice as long as necessary
+    this.barData = barData
+    this.lineData = lineData
+    this.setState({barStyle: barStyle})
     return svgTopicBars
   }
   renderTopics () {
-    // use boolean array to filter selected objects
-    // console.log('svgTopBars', this.bins[0][0].props.children[0].props.children)
-    // console.log('TFclickArray', this.props.clickArray)
-    let svgBins = this.bins.map((bars, i) => {
-      return bars.map((barD, index) => {
-        let topName = barD.props.children[0].props.children.props.className.split(/:|-/, 1)
-        let yPos = 0
-        let xPos = 0
-        let iName = index.toString() + '-' + i.toString
-        let check = this.props.clickArray
-        if (check[topName[0].toString()] || this.props.clickArray == null) {
-          return (
-            <g className='bin' key={this.props.className + '-' + iName} transform={'translate(' + xPos + ',' + yPos + ')'}>
-              {barD}
-            </g>
-          )
-        } else {
-          return (
-            null
-          )
-        }
-      })
-    })
-    console.log('rLines', this.state.selectedTopics)
+    let svgBins = []
+    for (let i = 0; i < this.barData.length; i++) {
+      let line = this.lineData[i]
+      let key = 'bar-' + i
+      let bar = Object.assign({}, this.barData[i])
+      delete bar.barStyle
+      if (this.state.selectedTopics === bar.data[0]) {
+        bar.sel = true
+      }
+      let cData = (
+        <g className='bin' key={key}>
+          <TextBar {...bar} onEnter={this.onEnter} onLeave={this.onLeave} barStyle={this.state.barStyle[i]} />
+          <path className={bar.data[0] + ' lineMatch -' + i} d={line} style={this.state.barStyle[i]} ></path>
+        </g>
+      )
+      if (bar.sel) {
+        // console.log('unshift')
+        svgBins.push(cData)
+      } else {
+        svgBins.unshift(cData)
+      }
+    }
     return (
       <g>
         {svgBins}
-        {this.state.selectedTopics}
-      </g>
-    )
-  }
-  checkMatch (topicName) {
-    let matchedBars = []
-    for (let index = 0; index < this.props.data.length; index++) {
-      for (let i = 0; i < this.props.data[index].length; i++) {
-        if (this.props.data[index][i][0] === topicName) {
-          let iName = index.toString() + '-' + i.toString
-          let keyName = this.props.className + '-' + iName + '-selected'
-          // console.log('matchPRops', this.bins[index][i].props.children[0].props.children)
-          // let bData = this.bins[index][i].props.children[0].props.children[0].props
-          // let tData = this.bins[index][i].props.children[0].props.children[1]
-          let Data = this.bins[index][i].props.children[0].props.children.props
-          Data.barStyle.stroke = 'orange'
-          console.log('data', Data)
-          let lData = []
-          console.log('linePath', this.bins[index][i].props.children[1].props.children)
-          if (this.bins[index][i].props.children[1].props.children != null) {
-            lData = this.bins[index][i].props.children[1].props.children.props
-          }
-          // <TextBar {...Data} style={{stroke: 'orange'}} key={keyName + '-bar'} />
-          let currBar = () => {
-            return (
-              <g className='barTopic.Selected' key={keyName}>
-                <TextBar {...Data} key={keyName + '-bar'} />
-                <path className='lineMatch Selected' d={lData.d} key={keyName + '-paths'} style={{stroke: 'orange'}}></path>
-              </g>
-            )
-          }
-          matchedBars.push(currBar())
-        }
-      }
-    }
-    console.log('matchedBars', matchedBars)
-    return (
-      <g className='barTopic.Selected' key='selected'>
-        {matchedBars}
       </g>
     )
   }
@@ -352,7 +313,6 @@ class TopicFlow extends React.Component {
 }
 
 TopicFlow.defaultProps = {
-  addOverlay: true,
   data: [],
   padding: 0.4,
   outerPadding: 0.4,
@@ -368,7 +328,6 @@ TopicFlow.defaultProps = {
 }
 
 TopicFlow.propTypes = {
-  addOverlay: PropTypes.bool,
   className: PropTypes.string.isRequired,
   height: PropTypes.number,
   loading: PropTypes.bool,
