@@ -103,7 +103,7 @@ class Settings extends React.Component {
         zIndex: 9999,
         position: 'absolute',
         top: 0,
-        left: width + margin.left
+        transform: 'translate(' + (width + margin.left) + 'px,0px)'
       },
       onClick: this.openMenu
     }
@@ -116,7 +116,7 @@ class Settings extends React.Component {
         zIndex: this.state.menuZIndex,
         width: (width + margin.left) - (width + margin.left - minWidth),
         top: 0,
-        left: (width + margin.left - minWidth)
+        transform: 'translate(' + (width + margin.left - minWidth) + 'px,0px)'
       }
     }
 

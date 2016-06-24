@@ -392,10 +392,11 @@ nav ul li .active {
 	margin-left: 5px;
 	padding: 6px 15px;
 	border: 1px solid #d4d4d4;
+	left: -30px;
 }
 .settings-icon {
 	cursor: pointer;
-	font-size: 3px;
+	left: -30px;
 }
 .settings-title {
 	height: 30px;
