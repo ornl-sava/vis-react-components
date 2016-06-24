@@ -12,6 +12,7 @@ class Nav extends React.Component {
           <li><Link to='/choropleth' activeClassName='active'>Choropleth Map</Link></li>
           <li><Link to='/scatterHeatmap' activeClassName='active'>Scatter Heatmap Hybrid</Link></li>
           <li><Link to='/circumshaker' activeClassName='active'>Circumshaker</Link></li>
+          <li><Link to='/topics' activeClassName='active'>Topics</Link></li>
         </ul>
       </nav>
     )

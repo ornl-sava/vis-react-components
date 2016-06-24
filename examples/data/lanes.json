@@ -1,0 +1,1456 @@
+{
+   "0": {
+      "source_countrydest_country": [
+         [
+            "ZZZ", 
+            "2"
+         ]
+      ], 
+      "description": "\t['2015-04-24T04:00:00Z', '2015-04-24T06:00:00Z'] times\n\t['10.248.190.237' '10.248.12.21' 'NSTEUCONITNAPL'] lane\n\tlabeled None", 
+      "has_label": false, 
+      "event_name": [
+         [
+            "SNORT: RDP TRAFFIC(sid:130)", 
+            "1"
+         ]
+      ], 
+      "row_info": [
+         "10.248.190.237", 
+         "10.248.12.21", 
+         "NSTEUCONITNAPL"
+      ], 
+      "prediction": 0.0, 
+      "label": false, 
+      "priority": 0.8482963381874735, 
+      "severity": [
+         [
+            "4", 
+            "1"
+         ]
+      ]
+   }, 
+   "1": {
+      "source_countrydest_country": [
+         [
+            "GBR", 
+            "2"
+         ], 
+         [
+            "USA", 
+            "2"
+         ]
+      ], 
+      "description": "\t['2015-04-24T04:00:00Z', '2015-04-24T06:00:00Z'] times\n\t['178.57.99.41' '164.190.117.91' 'NSTNORXNUSCHAR'] lane\n\tlabeled None", 
+      "has_label": false, 
+      "event_name": [
+         [
+            "P2P: Torrent uTP BEP-29 Traffic Detected", 
+            "2"
+         ]
+      ], 
+      "row_info": [
+         "178.57.99.41", 
+         "164.190.117.91", 
+         "NSTNORXNUSCHAR"
+      ], 
+      "prediction": 0.0, 
+      "label": false, 
+      "priority": 0.6420189452848862, 
+      "severity": [
+         [
+            "4", 
+            "2"
+         ]
+      ]
+   }, 
+   "2": {
+      "source_countrydest_country": [
+         [
+            "ZZZ", 
+            "2"
+         ], 
+         [
+            "USA", 
+            "2"
+         ]
+      ], 
+      "description": "\t['2015-04-24T04:00:00Z', '2015-04-24T06:00:00Z'] times\n\t['10.251.33.6' '205.69.232.10' 'NSTCENONBHBAHR'] lane\n\tlabeled None", 
+      "has_label": false, 
+      "event_name": [
+         [
+            "Kerberos: Kerberos Login Bruteforce Detected", 
+            "2"
+         ]
+      ], 
+      "row_info": [
+         "10.251.33.6", 
+         "205.69.232.10", 
+         "NSTCENONBHBAHR"
+      ], 
+      "prediction": 0.0, 
+      "label": false, 
+      "priority": 0.5440407182242329, 
+      "severity": [
+         [
+            "3", 
+            "2"
+         ]
+      ]
+   }, 
+   "3": {
+      "source_countrydest_country": [
+         [
+            "ZZZ", 
+            "1"
+         ], 
+         [
+            "ITA", 
+            "1"
+         ]
+      ], 
+      "description": "\t['2015-04-24T04:00:00Z', '2015-04-24T06:00:00Z'] times\n\t['213.92.16.171' '10.248.68.68' 'NSTEUCONITNAPL'] lane\n\tlabeled None", 
+      "has_label": false, 
+      "event_name": [
+         [
+            "HTTP: Microsoft Internet Explorer CCS Information Disclosure Vulnerability II", 
+            "1"
+         ]
+      ], 
+      "row_info": [
+         "213.92.16.171", 
+         "10.248.68.68", 
+         "NSTEUCONITNAPL"
+      ], 
+      "prediction": 0.0, 
+      "label": false, 
+      "priority": 0.4261982185776898, 
+      "severity": [
+         [
+            "4", 
+            "1"
+         ]
+      ]
+   }, 
+   "4": {
+      "source_countrydest_country": [
+         [
+            "ZZZ", 
+            "2"
+         ], 
+         [
+            "CHN", 
+            "2"
+         ]
+      ], 
+      "description": "\t['2015-04-24T04:00:00Z', '2015-04-24T06:00:00Z'] times\n\t['61.240.144.65' '0.0.0.0' 'NSTNORXNUSCNIC'] lane\n\tlabeled None", 
+      "has_label": false, 
+      "event_name": [
+         [
+            "TCP: SYN Host Sweep", 
+            "2"
+         ]
+      ], 
+      "row_info": [
+         "61.240.144.65", 
+         "0.0.0.0", 
+         "NSTNORXNUSCNIC"
+      ], 
+      "prediction": 0.0, 
+      "label": false, 
+      "priority": 0.3582638201611763, 
+      "severity": [
+         [
+            "3", 
+            "2"
+         ]
+      ]
+   }, 
+   "5": {
+      "source_countrydest_country": [
+         [
+            "ZZZ", 
+            "2"
+         ], 
+         [
+            "JPN", 
+            "2"
+         ]
+      ], 
+      "description": "\t['2015-04-24T04:00:00Z', '2015-04-24T06:00:00Z'] times\n\t['10.251.33.69' '202.229.23.46' 'NSTPACONJAYOKO'] lane\n\tlabeled None", 
+      "has_label": false, 
+      "event_name": [
+         [
+            "HTTP: Possible full-width and half-width unicode encoding evasion", 
+            "2"
+         ]
+      ], 
+      "row_info": [
+         "10.251.33.69", 
+         "202.229.23.46", 
+         "NSTPACONJAYOKO"
+      ], 
+      "prediction": 0.0, 
+      "label": false, 
+      "priority": 0.25300438286441396, 
+      "severity": [
+         [
+            "3", 
+            "2"
+         ]
+      ]
+   }, 
+   "6": {
+      "source_countrydest_country": [
+         [
+            "DEU", 
+            "2"
+         ], 
+         [
+            "USA", 
+            "2"
+         ]
+      ], 
+      "description": "\t['2015-04-24T04:00:00Z', '2015-04-24T06:00:00Z'] times\n\t['5.9.97.133' '138.180.194.3' 'NSTEUCONITNAPL'] lane\n\tlabeled None", 
+      "has_label": false, 
+      "event_name": [
+         [
+            "HTTP: IE Windows Script Host Object Vulnerability", 
+            "2"
+         ]
+      ], 
+      "row_info": [
+         "5.9.97.133", 
+         "138.180.194.3", 
+         "NSTEUCONITNAPL"
+      ], 
+      "prediction": 0.0, 
+      "label": false, 
+      "priority": 0.08511239926480985, 
+      "severity": [
+         [
+            "4", 
+            "2"
+         ]
+      ]
+   }, 
+   "7": {
+      "source_countrydest_country": [
+         [
+            "USA", 
+            "5"
+         ], 
+         [
+            "MNG", 
+            "5"
+         ]
+      ], 
+      "description": "\t['2015-04-24T04:00:00Z', '2015-04-24T06:00:00Z'] times\n\t['112.72.13.208' '164.223.204.141' 'NSTNORXNUSNUWC'] lane\n\tlabeled None", 
+      "has_label": false, 
+      "event_name": [
+         [
+            "P2P: BitTorrent Meta-Info Retrieving", 
+            "2"
+         ], 
+         [
+            "P2P: Torrent uTP BEP-29 Traffic Detected", 
+            "3"
+         ]
+      ], 
+      "row_info": [
+         "112.72.13.208", 
+         "164.223.204.141", 
+         "NSTNORXNUSNUWC"
+      ], 
+      "prediction": 0.0, 
+      "label": false, 
+      "priority": 0.057613459635232574, 
+      "severity": [
+         [
+            "4", 
+            "5"
+         ]
+      ]
+   }, 
+   "8": {
+      "source_countrydest_country": [
+         [
+            "USA", 
+            "4"
+         ], 
+         [
+            "ESP", 
+            "4"
+         ]
+      ], 
+      "description": "\t['2015-04-24T04:00:00Z', '2015-04-24T06:00:00Z'] times\n\t['62.81.159.99' '205.56.162.41' 'NSTEUCITITNAPL2'] lane\n\tlabeled None", 
+      "has_label": true, 
+      "event_name": [
+         [
+            "HTTP: Microsoft Windows HTML Converter HR Align Buffer Overflow Vulnerability", 
+            "4"
+         ]
+      ], 
+      "row_info": [
+         "62.81.159.99", 
+         "205.56.162.41", 
+         "NSTEUCITITNAPL2"
+      ], 
+      "prediction": 0.0, 
+      "label": false, 
+      "priority": 0.0431217305245299, 
+      "severity": [
+         [
+            "4", 
+            "4"
+         ]
+      ]
+   }, 
+   "9": {
+      "source_countrydest_country": [
+         [
+            "RUS", 
+            "2"
+         ], 
+         [
+            "USA", 
+            "2"
+         ]
+      ], 
+      "description": "\t['2015-04-24T04:00:00Z', '2015-04-24T06:00:00Z'] times\n\t['94.50.248.57' '128.38.174.225' 'NSTNORXNUSDAHL'] lane\n\tlabeled None", 
+      "has_label": false, 
+      "event_name": [
+         [
+            "P2P: BitTorrent Meta-Info Retrieving", 
+            "2"
+         ]
+      ], 
+      "row_info": [
+         "94.50.248.57", 
+         "128.38.174.225", 
+         "NSTNORXNUSDAHL"
+      ], 
+      "prediction": 0.0, 
+      "label": false, 
+      "priority": 0.3617276968754418, 
+      "severity": [
+         [
+            "4", 
+            "2"
+         ]
+      ]
+   }, 
+   "10": {
+      "source_countrydest_country": [
+         [
+            "ZZZ", 
+            "3"
+         ], 
+         [
+            "JPN", 
+            "3"
+         ]
+      ], 
+      "description": "\t['2015-04-24T04:00:00Z', '2015-04-24T06:00:00Z'] times\n\t['219.99.167.227' '10.251.33.71' 'NSTPACONJAYOKO'] lane\n\tlabeled None", 
+      "has_label": false, 
+      "event_name": [
+         [
+            "HTTP: Microsoft Internet Explorer CCS Information Disclosure Vulnerability II", 
+            "3"
+         ]
+      ], 
+      "row_info": [
+         "219.99.167.227", 
+         "10.251.33.71", 
+         "NSTPACONJAYOKO"
+      ], 
+      "prediction": 0.0, 
+      "label": false, 
+      "priority": 0.2997313728262406, 
+      "severity": [
+         [
+            "4", 
+            "3"
+         ]
+      ]
+   }, 
+   "11": {
+      "source_countrydest_country": [
+         [
+            "IRL", 
+            "1"
+         ], 
+         [
+            "ZZZ", 
+            "1"
+         ]
+      ], 
+      "description": "\t['2015-04-24T04:00:00Z', '2015-04-24T06:00:00Z'] times\n\t['31.13.77.6' '10.250.190.68' 'NSTPACONSGSING'] lane\n\tlabeled None", 
+      "has_label": false, 
+      "event_name": [
+         [
+            "TCP: ACK Port Scan", 
+            "1"
+         ]
+      ], 
+      "row_info": [
+         "31.13.77.6", 
+         "10.250.190.68", 
+         "NSTPACONSGSING"
+      ], 
+      "prediction": 0.0, 
+      "label": false, 
+      "priority": 0.24423865403647674, 
+      "severity": [
+         [
+            "3", 
+            "1"
+         ]
+      ]
+   }, 
+   "12": {
+      "source_countrydest_country": [
+         [
+            "IRL", 
+            "3"
+         ], 
+         [
+            "USA", 
+            "3"
+         ]
+      ], 
+      "description": "\t['2015-04-24T04:00:00Z', '2015-04-24T06:00:00Z'] times\n\t['205.56.181.194' '31.13.70.10' 'NSTPACITUSWAHI'] lane\n\tlabeled None", 
+      "has_label": true, 
+      "event_name": [
+         [
+            "TCP: Small Window DoS", 
+            "3"
+         ]
+      ], 
+      "row_info": [
+         "205.56.181.194", 
+         "31.13.70.10", 
+         "NSTPACITUSWAHI"
+      ], 
+      "prediction": 0.0, 
+      "label": false, 
+      "priority": 0.05443234836702955, 
+      "severity": [
+         [
+            "4", 
+            "3"
+         ]
+      ]
+   }, 
+   "13": {
+      "source_countrydest_country": [
+         [
+            "GBR", 
+            "24"
+         ], 
+         [
+            "USA", 
+            "24"
+         ]
+      ], 
+      "description": "\t['2015-04-24T04:00:00Z', '2015-04-24T06:00:00Z'] times\n\t['163.251.239.2' '83.138.191.144' 'NSTPACONJAYOKO1'] lane\n\tlabeled None", 
+      "has_label": true, 
+      "event_name": [
+         [
+            "HTTP: Overly Long POST URI in HTTP Request", 
+            "24"
+         ]
+      ], 
+      "row_info": [
+         "163.251.239.2", 
+         "83.138.191.144", 
+         "NSTPACONJAYOKO1"
+      ], 
+      "prediction": 0.0, 
+      "label": false, 
+      "priority": 0.038880248833592534, 
+      "severity": [
+         [
+            "3", 
+            "24"
+         ]
+      ]
+   }, 
+   "14": {
+      "source_countrydest_country": [
+         [
+            "GBR", 
+            "52"
+         ], 
+         [
+            "ZZZ", 
+            "52"
+         ]
+      ], 
+      "description": "\t['2015-04-24T04:00:00Z', '2015-04-24T06:00:00Z'] times\n\t['10.251.33.69' '83.138.191.144' 'NSTPACONJAYOKO'] lane\n\tlabeled None", 
+      "has_label": true, 
+      "event_name": [
+         [
+            "HTTP: Overly Long POST URI in HTTP Request", 
+            "52"
+         ]
+      ], 
+      "row_info": [
+         "10.251.33.69", 
+         "83.138.191.144", 
+         "NSTPACONJAYOKO"
+      ], 
+      "prediction": 0.0, 
+      "label": false, 
+      "priority": 0.014067580941608935, 
+      "severity": [
+         [
+            "3", 
+            "52"
+         ]
+      ]
+   }, 
+   "15": {
+      "source_countrydest_country": [
+         [
+            "USA", 
+            "3"
+         ], 
+         [
+            "PHL", 
+            "3"
+         ]
+      ], 
+      "description": "\t['2015-04-24T04:00:00Z', '2015-04-24T06:00:00Z'] times\n\t['124.6.181.106' '138.141.184.50' 'NSTNORXNUSMILL'] lane\n\tlabeled None", 
+      "has_label": false, 
+      "event_name": [
+         [
+            "P2P: Torrent uTP BEP-29 Traffic Detected", 
+            "3"
+         ]
+      ], 
+      "row_info": [
+         "124.6.181.106", 
+         "138.141.184.50", 
+         "NSTNORXNUSMILL"
+      ], 
+      "prediction": 0.0, 
+      "label": false, 
+      "priority": 0.513855506857062, 
+      "severity": [
+         [
+            "4", 
+            "3"
+         ]
+      ]
+   }, 
+   "16": {
+      "source_countrydest_country": [
+         [
+            "USA", 
+            "2"
+         ]
+      ], 
+      "description": "\t['2015-04-24T04:00:00Z', '2015-04-24T06:00:00Z'] times\n\t['98.136.171.208' '163.251.112.3' 'NSTPACONSGSING'] lane\n\tlabeled None", 
+      "has_label": false, 
+      "event_name": [
+         [
+            "SSL: SSLv3 Session Detected (CVE-2014-3566)", 
+            "1"
+         ]
+      ], 
+      "row_info": [
+         "98.136.171.208", 
+         "163.251.112.3", 
+         "NSTPACONSGSING"
+      ], 
+      "prediction": 0.0, 
+      "label": false, 
+      "priority": 0.43595362646684577, 
+      "severity": [
+         [
+            "3", 
+            "1"
+         ]
+      ]
+   }, 
+   "17": {
+      "source_countrydest_country": [
+         [
+            "FRA", 
+            "2"
+         ], 
+         [
+            "USA", 
+            "2"
+         ]
+      ], 
+      "description": "\t['2015-04-24T04:00:00Z', '2015-04-24T06:00:00Z'] times\n\t['37.187.147.44' '138.180.194.3' 'NSTEUCONITNAPL'] lane\n\tlabeled None", 
+      "has_label": false, 
+      "event_name": [
+         [
+            "HTTP: Microsoft Internet Explorer CCS Information Disclosure Vulnerability II", 
+            "2"
+         ]
+      ], 
+      "row_info": [
+         "37.187.147.44", 
+         "138.180.194.3", 
+         "NSTEUCONITNAPL"
+      ], 
+      "prediction": 0.0, 
+      "label": false, 
+      "priority": 0.3357132758376926, 
+      "severity": [
+         [
+            "4", 
+            "2"
+         ]
+      ]
+   }, 
+   "18": {
+      "source_countrydest_country": [
+         [
+            "ZZZ", 
+            "2"
+         ], 
+         [
+            "USA", 
+            "2"
+         ]
+      ], 
+      "description": "\t['2015-04-24T04:00:00Z', '2015-04-24T06:00:00Z'] times\n\t['205.85.41.210' '10.32.127.68' 'NMCIPRLHSN41'] lane\n\tlabeled None", 
+      "has_label": false, 
+      "event_name": [
+         [
+            "UDS-101208_Suspicious_X-Mailer", 
+            "1"
+         ], 
+         [
+            "UDS-NCDOC-Malicious Spam Source Domain", 
+            "1"
+         ]
+      ], 
+      "row_info": [
+         "205.85.41.210", 
+         "10.32.127.68", 
+         "NMCIPRLHSN41"
+      ], 
+      "prediction": 0.0, 
+      "label": false, 
+      "priority": 0.09211084405485649, 
+      "severity": [
+         [
+            "5", 
+            "2"
+         ]
+      ]
+   }, 
+   "19": {
+      "source_countrydest_country": [
+         [
+            "ZZZ", 
+            "1"
+         ], 
+         [
+            "JPN", 
+            "1"
+         ]
+      ], 
+      "description": "\t['2015-04-24T04:00:00Z', '2015-04-24T06:00:00Z'] times\n\t['202.93.69.248' '10.250.30.69' 'NSTPACONJASASE'] lane\n\tlabeled None", 
+      "has_label": false, 
+      "event_name": [
+         [
+            "HTTP: Adobe Flash Player Remote Code Execution Vulnerability (CVE-2014-0543)", 
+            "1"
+         ]
+      ], 
+      "row_info": [
+         "202.93.69.248", 
+         "10.250.30.69", 
+         "NSTPACONJASASE"
+      ], 
+      "prediction": 0.0, 
+      "label": false, 
+      "priority": 0.09147462180121589, 
+      "severity": [
+         [
+            "5", 
+            "1"
+         ]
+      ]
+   }, 
+   "20": {
+      "source_countrydest_country": [
+         [
+            "DEU", 
+            "2"
+         ], 
+         [
+            "ZZZ", 
+            "2"
+         ]
+      ], 
+      "description": "\t['2015-04-24T04:00:00Z', '2015-04-24T06:00:00Z'] times\n\t['5.9.97.133' '10.249.28.68' 'NSTEUCONITNAPL'] lane\n\tlabeled None", 
+      "has_label": false, 
+      "event_name": [
+         [
+            "HTTP: IE Windows Script Host Object Vulnerability", 
+            "2"
+         ]
+      ], 
+      "row_info": [
+         "5.9.97.133", 
+         "10.249.28.68", 
+         "NSTEUCONITNAPL"
+      ], 
+      "prediction": 0.0, 
+      "label": false, 
+      "priority": 0.08504170790329421, 
+      "severity": [
+         [
+            "4", 
+            "2"
+         ]
+      ]
+   }, 
+   "21": {
+      "source_countrydest_country": [
+         [
+            "IND", 
+            "5"
+         ], 
+         [
+            "USA", 
+            "5"
+         ]
+      ], 
+      "description": "\t['2015-04-24T04:00:00Z', '2015-04-24T06:00:00Z'] times\n\t['59.96.230.124' '198.253.56.122' 'NSTNORONUSJICF'] lane\n\tlabeled None", 
+      "has_label": false, 
+      "event_name": [
+         [
+            "P2P: Torrent uTP BEP-29 Traffic Detected", 
+            "5"
+         ]
+      ], 
+      "row_info": [
+         "59.96.230.124", 
+         "198.253.56.122", 
+         "NSTNORONUSJICF"
+      ], 
+      "prediction": 0.0, 
+      "label": false, 
+      "priority": 0.057684150996748194, 
+      "severity": [
+         [
+            "4", 
+            "5"
+         ]
+      ]
+   }, 
+   "22": {
+      "source_countrydest_country": [
+         [
+            "FRA", 
+            "6"
+         ], 
+         [
+            "ZZZ", 
+            "6"
+         ]
+      ], 
+      "description": "\t['2015-04-24T04:00:00Z', '2015-04-24T06:00:00Z'] times\n\t['212.129.46.61' '0.0.0.0' 'NSTNORXNUSDAHL'] lane\n\tlabeled None", 
+      "has_label": true, 
+      "event_name": [
+         [
+            "UDP: Host Sweep", 
+            "6"
+         ]
+      ], 
+      "row_info": [
+         "212.129.46.61", 
+         "0.0.0.0", 
+         "NSTNORXNUSDAHL"
+      ], 
+      "prediction": 0.0, 
+      "label": false, 
+      "priority": 0.056341015127951366, 
+      "severity": [
+         [
+            "3", 
+            "6"
+         ]
+      ]
+   }, 
+   "23": {
+      "source_countrydest_country": [
+         [
+            "USA", 
+            "2"
+         ]
+      ], 
+      "description": "\t['2015-04-24T04:00:00Z', '2015-04-24T06:00:00Z'] times\n\t['214.16.26.1' '163.251.104.2' 'NSTPACONKRCHIN'] lane\n\tlabeled None", 
+      "has_label": false, 
+      "event_name": [
+         [
+            "DNS: Too Many Type NS Query Attack Detected", 
+            "1"
+         ]
+      ], 
+      "row_info": [
+         "214.16.26.1", 
+         "163.251.104.2", 
+         "NSTPACONKRCHIN"
+      ], 
+      "prediction": 0.0, 
+      "label": false, 
+      "priority": 0.5865262264951223, 
+      "severity": [
+         [
+            "4", 
+            "1"
+         ]
+      ]
+   }, 
+   "24": {
+      "source_countrydest_country": [
+         [
+            "GRC", 
+            "2"
+         ], 
+         [
+            "USA", 
+            "2"
+         ]
+      ], 
+      "description": "\t['2015-04-24T04:00:00Z', '2015-04-24T06:00:00Z'] times\n\t['5.55.57.41' '128.38.113.238' 'NSTNORXNUSDAHL'] lane\n\tlabeled None", 
+      "has_label": false, 
+      "event_name": [
+         [
+            "P2P: BitTorrent File Transfer HandShaking", 
+            "2"
+         ]
+      ], 
+      "row_info": [
+         "5.55.57.41", 
+         "128.38.113.238", 
+         "NSTNORXNUSDAHL"
+      ], 
+      "prediction": 0.0, 
+      "label": false, 
+      "priority": 0.5219143220698431, 
+      "severity": [
+         [
+            "4", 
+            "2"
+         ]
+      ]
+   }, 
+   "25": {
+      "source_countrydest_country": [
+         [
+            "AUS", 
+            "1"
+         ], 
+         [
+            "ZZZ", 
+            "1"
+         ]
+      ], 
+      "description": "\t['2015-04-24T04:00:00Z', '2015-04-24T06:00:00Z'] times\n\t['54.79.96.109' '0.0.0.0' 'NSTNORXNUSNUWC'] lane\n\tlabeled None", 
+      "has_label": false, 
+      "event_name": [
+         [
+            "ICMP: Host Sweep", 
+            "1"
+         ]
+      ], 
+      "row_info": [
+         "54.79.96.109", 
+         "0.0.0.0", 
+         "NSTNORXNUSNUWC"
+      ], 
+      "prediction": 0.0, 
+      "label": false, 
+      "priority": 0.21384136858475894, 
+      "severity": [
+         [
+            "3", 
+            "1"
+         ]
+      ]
+   }, 
+   "26": {
+      "source_countrydest_country": [
+         [
+            "IRL", 
+            "2"
+         ], 
+         [
+            "ZZZ", 
+            "2"
+         ]
+      ], 
+      "description": "\t['2015-04-24T04:00:00Z', '2015-04-24T06:00:00Z'] times\n\t['10.10.84.137' '31.13.65.1' 'NAEANRFKSN83'] lane\n\tlabeled None", 
+      "has_label": false, 
+      "event_name": [
+         [
+            "UDS-SSLv2 Connection Detected - NOTIFY NETOPS", 
+            "2"
+         ]
+      ], 
+      "row_info": [
+         "10.10.84.137", 
+         "31.13.65.1", 
+         "NAEANRFKSN83"
+      ], 
+      "prediction": 0.0, 
+      "label": false, 
+      "priority": 0.18252509543333806, 
+      "severity": [
+         [
+            "4", 
+            "2"
+         ]
+      ]
+   }, 
+   "27": {
+      "source_countrydest_country": [
+         [
+            "SWE", 
+            "1"
+         ], 
+         [
+            "USA", 
+            "1"
+         ]
+      ], 
+      "description": "\t['2015-04-24T04:00:00Z', '2015-04-24T06:00:00Z'] times\n\t['205.70.139.6' '192.36.148.17' 'NSTNORITUSNORF'] lane\n\tlabeled None", 
+      "has_label": false, 
+      "event_name": [
+         [
+            "UDS-NCDOC-Domain Block Pre-Infection 'js.users.51.la'", 
+            "1"
+         ]
+      ], 
+      "row_info": [
+         "205.70.139.6", 
+         "192.36.148.17", 
+         "NSTNORITUSNORF"
+      ], 
+      "prediction": 0.0, 
+      "label": false, 
+      "priority": 0.10476459776615298, 
+      "severity": [
+         [
+            "3", 
+            "1"
+         ]
+      ]
+   }, 
+   "28": {
+      "source_countrydest_country": [
+         [
+            "NLD", 
+            "2"
+         ], 
+         [
+            "USA", 
+            "2"
+         ]
+      ], 
+      "description": "\t['2015-04-24T04:00:00Z', '2015-04-24T06:00:00Z'] times\n\t['205.68.101.193' '5.79.84.234' 'NSTNORXNUSONIH'] lane\n\tlabeled None", 
+      "has_label": false, 
+      "event_name": [
+         [
+            "P2P: Octoshape Traffic detected", 
+            "2"
+         ]
+      ], 
+      "row_info": [
+         "205.68.101.193", 
+         "5.79.84.234", 
+         "NSTNORXNUSONIH"
+      ], 
+      "prediction": 0.0, 
+      "label": false, 
+      "priority": 0.0679343984165135, 
+      "severity": [
+         [
+            "4", 
+            "2"
+         ]
+      ]
+   }, 
+   "29": {
+      "source_countrydest_country": [
+         [
+            "USA", 
+            "2"
+         ], 
+         [
+            "JPN", 
+            "2"
+         ]
+      ], 
+      "description": "\t['2015-04-24T04:00:00Z', '2015-04-24T06:00:00Z'] times\n\t['163.251.0.19' '43.253.140.106' 'NSTPACONJAYOKO1'] lane\n\tlabeled None", 
+      "has_label": false, 
+      "event_name": [
+         [
+            "HTTP: Thttpd Stack Overflow", 
+            "2"
+         ]
+      ], 
+      "row_info": [
+         "163.251.0.19", 
+         "43.253.140.106", 
+         "NSTPACONJAYOKO1"
+      ], 
+      "prediction": 0.0, 
+      "label": false, 
+      "priority": 0.06157217588010745, 
+      "severity": [
+         [
+            "4", 
+            "2"
+         ]
+      ]
+   }, 
+   "30": {
+      "source_countrydest_country": [
+         [
+            "USA", 
+            "8"
+         ], 
+         [
+            "BLR", 
+            "8"
+         ]
+      ], 
+      "description": "\t['2015-04-24T04:00:00Z', '2015-04-24T06:00:00Z'] times\n\t['37.215.87.115' '160.125.151.34' 'NSTNORXNUSPENS'] lane\n\tlabeled None", 
+      "has_label": true, 
+      "event_name": [
+         [
+            "P2P: Torrent uTP BEP-29 Traffic Detected", 
+            "8"
+         ]
+      ], 
+      "row_info": [
+         "37.215.87.115", 
+         "160.125.151.34", 
+         "NSTNORXNUSPENS"
+      ], 
+      "prediction": 0.0, 
+      "label": true, 
+      "priority": 0.03605259437296762, 
+      "severity": [
+         [
+            "4", 
+            "8"
+         ]
+      ]
+   }, 
+   "31": {
+      "source_countrydest_country": [
+         [
+            "DEU", 
+            "26"
+         ], 
+         [
+            "ZZZ", 
+            "26"
+         ]
+      ], 
+      "description": "\t['2015-04-24T04:00:00Z', '2015-04-24T06:00:00Z'] times\n\t['62.113.208.8' '0.0.0.0' 'NSTNORXNUSDAHL'] lane\n\tlabeled None", 
+      "has_label": true, 
+      "event_name": [
+         [
+            "TCP: ACK Host Sweep", 
+            "26"
+         ]
+      ], 
+      "row_info": [
+         "62.113.208.8", 
+         "0.0.0.0", 
+         "NSTNORXNUSDAHL"
+      ], 
+      "prediction": 0.0, 
+      "label": false, 
+      "priority": 0.02410575427682737, 
+      "severity": [
+         [
+            "3", 
+            "26"
+         ]
+      ]
+   }, 
+   "32": {
+      "source_countrydest_country": [
+         [
+            "USA", 
+            "19"
+         ], 
+         [
+            "SAU", 
+            "19"
+         ]
+      ], 
+      "description": "\t['2015-04-24T04:00:00Z', '2015-04-24T06:00:00Z'] times\n\t['188.51.10.89' '164.223.246.214' 'NSTNORXNUSNUWC'] lane\n\tlabeled None", 
+      "has_label": true, 
+      "event_name": [
+         [
+            "P2P: Torrent uTP BEP-29 Traffic Detected", 
+            "19"
+         ]
+      ], 
+      "row_info": [
+         "188.51.10.89", 
+         "164.223.246.214", 
+         "NSTNORXNUSNUWC"
+      ], 
+      "prediction": 0.0, 
+      "label": true, 
+      "priority": 0.01873321080164004, 
+      "severity": [
+         [
+            "4", 
+            "19"
+         ]
+      ]
+   }, 
+   "33": {
+      "source_countrydest_country": [
+         [
+            "ZZZ", 
+            "1"
+         ], 
+         [
+            "USA", 
+            "1"
+         ]
+      ], 
+      "description": "\t['2015-04-24T04:00:00Z', '2015-04-24T06:00:00Z'] times\n\t['185.59.56.19' '205.62.5.159' 'NSTPACITUSWAHI'] lane\n\tlabeled None", 
+      "has_label": false, 
+      "event_name": [
+         [
+            "P2P: Torrent uTP BEP-29 Traffic Detected", 
+            "1"
+         ]
+      ], 
+      "row_info": [
+         "185.59.56.19", 
+         "205.62.5.159", 
+         "NSTPACITUSWAHI"
+      ], 
+      "prediction": 0.0, 
+      "label": false, 
+      "priority": 0.9211791319100806, 
+      "severity": [
+         [
+            "4", 
+            "1"
+         ]
+      ]
+   }, 
+   "34": {
+      "source_countrydest_country": [
+         [
+            "KOR", 
+            "2"
+         ], 
+         [
+            "USA", 
+            "2"
+         ]
+      ], 
+      "description": "\t['2015-04-24T04:00:00Z', '2015-04-24T06:00:00Z'] times\n\t['211.108.230.220' '144.252.68.6' 'NSTNORXNUSORLO'] lane\n\tlabeled None", 
+      "has_label": false, 
+      "event_name": [
+         [
+            "P2P: BitTorrent File Transfer HandShaking", 
+            "2"
+         ]
+      ], 
+      "row_info": [
+         "211.108.230.220", 
+         "144.252.68.6", 
+         "NSTNORXNUSORLO"
+      ], 
+      "prediction": 0.0, 
+      "label": false, 
+      "priority": 0.512370988265234, 
+      "severity": [
+         [
+            "4", 
+            "2"
+         ]
+      ]
+   }, 
+   "35": {
+      "source_countrydest_country": [
+         [
+            "USA", 
+            "1"
+         ], 
+         [
+            "NAM", 
+            "1"
+         ]
+      ], 
+      "description": "\t['2015-04-24T04:00:00Z', '2015-04-24T06:00:00Z'] times\n\t['41.182.87.35' '144.252.79.189' 'NSTNORXNUSORLO'] lane\n\tlabeled None", 
+      "has_label": false, 
+      "event_name": [
+         [
+            "P2P: BitTorrent Meta-Info Retrieving", 
+            "1"
+         ]
+      ], 
+      "row_info": [
+         "41.182.87.35", 
+         "144.252.79.189", 
+         "NSTNORXNUSORLO"
+      ], 
+      "prediction": 0.0, 
+      "label": false, 
+      "priority": 0.467764739148876, 
+      "severity": [
+         [
+            "4", 
+            "1"
+         ]
+      ]
+   }, 
+   "36": {
+      "source_countrydest_country": [
+         [
+            "RUS", 
+            "1"
+         ], 
+         [
+            "USA", 
+            "1"
+         ]
+      ], 
+      "description": "\t['2015-04-24T04:00:00Z', '2015-04-24T06:00:00Z'] times\n\t['91.123.16.15' '144.252.95.207' 'NSTNORXNUSORLO'] lane\n\tlabeled None", 
+      "has_label": false, 
+      "event_name": [
+         [
+            "ICMP: Destination Unreachable DOS", 
+            "1"
+         ]
+      ], 
+      "row_info": [
+         "91.123.16.15", 
+         "144.252.95.207", 
+         "NSTNORXNUSORLO"
+      ], 
+      "prediction": 0.0, 
+      "label": false, 
+      "priority": 0.2598614449314294, 
+      "severity": [
+         [
+            "3", 
+            "1"
+         ]
+      ]
+   }, 
+   "37": {
+      "source_countrydest_country": [
+         [
+            "ZZZ", 
+            "1"
+         ], 
+         [
+            "USA", 
+            "1"
+         ]
+      ], 
+      "description": "\t['2015-04-24T04:00:00Z', '2015-04-24T06:00:00Z'] times\n\t['10.25.232.1' '205.77.98.99' 'NAEAQUAZSN90'] lane\n\tlabeled None", 
+      "has_label": false, 
+      "event_name": [
+         [
+            "NETBIOS-SS: Windows Password Guessing", 
+            "1"
+         ]
+      ], 
+      "row_info": [
+         "10.25.232.1", 
+         "205.77.98.99", 
+         "NAEAQUAZSN90"
+      ], 
+      "prediction": 0.0, 
+      "label": false, 
+      "priority": 0.10518874593524671, 
+      "severity": [
+         [
+            "4", 
+            "1"
+         ]
+      ]
+   }, 
+   "38": {
+      "source_countrydest_country": [
+         [
+            "UKR", 
+            "9"
+         ], 
+         [
+            "ZZZ", 
+            "9"
+         ]
+      ], 
+      "description": "\t['2015-04-24T04:00:00Z', '2015-04-24T06:00:00Z'] times\n\t['176.102.32.197' '0.0.0.0' 'NSTNORXNUSPAXR'] lane\n\tlabeled None", 
+      "has_label": false, 
+      "event_name": [
+         [
+            "TCP: SYN Host Sweep", 
+            "9"
+         ]
+      ], 
+      "row_info": [
+         "176.102.32.197", 
+         "0.0.0.0", 
+         "NSTNORXNUSPAXR"
+      ], 
+      "prediction": 0.0, 
+      "label": false, 
+      "priority": 0.09974551109854375, 
+      "severity": [
+         [
+            "3", 
+            "9"
+         ]
+      ]
+   }, 
+   "39": {
+      "source_countrydest_country": [
+         [
+            "CAN", 
+            "2"
+         ], 
+         [
+            "USA", 
+            "2"
+         ]
+      ], 
+      "description": "\t['2015-04-24T04:00:00Z', '2015-04-24T06:00:00Z'] times\n\t['66.48.79.9' '205.56.129.194' 'NSTNORITUSNORF'] lane\n\tlabeled None", 
+      "has_label": false, 
+      "event_name": [
+         [
+            "HTTP: Microsoft IE MHTML Protocol Cross Domain Policy", 
+            "2"
+         ]
+      ], 
+      "row_info": [
+         "66.48.79.9", 
+         "205.56.129.194", 
+         "NSTNORITUSNORF"
+      ], 
+      "prediction": 0.0, 
+      "label": false, 
+      "priority": 0.09854375795277817, 
+      "severity": [
+         [
+            "4", 
+            "2"
+         ]
+      ]
+   }, 
+   "40": {
+      "source_countrydest_country": [
+         [
+            "USA", 
+            "2"
+         ]
+      ], 
+      "description": "\t['2015-04-24T04:00:00Z', '2015-04-24T06:00:00Z'] times\n\t['161.69.31.20' '192.68.148.67' 'NSTNORXNUSNAVO2'] lane\n\tlabeled None", 
+      "has_label": false, 
+      "event_name": [
+         [
+            "UDS-NCDOC-Malicious HTTP User Agent", 
+            "1"
+         ]
+      ], 
+      "row_info": [
+         "161.69.31.20", 
+         "192.68.148.67", 
+         "NSTNORXNUSNAVO2"
+      ], 
+      "prediction": 0.0, 
+      "label": false, 
+      "priority": 0.0911918563551534, 
+      "severity": [
+         [
+            "5", 
+            "1"
+         ]
+      ]
+   }, 
+   "41": {
+      "source_countrydest_country": [
+         [
+            "USA", 
+            "1"
+         ], 
+         [
+            "JPN", 
+            "1"
+         ]
+      ], 
+      "description": "\t['2015-04-24T04:00:00Z', '2015-04-24T06:00:00Z'] times\n\t['124.83.230.249' '163.251.208.2' 'NSTPACONJASASE'] lane\n\tlabeled None", 
+      "has_label": false, 
+      "event_name": [
+         [
+            "HTTP: Adobe Flash Player Remote Code Execution Vulnerability (CVE-2014-0543)", 
+            "1"
+         ]
+      ], 
+      "row_info": [
+         "124.83.230.249", 
+         "163.251.208.2", 
+         "NSTPACONJASASE"
+      ], 
+      "prediction": 0.0, 
+      "label": false, 
+      "priority": 0.09112116499363777, 
+      "severity": [
+         [
+            "5", 
+            "1"
+         ]
+      ]
+   }, 
+   "42": {
+      "source_countrydest_country": [
+         [
+            "NLD", 
+            "4"
+         ], 
+         [
+            "ZZZ", 
+            "4"
+         ]
+      ], 
+      "description": "\t['2015-04-24T04:00:00Z', '2015-04-24T06:00:00Z'] times\n\t['10.251.33.71' '5.79.84.234' 'NSTPACONJAYOKO'] lane\n\tlabeled None", 
+      "has_label": true, 
+      "event_name": [
+         [
+            "P2P: Octoshape Traffic detected", 
+            "4"
+         ]
+      ], 
+      "row_info": [
+         "10.251.33.71", 
+         "5.79.84.234", 
+         "NSTPACONJAYOKO"
+      ], 
+      "prediction": 0.0, 
+      "label": false, 
+      "priority": 0.042768273716951785, 
+      "severity": [
+         [
+            "4", 
+            "4"
+         ]
+      ]
+   }
+}

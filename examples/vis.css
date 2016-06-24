@@ -432,3 +432,35 @@ nav ul li .active {
   stroke-width: 3;
   fill: none;
 }
+.topicStyle{
+  alignment-baseline: middle;
+  font-size: 12px;
+  font-weight: 300;
+  fill: #FFFAF0;
+}
+.barTopic{
+  fill: white;
+  stroke-width: 3;
+}
+.barTopic.Selected{
+  stroke-width: 6;
+  stroke: black;
+}
+
+.lineMatch{
+  fill: none;
+  stroke-width: 8;
+}
+.lineMatch.Selected{
+  fill: none;
+  stroke-width: 10;
+}
+.text{
+  alignment-baseline: middle;
+}
+.enter.text{
+  fill: green;
+}
+.exit.text{
+  fill: red;
+}
