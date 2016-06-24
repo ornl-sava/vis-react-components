@@ -157,7 +157,7 @@ class Histogram extends React.Component {
     let barData = transpose(props.data.map((histogram, index) => {
       return histogram.bins.map((bin) => {
         let scaledY = chartHeight - props.yScale(bin.y)
-        let barHeight = bin.y > 0 ? Math.max(Math.floor(scaledY), 3) : 0
+        let barHeight = bin.y > 0 ? Math.max(Math.floor(scaledY), 5) : 0
         let yPos = chartHeight - barHeight
         return this.buildABar(bin, props.data[index].name, props.data[index].type, barHeight, barWidth, yPos)
       })
