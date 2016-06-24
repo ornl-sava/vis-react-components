@@ -392,10 +392,11 @@ nav ul li .active {
 	margin-left: 5px;
 	padding: 6px 15px;
 	border: 1px solid #d4d4d4;
+	left: -30px;
 }
 .settings-icon {
 	cursor: pointer;
-	font-size: 3px;
+	left: -30px;
 }
 .settings-title {
 	height: 30px;
@@ -411,7 +412,6 @@ nav ul li .active {
 .settings-option select {
 	float: right;
 	min-width: 100px;
-	margin-right: 18px;
 }
 .settings-option select option:hover {
 	background-color: #4677f8;
