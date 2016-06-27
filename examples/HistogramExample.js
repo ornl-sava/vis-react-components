@@ -12,72 +12,6 @@ import { histogramData, stackedHistogramData } from './data/exampleData'
 //    xPos: int
 //    yPos: int
 
-const settings = {
-  title: 'Options',
-  options: [
-    {
-      type: 'dropdown',
-      label: 'Scale Type: ',
-      options: [
-        'Linear', 'Log', 'Power'
-      ],
-      defaultSelected: (chart) => {
-        let value = chart.state.yScaleType
-        return value.charAt(0).toUpperCase() + value.slice(1)
-      },
-      onChange: (value, chart) => {
-        chart.setState({
-          yScaleType: value.toLowerCase()
-        })
-      }
-    }, {
-      type: 'dropdown',
-      label: 'Sort By: ',
-      options: [
-        'Document Count', 'Key'
-      ],
-      defaultSelected: (chart) => {
-        let histogram = chart.refs.child
-        if (typeof histogram === 'undefined') {
-          return 'Key'
-        }
-        let value = histogram.state.sortBy === 'x'
-          ? 'Key'
-          : 'Document Count'
-        return value
-      },
-      onChange: (value, chart) => {
-        let histogram = chart.refs.child
-        let newValue = value === 'Key'
-          ? 'x'
-          : 'y'
-        histogram.setState({
-          sortBy: newValue
-        }, chart.forceUpdate())
-      }
-    }, {
-      type: 'dropdown',
-      label: 'Sort Order: ',
-      options: [
-        'Ascending', 'Descending'
-      ],
-      defaultSelected: (chart) => {
-        let histogram = chart.refs.child
-        if (typeof histogram === 'undefined') {
-          return 'Key'
-        }
-        return histogram.state.sortOrder
-      },
-      onChange: (value, chart) => {
-        let histogram = chart.refs.child
-        histogram.setState({
-          sortOrder: value
-        }, chart.forceUpdate())
-      }
-    }
-  ]
-}
-
 const toolTipFunction = (tooltipData) => {
   let d = tooltipData
   let total = tooltipData.stackCounts.reduce((prev, count) => {
@@ -95,17 +29,95 @@ const toolTipFunction = (tooltipData) => {
 }
 
 class HistogramExample extends React.Component {
+  constructor (props) {
+    super(props)
+
+    let id = 'histogram_endpoint'
+    let sortBy = JSON.parse(localStorage.getItem(id + '_sortBy'))
+    let sortOrder = JSON.parse(localStorage.getItem(id + '_sortOrder'))
+    let yScaleType = JSON.parse(localStorage.getItem(id + '_yScaleType'))
+
+    this.state = {
+      sortBy: (sortBy === 'Default') ? null : sortBy,
+      sortOrder: (sortOrder === 'Default') ? null : sortOrder,
+      sortTypes: ['two'],
+      yScaleType: (yScaleType === 'Default') ? null : yScaleType
+    }
+
+    this.settings = {
+      title: 'Options',
+      options: [
+        {
+          type: 'dropdown',
+          label: 'Scale Type: ',
+          options: [
+            'Default', 'Linear', 'Log', 'Power'
+          ],
+          defaultSelected: () => {
+            let defaultValue = this.state.yScaleType
+            return defaultValue === null ? 'Default' : defaultValue.charAt(0).toUpperCase() + defaultValue.slice(1)
+          },
+          onChange: (value) => {
+            localStorage.setItem(id + '_yScaleType', JSON.stringify(value))
+            this.setState({
+              yScaleType: value.toLowerCase()
+            })
+          }
+        }, {
+          type: 'dropdown',
+          label: 'Sort By: ',
+          options: [
+            'Default', 'Document Count', 'Key'
+          ],
+          defaultSelected: () => {
+            let defaultValue = this.state.sortBy
+            return defaultValue === null ? 'Default' : defaultValue
+          },
+          onChange: (value) => {
+            let newValue = value === 'Default'
+              ? null
+              : value === 'Key'
+                ? 'x'
+                : 'y'
+            localStorage.setItem(id + '_sortBy', JSON.stringify(value))
+            this.setState({
+              sortBy: newValue
+            })
+          }
+        }, {
+          type: 'dropdown',
+          label: 'Sort Order: ',
+          options: [
+            'Default', 'Ascending', 'Descending'
+          ],
+          defaultSelected: () => {
+            let defaultValue = this.state.sortOrder
+            return defaultValue === null ? 'Default' : defaultValue
+          },
+          onChange: (value) => {
+            let newValue = value === 'Default'
+              ? null
+              : value
+            localStorage.setItem(id + '_sortOrder', JSON.stringify(value))
+            this.setState({
+              sortOrder: newValue
+            })
+          }
+        }
+      ]
+    }
+  }
+
   render () {
     return (
       <div>
-        <div></div>
         <div>
-          <Chart title='Histogram' width={800} height={200} data={histogramData} settings={settings} tipFunction={toolTipFunction}>
+          <Chart ref='chart' title='Histogram' width={800} height={200} data={histogramData} {...this.state} settings={this.settings} tipFunction={toolTipFunction}>
             <Histogram addOverlay />
           </Chart>
         </div>
         <div>
-          <Chart title='Stacked Histogram' width={800} height={200} data={stackedHistogramData} settings={settings} tipFunction={toolTipFunction}>
+          <Chart title='Stacked Histogram' width={800} height={200} sortBy={'y'} sortOrder={'Ascending'} data={stackedHistogramData} tipFunction={toolTipFunction}>
             <Histogram type='stacked' addOverlay />
           </Chart>
         </div>

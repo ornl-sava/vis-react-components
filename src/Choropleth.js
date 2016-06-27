@@ -7,7 +7,8 @@ class Choropleth extends React.Component {
     super(props)
 
     this.state = {
-      colorScale: d3.scale.quantile()
+      selectedColorScale: d3.scale.quantile(),
+      unselectedColorScale: d3.scale.quantile()
     }
 
     this.projection = d3.geo.equirectangular()
@@ -25,21 +26,21 @@ class Choropleth extends React.Component {
   tooltipData (id) {
     // Get datum based on id
     let index = -1
-    this.props.data[0].bins.forEach((d, i) => {
+    this.props.data.forEach((d, i) => {
       if (d[this.props.keyField] === id) {
         index = i
         return false
       }
     })
 
-    let datum0 = this.props.data[0].bins[index]
-    let datum1 = this.props.data[1].bins[index]
-    let counts = (typeof datum0 === 'undefined' || typeof datum1 === 'undefined')
-      ? [0, 0]
-      : [datum1[this.props.valueField], datum0[this.props.valueField]]
+    let datum = this.props.data[index]
+    let count = (typeof datum === 'undefined')
+      ? 0
+      : datum[this.props.valueField]
+
     let tooltipData = {
       key: id,
-      value: counts
+      value: count
     }
 
     return tooltipData
@@ -85,41 +86,54 @@ class Choropleth extends React.Component {
       .projection(this.projection)
 
     // Generate scale to determine class for coloring
-    let tempColorScale = d3.scale.linear()
+    let tempSelectedColorScale = d3.scale.linear()
       .domain([0, this.props.numColorCat])
-      .range([this.props.minColor, this.props.maxColor])
+      .range([this.props.selectedMinColor, this.props.selectedMaxColor])
+      .interpolate(d3.interpolateHcl)
+
+    let tempUnselectedColorScale = d3.scale.linear()
+      .domain([0, this.props.numColorCat])
+      .range([this.props.unselectedMinColor, this.props.unselectedMaxColor])
       .interpolate(d3.interpolateHcl)
 
     let colorDomain = [0]
-    this.props.data[1].bins
+    this.props.data
       .forEach((d) => {
         let datum = d[this.props.valueField]
         if (datum > 0) colorDomain.push(datum)
       })
 
-    let colorRange = []
+    let selectedColorRange = []
+    let unselectedColorRange = []
     d3.range(this.props.numColorCat).map((i) => {
-      colorRange.push(tempColorScale(i))
+      selectedColorRange.push(tempSelectedColorScale(i))
+      unselectedColorRange.push(tempUnselectedColorScale(i))
     })
 
-    this.state.colorScale
+    this.state.selectedColorScale
       .domain(colorDomain)
-      .range(colorRange)
+      .range(selectedColorRange)
+
+    this.state.unselectedColorScale
+      .domain(colorDomain)
+      .range(unselectedColorRange)
 
     // Helper to get datum and return color
     const getColor = (id) => {
       // Find associated datum
       let index = -1
-      this.props.data[1].bins.forEach((d, i) => {
+      this.props.data.forEach((d, i) => {
         if (d[this.props.keyField] === id) {
           index = i
           return false
         }
       })
-      let datum = this.props.data[1].bins[index]
-      let color = this.props.minColor
+      let datum = this.props.data[index]
+      let color = this.props.unselectedMinColor
       if (typeof datum !== 'undefined') {
-        color = this.state.colorScale(datum[this.props.valueField])
+        color = datum[this.props.selectedField] === this.props.selectedValue
+          ? this.state.selectedColorScale(datum[this.props.valueField])
+          : this.state.unselectedColorScale(datum[this.props.valueField])
       }
       return color
     }
@@ -177,8 +191,10 @@ class Choropleth extends React.Component {
 }
 
 Choropleth.defaultProps = {
-  minColor: '#eff3ff',
-  maxColor: '#2171b5',
+  selectedMinColor: '#eff3ff',
+  selectedMaxColor: '#2171b5',
+  unselectedMinColor: '#f7f7f7',
+  unselectedMaxColor: '#636363',
   numColorCat: 20,
   chartHeight: 0,
   chartWidth: 0,
@@ -195,8 +211,10 @@ Choropleth.defaultProps = {
 }
 
 Choropleth.propTypes = {
-  minColor: PropTypes.string,
-  maxColor: PropTypes.string,
+  selectedMinColor: PropTypes.string,
+  selectedMaxColor: PropTypes.string,
+  unselectedMinColor: PropTypes.string,
+  unselectedMaxColor: PropTypes.string,
   numColorCat: PropTypes.number,
   map: PropTypes.object.isRequired,
   chartHeight: PropTypes.number.isRequired,
@@ -205,6 +223,8 @@ Choropleth.propTypes = {
   data: PropTypes.array,
   keyField: PropTypes.string,
   valueField: PropTypes.string,
+  selectedField: PropTypes.string,
+  selectedValue: PropTypes.string,
   loading: PropTypes.bool,
   onClick: PropTypes.func,
   onEnter: PropTypes.func,
