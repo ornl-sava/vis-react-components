@@ -165,7 +165,7 @@ class Chart extends React.Component {
               : undefined
             }
             {props.legend
-              ? <Legend margin={margin} width={this.state.chartWidth} height={this.state.chartHeight} component={this.refs.child} />
+              ? <Legend margin={margin} scaleAccessor={props.scaleAccessor} width={this.state.chartWidth} height={this.state.chartHeight} component={this.refs.child} />
               : undefined
             }
           </g>
@@ -208,6 +208,7 @@ Chart.defaultProps = {
 
 Chart.propTypes = {
   title: PropTypes.string,
+  scaleAccessor: PropTypes.string,
   sortBy: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.bool

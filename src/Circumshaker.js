@@ -31,7 +31,7 @@ class Circumshaker extends React.Component {
       graph.links = []
 
       // Helper to generate graph's links and nodes
-      const generateGraph = (data, depth, parent) => {
+      const generateGraph = (data, depth = 0, parent = null) => {
         // Create node
         // TODO: Used some passed down prop to determine key, value used
         let node = (depth !== 0)
@@ -79,7 +79,7 @@ class Circumshaker extends React.Component {
       }
 
       // Populate graph
-      generateGraph(nextProps.data, 0, null)
+      generateGraph(nextProps.data)
 
       // Sort nodes and set parents to null
       graph.nodes
@@ -195,10 +195,6 @@ class Circumshaker extends React.Component {
         let r = this.radius * d.depth
         d.x += r * Math.cos(d.degree * (Math.PI / 180))
         d.y += r * Math.sin(d.degree * (Math.PI / 180))
-
-        // d.radius = this.nodeSizeScale(graph.links.filter((g) => {
-        //   return g.source === d || g.target === d
-        // }).length)
       })
 
       // Find max node size if not predefined
@@ -226,7 +222,6 @@ class Circumshaker extends React.Component {
   }
 
   onClick (event) {
-    // Call this to remove tooltip
     this.props.onClick(event)
   }
 
