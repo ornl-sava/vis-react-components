@@ -150,8 +150,8 @@ class Histogram extends React.Component {
   renderHistogram () {
     let {chartWidth, chartHeight, ...props} = this.props
     let numBins = props.data[0].bins.length
-    let paddedWidth = chartWidth * (1 - props.padding).toFixed(2)
-    let barWidth = Math.ceil(paddedWidth / (numBins + (props.outerPadding * 2)))
+    let paddedWidth = chartWidth * (1.0 - props.padding).toFixed(2)
+    let barWidth = Math.floor(paddedWidth / (numBins + (props.outerPadding * 2)))
     if (typeof props.xScale.rangePoints === 'function') {
       props.xScale.rangeRoundBands([0, chartWidth], props.padding, props.outerPadding)
     } else {
