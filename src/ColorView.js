@@ -2,6 +2,40 @@ import React, { PropTypes } from 'react'
 import TextBar from './TextBar'
 import d3 from 'd3'
 
+const layout = (initRowNum, maxColLength, data) => {
+  console.log('lData', data)
+  let numCol = data.length / initRowNum
+  numCol = Math.ceil(numCol)
+  console.log('numCol', numCol)
+  // if the number of columns in row exceeds max re-run with more rows
+  if (numCol > maxColLength) {
+    let newInit = initRowNum + 1
+    return layout(newInit, maxColLength, data.length)
+  }
+  // setting up array with row column information
+  let rowData = []
+  for (let i = 0; i < data.length; i += numCol) {
+    if (i + numCol > data.length) {
+      rowData.push(data.length - i)
+    } else {
+      rowData.push(numCol)
+    }
+  }
+  console.log('rData', rowData)
+  let cIndex = 0
+  let outData = []
+  console.log('outData', outData)
+  for (let i = 0; i < rowData.length; i++) {
+    outData.push([])
+    for (let j = 0; j < rowData[i]; j++) {
+      console.log('cData', data[cIndex])
+      outData[i].push('pot' + cIndex)
+      cIndex++
+    }
+  }
+  return outData
+}
+
 class ColorView extends React.Component {
   // grabbing onEnter and Leave functions from chart and making new set of rules
   _onEnter (toolTipData, svgElement) {
@@ -56,8 +90,6 @@ class ColorView extends React.Component {
   componentWillUpdate (nextProps) {
   }
   componentWillReceiveProps (nextProps) {
-    let xDomain = Object.keys(nextProps.data)
-    console.log(xDomain)
     this.props.xScale.domain([0, 1])
     this.props.yScale.domain([nextProps.colorDomain.length + 2, 0.00001])
     this.prefScale.domain(nextProps.colorDomain)
@@ -131,6 +163,12 @@ class ColorView extends React.Component {
   }
 
   renderTopics (props) {
+    console.log('lay', layout(2, 10, this.props.colorDomain))
+    // let rData = layout(2, 10, this.props.colorDomain)
+    // let cIndex = 0
+    /* this.props.yScale = d3.scale.ordinal()
+    this.props.yScale.domain = rData.length
+    this.props.yScale.rangeRoundBands([0, props.chartHeight])*/
     let barWidth = props.chartWidth * 0.4
     let barHeight = props.yScale(1)
     // checking if ordinal or not

@@ -146,13 +146,13 @@ class TopicsContainer extends React.Component {
     return (
       <div className={'row ' + this.props.className}>
         <div className='row col-md-12'>
-          <Chart ref='updateChart' {...this.props} {...this.state} topArray={this.state.topArray} tipFunction={this.toolTipFunction} yAxis={false} xAxis={false} height={hTop}>
-            <TopicFlow {...this.props} clickArray={this.state.clickArray} topArray={this.state.topArray} colorView={this.refs.colorView} onBarClick={this.onClick} />
+          <Chart ref='updateChart2'{...this.props} {...this.state} tipFunction={this.toolTipFunction} yAxis={false} xAxis={false} xScaleType='linear' height={300}>
+            <ColorView {...this.props} clickArray={this.state.clickArray} ref='colorView' onBarClick={this.onClick} />
           </Chart>
         </div>
         <div className='row col-md-12'>
-          <Chart ref='updateChart2'{...this.props} {...this.state} tipFunction={this.toolTipFunction} yAxis={false} xAxis={false} xScaleType='linear' height={600}>
-            <ColorView {...this.props} clickArray={this.state.clickArray} ref='colorView' onBarClick={this.onClick} />
+          <Chart ref='updateChart' {...this.props} {...this.state} topArray={this.state.topArray} tipFunction={this.toolTipFunction} yAxis={false} xAxis={false} height={hTop}>
+            <TopicFlow {...this.props} clickArray={this.state.clickArray} topArray={this.state.topArray} colorView={this.refs.colorView} onBarClick={this.onClick} />
           </Chart>
         </div>
       </div>
