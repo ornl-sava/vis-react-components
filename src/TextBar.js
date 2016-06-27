@@ -39,22 +39,29 @@ class TextBar extends React.Component {
     return xPos
   }
   shouldComponentUpdate (nextProps, nextState) {
-    console.log('updated')
     // if I put the styleChange check back in, things bog down....
-    // let styleChange = nextProps.barStyle !== this.props.barStyle
-    let selected = this.props.sel
-    // return styleChange || selected
-    return selected
+    let styleChange = nextProps.barStyle !== this.props.barStyle
+    let selected = nextProps.sel
+    /* if (this.props.text.indexOf('IC') >= 0) {
+      console.log('next', nextProps.barStyle)
+      console.log('this', this.props.barStyle)
+      console.log('stylC', styleChange)
+    }*/
+    // if (selected) { console.log('updated') }
+    return styleChange || selected
+    // return selected
   }
   componentWillUnmount () {
     this._onMouseLeave()
   }
   render () {
+    // console.log('txtBar')
+    // console.log('txtBar', this.props.text, this.props.barStyle)
     let {className, ...props} = this.props
     return (
       <g>
         <Bar className={className + ' barTopic'} {...props} onClick={this.onClick} onEnter={this.onEnter} onLeave={this.onLeave} style={this.props.barStyle} />
-        <text className={this.props.className + ' text'} x={this.props.x + 10 + this.getTxtAlign()} y={this.props.y + this.props.height / 2} style={this.props.textStyle} > {this.props.text} </text>)
+        <text className={this.props.className + ' text'} x={this.props.x + 10 + this.getTxtAlign()} y={this.props.y + this.props.height / 2} style={this.props.textStyle} onMouseEnter={this.onEnter} > {this.props.text} </text>)
       </g>
     )
   }

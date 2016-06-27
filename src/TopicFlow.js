@@ -27,29 +27,12 @@ class TopicFlow extends React.Component {
   _onEnter (toolTipData, svgElement) {
     let props = this.props
     props.onEnter(toolTipData, svgElement)
-    // this.setState({selectedTopics: this.checkMatch(toolTipData.label)})
-    let newStyle = this.barData.map((d, i) => {
-      let oldStyle = Object.assign({}, d.barStyle)
-      if (d.data[0] === toolTipData.label) {
-        oldStyle.stroke = 'orange'
-      }
-      return oldStyle
-    })
-    // console.log('newStyle', newStyle.length)
-    // this.setState({selectedTopics: toolTipData.label})
-    this.setState({barStyle: newStyle, selectedTopics: toolTipData.label})
+    this.setState({selectedTopics: toolTipData.label})
   }
   _onLeave (toolTipData, svgElement) {
     let props = this.props
     props.onLeave(toolTipData, svgElement)
-    // this.setState({selectedTopics: []})
-    // console.log('dBarStyle', this.barData)
-    let newStyle = this.barData.map((d, i) => {
-      let oldStyle = d.barStyle
-      // oldStyle.stroke = 'green'
-      return oldStyle
-    })
-    this.setState({barStyle: newStyle, selectedTopics: toolTipData.label})
+    this.setState({selectedTopics: []})
   }
   _onClick () {
     // I thought I could call the other onClick and do something with it
@@ -60,8 +43,7 @@ class TopicFlow extends React.Component {
     this.state = {
       dataUp: 0,
       currentID: [],
-      selectedTopics: [],
-      barStyle: {}
+      selectedTopics: []
     }
     this.onEnter = this._onEnter.bind(this)
     this.onLeave = this._onLeave.bind(this)
@@ -105,11 +87,6 @@ class TopicFlow extends React.Component {
   }
   // React LifeCycle method - called after initial render
   componentDidMount () {
-    // console.log('didMountChartHeight', this.props.chartHeight)
-    /* if (this.props.data.length <= 0) {
-      console.log('probNoDataDidMount')
-      this.setState({dataUp: 1})
-    } */
   }
   componentWillUnmount () {
   }
@@ -155,7 +132,6 @@ class TopicFlow extends React.Component {
     let paddedWidth = props.chartWidth * (1 - props.padding).toFixed(2)
     let barWidth = Math.ceil(paddedWidth / (props.numTData + (props.outerPadding * 2)))
     let barHeight = 20
-    let barStyle = []
     let barData = []
     let lineData = []
     // let selLines = []
@@ -164,7 +140,7 @@ class TopicFlow extends React.Component {
     if (typeof props.xScale.rangePoints === 'function') {
       props.xScale.rangeRoundBands([0, props.chartWidth], props.padding, props.outerPadding)
     }
-    console.log
+    // console.log('init')
     let svgTopicBars = props.data.map((dataArr, index) => {
       return dataArr.map((data, i) => {
         if (data[0] == null) {
@@ -225,47 +201,43 @@ class TopicFlow extends React.Component {
         bar.tooltipData = {label: bar.data[0], counts: bar.data.length}
         barData.push(bar)
         lineData.push(linePath())
-        barStyle.push(bar.barStyle)
-        return (
-          <g>
-            <g>
-              <TextBar {...bar} selTopic={this.state.selectedTopics} tooltipData={bar.tooltipData} onEnter={this.onEnter} onLeave={this.onLeave} />
-            </g>
-            <g key={'line_' + index.toString()}>
-              {linePath()}
-            </g>
-          </g>
-        )
       })
     })
     // init gets called twice, can't do this.barData.push in the mapping loop
     // because it'll be twice as long as necessary
     this.barData = barData
     this.lineData = lineData
-    this.setState({barStyle: barStyle})
     return svgTopicBars
   }
   renderTopics () {
     let svgBins = []
+    let newData = JSON.parse(JSON.stringify(this.barData))
+    console.log(newData[1])
     for (let i = 0; i < this.barData.length; i++) {
-      let line = this.lineData[i]
       let key = 'bar-' + i
-      let bar = Object.assign({}, this.barData[i])
-      delete bar.barStyle
-      if (this.state.selectedTopics === bar.data[0]) {
-        bar.sel = true
+      let nData = []
+      if (this.state.selectedTopics[0] != null) {
+        if (this.state.selectedTopics.toString() === this.barData[i].data[0].toString()) {
+          nData = JSON.parse(JSON.stringify(this.barData[i]))
+          nData.sel = true
+          nData.barStyle.stroke = '#00ccff'
+          nData.barStyle.strokeWidth = 8
+        }
       }
-      let cData = (
-        <g className='bin' key={key}>
-          <TextBar {...bar} onEnter={this.onEnter} onLeave={this.onLeave} barStyle={this.state.barStyle[i]} />
-          <path className={bar.data[0] + ' lineMatch -' + i} d={line} style={this.state.barStyle[i]} ></path>
-        </g>
-      )
-      if (bar.sel) {
-        // console.log('unshift')
-        svgBins.push(cData)
-      } else {
-        svgBins.unshift(cData)
+      let cData = (data) => {
+        return (
+          <g className='bin' key={key}>
+            <TextBar {...data} onEnter={this.onEnter} onLeave={this.onLeave} />
+            <path className={data.data[0] + ' lineMatch -' + i} d={this.lineData[i]} style={data.barStyle} ></path>
+          </g>
+        )
+      }
+      if (this.props.clickArray[this.barData[i].data[0].toString().split(/:|-/, 1)]) {
+        if (nData.sel) {
+          svgBins.push(cData(nData))
+        } else {
+          svgBins.unshift(cData(this.barData[i]))
+        }
       }
     }
     return (

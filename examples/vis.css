@@ -449,7 +449,7 @@ nav ul li .active {
 
 .lineMatch{
   fill: none;
-  stroke-width: 8;
+  stroke-width: 4;
 }
 .lineMatch.Selected{
   fill: none;
