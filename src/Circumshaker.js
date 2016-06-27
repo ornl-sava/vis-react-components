@@ -211,7 +211,6 @@ class Circumshaker extends React.Component {
           : curr.degree - curr.startAngle
         theta *= (Math.PI / 180)
         let arcLength = r * theta
-        console.log(r, theta)
         return prev < arcLength || arcLength === 0 ? prev : arcLength
       }, Math.Infinity)
 
