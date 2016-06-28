@@ -900,3 +900,269 @@ export const choroplethData = [
     'className': 'selected'
   }
 ]
+
+export const ordinalHeatmapData = [
+  {
+    bins: [
+      {
+        key: 1,
+        value: 1
+      },
+      {
+        key: 2,
+        value: 2
+      },
+      {
+        key: 3,
+        value: 3
+      },
+      {
+        key: 4,
+        value: 4
+      },
+      {
+        key: 5,
+        value: 5
+      }
+    ],
+    key: 'a',
+    value: 15
+  },
+  {
+    bins: [
+      {
+        key: 1,
+        value: 2
+      },
+      {
+        key: 2,
+        value: 4
+      },
+      {
+        key: 3,
+        value: 6
+      },
+      {
+        key: 4,
+        value: 8
+      },
+      {
+        key: 5,
+        value: 10
+      }
+    ],
+    key: 'b',
+    value: 30
+  },
+  {
+    bins: [
+      {
+        key: 1,
+        value: 4
+      },
+      {
+        key: 2,
+        value: 8
+      },
+      {
+        key: 3,
+        value: 12
+      },
+      {
+        key: 4,
+        value: 16
+      },
+      {
+        key: 5,
+        value: 20
+      }
+    ],
+    key: 'c',
+    value: 60
+  },
+  {
+    bins: [
+      {
+        key: 1,
+        value: 8
+      },
+      {
+        key: 2,
+        value: 16
+      },
+      {
+        key: 3,
+        value: 24
+      },
+      {
+        key: 4,
+        value: 32
+      },
+      {
+        key: 5,
+        value: 40
+      }
+    ],
+    key: 'd',
+    value: 120
+  },
+  {
+    bins: [
+      {
+        key: 1,
+        value: 16
+      },
+      {
+        key: 2,
+        value: 32
+      },
+      {
+        key: 3,
+        value: 48
+      },
+      {
+        key: 4,
+        value: 64
+      },
+      {
+        key: 5,
+        value: 80
+      }
+    ],
+    key: 'e',
+    value: 240
+  }
+]
+
+export const linearHeatmapData = [
+  {
+    bins: [
+      {
+        key: 1467127044138,
+        value: 5
+      },
+      {
+        key: 1467127104138,
+        value: 4
+      },
+      {
+        key: 1467127164138,
+        value: 3
+      },
+      {
+        key: 1467127224138,
+        value: 2
+      },
+      {
+        key: 1467127284138,
+        value: 1
+      }
+    ],
+    key: 1,
+    value: 15
+  },
+  {
+    bins: [
+      {
+        key: 1467127044138,
+        value: 10
+      },
+      {
+        key: 1467127104138,
+        value: 8
+      },
+      {
+        key: 1467127164138,
+        value: 6
+      },
+      {
+        key: 1467127224138,
+        value: 4
+      },
+      {
+        key: 1467127284138,
+        value: 2
+      }
+    ],
+    key: 2,
+    value: 30
+  },
+  {
+    bins: [
+      {
+        key: 1467127044138,
+        value: 20
+      },
+      {
+        key: 1467127104138,
+        value: 16
+      },
+      {
+        key: 1467127164138,
+        value: 12
+      },
+      {
+        key: 1467127224138,
+        value: 8
+      },
+      {
+        key: 1467127284138,
+        value: 4
+      }
+    ],
+    key: 3,
+    value: 60
+  },
+  {
+    bins: [
+      {
+        key: 1467127044138,
+        value: 40
+      },
+      {
+        key: 1467127104138,
+        value: 32
+      },
+      {
+        key: 1467127164138,
+        value: 24
+      },
+      {
+        key: 1467127224138,
+        value: 16
+      },
+      {
+        key: 1467127284138,
+        value: 8
+      }
+    ],
+    key: 4,
+    value: 120
+  },
+  {
+    bins: [
+      {
+        key: 1467127044138,
+        value: 80
+      },
+      {
+        key: 1467127104138,
+        value: 64
+      },
+      {
+        key: 1467127164138,
+        value: 48
+      },
+      {
+        key: 1467127224138,
+        value: 32
+      },
+      {
+        key: 1467127284138,
+        value: 16
+      }
+    ],
+    key: 5,
+    value: 240
+  }
+]

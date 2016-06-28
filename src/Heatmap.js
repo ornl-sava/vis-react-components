@@ -28,12 +28,12 @@ class Heatmap extends React.Component {
         // NOTE: Computing offset so proper xDomain is given
         // Nth bin has a start time of it's key; so it's 'end time'
         // must be taken into consideration
-        let offset = nextProps.data[0].bins[1][nextProps.xKeyField] -
-          nextProps.data[0].bins[0][nextProps.xKeyField]
+        let offset = nextProps.data[0].bins[1][nextProps.xAccessor.key] -
+          nextProps.data[0].bins[0][nextProps.xAccessor.key]
         if (nextProps.xScaleType === 'ordinalBand') {
-          xDomain = nextProps.data[0].bins.map((d) => d[nextProps.xKeyField])
+          xDomain = nextProps.data[0].bins.map((d) => d[nextProps.xAccessor.key])
         } else {
-          xDomain = d3.extent(nextProps.data[0].bins, (d) => d[nextProps.xKeyField])
+          xDomain = d3.extent(nextProps.data[0].bins, (d) => d[nextProps.xAccessor.key])
         }
         xDomain[1] = xDomain[1] + offset
       }
@@ -42,9 +42,9 @@ class Heatmap extends React.Component {
       let yDomain = nextProps.yDomain
       if (yDomain.length === 0) {
         if (nextProps.yScaleType === 'ordinalBand') {
-          yDomain = nextProps.data.map((d) => d[nextProps.yKeyField])
+          yDomain = nextProps.data.map((d) => d[nextProps.yAccessor.key])
         } else {
-          yDomain = d3.extent(nextProps.data, (d) => d[nextProps.yKeyField])
+          yDomain = [0, d3.max(nextProps.data, (d) => d[nextProps.yAccessor.key])]
         }
       }
 
@@ -62,9 +62,9 @@ class Heatmap extends React.Component {
       // Generate color scale
       let yMax = nextProps.colorPerRow
         ? d3.max(nextProps.data, (d, i) => {
-          return d3.max(d.bins, (e, j) => e[nextProps.xValueField])
+          return d3.max(d.bins, (e, j) => e[nextProps.xAccessor.value])
         })
-        : d3.max(nextProps.data, (d, i) => d[nextProps.yValueField])
+        : d3.max(nextProps.data, (d, i) => d[nextProps.yAccessor.value])
 
       let tempColorScale = d3.scale.linear()
         .domain([0, yMax])
@@ -91,7 +91,7 @@ class Heatmap extends React.Component {
       // let colorDomain = [0, 1]
       // nextProps.data.forEach((d) => {
       //   d.bins.forEach((g) => {
-      //     let datum = g[nextProps.yValueField]
+      //     let datum = g[nextProps.yAccessor.value]
       //     if (datum > 0) colorDomain.push(datum)
       //   })
       // })
@@ -135,15 +135,18 @@ class Heatmap extends React.Component {
     return (
       <g className='heatmap'>
         {props.data.map((d, i) => {
+          if (props.yScaleType === 'linear') {
+            console.log(props.yScale(d[props.yAccessor.key]), d)
+          }
           return d.bins.map((e, j) => {
             let rectProps = {
               'data-key': e[props.labelField],
-              'data-value': e[props.xValueField],
-              'x': props.xScale(e[props.xKeyField]),
-              'y': props.yScale(d[props.yKeyField]),
+              'data-value': e[props.xAccessor.value],
+              'x': props.xScale(e[props.xAccessor.key]),
+              'y': props.yScale(d[props.yAccessor.key]),
               'width': props.chartWidth / d.bins.length,
               'height': props.chartHeight / props.data.length,
-              'fill': this.state.colorScale(e[props.xValueField]),
+              'fill': this.state.colorScale(e[props.xAccessor.value]),
               'onMouseEnter': this.onEnter,
               'onMouseLeave': this.onLeave,
               'onClick': this.onClick
@@ -199,11 +202,15 @@ Heatmap.defaultProps = {
   className: 'histogram',
   data: [],
   xDomain: [],
-  xKeyField: 'key',
-  xValueField: 'value',
   yDomain: [],
-  yKeyField: 'key',
-  yValueField: 'value',
+  xAccessor: {
+    key: 'key',
+    value: 'value'
+  },
+  yAccessor: {
+    key: 'key',
+    value: 'value'
+  },
   loading: false,
   status: '',
   onClick: () => {},
@@ -218,11 +225,9 @@ Heatmap.propTypes = {
   colorPerRow: PropTypes.bool,
   labelField: PropTypes.string,
   xDomain: PropTypes.array,
-  xKeyField: PropTypes.string,
-  xValueField: PropTypes.string,
+  xAccessor: PropTypes.object,
   yDomain: PropTypes.array,
-  yKeyField: PropTypes.string,
-  yValueField: PropTypes.string,
+  yAccessor: PropTypes.object,
   chartHeight: PropTypes.number.isRequired,
   chartWidth: PropTypes.number.isRequired,
   className: PropTypes.string.isRequired,
