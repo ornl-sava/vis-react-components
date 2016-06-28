@@ -3,10 +3,8 @@ import TextBar from './TextBar'
 import d3 from 'd3'
 
 const layout = (initRowNum, maxColLength, data) => {
-  console.log('lData', data)
   let numCol = data.length / initRowNum
   numCol = Math.ceil(numCol)
-  console.log('numCol', numCol)
   // if the number of columns in row exceeds max re-run with more rows
   if (numCol > maxColLength) {
     let newInit = initRowNum + 1
@@ -21,15 +19,13 @@ const layout = (initRowNum, maxColLength, data) => {
       rowData.push(numCol)
     }
   }
-  console.log('rData', rowData)
   let cIndex = 0
   let outData = []
-  console.log('outData', outData)
   for (let i = 0; i < rowData.length; i++) {
     outData.push([])
     for (let j = 0; j < rowData[i]; j++) {
-      console.log('cData', data[cIndex])
-      outData[i].push('pot' + cIndex)
+      // outData[i].push('pot' + cIndex)
+      outData[i].push(data[cIndex])
       cIndex++
     }
   }
@@ -46,6 +42,7 @@ class ColorView extends React.Component {
     // console.log('clicked', toolTipData)
     let index = toolTipData.label
     let newClickArray = this.props.clickArray
+    console.log('clickArray', this.props.spread, '-', this.props.clickArray)
     // might want to move this up and make constant?
     // used to check if all the topics are selected
     let checkClick = () => {
@@ -79,6 +76,14 @@ class ColorView extends React.Component {
     this.onLeave = this._onLeave.bind(this)
     this.prefScale = d3.scale.category20()
     this.onClick = this._onClick.bind(this)
+    if (this.props.spread === 'vertical') {
+      this.xScale = this.props.xScale
+      this.yScale = this.props.yScale
+    } else {
+      this.xScale = d3.scale.ordinal()
+      this.yScale = d3.scale.ordinal()
+    }
+    this.rData = []
   }
   shouldComponentUpdate (nextProps, nextState) {
     if (this.props.colorDomain == null) {
@@ -90,10 +95,15 @@ class ColorView extends React.Component {
   componentWillUpdate (nextProps) {
   }
   componentWillReceiveProps (nextProps) {
-    this.props.xScale.domain([0, 1])
-    this.props.yScale.domain([nextProps.colorDomain.length + 2, 0.00001])
+    if (this.props.spread === 'vertical') {
+      this.xScale.domain([0, 1])
+      this.yScale.domain([nextProps.colorDomain.length + 2, 0.00001])
+    } else {
+      this.rData = layout(2, 10, this.props.colorDomain)
+      this.yScale.domain(Object.keys(this.rData))
+      this.yScale.rangeRoundBands([0, this.props.chartHeight], this.props.padding, this.props.outerPadding)
+    }
     this.prefScale.domain(nextProps.colorDomain)
-    console.log('topFlowPref', nextProps.colorDomain)
     this.data = nextProps.colorDomain
   }
   componentWillMount () {
@@ -109,25 +119,10 @@ class ColorView extends React.Component {
   }
   componentWillUnmount () {
   }
-
-  addOverlay (barData, index) {
-    if (barData.data.length <= 0) {
-      barData.data[0] = 'EMPTY'
-    }
-    let overlayObj = Object.assign({}, barData)
-    // console.log('addOverlayBarDataName', barData)
-    overlayObj.className = 'overlay'
-    overlayObj.key = overlayObj.className
-    overlayObj.y = 1
-    overlayObj.tooltipData = {}
-    overlayObj.tooltipData.label = barData.data
-    overlayObj.tooltipData.counts = index
-    return overlayObj
-  }
   // add tool tip data here later so I don't have to call it in set up
-  buildABar (bin, name, text, height, width, x, y, barStyle, txtStyle) {
+  buildABar (bin, text, height, width, x, y, barStyle, txtStyle) {
     return {
-      className: name,
+      className: text,
       text: text,
       height: height,
       data: bin,
@@ -153,7 +148,7 @@ class ColorView extends React.Component {
 
   trimText (text, width, fontSize) {
     let ell = '...'
-    let buff = 1.5
+    let buff = 0.95
     text.toString()
     // 12 is the supposed font size of the text
     if (text.length > width / fontSize * buff) {
@@ -163,50 +158,71 @@ class ColorView extends React.Component {
   }
 
   renderTopics (props) {
-    console.log('lay', layout(2, 10, this.props.colorDomain))
-    // let rData = layout(2, 10, this.props.colorDomain)
-    // let cIndex = 0
-    /* this.props.yScale = d3.scale.ordinal()
-    this.props.yScale.domain = rData.length
-    this.props.yScale.rangeRoundBands([0, props.chartHeight])*/
-    let barWidth = props.chartWidth * 0.4
-    let barHeight = props.yScale(1)
-    // checking if ordinal or not
-    if (typeof props.xScale.rangePoints === 'function') {
-      props.xScale.rangeRoundBands([0, props.chartWidth], props.padding, props.outerPadding)
-    } else {
-      props.xScale.range([0, props.chartWidth])
-    }
-    let colorBars = this.props.colorDomain.map((data, index) => {
-      if (data[0] == null) {
-        data[0] = 'EMPTY'
-      }
-      let posY = this.props.yScale(index)
-      let posX = props.xScale(0.2)
-      let cName = data + '-' + index.toString()
-      let color = '#ecf2f9'
-      if (this.props.clickArray[data]) {
-        color = this.prefScale(data)
-      }
+    let colorBars = []
+    if (this.props.spread === 'vertical') {
+      let barHeight = this.yScale(1)
+      let barWidth = props.chartWidth * 0.9
       let fontSize = barHeight * 0.8
-      // let text = this.trimText(data, barWidth, fontSize)
-      // console.log(text)
       let barTxtStyle = this.buildAText(fontSize.toString() + 'px', 'black')
-      let barStyle = {fill: color}
-      let bar = this.buildABar(data, cName, cName, barHeight, barWidth, posX, posY, barStyle, barTxtStyle)
-      let barOverlay = null
-      if (props.addOverlay) {
-        barOverlay = this.addOverlay(bar, index)
+      // checking if ordinal or not
+      if (typeof props.xScale.rangePoints === 'function') {
+        this.xScale.rangeRoundBands([0, props.chartWidth], props.padding, props.outerPadding)
+      } else {
+        this.xScale.range([0, props.chartWidth])
       }
-      return (
-        <TextBar {...bar} onClick={this.onClick} tooltipData={barOverlay.tooltipData} onEnter={this.onEnter} onLeave={this.onLeave} style={bar.barStyle} />
-      )
-    })
+      colorBars = this.props.colorDomain.map((data, index) => {
+        if (data[0] == null) {
+          data[0] = 'EMPTY'
+        }
+        let posY = this.yScale(index)
+        let posX = (props.chartWidth - barWidth) / 2
+        let cName = data + '-' + index.toString()
+        let color = '#ecf2f9'
+        if (this.props.clickArray[data]) {
+          color = this.prefScale(data)
+        }
+        let barStyle = {fill: color}
+        let text = this.trimText(data, barWidth, fontSize)
+        let bar = this.buildABar(cName, text, barHeight, barWidth, posX, posY, barStyle, barTxtStyle)
+        bar.tooltipData = {label: data, counts: index}
+        return (
+          <TextBar {...bar} onClick={this.onClick} onEnter={this.onEnter} onLeave={this.onLeave} style={bar.barStyle} />
+        )
+      })
+    } else {
+      console.log('lay', this.rData)
+      let paddedHeight = this.props.chartHeight * (1.0 - this.props.padding).toFixed(2)
+      let barHeight = Math.floor(paddedHeight / (this.rData.length + (props.outerPadding * 2)))
+      let fontSize = barHeight * 0.4
+      let barTxtStyle = this.buildAText(fontSize.toString() + 'px', 'black')
+      colorBars = this.rData.map((arr, index) => {
+        this.xScale.domain(Object.keys(arr))
+        this.xScale.rangeRoundBands([0, this.props.chartWidth], this.props.padding, this.props.outerPadding)
+        let paddedWidth = this.props.chartWidth * (1.0 - this.props.padding).toFixed(2)
+        let barWidth = Math.floor(paddedWidth / (arr.length + (props.outerPadding * 2)))
+        return arr.map((title, i) => {
+          let posY = this.yScale(index)
+          let posX = this.xScale(i)
+          let cName = title + '-r' + index.toString() + '-c' + i.toString()
+          let text = this.trimText(title, barWidth, fontSize)
+          let color = '#ecf2f9'
+          if (this.props.clickArray[title]) {
+            color = this.prefScale(title)
+          }
+          let barStyle = {fill: color}
+          let bar = this.buildABar(cName, text, barHeight, barWidth, posX, posY, barStyle, barTxtStyle)
+          bar.tooltipData = {label: title, counts: index}
+          return (
+            <TextBar {...bar} onClick={this.onClick} onEnter={this.onEnter} onLeave={this.onLeave} style={bar.barStyle} />
+          )
+        })
+      })
+    }
     let svgBins = colorBars.map((barD, index) => {
       let yPos = 0
       let xPos = 0
       return (
-        <g className='bin' key={props.className + '-' + index.toString()} transform={'translate(' + xPos + ',' + yPos + ')'}>
+        <g className='bin' key={props.className + '-' + index.toString() + '-' + this.props.spread} transform={'translate(' + xPos + ',' + yPos + ')'}>
           {barD}
         </g>
       )
@@ -242,8 +258,8 @@ class ColorView extends React.Component {
 
   render () {
     let renderEl = null
-    if (this.props.data.length <= 0) {
-      console.log('probably no data')
+    if (this.props.colorDomain.length <= 0) {
+      console.log('no data')
       renderEl = this.renderLoadAnimation(this.props)
     } else {
       renderEl = this.renderTopics(this.props)
@@ -253,42 +269,29 @@ class ColorView extends React.Component {
 }
 
 ColorView.defaultProps = {
-  addOverlay: true,
-  data: [],
-  padding: 0.2,
+  colorDomain: [],
+  spread: 'vertical',
+  padding: 0.1,
   outerPadding: 0.4,
-  width: 400,
-  height: 250,
-  rangePadding: 25,
   chartHeight: 0,
-  chartWidth: 0,
-  barHeight: 20,
-  maxTopics: 60
+  chartWidth: 0
 }
 
 ColorView.propTypes = {
-  addOverlay: PropTypes.bool,
-  className: PropTypes.string.isRequired,
-  height: PropTypes.number,
-  loading: PropTypes.bool,
-  padding: PropTypes.number.isRequired,
-  outerPadding: PropTypes.number.isRequired,
-  xDomain: PropTypes.array,
-  xScale: PropTypes.any,
-  yScale: PropTypes.any,
-  rangePadding: PropTypes.number,
-  data: PropTypes.object,
-  status: PropTypes.string,
-  tipFunction: PropTypes.func,
-  chartHeight: PropTypes.number.isRequired,
-  chartWidth: PropTypes.number.isRequired,
-  numTData: PropTypes.number.isRequired,
-  barHeight: PropTypes.number.isRequired,
-  maxTopics: PropTypes.number.isRequired,
   colorDomain: PropTypes.array,
   colorScale: PropTypes.func,
   onBarClick: PropTypes.func,
-  clickArray: PropTypes.array.isRequired
+  clickArray: PropTypes.object.isRequired,
+  spread: PropTypes.string.isRequired,
+  className: PropTypes.string.isRequired,
+  loading: PropTypes.bool,
+  padding: PropTypes.number.isRequired,
+  outerPadding: PropTypes.number.isRequired,
+  chartHeight: PropTypes.number.isRequired,
+  chartWidth: PropTypes.number.isRequired,
+  xScale: PropTypes.any,
+  yScale: PropTypes.any,
+  status: PropTypes.string
 }
 
 export default ColorView

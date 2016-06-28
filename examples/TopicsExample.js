@@ -11,7 +11,7 @@ const hTop = 60 * (20 + 15)
 
 // when cursor over bar it spits out data
 const toolTipFunction = (tooltipData) => {
-  console.log('toolFData', tooltipData)
+  // console.log('toolFData', tooltipData)
   let d = tooltipData
   var toolTip =
     '<span class="title">' + d.label + '</span>' +
@@ -85,7 +85,6 @@ class TopicsContainer extends React.Component {
       data: [],
       loading: true,
       status: '',
-      topArray: [],
       clickArray: []
     }
     // this.prefixes = prefixes
@@ -96,15 +95,9 @@ class TopicsContainer extends React.Component {
     this.onClick = this._onBarClick.bind(this)
   }
   _onBarClick (toggleList) {
-    let list = this.props.colorDomain
-    console.log('toggleList', toggleList)
-    list = list.filter((elem, index) => {
-      // console.log('filterInd', toggleList[index])
-      return toggleList[elem] === true
-    })
-    console.log('selectedList', list)
-    console.log('loadingStatus', this.state.loading)
-    this.setState({topArray: list, clickArray: toggleList}, () => {
+    // takes toggle list and updates clickArray state
+    // console.log('toggleList', toggleList)
+    this.setState({clickArray: toggleList}, () => {
       this.refs.updateChart.forceUpdate()
       this.refs.updateChart2.forceUpdate()
     })
@@ -113,17 +106,14 @@ class TopicsContainer extends React.Component {
     // console.log('topicData', topicData)
   }
   componentDidMount () {
-    // let setClickArr = new Array(this.props.colorDomain.length).fill(true)
     let setClickArr = {}
     for (let i = 0; i < this.props.colorDomain.length; i++) {
       setClickArr[this.props.colorDomain[i]] = true
     }
-    // console.log('setClickArr', setClickArr)
     this.setState({clickArray: setClickArr})
     this.fetchData(this.props)
   }
   shouldComponentUpdate (nextProps, nextState) {
-    console.log('here')
     // this.fetchData(nextProps)
     // return nextState.loading !== this.state.loading
     return true
@@ -131,7 +121,6 @@ class TopicsContainer extends React.Component {
   componentWillReceiveProps (nextProps) {
     // this.fetchData(this.props)
     this.setState({loading: true})
-    console.log('sCU')
     return true
   }
   fetchData (nextProps) {
@@ -141,51 +130,33 @@ class TopicsContainer extends React.Component {
     // if the data didn't go beyond this ... loading wouldn't be set to false
     this.setState({data: allData, loading: false, status: 'OK'})
   }
-  getStuff () {
-    console.log('gettingSTUFF')
+  render () {
+    let {className, ...props} = this.props
     return (
-      <div className={'row ' + this.props.className}>
-        <div className='row col-md-12'>
-          <Chart ref='updateChart2'{...this.props} {...this.state} tipFunction={this.toolTipFunction} yAxis={false} xAxis={false} xScaleType='linear' height={300}>
-            <ColorView {...this.props} clickArray={this.state.clickArray} ref='colorView' onBarClick={this.onClick} />
-          </Chart>
-        </div>
-        <div className='row col-md-12'>
-          <Chart ref='updateChart' {...this.props} {...this.state} topArray={this.state.topArray} tipFunction={this.toolTipFunction} yAxis={false} xAxis={false} height={hTop}>
-            <TopicFlow {...this.props} clickArray={this.state.clickArray} topArray={this.state.topArray} colorView={this.refs.colorView} onBarClick={this.onClick} />
-          </Chart>
-        </div>
+      <div className={className}>
+        <Chart className='col-md-2' ref='updateChart2'{...props} {...this.state} tipFunction={this.toolTipFunction} yAxis={false} xAxis={false} xScaleType='linear' height={600}>
+          <ColorView className='col-md-2' {...props} clickArray={this.state.clickArray} ref='colorView' onBarClick={this.onClick} />
+        </Chart>
+        <Chart className='col-md-10' ref='updateChart' {...props} {...this.state} tipFunction={this.toolTipFunction} yAxis={false} xAxis={false} height={hTop}>
+          <TopicFlow className='col-md-10' {...props} clickArray={this.state.clickArray} colorView={this.refs.colorView} onBarClick={this.onClick} />
+        </Chart>
       </div>
     )
-  }
-  render () {
-    console.log('renderTopicsContainerData: ', this.state.data)
-    console.log('UPDATING!!!!')
-    console.log(this.state.topArray)
-    return this.getStuff()
   }
 }
 
 TopicsContainer.defaultProps = {
   url: '',
-  endpoint: '',
-  filterType: 'selectedFilter',
   height: 200,
   numTData: nData,
-  numBins: 10,
-  colorDomain: prefixes
+  colorDomain: prefixes,
+  className: 'row'
 }
 TopicsContainer.propTypes = {
   className: PropTypes.string,
-  endpoint: PropTypes.string,
-  filterField: PropTypes.string,
-  filterType: PropTypes.string.isRequired,
   height: PropTypes.number.isRequired,
   numTData: PropTypes.number,
-  numBins: PropTypes.number,
   url: PropTypes.string,
-  params: PropTypes.object.isRequired,
-  updateFilter: PropTypes.func.isRequired,
   colorDomain: PropTypes.array
 }
 
