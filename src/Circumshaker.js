@@ -31,7 +31,7 @@ class Circumshaker extends React.Component {
       graph.links = []
 
       // Helper to generate graph's links and nodes
-      const generateGraph = (data, depth, parent) => {
+      const generateGraph = (data, depth = 0, parent = null) => {
         // Create node
         // TODO: Used some passed down prop to determine key, value used
         let node = (depth !== 0)
@@ -79,7 +79,7 @@ class Circumshaker extends React.Component {
       }
 
       // Populate graph
-      generateGraph(nextProps.data, 0, null)
+      generateGraph(nextProps.data)
 
       // Sort nodes and set parents to null
       graph.nodes
@@ -150,15 +150,6 @@ class Circumshaker extends React.Component {
       this.radius = d3.min([nextProps.chartWidth, nextProps.chartHeight]) /
         (this.depth) / 2
 
-      // Create scale that determines node size
-      this.nodeSizeScale
-        .range([nextProps.nodeMinSize, nextProps.nodeMaxSize])
-        .domain(d3.extent(this.graph.nodes, (d) => {
-          return this.graph.links.filter((g) => {
-            return g.source === d || g.target === d
-          }).length
-        }))
-
       // Determine properties used for each node during drawing
       // Properties determined are as follows
       // (x, y) - coordinate of where to palce node
@@ -204,16 +195,33 @@ class Circumshaker extends React.Component {
         let r = this.radius * d.depth
         d.x += r * Math.cos(d.degree * (Math.PI / 180))
         d.y += r * Math.sin(d.degree * (Math.PI / 180))
-
-        d.radius = this.nodeSizeScale(graph.links.filter((g) => {
-          return g.source === d || g.target === d
-        }).length)
       })
+
+      // Find max node size if not predefined
+      let maxSize = nextProps.nodeMaxSize !== null
+      ? nextProps.nodeMaxSize
+      : graph.nodes.reduce((prev, curr) => {
+        let r = this.radius * curr.depth
+        let theta = curr.startAngle > curr.degree
+          ? curr.startAngle - curr.degree
+          : curr.degree - curr.startAngle
+        theta *= (Math.PI / 180)
+        let arcLength = r * theta
+        return prev < arcLength || arcLength === 0 ? prev : arcLength
+      }, Math.Infinity)
+
+      // Create scale that determines node size
+      this.nodeSizeScale
+        .range([nextProps.nodeMinSize, maxSize])
+        .domain(d3.extent(this.graph.nodes, (d) => {
+          return this.graph.links.filter((g) => {
+            return g.source === d || g.target === d
+          }).length
+        }))
     }
   }
 
   onClick (event) {
-    // Call this to remove tooltip
     this.props.onClick(event)
   }
 
@@ -317,7 +325,9 @@ class Circumshaker extends React.Component {
             onMouseLeave: this.onLeave,
             className: 'node',
             key: i,
-            r: d.radius,
+            r: this.nodeSizeScale(this.graph.links.filter((g) => {
+              return g.source === d || g.target === d
+            }).length),
             cx: d.x,
             cy: d.y
           }
@@ -362,7 +372,7 @@ class Circumshaker extends React.Component {
 
 Circumshaker.defaultProps = {
   nodeMinSize: 8,
-  nodeMaxSize: 20,
+  nodeMaxSize: null,
   maxDepth: 3,
   labelField: 'label',
   chartHeight: 0,
