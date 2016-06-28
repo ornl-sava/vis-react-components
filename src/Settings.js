@@ -139,7 +139,7 @@ class Settings extends React.Component {
 Settings.defaultProps = {
   settings: {},
   chart: null,
-  icon: 'icono-gear'
+  icon: 'fa fa-cogs'
 }
 
 Settings.propTypes = {
