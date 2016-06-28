@@ -5,32 +5,32 @@ export const histogramData = [
     name: 'One',
     type: 'one',
     bins: [
-      {x: 'A', y: 600},
-      {x: 'B', y: 450},
-      {x: 'C', y: 130},
-      {x: 'D', y: 900},
-      {x: 'E', y: 220},
-      {x: 'F', y: 690},
-      {x: 'G', y: 415},
-      {x: 'H', y: 105},
-      {x: 'I', y: 760},
-      {x: 'J', y: 300}
+      {key: 'A', count: 600},
+      {key: 'B', count: 450},
+      {key: 'C', count: 130},
+      {key: 'D', count: 900},
+      {key: 'E', count: 220},
+      {key: 'F', count: 690},
+      {key: 'G', count: 415},
+      {key: 'H', count: 105},
+      {key: 'I', count: 760},
+      {key: 'J', count: 300}
     ]
   },
   {
     name: 'Two',
     type: 'two',
     bins: [
-      {x: 'A', y: 200},
-      {x: 'B', y: 150},
-      {x: 'C', y: 10},
-      {x: 'D', y: 300},
-      {x: 'E', y: 200},
-      {x: 'F', y: 0},
-      {x: 'G', y: 285},
-      {x: 'H', y: 88},
-      {x: 'I', y: 580},
-      {x: 'J', y: 20}
+      {key: 'A', count: 200},
+      {key: 'B', count: 150},
+      {key: 'C', count: 10},
+      {key: 'D', count: 300},
+      {key: 'E', count: 200},
+      {key: 'F', count: 0},
+      {key: 'G', count: 285},
+      {key: 'H', count: 88},
+      {key: 'I', count: 580},
+      {key: 'J', count: 20}
     ]
   }
 ]

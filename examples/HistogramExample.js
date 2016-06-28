@@ -112,12 +112,12 @@ class HistogramExample extends React.Component {
     return (
       <div>
         <div>
-          <Chart ref='chart' title='Histogram' width={800} height={200} data={histogramData} {...this.state} settings={this.settings} tipFunction={toolTipFunction}>
-            <Histogram padding={0.0} outerPadding={0.0} addOverlay />
+          <Chart title='Histogram - Layered bars based on data order' width={800} height={200} data={histogramData} {...this.state} settings={this.settings} tipFunction={toolTipFunction}>
+            <Histogram padding={0.0} outerPadding={0.0} addOverlay xAccessor='key'yAccessor='count' />
           </Chart>
         </div>
         <div>
-          <Chart title='Stacked Histogram' width={800} height={200} sortBy={'y'} sortOrder={'Ascending'} data={stackedHistogramData} tipFunction={toolTipFunction}>
+          <Chart title='Stacked Histogram - Stacked bars based on data order' width={800} height={200} sortBy={'y'} sortOrder={'Ascending'} data={stackedHistogramData} tipFunction={toolTipFunction}>
             <Histogram type='stacked' addOverlay />
           </Chart>
         </div>
