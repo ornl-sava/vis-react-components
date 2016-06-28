@@ -169,7 +169,7 @@ class ColorView extends React.Component {
     /* this.props.yScale = d3.scale.ordinal()
     this.props.yScale.domain = rData.length
     this.props.yScale.rangeRoundBands([0, props.chartHeight])*/
-    let barWidth = props.chartWidth * 0.4
+    let barWidth = props.chartWidth * 0.9
     let barHeight = props.yScale(1)
     // checking if ordinal or not
     if (typeof props.xScale.rangePoints === 'function') {
@@ -182,7 +182,7 @@ class ColorView extends React.Component {
         data[0] = 'EMPTY'
       }
       let posY = this.props.yScale(index)
-      let posX = props.xScale(0.2)
+      let posX = (props.chartWidth - barWidth) / 2
       let cName = data + '-' + index.toString()
       let color = '#ecf2f9'
       if (this.props.clickArray[data]) {

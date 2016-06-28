@@ -216,6 +216,7 @@ class TopicFlow extends React.Component {
     for (let i = 0; i < this.barData.length; i++) {
       let key = 'bar-' + i
       let nData = []
+      // console.log('topSel', this.state.selectedTopics)
       if (this.state.selectedTopics[0] != null) {
         if (this.state.selectedTopics.toString() === this.barData[i].data[0].toString()) {
           nData = JSON.parse(JSON.stringify(this.barData[i]))

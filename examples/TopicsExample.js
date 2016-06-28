@@ -143,18 +143,16 @@ class TopicsContainer extends React.Component {
   }
   getStuff () {
     console.log('gettingSTUFF')
+    let {className, ...props} = this.props
+    console.log('cName', className)
     return (
-      <div className={'row ' + this.props.className}>
-        <div className='row col-md-12'>
-          <Chart ref='updateChart2'{...this.props} {...this.state} tipFunction={this.toolTipFunction} yAxis={false} xAxis={false} xScaleType='linear' height={300}>
-            <ColorView {...this.props} clickArray={this.state.clickArray} ref='colorView' onBarClick={this.onClick} />
-          </Chart>
-        </div>
-        <div className='row col-md-12'>
-          <Chart ref='updateChart' {...this.props} {...this.state} topArray={this.state.topArray} tipFunction={this.toolTipFunction} yAxis={false} xAxis={false} height={hTop}>
-            <TopicFlow {...this.props} clickArray={this.state.clickArray} topArray={this.state.topArray} colorView={this.refs.colorView} onBarClick={this.onClick} />
-          </Chart>
-        </div>
+      <div className={className}>
+        <Chart className='col-md-2' ref='updateChart2'{...props} {...this.state} tipFunction={this.toolTipFunction} yAxis={false} xAxis={false} xScaleType='linear' height={600}>
+          <ColorView className='col-md-2' {...props} clickArray={this.state.clickArray} ref='colorView' onBarClick={this.onClick} />
+        </Chart>
+        <Chart className='col-md-10' ref='updateChart' {...props} {...this.state} topArray={this.state.topArray} tipFunction={this.toolTipFunction} yAxis={false} xAxis={false} height={hTop}>
+          <TopicFlow className='col-md-10' {...props} clickArray={this.state.clickArray} topArray={this.state.topArray} colorView={this.refs.colorView} onBarClick={this.onClick} />
+        </Chart>
       </div>
     )
   }
@@ -173,7 +171,8 @@ TopicsContainer.defaultProps = {
   height: 200,
   numTData: nData,
   numBins: 10,
-  colorDomain: prefixes
+  colorDomain: prefixes,
+  className: 'row'
 }
 TopicsContainer.propTypes = {
   className: PropTypes.string,
