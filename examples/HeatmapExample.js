@@ -19,7 +19,6 @@ const toolTipFunction1 = (d) => {
 }
 
 const chartProps1 = {
-  className: 'col-lg-3',
   margin: {top: 15, right: 15, bottom: 50, left: 110},
   width: 800,
   height: 300,
@@ -75,7 +74,6 @@ const toolTipFunction2 = (d) => {
 }
 
 const chartProps2 = {
-  className: 'col-lg-3',
   margin: {top: 15, right: 15, bottom: 50, left: 110},
   width: 800,
   height: 300,
