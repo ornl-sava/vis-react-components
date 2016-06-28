@@ -3,8 +3,8 @@ import d3 from 'd3'
 
 import { Chart, Heatmap } from '../src'
 
-import exampleData from './data/heatmap.json'
-let data = exampleData.data
+// import exampleData from './data/heatmap.json'
+import { ordinalHeatmapData, linearHeatmapData } from './data/exampleData'
 
 const toolTipFunction = (d) => {
   let toolTip = '<span> No Data </span>'
@@ -18,73 +18,93 @@ const toolTipFunction = (d) => {
   return toolTip
 }
 
-// Setup custom tick values to be used
-let yTickValues = []
-data.forEach((d) => {
-  yTickValues.push(d.key_as_string)
-})
-
-// NOTE: Padding with empty data to keep heatmap more generic
-let numBins = 10
-if (data.length < numBins) {
-  let n = data.length
-  for (let i = n; i < numBins; i++) {
-    data.push({
-      bins: [],
-      key: ' '.repeat(i),
-      key_as_string: ' '.repeat(i),
-      doc_count: 0
-    })
-  }
-}
-
-// NOTE: Chart specific props (need specific x/y axis setup)
-const chartProps = {
+const chartProps1 = {
   className: 'col-lg-3',
   margin: {top: 15, right: 15, bottom: 50, left: 110},
   width: 800,
   height: 300,
-  data: data,
-  xScaleType: 'temporal',
+  data: ordinalHeatmapData,
+  xScaleType: 'linear',
   yScaleType: 'ordinalBand',
   yAxis: {
     type: 'y',
-    tickValues: yTickValues,
     orient: 'left'
   },
   xAxis: {
     type: 'x',
-    tickCount: data[0].bins.length,
-    tickFormat: (d, i) => {
-      if (i === 1 ||
-          i === data[0].bins.length ||
-          i === Math.floor(data[0].bins.length / 2) + 1) {
-        let timeFormat = d3.time.format.utc('%H:%M')
-        return timeFormat(d)
-      } else {
-        return ''
-      }
-    },
+    tickCount: ordinalHeatmapData[0].bins.length,
     orient: 'bottom'
   },
   legend: true
 }
 
-// NOTE: These are props specific to heatmap container (could be sneakily passed down as chart props too)
-const heatmapProps = {
-  labelField: 'key_as_string',
-  xKeyField: 'key',
-  xValueField: 'doc_count',
-  yKeyField: 'key_as_string',
-  yValueField: 'doc_count'
+const heatmapProps1 = {
+  labelField: 'key',
+  numColorCat: 17
+}
+
+// Setup custom tick values to be used
+// let yTickValues = []
+// linearHeatmapData.forEach((d) => {
+//   yTickValues.push(d.key)
+// })
+
+// NOTE: Padding wlinearHeatmapDataith empty data to keep heatmap more generic
+// let numBins = 10
+// if (linearHeatmapData.length < numBins) {
+//   let n = linearHeatmapData.length
+//   for (let i = n; i < numBins; i++) {
+//     linearHeatmapData.push({
+//       bins: [],
+//       key: ' '.repeat(i),
+//       value: 0
+//     })
+//   }
+// }
+
+const chartProps2 = {
+  className: 'col-lg-3',
+  margin: {top: 15, right: 15, bottom: 50, left: 110},
+  width: 800,
+  height: 300,
+  data: linearHeatmapData,
+  xScaleType: 'temporal',
+  yScaleType: 'linear',
+  yAxis: {
+    type: 'y',
+    tickCount: linearHeatmapData[0].bins.length,
+    orient: 'left'
+  },
+  xAxis: {
+    type: 'x',
+    tickCount: linearHeatmapData[0].bins.length,
+    orient: 'bottom'
+  },
+  legend: true
+}
+
+const heatmapProps2 = {
+  labelField: 'key',
+  yAccessor: {
+    key: 'key',
+    value: 'key'
+  },
+  numColorCat: 17,
+  maxColor: '#7C9B27',
+  minColor: '#F1F5E9'
 }
 
 class HeatmapExample extends React.Component {
   render () {
     return (
-      <Chart {...chartProps} tipFunction={toolTipFunction}>
-        <Heatmap {...heatmapProps} />
-      </Chart>
+      <div>
+        <Chart {...chartProps1} tipFunction={toolTipFunction}>
+          <Heatmap {...heatmapProps1} />
+        </Chart>
+        <Chart {...chartProps2} tipFunction={toolTipFunction}>
+          <Heatmap {...heatmapProps2} />
+        </Chart>
+      </div>
     )
   }
 }
