@@ -6,7 +6,7 @@ import { Chart, Heatmap } from '../src'
 // import exampleData from './data/heatmap.json'
 import { ordinalHeatmapData, linearHeatmapData } from './data/exampleData'
 
-const toolTipFunction = (d) => {
+const toolTipFunction1 = (d) => {
   let toolTip = '<span> No Data </span>'
 
   if (d.value > 0) {
@@ -62,6 +62,18 @@ const heatmapProps1 = {
 //   }
 // }
 
+const toolTipFunction2 = (d) => {
+  let toolTip = '<span> No Data </span>'
+
+  if (d.value > 0) {
+    toolTip =
+      '<span class="title">' + new Date(+d.key) + '</span>' +
+      d3.format('n')(d.value)
+  }
+
+  return toolTip
+}
+
 const chartProps2 = {
   className: 'col-lg-3',
   margin: {top: 15, right: 15, bottom: 50, left: 110},
@@ -98,10 +110,10 @@ class HeatmapExample extends React.Component {
   render () {
     return (
       <div>
-        <Chart {...chartProps1} tipFunction={toolTipFunction}>
+        <Chart {...chartProps1} tipFunction={toolTipFunction1}>
           <Heatmap {...heatmapProps1} />
         </Chart>
-        <Chart {...chartProps2} tipFunction={toolTipFunction}>
+        <Chart {...chartProps2} tipFunction={toolTipFunction2}>
           <Heatmap {...heatmapProps2} />
         </Chart>
       </div>
