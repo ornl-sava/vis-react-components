@@ -34,7 +34,9 @@ class TextBar extends React.Component {
     if (align === 'middle') {
       xPos = this.props.width / 2
     } else if (align === 'end') {
-      xPos = this.props.width
+      xPos = this.props.width - 10
+    } else {
+      xPos = 10
     }
     return xPos
   }
@@ -61,7 +63,7 @@ class TextBar extends React.Component {
     return (
       <g>
         <Bar className={className + ' barTopic'} {...props} onClick={this.onClick} onEnter={this.onEnter} onLeave={this.onLeave} style={this.props.barStyle} />
-        <text className={this.props.className + ' text'} x={this.props.x + 10 + this.getTxtAlign()} y={this.props.y + this.props.height / 2} style={this.props.textStyle} onMouseEnter={this.onEnter} > {this.props.text} </text>)
+        <text className={this.props.className + ' text'} x={this.props.x + this.getTxtAlign()} y={this.props.y + this.props.height / 2} style={this.props.textStyle} onClick={this.onClick} onMouseEnter={this.onEnter} > {props.text} </text>)
       </g>
     )
   }

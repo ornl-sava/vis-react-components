@@ -58,7 +58,6 @@ class TopicFlow extends React.Component {
       console.log('probNoDataWillRProps')
       this.setState({dataUp: 1})
     }
-    console.log('sCU')
     return true
     // return nextProps.data.length !== this.props.data.length || nextProps.loading !== this.props.loading
   }
@@ -68,19 +67,14 @@ class TopicFlow extends React.Component {
   }
   componentWillReceiveProps (nextProps) {
     let xDomain = Object.keys(nextProps.data)
-    console.log(xDomain)
     this.props.xScale.domain(xDomain)
     this.props.yScale.domain([nextProps.maxTopics + 2, 0.00001])
     this.statArr = new Array(nextProps.data.length)
     for (let i = 0; i < nextProps.data.length; i++) {
       this.statArr[i] = new Array(nextProps.data[i].length)
     }
-    // console.log('statArr' + this.statArr)
     this.prefScale.domain(nextProps.colorDomain)
-    // console.log('topFlowPref', nextProps.colorDomain)
-    // console.log('nProps', nextProps)
     this.bins = this.initTopics(nextProps)
-    console.log('wRP', this.barData)
   }
   componentWillMount () {
     // console.log('willMountChartHeight', this.props.chartHeight)
@@ -154,7 +148,7 @@ class TopicFlow extends React.Component {
         let fontSize = 12
         // It seems like class name does not like :
         let cName = data[0].toString().split(/:|-/, 1) + '-' + i.toString()
-        // check to see if same topic in previous timeSteps
+        // checking to see if same topic in previous timeSteps
         let dataMatch = []
         if (index + 1 < props.data.length) {
           for (let k in props.data[index + 1]) {
@@ -211,12 +205,9 @@ class TopicFlow extends React.Component {
   }
   renderTopics () {
     let svgBins = []
-    let newData = JSON.parse(JSON.stringify(this.barData))
-    console.log(newData[1])
     for (let i = 0; i < this.barData.length; i++) {
       let key = 'bar-' + i
       let nData = []
-      // console.log('topSel', this.state.selectedTopics)
       if (this.state.selectedTopics[0] != null) {
         if (this.state.selectedTopics.toString() === this.barData[i].data[0].toString()) {
           nData = JSON.parse(JSON.stringify(this.barData[i]))
@@ -271,9 +262,6 @@ class TopicFlow extends React.Component {
   }
 
   render () {
-    // console.log('renderChartHeight', this.props.chartHeight)
-    // console.log('renderHeight', this.props.height)
-    console.log('dataLength', this.props.data.length)
     let renderEl = null
     if (this.props.data.length <= 0) {
       console.log('probably no data')
@@ -322,7 +310,7 @@ TopicFlow.propTypes = {
   colorDomain: PropTypes.array,
   colorScale: PropTypes.func,
   lineType: PropTypes.string.isRequired,
-  clickArray: PropTypes.array.isRequired
+  clickArray: PropTypes.object.isRequired
 }
 
 export default TopicFlow
