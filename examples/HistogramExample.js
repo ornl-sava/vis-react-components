@@ -113,7 +113,7 @@ class HistogramExample extends React.Component {
       <div>
         <div>
           <Chart ref='chart' title='Histogram' width={800} height={200} data={histogramData} {...this.state} settings={this.settings} tipFunction={toolTipFunction}>
-            <Histogram addOverlay />
+            <Histogram padding={0.0} outerPadding={0.0} addOverlay />
           </Chart>
         </div>
         <div>

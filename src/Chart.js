@@ -50,8 +50,10 @@ class Chart extends React.Component {
     } else if (scaleType === 'power') {
       scale = d3.scale.pow().exponent(0.5)
     } else {
+      scaleType = 'linear'
       scale = d3.scale.linear()
     }
+    scale.type = scaleType
     return scale
   }
 

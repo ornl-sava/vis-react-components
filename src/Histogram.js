@@ -14,7 +14,6 @@ class Histogram extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
-      xDomain: [],
       yDomain: [0.00001, 1]
     }
   }
