@@ -17,7 +17,9 @@ class Histogram extends React.Component {
     this.xDomain = []
     this.yDomain = [0.00001, 1]
 
-    this.updateDomain(props, this.state)
+    if (props.data.length > 0) {
+      this.updateDomain(props, this.state)
+    }
   }
   // Update the domain for the shared scale
   componentWillReceiveProps (nextProps) {
