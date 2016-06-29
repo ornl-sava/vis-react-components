@@ -25,7 +25,7 @@ class Heatmap extends React.Component {
       // Each bin should have matching x domain keys
       let xDomain = nextProps.xDomain
       if (xDomain.length === 0) {
-        // NOTE: Computing offset so proper xDomain is given
+        // NOTE: Computing offset so proper xDomain is given for time scales
         // Nth bin has a start time of it's key; so it's 'end time'
         // must be taken into consideration
         let offset = nextProps.data[0].bins[1][nextProps.xAccessor.key] -
@@ -34,17 +34,23 @@ class Heatmap extends React.Component {
           xDomain = nextProps.data[0].bins.map((d) => d[nextProps.xAccessor.key])
         } else {
           xDomain = d3.extent(nextProps.data[0].bins, (d) => d[nextProps.xAccessor.key])
+          xDomain[1] = xDomain[1] + offset
         }
-        xDomain[1] = xDomain[1] + offset
       }
 
       // If yDomain is not predefined
       let yDomain = nextProps.yDomain
       if (yDomain.length === 0) {
+        // NOTE: Computing offset so proper xDomain is given for time scales
+        // Nth bin has a start time of it's key; so it's 'end time'
+        // must be taken into consideration
+        let offset = nextProps.data[0][nextProps.yAccessor.key] -
+          nextProps.data[0][nextProps.yAccessor.key]
         if (nextProps.yScaleType === 'ordinalBand') {
           yDomain = nextProps.data.map((d) => d[nextProps.yAccessor.key])
         } else {
-          yDomain = [0, d3.max(nextProps.data, (d) => d[nextProps.yAccessor.key])]
+          yDomain = [0.000001, d3.max(nextProps.data, (d) => d[nextProps.yAccessor.key])]
+          yDomain[1] = yDomain[1] + offset
         }
       }
 
@@ -135,14 +141,18 @@ class Heatmap extends React.Component {
     return (
       <g className='heatmap'>
         {props.data.map((d, i) => {
+          let height = (i === 0) ? props.chartHeight : props.yScale(props.data[i - 1][props.yAccessor.key])
+          height -= props.yScale(d[props.yAccessor.key])
           return d.bins.map((e, j) => {
+            let width = (j + 1 < d.bins.length) ? props.xScale(d.bins[j + 1][props.xAccessor.key]) : props.chartWidth
+            width -= props.xScale(e[props.xAccessor.key])
             let rectProps = {
               'data-key': e[props.labelField],
               'data-value': e[props.xAccessor.value],
               'x': props.xScale(e[props.xAccessor.key]),
               'y': props.yScale(d[props.yAccessor.key]),
-              'width': props.chartWidth / d.bins.length,
-              'height': props.chartHeight / props.data.length,
+              'width': width,
+              'height': height,
               'fill': this.state.colorScale(e[props.xAccessor.value]),
               'onMouseEnter': this.onEnter,
               'onMouseLeave': this.onLeave,
