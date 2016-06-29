@@ -4,77 +4,88 @@ import d3 from 'd3'
 class Heatmap extends React.Component {
   constructor (props) {
     super(props)
-    this.state = {
-      colorScale: d3.scale.quantile(),
-      xDomain: this.props.xDomain,
-      yDomain: this.props.yDomain
-    }
+
+    this.colorScale = d3.scale.quantile()
+    this.xDomain = this.props.xDomain
+    this.yDomain = this.props.yDomain
 
     this.onClick = this.onClick.bind(this)
     this.onEnter = this.onEnter.bind(this)
     this.onLeave = this.onLeave.bind(this)
+    this.updateDomain = this.updateDomain.bind(this)
     this.renderLoadAnimation = this.renderLoadAnimation.bind(this)
     this.renderHeatmap = this.renderHeatmap.bind(this)
-  }
 
+    this.updateDomain(props, this.state)
+  }
   // Update the domain for the shared scale
   componentWillReceiveProps (nextProps) {
-    if (nextProps.data.length > 0 && nextProps.data[0].bins.length > 0) {
+    this.updateDomain(nextProps, this.state)
+  }
+
+  updateDomain (props, state) {
+    if (props.data.length > 0 && props.data[0].bins.length > 0) {
       // If xDomain is not predefined
       // NOTE: When determining domain for x the first bin is Used
       // Each bin should have matching x domain keys
-      let xDomain = nextProps.xDomain
+      let xDomain = props.xDomain
       if (xDomain.length === 0) {
-        // NOTE: Computing offset so proper xDomain is given
+        // NOTE: Computing offset so proper xDomain is given for time scales
         // Nth bin has a start time of it's key; so it's 'end time'
         // must be taken into consideration
-        let offset = nextProps.data[0].bins[1][nextProps.xAccessor.key] -
-          nextProps.data[0].bins[0][nextProps.xAccessor.key]
-        if (nextProps.xScaleType === 'ordinalBand') {
-          xDomain = nextProps.data[0].bins.map((d) => d[nextProps.xAccessor.key])
+        let offset = props.data[0].bins[1][props.xAccessor.key] -
+          props.data[0].bins[0][props.xAccessor.key]
+        if (props.xScaleType === 'ordinalBand') {
+          xDomain = props.data[0].bins.map((d) => d[props.xAccessor.key])
         } else {
-          xDomain = d3.extent(nextProps.data[0].bins, (d) => d[nextProps.xAccessor.key])
+          xDomain = d3.extent(props.data[0].bins, (d) => d[props.xAccessor.key])
+          xDomain[1] = xDomain[1] + offset
         }
-        xDomain[1] = xDomain[1] + offset
       }
 
       // If yDomain is not predefined
-      let yDomain = nextProps.yDomain
+      let yDomain = props.yDomain
       if (yDomain.length === 0) {
-        if (nextProps.yScaleType === 'ordinalBand') {
-          yDomain = nextProps.data.map((d) => d[nextProps.yAccessor.key])
+        // NOTE: Computing offset so proper xDomain is given for time scales
+        // Nth bin has a start time of it's key; so it's 'end time'
+        // must be taken into consideration
+        // let offset = props.data[1][props.yAccessor.key] -
+          // props.data[0][props.yAccessor.key]
+        if (props.yScaleType === 'ordinalBand') {
+          yDomain = props.data.map((d) => d[props.yAccessor.key])
         } else {
-          yDomain = [0, d3.max(nextProps.data, (d) => d[nextProps.yAccessor.key])]
+          yDomain = [0.000001, d3.max(props.data, (d) => d[props.yAccessor.key])]
+          // yDomain[1] = yDomain[1] + offset
         }
       }
 
-      // Update state and scale if domains are new
-      if (xDomain !== this.state.xDomain) {
+      // Update scale if domains are new
+      if (xDomain !== this.xDomain) {
         this.props.xScale.domain(xDomain)
-        this.setState({xDomain: xDomain})
+        this.xDomain = xDomain
       }
 
-      if (yDomain !== this.state.yDomain) {
+      if (yDomain !== this.yDomain) {
         this.props.yScale.domain(yDomain)
-        this.setState({yDomain: yDomain})
+        this.yDomain = yDomain
       }
 
       // Generate color scale
-      let yMax = nextProps.colorPerRow
-        ? d3.max(nextProps.data, (d, i) => {
-          return d3.max(d.bins, (e, j) => e[nextProps.xAccessor.value])
+      let yMax = props.colorPerRow
+        ? d3.max(props.data, (d, i) => {
+          return d3.max(d.bins, (e, j) => e[props.xAccessor.value])
         })
-        : d3.max(nextProps.data, (d, i) => d[nextProps.yAccessor.value])
+        : d3.max(props.data, (d, i) => d[props.yAccessor.value])
 
       let tempColorScale = d3.scale.linear()
         .domain([0, yMax])
-        .range([nextProps.minColor, nextProps.maxColor])
+        .range([props.minColor, props.maxColor])
         .interpolate(d3.interpolateHcl)
 
       let colorDomain = [0, 1]
-      let colorRange = [nextProps.minColor]
-      let colorDomainBand = yMax / (nextProps.numColorCat - 1)
-      for (var i = 2; i < nextProps.numColorCat + 1; i++) {
+      let colorRange = [props.minColor]
+      let colorDomainBand = yMax / (props.numColorCat - 1)
+      for (var i = 2; i < props.numColorCat + 1; i++) {
         let value = colorDomain[i - 1] + colorDomainBand
         if (i === 2) value--
         colorDomain.push(value)
@@ -84,24 +95,24 @@ class Heatmap extends React.Component {
       // NOTE: Alternate quantile color generation . . .
       // Generate scale to determine class for coloring
       // let tempColorScale = d3.scale.linear()
-      //   .domain([0, nextProps.numColorCat])
-      //   .range([nextProps.minColor, nextProps.maxColor])
+      //   .domain([0, props.numColorCat])
+      //   .range([props.minColor, props.maxColor])
       //   .interpolate(d3.interpolateHcl)
       //
       // let colorDomain = [0, 1]
-      // nextProps.data.forEach((d) => {
+      // props.data.forEach((d) => {
       //   d.bins.forEach((g) => {
-      //     let datum = g[nextProps.yAccessor.value]
+      //     let datum = g[props.yAccessor.value]
       //     if (datum > 0) colorDomain.push(datum)
       //   })
       // })
       //
       // let colorRange = []
-      // d3.range(nextProps.numColorCat).map((i) => {
+      // d3.range(props.numColorCat).map((i) => {
       //   colorRange.push(tempColorScale(i))
       // })
 
-      this.state.colorScale
+      this.colorScale
         .domain(colorDomain)
         .range(colorRange)
     }
@@ -135,15 +146,19 @@ class Heatmap extends React.Component {
     return (
       <g className='heatmap'>
         {props.data.map((d, i) => {
+          let height = (i === 0) ? props.chartHeight : props.yScale(props.data[i - 1][props.yAccessor.key])
+          height -= props.yScale(d[props.yAccessor.key])
           return d.bins.map((e, j) => {
+            let width = (j + 1 < d.bins.length) ? props.xScale(d.bins[j + 1][props.xAccessor.key]) : props.chartWidth
+            width -= props.xScale(e[props.xAccessor.key])
             let rectProps = {
               'data-key': e[props.labelField],
               'data-value': e[props.xAccessor.value],
               'x': props.xScale(e[props.xAccessor.key]),
               'y': props.yScale(d[props.yAccessor.key]),
-              'width': props.chartWidth / d.bins.length,
-              'height': props.chartHeight / props.data.length,
-              'fill': this.state.colorScale(e[props.xAccessor.value]),
+              'width': width,
+              'height': height,
+              'fill': this.colorScale(e[props.xAccessor.value]),
               'onMouseEnter': this.onEnter,
               'onMouseLeave': this.onLeave,
               'onClick': this.onClick
@@ -181,7 +196,7 @@ class Heatmap extends React.Component {
   render () {
     let renderEl = null
     renderEl = this.renderLoadAnimation(this.props)
-    if (this.props.data.length > 0) {
+    if (this.props.data.length > 0 && this.props.chartWidth !== 0) {
       renderEl = this.renderHeatmap(this.props)
     }
     return renderEl

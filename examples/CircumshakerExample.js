@@ -127,7 +127,6 @@ const toolTipFunction = (d) => {
 
 const chartProps = {
   tipFunction: toolTipFunction,
-  width: 800,
   height: 800,
   xAxis: false,
   yAxis: false,

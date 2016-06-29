@@ -363,7 +363,7 @@ class Circumshaker extends React.Component {
   render () {
     let renderEl = null
     renderEl = this.renderLoadAnimation()
-    if (Object.keys(this.props.data).length > 0) {
+    if (Object.keys(this.props.data).length > 0 && this.props.chartWidth !== 0) {
       renderEl = this.renderCircumshaker()
     }
     return renderEl

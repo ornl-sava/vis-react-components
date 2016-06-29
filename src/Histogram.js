@@ -13,8 +13,10 @@ const transpose = (a) => {
 class Histogram extends React.Component {
   constructor (props) {
     super(props)
-    this.state = {
-      yDomain: [0.00001, 1]
+    this.yDomain = [0.00001, 1]
+
+    if (props.data.length > 0) {
+      this.updateDomain(props, this.state)
     }
   }
   // Update the domain for the shared scale
@@ -43,10 +45,14 @@ class Histogram extends React.Component {
     let xDomain = domainData[0].bins.map((bin) => bin[props.xAccessor])
 
     if (yMax !== this.props.yScale.domain()[1]) {
-      this.props.yScale.domain([state.yDomain[0], yMax])
-      this.setState({yDomain: [state.yDomain[0], yMax]})
+      this.props.yScale.domain([this.yDomain[0], yMax])
+      this.yDomain = [this.yDomain[0], yMax]
     }
     if (xDomain[0] instanceof Date) {
+      let interval = xDomain[1].getTime() - xDomain[0].getTime()
+      // Add one more interval to the domain so all bins can be rendered property
+      xDomain.push(new Date(xDomain[xDomain.length - 1].getTime() + interval))
+      console.log(xDomain[xDomain.length - 1])
       this.props.xScale.domain([
         xDomain[0],
         xDomain[xDomain.length - 1]
@@ -227,7 +233,7 @@ class Histogram extends React.Component {
   render () {
     let renderEl = null
     renderEl = this.renderLoadAnimation(this.props)
-    if (this.props.data.length > 0) {
+    if (this.props.data.length > 0 && this.props.chartWidth !== 0) {
       renderEl = this.renderHistogram(this.props)
     }
     return renderEl
