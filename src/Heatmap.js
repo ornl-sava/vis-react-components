@@ -135,9 +135,6 @@ class Heatmap extends React.Component {
     return (
       <g className='heatmap'>
         {props.data.map((d, i) => {
-          if (props.yScaleType === 'linear') {
-            console.log(props.yScale(d[props.yAccessor.key]), d)
-          }
           return d.bins.map((e, j) => {
             let rectProps = {
               'data-key': e[props.labelField],

@@ -14,8 +14,6 @@ const toolTipFunction = (d) => {
 
 class ChoroplethExample extends React.Component {
   render () {
-    console.log(choroplethData)
-
     map.objects.countries.geometries.forEach((d, i) => {
       if (d.id === 'ATA') {
         map.objects.countries.geometries.splice(i, 1)
