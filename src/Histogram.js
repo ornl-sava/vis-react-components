@@ -133,7 +133,6 @@ class Histogram extends React.Component {
       overlayObj.tooltipData.yPos = barData[i][0][props.yAccessor]
       overlayObj.tooltipData.xPos = props.xScale(barData[i][0].data[props.xAccessor])
       overlayObj.height = props.yScale.range()[0]
-      console.log(overlayObj)
       barData[i].push(overlayObj)
     }
   }
