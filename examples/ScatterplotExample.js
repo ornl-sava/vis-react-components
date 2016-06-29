@@ -9,31 +9,35 @@ const commonProps = {
 }
 
 const chartProps1 = {
-  className: 'scatter1',
-  xScaleType: 'linear',
-  yScaleType: 'ordinalPoint',
-  data: linearOrdinalScatterplotData
-}
-
-const chartProps2 = {
+  title: 'Linear over Linear',
   className: 'scatter2',
   xScaleType: 'linear',
   yScaleType: 'linear',
   data: linearLinearScatterplotData
 }
 
-const chartProps3 = {
-  className: 'scatter3',
-  xScaleType: 'ordinalPoint',
-  yScaleType: 'linear',
-  data: ordinalLinearScatterplotData
+const chartProps2 = {
+  title: 'Linear over Ordinal',
+  className: 'scatter1',
+  xScaleType: 'linear',
+  yScaleType: 'ordinalPoint',
+  data: linearOrdinalScatterplotData
 }
 
-const chartProps4 = {
+const chartProps3 = {
+  title: 'Ordinal over Ordinal',
   className: 'scatter4',
   xScaleType: 'ordinalPoint',
   yScaleType: 'ordinalPoint',
   data: ordinalOrdinalScatterplotData
+}
+
+const chartProps4 = {
+  title: 'Ordinal over Linear',
+  className: 'scatter3',
+  xScaleType: 'ordinalPoint',
+  yScaleType: 'linear',
+  data: ordinalLinearScatterplotData
 }
 
 class ScatterplotExample extends React.Component {

@@ -1436,11 +1436,11 @@ export const linearOrdinalHeatmapData = [
 export const ordinalLinearScatterplotData = [
   {
     'x': 'a',
-    'y': 1
+    'y': 5
   },
   {
     'x': 'b',
-    'y': 2
+    'y': 4
   },
   {
     'x': 'c',
@@ -1448,22 +1448,22 @@ export const ordinalLinearScatterplotData = [
   },
   {
     'x': 'd',
-    'y': 4
+    'y': 2
   },
   {
     'x': 'e',
-    'y': 5
+    'y': 1
   }
 ]
 
 export const linearLinearScatterplotData = [
   {
     'x': 1,
-    'y': 1
+    'y': 5
   },
   {
     'x': 2,
-    'y': 2
+    'y': 4
   },
   {
     'x': 3,
@@ -1471,11 +1471,11 @@ export const linearLinearScatterplotData = [
   },
   {
     'x': 4,
-    'y': 4
+    'y': 2
   },
   {
     'x': 5,
-    'y': 5
+    'y': 1
   }
 ]
 

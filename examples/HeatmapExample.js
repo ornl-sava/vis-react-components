@@ -3,7 +3,6 @@ import d3 from 'd3'
 
 import { Chart, Heatmap } from '../src'
 
-// import exampleData from './data/heatmap.json'
 import { ordinalLinearHeatmapData, linearTemporalHeatmapData, ordinalOrdinalHeatmapData, linearOrdinalHeatmapData } from './data/exampleData'
 
 const toolTipFunction1 = (d) => {
@@ -20,7 +19,7 @@ const toolTipFunction1 = (d) => {
 
 const toolTipFunction2 = (d) => {
   let toolTip = '<span> No Data </span>'
-  let timeFormat = d3.time.format('%H:%M')
+  let timeFormat = d3.time.format('%c')
   if (d.value > 0) {
     toolTip =
       '<span class="title">' + timeFormat(new Date(+d.key)) + '</span>' +
@@ -37,6 +36,7 @@ const chartCommon = {
 }
 
 const chartProps1 = {
+  title: 'Linear over Ordinal',
   data: ordinalLinearHeatmapData,
   xScaleType: 'linear',
   yScaleType: 'ordinalBand',
@@ -55,8 +55,9 @@ const heatmapProps1 = {
   labelField: 'key',
   numColorCat: 17
 }
-
+console.log(linearTemporalHeatmapData)
 const chartProps2 = {
+  title: 'Temporal over Linear',
   data: linearTemporalHeatmapData,
   xScaleType: 'temporal',
   yScaleType: 'linear',
@@ -67,7 +68,12 @@ const chartProps2 = {
   },
   xAxis: {
     type: 'x',
-    tickCount: linearTemporalHeatmapData[0].bins.length,
+    tickCount: linearTemporalHeatmapData[0].bins.length + 1,
+    tickValues: linearTemporalHeatmapData[0].bins.map((d) => new Date(d.key)),
+    tickFormat: (d, i) => {
+      let timeFormat = d3.time.format('%X')
+      return timeFormat(d)
+    },
     orient: 'bottom'
   }
 }
@@ -80,6 +86,7 @@ const heatmapProps2 = {
 }
 
 const chartProps3 = {
+  title: 'Ordinal over Ordinal',
   data: ordinalOrdinalHeatmapData,
   xScaleType: 'ordinalBand',
   yScaleType: 'ordinalBand'
@@ -97,6 +104,7 @@ const heatmapProps3 = {
 }
 
 const chartProps4 = {
+  title: 'Ordinal over Linear',
   data: linearOrdinalHeatmapData,
   xScaleType: 'ordinalBand',
   yScaleType: 'linear',
