@@ -13,8 +13,6 @@ const transpose = (a) => {
 class Histogram extends React.Component {
   constructor (props) {
     super(props)
-
-    this.xDomain = []
     this.yDomain = [0.00001, 1]
 
     if (props.data.length > 0) {
@@ -47,7 +45,7 @@ class Histogram extends React.Component {
     }
 
     let yMax = this.getMaxCount(props.data) * 1.1
-    let xDomain = domainData[0].bins.map((bin) => bin.x)
+    let xDomain = domainData[0].bins.map((bin) => bin[props.xAccessor])
 
     if (yMax !== this.props.yScale.domain()[1]) {
       this.props.yScale.domain([this.yDomain[0], yMax])
@@ -75,21 +73,21 @@ class Histogram extends React.Component {
       let i = 0
       if (props.sortBy === 'x') {
         i = props.sortOrder === 'Ascending'
-          ? d3.ascending(a.x, b.x)
-          : d3.descending(a.x, b.x)
+          ? d3.ascending(a[props.xAccessor], b[props.xAccessor])
+          : d3.descending(a[props.xAccessor], b[props.xAccessor])
       } else {
         let useBin = (props.sortTypes.indexOf(data[0].type) > -1 || props.sortTypes.length === 0)
-        let ya = useBin ? a.y : 0
-        let yb = useBin ? b.y : 0
+        let ya = useBin ? a[props.yAccessor] : 0
+        let yb = useBin ? b[props.yAccessor] : 0
         for (let j = 1; j < data.length; j++) {
           let useBin = (props.sortTypes.indexOf(data[j].type) > -1 || props.sortTypes.length === 0)
           if (useBin) {
             data[j].bins.forEach((d, i) => {
-              if (d.x === a.x) {
-                ya += d.y
+              if (d[props.xAccessor] === a[props.xAccessor]) {
+                ya += d[props.yAccessor]
               }
-              if (d.x === b.x) {
-                yb += d.y
+              if (d[props.xAccessor] === b[props.xAccessor]) {
+                yb += d[props.yAccessor]
               }
             })
           }
@@ -112,42 +110,45 @@ class Histogram extends React.Component {
   }
   getMaxCount (dataArr) {
     let max = 0
-    if (this.props.type === 'stacked') {
-      let x = dataArr.reduce((prev, datum, histogramIndex) => {
+    let props = this.props
+    if (props.type === 'stacked') {
+      let xArr = dataArr.reduce((prev, datum, histogramIndex) => {
         if (histogramIndex > 0) {
           datum.bins.map((bin, index) => {
-            prev[index] += bin.y
+            prev[index] += bin[props.yAccessor]
           })
         }
         return prev
-      }, dataArr[0].bins.map((bin) => bin.y))
-      max = Math.max(...x)
+      }, dataArr[0].bins.map((bin) => bin[props.yAccessor]))
+      max = Math.max(...xArr)
     } else {
       max = dataArr.reduce((oldMax, datum) => {
-        let localMax = Math.max(...datum.bins.map((bin) => bin.y))
+        let localMax = Math.max(...datum.bins.map((bin) => bin[props.yAccessor]))
         return localMax > oldMax ? localMax : oldMax
       }, 0)
     }
     return max
   }
   addOverlay (barData) {
+    let props = this.props
     for (let i = 0; i < barData.length; i++) {
       let overlayObj = Object.assign({}, barData[i][0])
       overlayObj.className = '_overlay'
-      overlayObj.key = overlayObj.className + '-' + overlayObj.data.x
-      overlayObj.y = 1
+      overlayObj.key = overlayObj.className + '-' + overlayObj.data[props.xAccessor]
+      overlayObj[props.yAccessor] = 1
       overlayObj.tooltipData = {}
-      overlayObj.tooltipData.label = barData[i][0].data.x
+      overlayObj.tooltipData.label = barData[i][0].data[props.xAccessor]
       overlayObj.tooltipData.stackNames = barData[i].reduce((prev, bar) => { return bar ? [bar.name].concat(prev) : [''].concat(prev) }, [])
-      overlayObj.tooltipData.stackCounts = barData[i].reduce((prev, bar) => { return bar ? [bar.data.y].concat(prev) : [0].concat(prev) }, [])
-      overlayObj.tooltipData.yPos = barData[i][0].y
-      overlayObj.tooltipData.xPos = this.props.xScale(barData[i][0].data.x)
-      overlayObj.height = this.props.yScale.range()[0]
+      overlayObj.tooltipData.stackCounts = barData[i].reduce((prev, bar) => { return bar ? [bar.data[props.yAccessor]].concat(prev) : [0].concat(prev) }, [])
+      overlayObj.tooltipData.yPos = barData[i][0][props.yAccessor]
+      overlayObj.tooltipData.xPos = props.xScale(barData[i][0].data[props.xAccessor])
+      overlayObj.height = props.yScale.range()[0]
       barData[i].push(overlayObj)
     }
   }
   buildABar (bin, name, type, height, width, y) {
-    let keyVal = type.toString() + '-' + bin.x.toString()
+    let props = this.props
+    let keyVal = type.toString() + '-' + bin[props.xAccessor].toString()
     return {
       name,
       className: bin.className ? type + ' ' + bin.className : type,
@@ -171,8 +172,8 @@ class Histogram extends React.Component {
 
     let barData = transpose(props.data.map((histogram, index) => {
       return histogram.bins.map((bin) => {
-        let scaledY = chartHeight - props.yScale(bin.y)
-        let barHeight = bin.y > 0 ? Math.max(Math.floor(scaledY), 5) : 0
+        let scaledY = chartHeight - props.yScale(bin[props.yAccessor])
+        let barHeight = bin[props.yAccessor] > 0 ? Math.max(Math.floor(scaledY), 5) : 0
         let yPos = chartHeight - barHeight
         return this.buildABar(bin, props.data[index].name, props.data[index].type, barHeight, barWidth, yPos)
       })
@@ -186,7 +187,7 @@ class Histogram extends React.Component {
         // If we are a stacked bar chart we need to reference the previously stored
         // calculation for 'y' in barData. Can't easily calculate this above
         if (props.type === 'stacked' && barIndex > 0 && data.className !== '_overlay') {
-          data.y = dataArr[barIndex - 1].y - data.height
+          data[props.yAccessor] = dataArr[barIndex - 1][props.yAccessor] - data.height
         }
         return (<Bar {...data} onClick={props.onBarClick} onEnter={props.onEnter} onLeave={props.onLeave} />)
         // return (<Bar {...data} onClick={props.onBarClick} />)
@@ -195,7 +196,7 @@ class Histogram extends React.Component {
 
     let svgBins = svgBars.map((bars, i) => {
       let yPos = 0
-      let xPos = props.xScale(barData[i][0].data.x)
+      let xPos = props.xScale(barData[i][0].data[props.xAccessor])
       if (xPos == null) { // also catches undefined
         xPos = 0
       }
@@ -254,6 +255,8 @@ Histogram.defaultProps = {
   loading: false,
   status: '',
   type: '',
+  xAccessor: 'x',
+  yAccessor: 'y',
   onBarClick: () => {},
   onEnter: () => {},
   onLeave: () => {}
@@ -285,7 +288,9 @@ Histogram.propTypes = {
   onLeave: PropTypes.func,
   status: PropTypes.string,
   type: PropTypes.string,
+  xAccessor: PropTypes.string.isRequired,
   xScale: PropTypes.any,
+  yAccessor: PropTypes.string.isRequired,
   yScale: PropTypes.any
 }
 
