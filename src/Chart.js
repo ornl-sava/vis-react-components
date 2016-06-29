@@ -164,7 +164,7 @@ class Chart extends React.Component {
               ? <Axis className='y axis' margin={margin} {...props.yAxis} data={props.data} scale={this.yScale} scaleType={props.yScaleType} {...this.state} />
               : undefined
             }
-            {props.legend
+            {props.legend && props.data.length > 0
               ? <Legend margin={margin} scaleAccessor={props.scaleAccessor} width={this.state.chartWidth} height={this.state.chartHeight} component={this.refs.child} />
               : undefined
             }

@@ -21,7 +21,7 @@ Object.byString = (o, s) => {
 
 class Legend extends React.Component {
   render () {
-    if (this.props.component === null) {
+    if (this.props.component === null || this.props.width === 0) {
       return <g />
     }
 

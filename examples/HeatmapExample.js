@@ -55,7 +55,7 @@ const heatmapProps1 = {
   labelField: 'key',
   numColorCat: 17
 }
-console.log(linearTemporalHeatmapData)
+
 const chartProps2 = {
   title: 'Temporal over Linear',
   data: linearTemporalHeatmapData,
