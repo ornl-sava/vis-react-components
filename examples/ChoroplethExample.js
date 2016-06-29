@@ -20,10 +20,10 @@ class ChoroplethExample extends React.Component {
       }
     })
     return (
-      <Chart width={800} height={600} className='ChoroplethExample'
+      <Chart height={600} className='ChoroplethExample'
         margin={{top: 15, right: 10, bottom: 40, left: 80}}
         tipFunction={toolTipFunction} data={choroplethData}
-        xAxis={false} yAxis={false} legend scaleAccessor='state.selectedColorScale'>
+        xAxis={false} yAxis={false} legend scaleAccessor='selectedColorScale'>
         <Choropleth valueField='y' keyField='x' selectedField='className' selectedValue='selected' map={map} />
       </Chart>
     )

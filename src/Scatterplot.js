@@ -5,40 +5,47 @@ class Scatterplot extends React.Component {
   constructor (props) {
     super(props)
 
+    this.xDomain = []
+    this.yDomain = []
+
     this.onClick = this.onClick.bind(this)
     this.onMouseEnter = this.onMouseEnter.bind(this)
     this.onMouseLeave = this.onMouseLeave.bind(this)
     this.renderLoadAnimation = this.renderLoadAnimation.bind(this)
     this.renderScatterplot = this.renderScatterplot.bind(this)
+
+    this.updateDomain(props, this.state)
   }
 
   componentWillReceiveProps (nextProps) {
-    if (nextProps.data.length > 0) {
-      let xDomain = nextProps.xDomain
+    this.updateDomain(nextProps, this.state)
+  }
+
+  updateDomain (props, state) {
+    if (props.data.length > 0) {
+      let xDomain = props.xDomain
       if (xDomain.length === 0) {
-        if (/ordinal/.test(nextProps.xScaleType)) {
-          xDomain = nextProps.data.map((d) => d[nextProps.xField])
+        if (/ordinal/.test(props.xScaleType)) {
+          xDomain = props.data.map((d) => d[props.xField])
         } else {
-          xDomain = d3.extent(nextProps.data, (d) => d[nextProps.xField])
+          xDomain = d3.extent(props.data, (d) => d[props.xField])
         }
       }
 
-      let yDomain = nextProps.yDomain
+      let yDomain = props.yDomain
       if (yDomain.length === 0) {
-        if (/ordinal/.test(nextProps.yScaleType)) {
-          yDomain = nextProps.data.map((d) => d[nextProps.yField])
+        if (/ordinal/.test(props.yScaleType)) {
+          yDomain = props.data.map((d) => d[props.yField])
         } else {
-          yDomain = d3.extent(nextProps.data, (d) => d[nextProps.yField])
+          yDomain = d3.extent(props.data, (d) => d[props.yField])
         }
       }
 
       this.props.xScale.domain(xDomain)
       this.props.yScale.domain(yDomain)
 
-      this.setState({
-        xDomain: xDomain,
-        yDomain: yDomain
-      })
+      this.xDomain = xDomain
+      this.yDomain = yDomain
     }
   }
 

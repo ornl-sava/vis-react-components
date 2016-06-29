@@ -61,7 +61,7 @@ class Legend extends React.Component {
 
 Legend.defaultProps = {
   component: null,
-  scaleAccessor: 'state.colorScale',
+  scaleAccessor: 'colorScale',
   margin: {top: 0, right: 0, bottom: 0, left: 0},
   height: 0,
   width: 0

@@ -13,10 +13,11 @@ const transpose = (a) => {
 class Histogram extends React.Component {
   constructor (props) {
     super(props)
-    this.state = {
-      xDomain: [],
-      yDomain: [0.00001, 1]
-    }
+
+    this.xDomain = []
+    this.yDomain = [0.00001, 1]
+
+    this.updateDomain(props, this.state)
   }
   // Update the domain for the shared scale
   componentWillReceiveProps (nextProps) {
@@ -44,8 +45,8 @@ class Histogram extends React.Component {
     let xDomain = domainData[0].bins.map((bin) => bin.x)
 
     if (yMax !== this.props.yScale.domain()[1]) {
-      this.props.yScale.domain([state.yDomain[0], yMax])
-      this.setState({yDomain: [state.yDomain[0], yMax]})
+      this.props.yScale.domain([this.yDomain[0], yMax])
+      this.yDomain = [this.yDomain[0], yMax]
     }
     if (xDomain[0] instanceof Date) {
       this.props.xScale.domain([

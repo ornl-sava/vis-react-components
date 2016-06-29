@@ -20,10 +20,10 @@ const toolTipFunction1 = (d) => {
 
 const toolTipFunction2 = (d) => {
   let toolTip = '<span> No Data </span>'
-
+  let timeFormat = d3.time.format('%H:%M')
   if (d.value > 0) {
     toolTip =
-      '<span class="title">' + new Date(+d.key) + '</span>' +
+      '<span class="title">' + timeFormat(new Date(+d.key)) + '</span>' +
       d3.format('n')(d.value)
   }
 

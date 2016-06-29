@@ -152,7 +152,7 @@ class Chart extends React.Component {
       <div ref='rootElement' className={props.className} style={{position: 'relative'}}>
         <svg ref='svgRoot'>
           <g ref='container' className='container' transform={'translate(' + left + ',' + top + ')'}>
-            {child}
+            {this.state.chartWidth !== 0 ? child : undefined}
             <g className='chart-title'>
               <text y={-props.margin.top + 1} dy='0.71em'>{props.title.replace(/_/g, ' ')}</text>
             </g>
