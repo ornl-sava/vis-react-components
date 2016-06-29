@@ -132,8 +132,8 @@ class HistogramExample extends React.Component {
           </Chart>
         </div>
         <div>
-          <Chart title='Temporal Histogram' xScale='temporal' width={800} height={200} data={temporalData} tipFunction={toolTipFunction}>
-            <Histogram addOverlay />
+          <Chart title='Temporal Histogram' xScaleType='temporal' width={800} height={200} data={temporalData} tipFunction={toolTipFunction}>
+            <Histogram padding={0.0} outerPadding={0.0} addOverlay />
           </Chart>
         </div>
 

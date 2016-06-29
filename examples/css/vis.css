@@ -35,7 +35,7 @@ body {
 
 .histogram-bar.temporal {
 	fill: #6baed6;
-	stroke: #6baed6;
+	stroke: #5b9eb6;
 	stroke-width: 1px;
 	opacity: 0.8;
 }
