@@ -464,3 +464,16 @@ nav ul li .active {
 .exit.text{
   fill: red;
 }
+
+.scatter1 {
+	fill: #2171b5
+}
+.scatter2 {
+	fill: #7C9B27
+}
+.scatter3 {
+	fill: #E6550D
+}
+.scatter4 {
+	fill: #FFFF99
+}
