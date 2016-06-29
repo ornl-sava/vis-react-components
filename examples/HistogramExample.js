@@ -2,7 +2,7 @@ import React from 'react'
 import d3 from 'd3'
 
 import { Chart, Histogram } from '../src'
-import { histogramData, stackedHistogramData } from './data/exampleData'
+import { histogramData, temporalHistogramData, stackedHistogramData } from './data/exampleData'
 
 // Tooltipdata is an object currently defined in the component
 // Properties for Histogram tooltipData are :
@@ -11,6 +11,16 @@ import { histogramData, stackedHistogramData } from './data/exampleData'
 //    stackNames : string[]
 //    xPos: int
 //    yPos: int
+const temporalData = temporalHistogramData.map((histogram) => {
+  let transformedObj = {name: histogram.name, type: histogram.type}
+  transformedObj.bins = histogram.bins.map((bin) => {
+    return {
+      x: new Date(bin.x),
+      y: bin.y
+    }
+  })
+  return transformedObj
+})
 
 const toolTipFunction = (tooltipData) => {
   let d = tooltipData
@@ -121,6 +131,12 @@ class HistogramExample extends React.Component {
             <Histogram type='stacked' addOverlay />
           </Chart>
         </div>
+        <div>
+          <Chart title='Temporal Histogram' xScale='temporal' width={800} height={200} data={temporalData} tipFunction={toolTipFunction}>
+            <Histogram addOverlay />
+          </Chart>
+        </div>
+
       </div>
     )
   }

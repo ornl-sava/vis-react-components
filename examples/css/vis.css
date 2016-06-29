@@ -33,6 +33,13 @@ body {
 	opacity: 0.2;
 }
 
+.histogram-bar.temporal {
+	fill: #6baed6;
+	stroke: #6baed6;
+	stroke-width: 1px;
+	opacity: 0.8;
+}
+
 .histogram-bar.one {
 	fill: #aaa;
 	stroke: #808080;

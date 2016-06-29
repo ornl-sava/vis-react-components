@@ -21,6 +21,9 @@ class Histogram extends React.Component {
       this.updateDomain(props, this.state)
     }
   }
+  componentDidMount () {
+    this.forceUpdate()
+  }
   // Update the domain for the shared scale
   componentWillReceiveProps (nextProps) {
     if (nextProps.data.length > 0) {
@@ -54,6 +57,7 @@ class Histogram extends React.Component {
       let interval = xDomain[1].getTime() - xDomain[0].getTime()
       // Add one more interval to the domain so all bins can be rendered property
       xDomain.push(new Date(xDomain[xDomain.length - 1].getTime() + interval))
+      console.log(xDomain[0])
       console.log(xDomain[xDomain.length - 1])
       this.props.xScale.domain([
         xDomain[0],
