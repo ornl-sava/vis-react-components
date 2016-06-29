@@ -18,7 +18,6 @@ class Heatmap extends React.Component {
 
     this.updateDomain(props, this.state)
   }
-
   // Update the domain for the shared scale
   componentWillReceiveProps (nextProps) {
     this.updateDomain(nextProps, this.state)
@@ -197,7 +196,7 @@ class Heatmap extends React.Component {
   render () {
     let renderEl = null
     renderEl = this.renderLoadAnimation(this.props)
-    if (this.props.data.length > 0) {
+    if (this.props.data.length > 0 && this.props.chartWidth !== 0) {
       renderEl = this.renderHeatmap(this.props)
     }
     return renderEl

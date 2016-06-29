@@ -119,7 +119,7 @@ class Scatterplot extends React.Component {
   render () {
     let renderEl = null
     renderEl = this.renderLoadAnimation(this.props)
-    if (this.props.data.length > 0) {
+    if (this.props.data.length > 0 && this.props.chartWidth !== 0) {
       renderEl = this.renderScatterplot(this.props)
     }
     return renderEl

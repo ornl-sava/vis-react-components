@@ -24,11 +24,10 @@ class Legend extends React.Component {
     if (this.props.component === null) {
       return <g />
     }
+
     let { component, scaleAccessor, height, width, margin } = this.props
     let colorScale = Object.byString(component, scaleAccessor)
-    if (colorScale.range().length === 0) {
-      return <g />
-    }
+
     let xPos = 0
     let yPos = height + margin.bottom / 2
     let legendBlockWidth = (width) / colorScale.range().length
