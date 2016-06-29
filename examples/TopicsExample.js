@@ -6,6 +6,8 @@ import {Chart} from '../src'
 import TopicFlow from '../src/TopicFlow'
 import ColorView from '../src/ColorView'
 import topicData from './data/topics.json'
+import Tester from '../src/Tester'
+import eTopics from '../examples/data/for-hci/enduring-topics-listed.json'
 
 const hTop = 60 * (20 + 15)
 
@@ -23,18 +25,13 @@ const toolTipFunction = (tooltipData) => {
 const getPrefixes = (data) => {
   // getting data in right format
   let fData = Object.keys(data).map(key => { return topicData[key][0] })
-  // let dataPref = []
-  // console.log('fData', fData)
   fData = fData.map((arr, i) => {
     if (arr == null) {
       arr = 'EMPTY'
     }
-    // console.log('split', arr.split(/:|-/, 1))
-    // arr = arr.split(/:|-/, 1)
     let arrPref = arr.split(/:|-/, 1)
     return arrPref[0]
   })
-  // console.log('nData', fData)
   return fData.filter((arr, i) => {
     return fData.indexOf(arr) === i
   })
@@ -75,8 +72,18 @@ const allDataComb = (n) => {
   return comData
 }
 
+const tData = (n) => {
+  let comData = []
+  for (let i = 0; i < n; i++) {
+    comData[i] = eTopics[i]
+  }
+  console.log('tData', comData)
+  return comData
+}
+
 const nData = 7
-const allData = allDataComb(nData)
+const fakeData = allDataComb(nData)
+const allData = tData(nData)
 
 class TopicsContainer extends React.Component {
   constructor (props) {
@@ -87,10 +94,6 @@ class TopicsContainer extends React.Component {
       status: '',
       clickArray: []
     }
-    // this.prefixes = prefixes
-    // console.log('pref', this.prefixes)
-    // We can use a different function for the stacked histogram
-    // if we define it above and assign it to this.toolTipFunction
     this.toolTipFunction = toolTipFunction
     this.onClick = this._onBarClick.bind(this)
   }
@@ -128,9 +131,10 @@ class TopicsContainer extends React.Component {
     // doesn't re-render if setting state twice
     // this would be where it updates data..
     // if the data didn't go beyond this ... loading wouldn't be set to false
-    this.setState({data: allData, loading: false, status: 'OK'})
+    this.setState({data: fakeData, loading: false, status: 'OK'})
   }
   render () {
+    console.log('realData', allData)
     let {className, ...props} = this.props
     return (
       <div className={className}>
@@ -140,6 +144,7 @@ class TopicsContainer extends React.Component {
         <Chart className='col-md-10' ref='updateChart' {...props} {...this.state} tipFunction={this.toolTipFunction} yAxis={false} xAxis={false} height={hTop}>
           <TopicFlow className='col-md-10' {...props} clickArray={this.state.clickArray} colorView={this.refs.colorView} onBarClick={this.onClick} />
         </Chart>
+        <Tester className='row' />
       </div>
     )
   }
@@ -147,14 +152,12 @@ class TopicsContainer extends React.Component {
 
 TopicsContainer.defaultProps = {
   url: '',
-  height: 200,
   numTData: nData,
   colorDomain: prefixes,
   className: 'row'
 }
 TopicsContainer.propTypes = {
   className: PropTypes.string,
-  height: PropTypes.number.isRequired,
   numTData: PropTypes.number,
   url: PropTypes.string,
   colorDomain: PropTypes.array

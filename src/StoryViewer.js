@@ -22,7 +22,7 @@ const diagMaker = d3.svg.diagonal()
     return [d.y, d.x]
   })
 
-class TopicFlow extends React.Component {
+class StoryViewer extends React.Component {
   // grabbing onEnter and Leave functions from chart and making new set of rules
   _onEnter (toolTipData, svgElement) {
     let props = this.props
@@ -275,7 +275,7 @@ class TopicFlow extends React.Component {
   }
 }
 
-TopicFlow.defaultProps = {
+StoryViewer.defaultProps = {
   data: [],
   padding: 0.4,
   outerPadding: 0.4,
@@ -287,7 +287,7 @@ TopicFlow.defaultProps = {
   clickArray: []
 }
 
-TopicFlow.propTypes = {
+StoryViewer.propTypes = {
   className: PropTypes.string.isRequired,
   loading: PropTypes.bool,
   padding: PropTypes.number.isRequired,
@@ -306,4 +306,4 @@ TopicFlow.propTypes = {
   clickArray: PropTypes.object.isRequired
 }
 
-export default TopicFlow
+export default StoryViewer
