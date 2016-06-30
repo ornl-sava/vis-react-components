@@ -153,8 +153,15 @@ class Chart extends React.Component {
     return (
       <div ref='rootElement' className={props.className} style={{position: 'relative'}}>
         <svg ref='svgRoot'>
+          <defs>
+            <clipPath id='clip'>
+              <rect width={this.state.chartWidth} height={this.state.chartHeight} />
+            </clipPath>
+          </defs>
           <g ref='container' className='container' transform={'translate(' + left + ',' + top + ')'}>
-            {child}
+            <g className='component' clipPath={props.clipPath ? 'url(#clip)' : ''}>
+              {child}
+            </g>
             <g className='chart-title'>
               <text y={-props.margin.top + 1} dy='0.71em'>{props.title.replace(/_/g, ' ')}</text>
             </g>
@@ -187,6 +194,7 @@ Chart.defaultProps = {
   sortTypes: [],
   className: '',
   settings: false,
+  clipPath: false,
   data: {},
   title: '',
   xAxis: {
@@ -210,6 +218,7 @@ Chart.defaultProps = {
 
 Chart.propTypes = {
   title: PropTypes.string,
+  clipPath: PropTypes.bool,
   scaleAccessor: PropTypes.string,
   sortBy: PropTypes.oneOfType([
     PropTypes.string,

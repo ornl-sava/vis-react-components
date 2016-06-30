@@ -30,7 +30,7 @@ const toolTipFunction2 = (d) => {
 }
 
 const chartCommon = {
-  margin: {top: 15, right: 15, bottom: 50, left: 110},
+  margin: {top: 15, right: 5, bottom: 50, left: 15},
   height: 300,
   legend: true
 }

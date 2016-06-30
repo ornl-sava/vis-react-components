@@ -3,7 +3,19 @@ import React from 'react'
 import { Chart, Scatterplot } from '../src'
 import { linearOrdinalScatterplotData, linearLinearScatterplotData, ordinalLinearScatterplotData, ordinalOrdinalScatterplotData } from './data/exampleData'
 
+const toolTipFunction = (d) => {
+  let toolTip = '<span> No Data </span>'
+
+  toolTip =
+    '<span class="title">' + d.key + '</span>' + (d.value)
+
+  return toolTip
+}
+
 const commonProps = {
+  tipFunction: toolTipFunction,
+  margin: {top: 15, right: 5, bottom: 50, left: 15},
+  clipPath: true,
   width: 800,
   height: 300
 }
@@ -47,24 +59,24 @@ class ScatterplotExample extends React.Component {
         <div className='row'>
           <div className='col-md-6'>
             <Chart {...commonProps} {...chartProps1}>
-              <Scatterplot />
+              <Scatterplot radius={10} />
             </Chart>
           </div>
           <div className='col-md-6'>
             <Chart {...commonProps} {...chartProps2}>
-              <Scatterplot />
+              <Scatterplot radius={10} />
             </Chart>
           </div>
         </div>
         <div className='row'>
           <div className='col-md-6'>
             <Chart {...commonProps} {...chartProps3}>
-              <Scatterplot />
+              <Scatterplot radius={10} />
             </Chart>
           </div>
           <div className='col-md-6'>
             <Chart {...commonProps} {...chartProps4}>
-              <Scatterplot />
+              <Scatterplot radius={10} />
             </Chart>
           </div>
         </div>

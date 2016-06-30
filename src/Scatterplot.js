@@ -5,9 +5,6 @@ class Scatterplot extends React.Component {
   constructor (props) {
     super(props)
 
-    this.xDomain = []
-    this.yDomain = []
-
     this.onClick = this.onClick.bind(this)
     this.onMouseEnter = this.onMouseEnter.bind(this)
     this.onMouseLeave = this.onMouseLeave.bind(this)
@@ -26,26 +23,23 @@ class Scatterplot extends React.Component {
       let xDomain = props.xDomain
       if (xDomain.length === 0) {
         if (/ordinal/.test(props.xScaleType)) {
-          xDomain = props.data.map((d) => d[props.xField])
+          xDomain = props.data.map((d) => d[props.xAccessor])
         } else {
-          xDomain = d3.extent(props.data, (d) => d[props.xField])
+          xDomain = d3.extent(props.data, (d) => d[props.xAccessor])
         }
       }
 
       let yDomain = props.yDomain
       if (yDomain.length === 0) {
         if (/ordinal/.test(props.yScaleType)) {
-          yDomain = props.data.map((d) => d[props.yField])
+          yDomain = props.data.map((d) => d[props.yAccessor])
         } else {
-          yDomain = d3.extent(props.data, (d) => d[props.yField])
+          yDomain = d3.extent(props.data, (d) => d[props.yAccessor])
         }
       }
 
       this.props.xScale.domain(xDomain)
       this.props.yScale.domain(yDomain)
-
-      this.xDomain = xDomain
-      this.yDomain = yDomain
     }
   }
 
@@ -78,11 +72,11 @@ class Scatterplot extends React.Component {
       <g className='scatterplot'>
         {this.props.data.map((d, i) => {
           let circleProps = {
-            'data-key': d[props.xField],
-            'data-value': d[props.yField],
+            'data-key': d[props.xAccessor],
+            'data-value': d[props.yAccessor],
             'r': props.radius,
-            'cx': props.xScale(d[props.xField]),
-            'cy': props.yScale(d[props.yField]),
+            'cx': props.xScale(d[props.xAccessor]),
+            'cy': props.yScale(d[props.yAccessor]),
             'onMouseEnter': this.onMouseEnter,
             'onMouseLeave': this.onMouseLeave,
             'onClick': this.onClick
@@ -129,8 +123,8 @@ class Scatterplot extends React.Component {
 Scatterplot.defaultProps = {
   chartHeight: 0,
   chartWidth: 0,
-  xField: 'x',
-  yField: 'y',
+  xAccessor: 'x',
+  yAccessor: 'y',
   xDomain: [],
   yDomain: [],
   radius: 5,
@@ -148,8 +142,8 @@ Scatterplot.propTypes = {
   radius: PropTypes.number,
   xDomain: PropTypes.array,
   yDomain: PropTypes.array,
-  xField: PropTypes.string,
-  yField: PropTypes.string,
+  xAccessor: PropTypes.string,
+  yAccessor: PropTypes.string,
   xScale: PropTypes.any,
   yScale: PropTypes.any,
   data: PropTypes.array,
