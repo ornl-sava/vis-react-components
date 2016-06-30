@@ -166,11 +166,11 @@ class Chart extends React.Component {
               <text y={-props.margin.top + 1} dy='0.71em'>{props.title.replace(/_/g, ' ')}</text>
             </g>
             {props.xAxis
-              ? <Axis className='x axis' margin={margin} {...props.xAxis} data={props.data} scale={this.xScale} scaleType={props.xScaleType} {...this.state} />
+              ? <Axis className='x axis' margin={margin} {...props.xAxis} data={props.data} scale={this.xScale} {...this.state} />
               : undefined
             }
             {props.yAxis
-              ? <Axis className='y axis' margin={margin} {...props.yAxis} data={props.data} scale={this.yScale} scaleType={props.yScaleType} {...this.state} />
+              ? <Axis className='y axis' margin={margin} {...props.yAxis} data={props.data} scale={this.yScale} {...this.state} />
               : undefined
             }
             {props.legend && props.data.length > 0

@@ -54,11 +54,11 @@ class Axis extends React.Component {
       if (props.tickValues) {
         tickValues = props.tickValues
       } else {
-        tickValues = (!/ordinal+/.test(props.scaleType)) ? null : props.scale.domain()
+        tickValues = (!/ordinal+/.test(props.scale.type)) ? null : props.scale.domain()
       }
 
       // If scale type is ordinal truncate labels
-      if (/ordinal+/.test(props.scaleType)) {
+      if (/ordinal+/.test(props.scale.type)) {
         let maxWidth = 0
         let fontSize = 12
         if (props.orient === 'top' || props.orient === 'bottom') {
@@ -112,7 +112,6 @@ class Axis extends React.Component {
 
 Axis.defaultProps = {
   type: 'x',
-  scaleType: 'linear',
   orient: 'left',
   tickValues: false,
   tickCount: false,
@@ -127,7 +126,6 @@ Axis.defaultProps = {
 Axis.propTypes = {
   orient: PropTypes.string.isRequired,
   type: PropTypes.string.isRequired,
-  scaleType: PropTypes.string,
   tickValues: React.PropTypes.oneOfType([
     React.PropTypes.array,
     React.PropTypes.bool

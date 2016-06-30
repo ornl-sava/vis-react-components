@@ -22,7 +22,7 @@ class Scatterplot extends React.Component {
     if (props.data.length > 0) {
       let xDomain = props.xDomain
       if (xDomain.length === 0) {
-        if (/ordinal/.test(props.xScaleType)) {
+        if (/ordinal/.test(props.xScale.type)) {
           xDomain = props.data.map((d) => d[props.xAccessor])
         } else {
           xDomain = d3.extent(props.data, (d) => d[props.xAccessor])
@@ -31,7 +31,7 @@ class Scatterplot extends React.Component {
 
       let yDomain = props.yDomain
       if (yDomain.length === 0) {
-        if (/ordinal/.test(props.yScaleType)) {
+        if (/ordinal/.test(props.yScale.type)) {
           yDomain = props.data.map((d) => d[props.yAccessor])
         } else {
           yDomain = d3.extent(props.data, (d) => d[props.yAccessor])
