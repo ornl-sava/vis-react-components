@@ -89,7 +89,7 @@ class ColorView extends React.Component {
       this.yScale = d3.scale.ordinal()
     }
     this.rData = []
-    this.colorDomain = this.props.colorDomain
+    this.colorDomain = JSON.parse(JSON.stringify(this.props.colorDomain))
     this.colorDomain.push('CLEAR')
   }
   shouldComponentUpdate (nextProps, nextState) {
@@ -177,7 +177,7 @@ class ColorView extends React.Component {
       } else {
         this.xScale.range([0, props.chartWidth])
       }
-      colorBars = this.props.colorDomain.map((data, index) => {
+      colorBars = this.colorDomain.map((data, index) => {
         if (data[0] == null) {
           data[0] = 'EMPTY'
         }
