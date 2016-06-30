@@ -39,28 +39,33 @@ class ColorView extends React.Component {
   _onLeave (toolTipData, svgElement) {
   }
   _onClick (toolTipData) {
-    // console.log('clicked', toolTipData)
+    console.log('clicked', toolTipData)
     let index = toolTipData.label
     let newClickArray = this.props.clickArray
-    console.log('clickArray', this.props.spread, '-', this.props.clickArray)
     // might want to move this up and make constant?
     // used to check if all the topics are selected
-    let checkClick = () => {
+    /* let checkClick = () => {
       for (let i in newClickArray) {
         if (!newClickArray[i]) {
           return false
         }
       }
       return true
-    }
+    }*/
     // if all are clicked the resets it to the only the one being clicked
     // else toggle on / off
-    if (checkClick()) {
+    if (index === 'CLEAR') {
       for (let i in newClickArray) {
         newClickArray[i] = false
       }
-      newClickArray[index] = true
-      console.log('sweet beAns!')
+      this.colorDomain[toolTipData.counts] = 'ALL'
+      // newClickArray[index] = true
+    } else if (index === 'ALL') {
+      for (let i in newClickArray) {
+        newClickArray[i] = true
+      }
+      this.colorDomain[toolTipData.counts] = 'CLEAR'
+      // newClickArray[index] = true
     } else {
       newClickArray[index] = !newClickArray[index]
     }
@@ -84,6 +89,8 @@ class ColorView extends React.Component {
       this.yScale = d3.scale.ordinal()
     }
     this.rData = []
+    this.colorDomain = this.props.colorDomain
+    this.colorDomain.push('CLEAR')
   }
   shouldComponentUpdate (nextProps, nextState) {
     if (this.props.colorDomain == null) {
@@ -178,7 +185,13 @@ class ColorView extends React.Component {
         let posX = (props.chartWidth - barWidth) / 2
         let cName = data + '-' + index.toString()
         let color = '#ecf2f9'
-        if (this.props.clickArray[data]) {
+        if (data === 'CLEAR') {
+          posY = this.yScale(index + 1)
+          color = 'red'
+        } else if (data === 'ALL') {
+          posY = this.yScale(index + 1)
+          color = 'green'
+        } else if (this.props.clickArray[data]) {
           color = this.prefScale(data)
         }
         let barStyle = {fill: color, fillOpacity: 0.5}
@@ -190,7 +203,6 @@ class ColorView extends React.Component {
         )
       })
     } else {
-      console.log('lay', this.rData)
       let paddedHeight = this.props.chartHeight * (1.0 - this.props.padding).toFixed(2)
       let barHeight = Math.floor(paddedHeight / (this.rData.length + (props.outerPadding * 2)))
       let fontSize = barHeight * 0.4

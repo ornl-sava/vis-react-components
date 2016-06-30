@@ -6,8 +6,8 @@ import {Chart} from '../src'
 import TopicFlow from '../src/TopicFlow'
 import ColorView from '../src/ColorView'
 import topicData from './data/topics.json'
-import Tester from '../src/Tester'
-import StoryViewer from '../src/StoryViewer'
+// import Tester from '../src/Tester'
+// import StoryViewer from '../src/StoryViewer'
 import eTopics from '../examples/data/for-hci/enduring-topics-listed.json'
 
 const hTop = 60 * (20 + 15)
@@ -134,21 +134,28 @@ class TopicsContainer extends React.Component {
     // if the data didn't go beyond this ... loading wouldn't be set to false
     this.setState({data: fakeData, loading: false, status: 'OK'})
   }
+  /*
+  <div className='row' >
+    <Chart className='col-md-12' {...props} {...this.state} tipFunction={this.toolTipFunction} yAxis={false} xAxis={false} height={hTop}>
+      <StoryViewer className='col-md-12' {...props} clickArray={this.state.clickArray} colorView={this.refs.colorView} onBarClick={this.onClick} />
+    </Chart>
+  </div>
+  <div className='row' >
+    <Tester className='col-md-04' />
+  </div>*/
   render () {
     console.log('realData', allData)
     let {className, ...props} = this.props
     return (
       <div className={className}>
-        <Chart className='col-md-2' ref='updateChart2'{...props} {...this.state} tipFunction={this.toolTipFunction} yAxis={false} xAxis={false} xScaleType='linear' height={600}>
-          <ColorView className='col-md-2' {...props} clickArray={this.state.clickArray} ref='colorView' onBarClick={this.onClick} />
-        </Chart>
-        <Chart className='col-md-10' ref='updateChart' {...props} {...this.state} tipFunction={this.toolTipFunction} yAxis={false} xAxis={false} height={hTop}>
-          <TopicFlow className='col-md-10' {...props} clickArray={this.state.clickArray} colorView={this.refs.colorView} onBarClick={this.onClick} />
-        </Chart>
-        <Tester className='row' />
-        <Chart className='row col-md-12' {...props} {...this.state} tipFunction={this.toolTipFunction} yAxis={false} xAxis={false} height={hTop}>
-          <StoryViewer className='row col-md-12' {...props} clickArray={this.state.clickArray} colorView={this.refs.colorView} onBarClick={this.onClick} />
-        </Chart>
+        <div className='row' >
+          <Chart className='col-md-2' ref='updateChart2'{...props} {...this.state} tipFunction={this.toolTipFunction} yAxis={false} xAxis={false} xScaleType='linear' height={600}>
+            <ColorView className='col-md-2' {...props} clickArray={this.state.clickArray} ref='colorView' onBarClick={this.onClick} />
+          </Chart>
+          <Chart className='col-md-10' ref='updateChart' {...props} {...this.state} tipFunction={this.toolTipFunction} yAxis={false} xAxis={false} height={hTop}>
+            <TopicFlow className='col-md-10' {...props} clickArray={this.state.clickArray} colorView={this.refs.colorView} onBarClick={this.onClick} />
+          </Chart>
+        </div>
       </div>
     )
   }
@@ -158,7 +165,7 @@ TopicsContainer.defaultProps = {
   url: '',
   numTData: nData,
   colorDomain: prefixes,
-  className: 'row'
+  className: 'col-md-12'
 }
 TopicsContainer.propTypes = {
   className: PropTypes.string,

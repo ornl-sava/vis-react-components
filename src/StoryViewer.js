@@ -134,7 +134,7 @@ class StoryViewer extends React.Component {
     let barHeight = 20
     // let lineData = []
     let storyInd = 0
-    console.log('storyData0', storyData[0])
+    // console.log('storyData0', storyData[0])
     // setting current story
     let currStory = storyData[storyInd]
     props.xScale.rangeRoundBands([0, props.chartWidth], props.padding, props.outerPadding)
@@ -170,7 +170,7 @@ class StoryViewer extends React.Component {
     // dataMatch = [{x: posX + barWidth, y: posY + barHeight / 2}, {x: props.xScale(index + 1), y: this.props.yScale(k) + barHeight / 2}]
     this.barData = timeStepBars
     let midBar = barHeight / 2
-    console.log('keys', Object.keys(currStory))
+    // console.log('keys', Object.keys(currStory))
     let lineData = Object.keys(currStory).map((i) => {
       let data = currStory[i]
       let endCurr = timeStepBars[1][i]
@@ -189,7 +189,7 @@ class StoryViewer extends React.Component {
         return diagMaker(dataMatch)
       })
     })
-    console.log('lineData', lineData)
+    // console.log('lineData', lineData)
     this.lineData = lineData
   }
   renderTopics () {
@@ -229,7 +229,7 @@ class StoryViewer extends React.Component {
         <text fontSize='30px' x={this.props.xScale(3) + 10} y={100 + (this.props.chartHeight - 100) / 3 * dataI + 50 + index * 50} >{data}</text>
       )
     })
-    console.log('this.tType', this.tType[0])
+    // console.log('this.tType', this.tType[0])
     let svgInfo = []
     for (let i = 0; i < 3; i++) {
       svgInfo[i] = (
