@@ -7,6 +7,7 @@ import TopicFlow from '../src/TopicFlow'
 import ColorView from '../src/ColorView'
 import topicData from './data/topics.json'
 import Tester from '../src/Tester'
+import StoryViewer from '../src/StoryViewer'
 import eTopics from '../examples/data/for-hci/enduring-topics-listed.json'
 
 const hTop = 60 * (20 + 15)
@@ -145,6 +146,9 @@ class TopicsContainer extends React.Component {
           <TopicFlow className='col-md-10' {...props} clickArray={this.state.clickArray} colorView={this.refs.colorView} onBarClick={this.onClick} />
         </Chart>
         <Tester className='row' />
+        <Chart className='row col-md-12' {...props} {...this.state} tipFunction={this.toolTipFunction} yAxis={false} xAxis={false} height={hTop}>
+          <StoryViewer className='row col-md-12' {...props} clickArray={this.state.clickArray} colorView={this.refs.colorView} onBarClick={this.onClick} />
+        </Chart>
       </div>
     )
   }

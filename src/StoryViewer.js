@@ -2,14 +2,17 @@ import React, { PropTypes } from 'react'
 // import Bar from './Bar'
 import TextBar from './TextBar'
 import d3 from 'd3'
+import storyData from '../examples/data/for-hci/stories.json'
+import eTopics from '../examples/data/for-hci/enduring-topics-listed.json'
+import hrTopics from '../examples/data/for-hci/hourly-topics-listed.json'
 
-const lineMaker = d3.svg.line()
+/* const lineMaker = d3.svg.line()
   .x((d) => {
     return d.x
   })
   .y((d) => {
     return d.y
-  })
+  }) */
 
 const diagMaker = d3.svg.diagonal()
   .source((d) => {
@@ -27,16 +30,17 @@ class StoryViewer extends React.Component {
   _onEnter (toolTipData, svgElement) {
     let props = this.props
     props.onEnter(toolTipData, svgElement)
-    this.setState({selectedTopics: toolTipData.label})
+    // this.setState({selectedTopics: toolTipData.label})
   }
   _onLeave (toolTipData, svgElement) {
     let props = this.props
     props.onLeave(toolTipData, svgElement)
-    this.setState({selectedTopics: []})
+    // this.setState({selectedTopics: []})
   }
-  _onClick () {
-    // I thought I could call the other onClick and do something with it
-    // but I wouldn't know when to call this to call the other one...
+  _onClick (tooltipData) {
+    // show event list
+    console.log(tooltipData)
+    this.setState({currentID: tooltipData.label})
   }
   constructor (props) {
     super(props)
@@ -47,15 +51,17 @@ class StoryViewer extends React.Component {
     }
     this.onEnter = this._onEnter.bind(this)
     this.onLeave = this._onLeave.bind(this)
+    this.onClick = this._onClick.bind(this)
     this.statArr = []
     this.prefScale = d3.scale.category20()
     this.bins = []
     this.lineData = []
     this.barData = []
+    this.tType = ['hrCurr-', 'endCurr-', 'endPrev-']
   }
   shouldComponentUpdate (nextProps, nextState) {
     if (this.props.data.length <= 0) {
-      console.log('probNoDataWillRProps')
+      console.log('SVprobNoDataWillRProps')
       this.setState({dataUp: 1})
     }
     return true
@@ -66,7 +72,7 @@ class StoryViewer extends React.Component {
     // this.setState[{dataUp: 0}]
   }
   componentWillReceiveProps (nextProps) {
-    let xDomain = Object.keys(nextProps.data)
+    let xDomain = [0, 1, 2, 3]
     this.props.xScale.domain(xDomain)
     this.props.yScale.domain([nextProps.maxTopics + 2, 0.00001])
     this.statArr = new Array(nextProps.data.length)
@@ -124,119 +130,121 @@ class StoryViewer extends React.Component {
 
   initTopics (props) {
     let paddedWidth = props.chartWidth * (1 - props.padding).toFixed(2)
-    let barWidth = Math.ceil(paddedWidth / (props.numTData + (props.outerPadding * 2)))
+    let barWidth = Math.ceil(paddedWidth / (4 + (props.outerPadding * 2)))
     let barHeight = 20
-    let barData = []
-    let lineData = []
-    // let selLines = []
-    // just checking if ordinal without checking
-    // might not need to do this, assuming it's always ordinal
-    if (typeof props.xScale.rangePoints === 'function') {
-      props.xScale.rangeRoundBands([0, props.chartWidth], props.padding, props.outerPadding)
-    }
-    // console.log('init')
-    let svgTopicBars = props.data.map((dataArr, index) => {
-      // return Object.keys(dataArr).map((i) => {
-      //  let data = dataArr[i]
-      return dataArr.map((data, i) => {
+    // let lineData = []
+    let storyInd = 0
+    console.log('storyData0', storyData[0])
+    // setting current story
+    let currStory = storyData[storyInd]
+    props.xScale.rangeRoundBands([0, props.chartWidth], props.padding, props.outerPadding)
+    let timeStepBars = []
+    // setting up data for (ex: hr[01], end[01]. end[00])
+    let currData = []
+    currData[0] = hrTopics[storyInd + 1]
+    currData[1] = eTopics[storyInd + 1]
+    currData[2] = eTopics[storyInd + 0]
+    // cycling through data for particular story index
+    for (let k = 0; k < 3; k++) {
+      // making bar data for each data set
+      let currBars = Object.keys(currData[k]).map((i) => {
+        let data = currData[k][i]
         if (data[0] == null) {
           data[0] = 'EMPTY'
         }
-        // use yScale if want them all starting at top
-        let posY = this.props.yScale(i)
-        // use this if want them uniformly spread
-        // let posY = this.props.chartHeight / dataArr.length * i
-        let posX = props.xScale(index)
+        let posY = this.props.chartHeight / Object.keys(currData[k]).length * i
+        let posX = props.xScale(k)
         let fontSize = 12
-        // It seems like class name does not like :
-        let cName = data[0].toString().split(/:|-/, 1) + '-' + i.toString()
-        // checking to see if same topic in previous timeSteps
-        let dataMatch = []
-        if (index + 1 < props.data.length) {
-          for (let k in props.data[index + 1]) {
-            // if (!this.props.data[index + 1].hasOwnProperty(k)) continue
-            if (props.data[index + 1][k][0] === data[0]) {
-              dataMatch = [{x: posX + barWidth, y: posY + barHeight / 2}, {x: props.xScale(index + 1), y: this.props.yScale(k) + barHeight / 2}]
-              // next topic happened
-              this.statArr[index + 1][k] = ' happened'
-              // if current topic happened
-              if (this.statArr[index][i] === ' happened') {
-                this.statArr[index][i] = ' continue'
-              } else {
-                this.statArr[index][i] = ' enter'
-              }
-            }
-          }
-          // if no match made then the topic is exiting
-          if (this.statArr[index][i] !== ' continue' && this.statArr[index][i] !== ' enter') {
-            this.statArr[index][i] = ' exit'
-          }
-        }
-        // assuming the first batch of topics are entering...
-        /* if (index === 0) {
-          stat = ' enter'
-          this.statArr[index][i] = ' enter'
-        } */
+        let cName = this.tType[k] + (storyInd + 1).toString() + '-index-' + i
         let topicColor = {stroke: this.prefScale(data[0].split(/:|-/, 1)[0])}
-        let linePath = () => {
-          if (dataMatch[0] != null) {
-            if (this.props.lineType === 'curved') {
-              return diagMaker(dataMatch)
-            } else { lineMaker(dataMatch) }
-          } else { return null }
-        }
-        cName += this.statArr[index][i]
-        if (this.state.currentID === data[0]) {
-          cName += ' Selected'
-          topicColor = {stroke: '#e67300'}
-        }
-        // eventually might want to check if style sheet is handling this
         let text = this.trimText(data[0], barWidth, fontSize)
         let barTxtStyle = this.buildAText(fontSize.toString() + 'px', 'black')
         let bar = this.buildABar(data, cName, text, barHeight, barWidth, posX, posY, topicColor, barTxtStyle)
-        bar.tooltipData = {label: bar.data[0], counts: bar.data.length}
-        barData.push(bar)
-        lineData.push(linePath())
+        // console.log('bData', bar)
+        bar.tooltipData = {label: cName, counts: bar.data.length}
+        return bar
+      })
+      // adding bar data to all bar data
+      timeStepBars.push(currBars)
+    }
+    // dataMatch = [{x: posX + barWidth, y: posY + barHeight / 2}, {x: props.xScale(index + 1), y: this.props.yScale(k) + barHeight / 2}]
+    this.barData = timeStepBars
+    let midBar = barHeight / 2
+    console.log('keys', Object.keys(currStory))
+    let lineData = Object.keys(currStory).map((i) => {
+      let data = currStory[i]
+      let endCurr = timeStepBars[1][i]
+      let matchBar = []
+      return data.map((arr, index) => {
+        let dataMatch = []
+        for (let j = 0; j < data.length; j++) {
+          if (arr[0] === 0) {
+            matchBar = timeStepBars[2][arr[1]]
+            dataMatch = [{x: endCurr.x + barWidth, y: endCurr.y + midBar}, {x: matchBar.x, y: matchBar.y + midBar}]
+          } else if (arr[0] === 1) {
+            matchBar = timeStepBars[0][arr[1]]
+            dataMatch = [{x: endCurr.x, y: endCurr.y + midBar}, {x: matchBar.x + barWidth, y: matchBar.y + midBar}]
+          }
+        }
+        return diagMaker(dataMatch)
       })
     })
-    // init gets called twice, can't do this.barData.push in the mapping loop
-    // because it'll be twice as long as necessary
-    this.barData = barData
+    console.log('lineData', lineData)
     this.lineData = lineData
-    return svgTopicBars
   }
   renderTopics () {
-    let svgBins = []
-    for (let i = 0; i < this.barData.length; i++) {
-      let key = 'bar-' + i
-      let nData = []
-      if (this.state.selectedTopics[0] != null) {
-        if (this.state.selectedTopics.toString() === this.barData[i].data[0].toString()) {
-          nData = JSON.parse(JSON.stringify(this.barData[i]))
-          nData.sel = true
-          nData.barStyle.stroke = '#00ccff'
-          nData.barStyle.strokeWidth = 8
-        }
-      }
-      let cData = (data) => {
+    let svgBins = this.barData.map((array, index) => {
+      return array.map((data, i) => {
+        let key = 'bar-' + i + index
         return (
-          <g className='bin' key={key}>
-            <TextBar {...data} onEnter={this.onEnter} onLeave={this.onLeave} />
-            <path className={data.data[0] + ' lineMatch -' + i} d={this.lineData[i]} style={data.barStyle} ></path>
+          <g key={key}>
+            <TextBar {...data} onEnter={this.onEnter} onLeave={this.onLeave} onClick={this.onClick} />
           </g>
         )
-      }
-      if (this.props.clickArray[this.barData[i].data[0].toString().split(/:|-/, 1)]) {
-        if (nData.sel) {
-          svgBins.push(cData(nData))
-        } else {
-          svgBins.unshift(cData(this.barData[i]))
-        }
-      }
+      })
+    })
+    let svgLines = this.lineData.map((array, index) => {
+      return array.map((data, i) => {
+        let key = 'line-' + index + i
+        return (
+          <g key={key}>
+            <path className={' lineMatch -' + index + i} d={array} style={{stroke: 'grey'}} ></path>
+          </g>
+        )
+      })
+    })
+    let currIndex = this.state.currentID.toString().split(/-/)
+    // can put a if statement here...to skip this should the index be empty
+    let currData = []
+    let dataI = []
+    if (currIndex[0] === 'hrCurr') {
+      dataI = 0
+      currData = hrTopics[currIndex[1]][currIndex[3]]
+    } else if (currIndex[0] === 'endPrev' || currIndex[0] === 'endCurr') {
+      if (currIndex[0] === 'endPrev') { dataI = 1 } else { dataI = 2 }
+      currData = eTopics[currIndex[1]][currIndex[3]]
     }
+    let info = currData.map((data, index) => {
+      return (
+        <text fontSize='30px' x={this.props.xScale(3) + 10} y={100 + (this.props.chartHeight - 100) / 3 * dataI + 50 + index * 50} >{data}</text>
+      )
+    })
+    console.log('this.tType', this.tType[0])
+    let svgInfo = []
+    for (let i = 0; i < 3; i++) {
+      svgInfo[i] = (
+        <g key={'view' + i}>
+          <text fontSize='100px' x={this.props.xScale(3)} y={100 + (this.props.chartHeight - 100) / 3 * i} >{this.tType[i].toString()}</text>
+          {info}
+        </g>
+      )
+    }
+    // {svgLines}
     return (
-      <g>
+      <g className='bin'>
+        {svgLines}
         {svgBins}
+        {svgInfo}
       </g>
     )
   }
@@ -283,8 +291,7 @@ StoryViewer.defaultProps = {
   chartWidth: 0,
   barHeight: 20,
   maxTopics: 60,
-  lineType: 'curved',
-  clickArray: []
+  lineType: 'curved'
 }
 
 StoryViewer.propTypes = {
@@ -294,16 +301,14 @@ StoryViewer.propTypes = {
   outerPadding: PropTypes.number.isRequired,
   xScale: PropTypes.any,
   yScale: PropTypes.any,
-  data: PropTypes.object,
+  data: PropTypes.any,
   status: PropTypes.string,
   chartHeight: PropTypes.number.isRequired,
   chartWidth: PropTypes.number.isRequired,
-  numTData: PropTypes.number.isRequired,
   barHeight: PropTypes.number.isRequired,
   maxTopics: PropTypes.number.isRequired,
   colorDomain: PropTypes.array,
-  lineType: PropTypes.string.isRequired,
-  clickArray: PropTypes.object.isRequired
+  lineType: PropTypes.string.isRequired
 }
 
 export default StoryViewer

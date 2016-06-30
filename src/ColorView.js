@@ -181,7 +181,7 @@ class ColorView extends React.Component {
         if (this.props.clickArray[data]) {
           color = this.prefScale(data)
         }
-        let barStyle = {fill: color}
+        let barStyle = {fill: color, fillOpacity: 0.5}
         let text = this.trimText(data, barWidth, fontSize)
         let bar = this.buildABar(cName, text, barHeight, barWidth, posX, posY, barStyle, barTxtStyle)
         bar.tooltipData = {label: data, counts: index}
@@ -281,7 +281,7 @@ ColorView.propTypes = {
   colorDomain: PropTypes.array,
   colorScale: PropTypes.func,
   onBarClick: PropTypes.func,
-  clickArray: PropTypes.object.isRequired,
+  clickArray: PropTypes.any.isRequired,
   spread: PropTypes.string.isRequired,
   className: PropTypes.string.isRequired,
   loading: PropTypes.bool,

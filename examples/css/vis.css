@@ -439,7 +439,7 @@ nav ul li .active {
   fill: #FFFAF0;
 }
 .barTopic{
-  fill: white;
+	fill-opacity: 0;
   stroke-width: 3;
 }
 .barTopic.Selected{
@@ -450,6 +450,7 @@ nav ul li .active {
 .lineMatch{
   fill: none;
   stroke-width: 4;
+	shape-rendering: geometricPrecision;
 }
 .lineMatch.Selected{
   fill: none;

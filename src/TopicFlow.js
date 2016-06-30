@@ -294,7 +294,7 @@ TopicFlow.propTypes = {
   outerPadding: PropTypes.number.isRequired,
   xScale: PropTypes.any,
   yScale: PropTypes.any,
-  data: PropTypes.object,
+  data: PropTypes.any.isRequired,
   status: PropTypes.string,
   chartHeight: PropTypes.number.isRequired,
   chartWidth: PropTypes.number.isRequired,
@@ -303,7 +303,7 @@ TopicFlow.propTypes = {
   maxTopics: PropTypes.number.isRequired,
   colorDomain: PropTypes.array,
   lineType: PropTypes.string.isRequired,
-  clickArray: PropTypes.object.isRequired
+  clickArray: PropTypes.any.isRequired
 }
 
 export default TopicFlow
