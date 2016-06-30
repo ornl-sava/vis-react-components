@@ -91,7 +91,7 @@ class HistogramExample extends React.Component {
                 : 'y'
             localStorage.setItem(id + '_sortBy', JSON.stringify(value))
             this.setState({
-              sortBy: newValue
+              sortBy: newValue.toLowerCase()
             })
           }
         }, {
@@ -110,7 +110,7 @@ class HistogramExample extends React.Component {
               : value
             localStorage.setItem(id + '_sortOrder', JSON.stringify(value))
             this.setState({
-              sortOrder: newValue
+              sortOrder: newValue.toLowerCase()
             })
           }
         }

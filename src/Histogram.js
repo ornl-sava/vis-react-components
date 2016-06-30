@@ -69,8 +69,8 @@ class Histogram extends React.Component {
     let sortArr = []
     data[0].bins.sort((a, b) => {
       let i = 0
-      if (props.sortBy === 'x') {
-        i = props.sortOrder === 'Ascending'
+      if (props.sortBy === props.xAccessor) {
+        i = props.sortOrder === 'ascending'
           ? d3.ascending(a[props.xAccessor], b[props.xAccessor])
           : d3.descending(a[props.xAccessor], b[props.xAccessor])
       } else {
@@ -90,7 +90,7 @@ class Histogram extends React.Component {
             })
           }
         }
-        i = props.sortOrder === 'Ascending'
+        i = props.sortOrder === 'ascending'
           ? ya - yb
           : yb - ya
       }
