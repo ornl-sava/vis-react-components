@@ -69,7 +69,7 @@ class Scatterplot extends React.Component {
   renderScatterplot () {
     let props = this.props
     return (
-      <g className='scatterplot'>
+      <g className={props.className}>
         {this.props.data.map((d, i) => {
           let circleProps = {
             'data-key': d[props.xAccessor],
@@ -112,9 +112,9 @@ class Scatterplot extends React.Component {
 
   render () {
     let renderEl = null
-    renderEl = this.renderLoadAnimation(this.props)
+    renderEl = this.renderLoadAnimation()
     if (this.props.data.length > 0 && this.props.chartWidth !== 0) {
-      renderEl = this.renderScatterplot(this.props)
+      renderEl = this.renderScatterplot()
     }
     return renderEl
   }
@@ -123,6 +123,7 @@ class Scatterplot extends React.Component {
 Scatterplot.defaultProps = {
   chartHeight: 0,
   chartWidth: 0,
+  className: 'scatterplot',
   xAccessor: 'x',
   yAccessor: 'y',
   xDomain: [],
@@ -139,6 +140,7 @@ Scatterplot.defaultProps = {
 Scatterplot.propTypes = {
   chartHeight: PropTypes.number.isRequired,
   chartWidth: PropTypes.number.isRequired,
+  className: PropTypes.string,
   radius: PropTypes.number,
   xDomain: PropTypes.array,
   yDomain: PropTypes.array,

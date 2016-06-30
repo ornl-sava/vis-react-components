@@ -142,9 +142,10 @@ class Heatmap extends React.Component {
     }
   }
 
-  renderHeatmap (props) {
+  renderHeatmap () {
+    let props = this.props
     return (
-      <g className='heatmap'>
+      <g className={props.className}>
         {props.data.map((d, i) => {
           let height = (i === 0) ? props.chartHeight : props.yScale(props.data[i - 1][props.yAccessor.key])
           height -= props.yScale(d[props.yAccessor.key])
@@ -154,6 +155,7 @@ class Heatmap extends React.Component {
             let rectProps = {
               'data-key': e[props.labelField],
               'data-value': e[props.xAccessor.value],
+              'key': i + j,
               'x': props.xScale(e[props.xAccessor.key]),
               'y': props.yScale(d[props.yAccessor.key]),
               'width': width,
@@ -164,7 +166,7 @@ class Heatmap extends React.Component {
               'onClick': this.onClick
             }
             return (
-              <rect key={i + j} {...rectProps} />
+              <rect {...rectProps} />
             )
           })
         })}
@@ -195,9 +197,9 @@ class Heatmap extends React.Component {
 
   render () {
     let renderEl = null
-    renderEl = this.renderLoadAnimation(this.props)
+    renderEl = this.renderLoadAnimation()
     if (this.props.data.length > 0 && this.props.chartWidth !== 0) {
-      renderEl = this.renderHeatmap(this.props)
+      renderEl = this.renderHeatmap()
     }
     return renderEl
   }
@@ -211,7 +213,7 @@ Heatmap.defaultProps = {
   labelField: 'label',
   chartHeight: 0,
   chartWidth: 0,
-  className: 'histogram',
+  className: 'heatmap',
   data: [],
   xDomain: [],
   yDomain: [],
