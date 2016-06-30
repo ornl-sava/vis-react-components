@@ -38,6 +38,13 @@ const toolTipFunction = (tooltipData) => {
   return toolTip
 }
 
+const onBarClick = function (clickEvent) {
+  console.groupCollapsed('Bar ' + this.props.data.x)
+  console.log(clickEvent.target)
+  console.log(this.props)
+  console.groupEnd()
+}
+
 class HistogramExample extends React.Component {
   constructor (props) {
     super(props)
@@ -123,7 +130,7 @@ class HistogramExample extends React.Component {
       <div>
         <div>
           <Chart title='Histogram - Layered bars based on data order' width={800} height={200} data={histogramData} {...this.state} settings={this.settings} tipFunction={toolTipFunction}>
-            <Histogram padding={0.0} outerPadding={0.0} addOverlay xAccessor='key'yAccessor='count' />
+            <Histogram padding={0.0} outerPadding={0.0} addOverlay xAccessor='key'yAccessor='count' onBarClick={onBarClick} />
           </Chart>
         </div>
         <div>
@@ -133,7 +140,7 @@ class HistogramExample extends React.Component {
         </div>
         <div>
           <Chart title='Temporal Histogram' xScaleType='temporal' width={800} height={200} data={temporalData} tipFunction={toolTipFunction}>
-            <Histogram padding={0.0} outerPadding={0.0} addOverlay />
+            <Histogram padding={0.0} outerPadding={0.0} addOverlay onBarClick={onBarClick} />
           </Chart>
         </div>
 

@@ -13,14 +13,7 @@ const transpose = (a) => {
 class Histogram extends React.Component {
   constructor (props) {
     super(props)
-    this.yDomain = [0.00001, 1]
-
-    if (props.data.length > 0) {
-      this.updateDomain(props, this.state)
-    }
-  }
-  componentDidMount () {
-    this.forceUpdate()
+    this.state = {interval: null}
   }
   // Update the domain for the shared scale
   componentWillReceiveProps (nextProps) {
@@ -44,24 +37,22 @@ class Histogram extends React.Component {
       domainData = this.sortData(JSON.parse(JSON.stringify(props.data)), props, state)
     }
 
-    let yMax = this.getMaxCount(props.data) * 1.1
+    let yDomain = [0.00001, this.getMaxCount(props.data) * 1.1]
     let xDomain = domainData[0].bins.map((bin) => bin[props.xAccessor])
 
-    if (yMax !== this.props.yScale.domain()[1]) {
-      this.props.yScale.domain([this.yDomain[0], yMax])
-      this.yDomain = [this.yDomain[0], yMax]
-    }
     if (xDomain[0] instanceof Date) {
       let interval = xDomain[1].getTime() - xDomain[0].getTime()
+      this.setState({interval})
       // Add one more interval to the domain so all bins can be rendered property
       xDomain.push(new Date(xDomain[xDomain.length - 1].getTime() + interval))
-      this.props.xScale.domain([
+      xDomain = [
         xDomain[0],
         xDomain[xDomain.length - 1]
-      ])
-    } else {
-      this.props.xScale.domain(xDomain)
+      ]
     }
+
+    this.props.xScale.domain(xDomain)
+    this.props.yScale.domain(yDomain)
   }
   sortData (data, props, state) {
     // NOTE: This WILL mutate the prop
@@ -141,7 +132,7 @@ class Histogram extends React.Component {
       overlayObj.tooltipData.yPos = barData[i][0][props.yAccessor]
       overlayObj.tooltipData.xPos = props.xScale(barData[i][0].data[props.xAccessor])
       overlayObj.height = props.yScale.range()[0]
-      barData[i].push(overlayObj)
+      barData[i].push(Object.assign(overlayObj, this.state))
     }
   }
   buildABar (bin, name, type, height, width, y) {
@@ -152,7 +143,7 @@ class Histogram extends React.Component {
       className: bin.className ? type + ' ' + bin.className : type,
       key: keyVal,
       height: height,
-      data: bin,
+      data: {x: bin[props.xAccessor], y: bin[props.yAccessor], ...bin},
       width: width,
       y: y
     }
@@ -176,6 +167,7 @@ class Histogram extends React.Component {
         return this.buildABar(bin, props.data[index].name, props.data[index].type, barHeight, barWidth, yPos)
       })
     }))
+
     if (props.addOverlay === true) {
       this.addOverlay(barData)
     }
@@ -188,7 +180,6 @@ class Histogram extends React.Component {
           data[props.yAccessor] = dataArr[barIndex - 1][props.yAccessor] - data.height
         }
         return (<Bar {...data} onClick={props.onBarClick} onEnter={props.onEnter} onLeave={props.onLeave} />)
-        // return (<Bar {...data} onClick={props.onBarClick} />)
       })
     })
 
