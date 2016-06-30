@@ -33,6 +33,13 @@ body {
 	opacity: 0.2;
 }
 
+.histogram-bar.temporal {
+	fill: #6baed6;
+	stroke: #5b9eb6;
+	stroke-width: 1px;
+	opacity: 0.8;
+}
+
 .histogram-bar.one {
 	fill: #aaa;
 	stroke: #808080;
@@ -464,4 +471,17 @@ nav ul li .active {
 }
 .exit.text{
   fill: red;
+}
+
+.scatter1 {
+	fill: #2171b5
+}
+.scatter2 {
+	fill: #7C9B27
+}
+.scatter3 {
+	fill: #E6550D
+}
+.scatter4 {
+	fill: #984EA3
 }

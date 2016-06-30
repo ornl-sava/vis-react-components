@@ -21,11 +21,13 @@ Object.byString = (o, s) => {
 
 class Legend extends React.Component {
   render () {
-    if (this.props.component === null) {
+    if (this.props.component === null || this.props.width === 0) {
       return <g />
     }
+
     let { component, scaleAccessor, height, width, margin } = this.props
     let colorScale = Object.byString(component, scaleAccessor)
+
     let xPos = 0
     let yPos = height + margin.bottom / 2
     let legendBlockWidth = (width) / colorScale.range().length
@@ -58,7 +60,7 @@ class Legend extends React.Component {
 
 Legend.defaultProps = {
   component: null,
-  scaleAccessor: 'state.colorScale',
+  scaleAccessor: 'colorScale',
   margin: {top: 0, right: 0, bottom: 0, left: 0},
   height: 0,
   width: 0

@@ -5,32 +5,140 @@ export const histogramData = [
     name: 'One',
     type: 'one',
     bins: [
-      {x: 'A', y: 600},
-      {x: 'B', y: 450},
-      {x: 'C', y: 130},
-      {x: 'D', y: 900},
-      {x: 'E', y: 220},
-      {x: 'F', y: 690},
-      {x: 'G', y: 415},
-      {x: 'H', y: 105},
-      {x: 'I', y: 760},
-      {x: 'J', y: 300}
+      {key: 'A', count: 600},
+      {key: 'B', count: 450},
+      {key: 'C', count: 130},
+      {key: 'D', count: 900},
+      {key: 'E', count: 220},
+      {key: 'F', count: 690},
+      {key: 'G', count: 415},
+      {key: 'H', count: 105},
+      {key: 'I', count: 760},
+      {key: 'J', count: 300}
     ]
   },
   {
     name: 'Two',
     type: 'two',
     bins: [
-      {x: 'A', y: 200},
-      {x: 'B', y: 150},
-      {x: 'C', y: 10},
-      {x: 'D', y: 300},
-      {x: 'E', y: 200},
-      {x: 'F', y: 0},
-      {x: 'G', y: 285},
-      {x: 'H', y: 88},
-      {x: 'I', y: 580},
-      {x: 'J', y: 20}
+      {key: 'A', count: 200},
+      {key: 'B', count: 150},
+      {key: 'C', count: 10},
+      {key: 'D', count: 300},
+      {key: 'E', count: 200},
+      {key: 'F', count: 0},
+      {key: 'G', count: 285},
+      {key: 'H', count: 88},
+      {key: 'I', count: 580},
+      {key: 'J', count: 20}
+    ]
+  }
+]
+export const temporalHistogramData = [
+  {
+    name: 'Temporal Histogram',
+    type: 'temporal',
+    bins: [
+      {
+        x: '2015-05-20T12:45:00+00:00',
+        y: 1021
+      },
+      {
+        x: '2015-05-20T13:00:00+00:00',
+        y: 435
+      },
+      {
+        x: '2015-05-20T13:15:00+00:00',
+        y: 1225
+      },
+      {
+        x: '2015-05-20T13:30:00+00:00',
+        y: 399
+      },
+      {
+        x: '2015-05-20T13:45:00+00:00',
+        y: 618
+      },
+      {
+        x: '2015-05-20T14:00:00+00:00',
+        y: 755
+      },
+      {
+        x: '2015-05-20T14:15:00+00:00',
+        y: 770
+      },
+      {
+        x: '2015-05-20T14:30:00+00:00',
+        y: 900
+      },
+      {
+        x: '2015-05-20T14:45:00+00:00',
+        y: 551
+      },
+      {
+        x: '2015-05-20T15:00:00+00:00',
+        y: 250
+      },
+      {
+        x: '2015-05-20T15:15:00+00:00',
+        y: 818
+      },
+      {
+        x: '2015-05-20T15:30:00+00:00',
+        y: 687
+      },
+      {
+        x: '2015-05-20T15:45:00+00:00',
+        y: 1479
+      },
+      {
+        x: '2015-05-20T16:00:00+00:00',
+        y: 1078
+      },
+      {
+        x: '2015-05-20T16:15:00+00:00',
+        y: 736
+      },
+      {
+        x: '2015-05-20T16:30:00+00:00',
+        y: 546
+      },
+      {
+        x: '2015-05-20T16:45:00+00:00',
+        y: 757
+      },
+      {
+        x: '2015-05-20T17:00:00+00:00',
+        y: 346
+      },
+      {
+        x: '2015-05-20T17:15:00+00:00',
+        y: 803
+      },
+      {
+        x: '2015-05-20T17:30:00+00:00',
+        y: 459
+      },
+      {
+        x: '2015-05-20T17:45:00+00:00',
+        y: 220
+      },
+      {
+        x: '2015-05-20T18:00:00+00:00',
+        y: 1816
+      },
+      {
+        x: '2015-05-20T18:15:00+00:00',
+        y: 587
+      },
+      {
+        x: '2015-05-20T18:30:00+00:00',
+        y: 769
+      },
+      {
+        x: '2015-05-20T18:45:00+00:00',
+        y: 134
+      }
     ]
   }
 ]
@@ -901,28 +1009,28 @@ export const choroplethData = [
   }
 ]
 
-export const ordinalHeatmapData = [
+export const ordinalLinearHeatmapData = [
   {
     bins: [
       {
         key: 1,
-        value: 1
+        value: 16
       },
       {
         key: 2,
-        value: 2
+        value: 32
       },
       {
         key: 3,
-        value: 3
+        value: 48
       },
       {
         key: 4,
-        value: 4
+        value: 64
       },
       {
         key: 5,
-        value: 5
+        value: 80
       }
     ],
     key: 'a',
@@ -932,23 +1040,23 @@ export const ordinalHeatmapData = [
     bins: [
       {
         key: 1,
-        value: 2
-      },
-      {
-        key: 2,
-        value: 4
-      },
-      {
-        key: 3,
-        value: 6
-      },
-      {
-        key: 4,
         value: 8
       },
       {
+        key: 2,
+        value: 16
+      },
+      {
+        key: 3,
+        value: 24
+      },
+      {
+        key: 4,
+        value: 32
+      },
+      {
         key: 5,
-        value: 10
+        value: 40
       }
     ],
     key: 'b',
@@ -984,23 +1092,23 @@ export const ordinalHeatmapData = [
     bins: [
       {
         key: 1,
-        value: 8
+        value: 2
       },
       {
         key: 2,
-        value: 16
+        value: 4
       },
       {
         key: 3,
-        value: 24
+        value: 6
       },
       {
         key: 4,
-        value: 32
+        value: 8
       },
       {
         key: 5,
-        value: 40
+        value: 10
       }
     ],
     key: 'd',
@@ -1010,23 +1118,23 @@ export const ordinalHeatmapData = [
     bins: [
       {
         key: 1,
-        value: 16
+        value: 1
       },
       {
         key: 2,
-        value: 32
+        value: 2
       },
       {
         key: 3,
-        value: 48
+        value: 3
       },
       {
         key: 4,
-        value: 64
+        value: 4
       },
       {
         key: 5,
-        value: 80
+        value: 5
       }
     ],
     key: 'e',
@@ -1034,28 +1142,28 @@ export const ordinalHeatmapData = [
   }
 ]
 
-export const linearHeatmapData = [
+export const linearTemporalHeatmapData = [
   {
     bins: [
       {
         key: 1467127044138,
-        value: 5
+        value: 80
       },
       {
         key: 1467127104138,
-        value: 4
+        value: 64
       },
       {
         key: 1467127164138,
-        value: 3
+        value: 48
       },
       {
         key: 1467127224138,
-        value: 2
+        value: 32
       },
       {
         key: 1467127284138,
-        value: 1
+        value: 16
       }
     ],
     key: 1,
@@ -1065,23 +1173,23 @@ export const linearHeatmapData = [
     bins: [
       {
         key: 1467127044138,
-        value: 10
+        value: 40
       },
       {
         key: 1467127104138,
-        value: 8
+        value: 32
       },
       {
         key: 1467127164138,
-        value: 6
+        value: 24
       },
       {
         key: 1467127224138,
-        value: 4
+        value: 16
       },
       {
         key: 1467127284138,
-        value: 2
+        value: 8
       }
     ],
     key: 2,
@@ -1117,23 +1225,23 @@ export const linearHeatmapData = [
     bins: [
       {
         key: 1467127044138,
-        value: 40
+        value: 10
       },
       {
         key: 1467127104138,
-        value: 32
+        value: 8
       },
       {
         key: 1467127164138,
-        value: 24
+        value: 6
       },
       {
         key: 1467127224138,
-        value: 16
+        value: 4
       },
       {
         key: 1467127284138,
-        value: 8
+        value: 2
       }
     ],
     key: 4,
@@ -1143,26 +1251,384 @@ export const linearHeatmapData = [
     bins: [
       {
         key: 1467127044138,
-        value: 80
+        value: 5
       },
       {
         key: 1467127104138,
-        value: 64
+        value: 4
       },
       {
         key: 1467127164138,
-        value: 48
+        value: 3
       },
       {
         key: 1467127224138,
-        value: 32
+        value: 2
       },
       {
         key: 1467127284138,
+        value: 1
+      }
+    ],
+    key: 5,
+    value: 240
+  }
+]
+
+export const ordinalOrdinalHeatmapData = [
+  {
+    bins: [
+      {
+        key: 'z',
+        value: 1
+      },
+      {
+        key: 'y',
+        value: 2
+      },
+      {
+        key: 'x',
+        value: 3
+      },
+      {
+        key: 'w',
+        value: 4
+      },
+      {
+        key: 'v',
+        value: 5
+      }
+    ],
+    key: 'a',
+    value: 15
+  },
+  {
+    bins: [
+      {
+        key: 'z',
+        value: 2
+      },
+      {
+        key: 'y',
+        value: 4
+      },
+      {
+        key: 'x',
+        value: 6
+      },
+      {
+        key: 'w',
+        value: 8
+      },
+      {
+        key: 'v',
+        value: 10
+      }
+    ],
+    key: 'b',
+    value: 30
+  },
+  {
+    bins: [
+      {
+        key: 'z',
+        value: 4
+      },
+      {
+        key: 'y',
+        value: 8
+      },
+      {
+        key: 'x',
+        value: 12
+      },
+      {
+        key: 'w',
+        value: 16
+      },
+      {
+        key: 'v',
+        value: 20
+      }
+    ],
+    key: 'c',
+    value: 60
+  },
+  {
+    bins: [
+      {
+        key: 'z',
+        value: 8
+      },
+      {
+        key: 'y',
+        value: 16
+      },
+      {
+        key: 'x',
+        value: 24
+      },
+      {
+        key: 'w',
+        value: 32
+      },
+      {
+        key: 'v',
+        value: 40
+      }
+    ],
+    key: 'd',
+    value: 120
+  },
+  {
+    bins: [
+      {
+        key: 'z',
+        value: 16
+      },
+      {
+        key: 'y',
+        value: 32
+      },
+      {
+        key: 'x',
+        value: 48
+      },
+      {
+        key: 'w',
+        value: 64
+      },
+      {
+        key: 'v',
+        value: 80
+      }
+    ],
+    key: 'e',
+    value: 240
+  }
+]
+
+export const linearOrdinalHeatmapData = [
+  {
+    bins: [
+      {
+        key: 'a',
+        value: 5
+      },
+      {
+        key: 'b',
+        value: 4
+      },
+      {
+        key: 'c',
+        value: 3
+      },
+      {
+        key: 'd',
+        value: 2
+      },
+      {
+        key: 'e',
+        value: 1
+      }
+    ],
+    key: 1,
+    value: 15
+  },
+  {
+    bins: [
+      {
+        key: 'a',
+        value: 10
+      },
+      {
+        key: 'b',
+        value: 8
+      },
+      {
+        key: 'c',
+        value: 6
+      },
+      {
+        key: 'd',
+        value: 4
+      },
+      {
+        key: 'e',
+        value: 2
+      }
+    ],
+    key: 2,
+    value: 30
+  },
+  {
+    bins: [
+      {
+        key: 'a',
+        value: 20
+      },
+      {
+        key: 'b',
+        value: 16
+      },
+      {
+        key: 'c',
+        value: 12
+      },
+      {
+        key: 'd',
+        value: 8
+      },
+      {
+        key: 'e',
+        value: 4
+      }
+    ],
+    key: 3,
+    value: 60
+  },
+  {
+    bins: [
+      {
+        key: 'a',
+        value: 40
+      },
+      {
+        key: 'b',
+        value: 32
+      },
+      {
+        key: 'c',
+        value: 24
+      },
+      {
+        key: 'd',
+        value: 16
+      },
+      {
+        key: 'e',
+        value: 8
+      }
+    ],
+    key: 4,
+    value: 120
+  },
+  {
+    bins: [
+      {
+        key: 'a',
+        value: 80
+      },
+      {
+        key: 'b',
+        value: 64
+      },
+      {
+        key: 'c',
+        value: 48
+      },
+      {
+        key: 'd',
+        value: 32
+      },
+      {
+        key: 'e',
         value: 16
       }
     ],
     key: 5,
     value: 240
+  }
+]
+
+export const ordinalLinearScatterplotData = [
+  {
+    'x': 'a',
+    'y': 5
+  },
+  {
+    'x': 'b',
+    'y': 4
+  },
+  {
+    'x': 'c',
+    'y': 3
+  },
+  {
+    'x': 'd',
+    'y': 2
+  },
+  {
+    'x': 'e',
+    'y': 1
+  }
+]
+
+export const linearLinearScatterplotData = [
+  {
+    'x': 1,
+    'y': 5
+  },
+  {
+    'x': 2,
+    'y': 4
+  },
+  {
+    'x': 3,
+    'y': 3
+  },
+  {
+    'x': 4,
+    'y': 2
+  },
+  {
+    'x': 5,
+    'y': 1
+  }
+]
+
+export const linearOrdinalScatterplotData = [
+  {
+    'x': 1,
+    'y': 'a'
+  },
+  {
+    'x': 2,
+    'y': 'b'
+  },
+  {
+    'x': 3,
+    'y': 'c'
+  },
+  {
+    'x': 4,
+    'y': 'd'
+  },
+  {
+    'x': 5,
+    'y': 'e'
+  }
+]
+
+export const ordinalOrdinalScatterplotData = [
+  {
+    'x': 'z',
+    'y': 'a'
+  },
+  {
+    'x': 'x',
+    'y': 'b'
+  },
+  {
+    'x': 'y',
+    'y': 'c'
+  },
+  {
+    'x': 'w',
+    'y': 'd'
+  },
+  {
+    'x': 'v',
+    'y': 'e'
   }
 ]

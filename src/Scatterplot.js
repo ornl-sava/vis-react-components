@@ -10,35 +10,36 @@ class Scatterplot extends React.Component {
     this.onMouseLeave = this.onMouseLeave.bind(this)
     this.renderLoadAnimation = this.renderLoadAnimation.bind(this)
     this.renderScatterplot = this.renderScatterplot.bind(this)
+
+    this.updateDomain(props, this.state)
   }
 
   componentWillReceiveProps (nextProps) {
-    if (nextProps.data.length > 0) {
-      let xDomain = nextProps.xDomain
+    this.updateDomain(nextProps, this.state)
+  }
+
+  updateDomain (props, state) {
+    if (props.data.length > 0) {
+      let xDomain = props.xDomain
       if (xDomain.length === 0) {
-        if (/ordinal/.test(nextProps.xScaleType)) {
-          xDomain = nextProps.data.map((d) => d[nextProps.xField])
+        if (/ordinal/.test(props.xScale.type)) {
+          xDomain = props.data.map((d) => d[props.xAccessor])
         } else {
-          xDomain = d3.extent(nextProps.data, (d) => d[nextProps.xField])
+          xDomain = d3.extent(props.data, (d) => d[props.xAccessor])
         }
       }
 
-      let yDomain = nextProps.yDomain
+      let yDomain = props.yDomain
       if (yDomain.length === 0) {
-        if (/ordinal/.test(nextProps.yScaleType)) {
-          yDomain = nextProps.data.map((d) => d[nextProps.yField])
+        if (/ordinal/.test(props.yScale.type)) {
+          yDomain = props.data.map((d) => d[props.yAccessor])
         } else {
-          yDomain = d3.extent(nextProps.data, (d) => d[nextProps.yField])
+          yDomain = d3.extent(props.data, (d) => d[props.yAccessor])
         }
       }
 
       this.props.xScale.domain(xDomain)
       this.props.yScale.domain(yDomain)
-
-      this.setState({
-        xDomain: xDomain,
-        yDomain: yDomain
-      })
     }
   }
 
@@ -68,14 +69,14 @@ class Scatterplot extends React.Component {
   renderScatterplot () {
     let props = this.props
     return (
-      <g className='scatterplot'>
+      <g className={props.className}>
         {this.props.data.map((d, i) => {
           let circleProps = {
-            'data-key': d[props.xField],
-            'data-value': d[props.yField],
+            'data-key': d[props.xAccessor],
+            'data-value': d[props.yAccessor],
             'r': props.radius,
-            'cx': props.xScale(d[props.xField]),
-            'cy': props.yScale(d[props.yField]),
+            'cx': props.xScale(d[props.xAccessor]),
+            'cy': props.yScale(d[props.yAccessor]),
             'onMouseEnter': this.onMouseEnter,
             'onMouseLeave': this.onMouseLeave,
             'onClick': this.onClick
@@ -111,9 +112,9 @@ class Scatterplot extends React.Component {
 
   render () {
     let renderEl = null
-    renderEl = this.renderLoadAnimation(this.props)
-    if (this.props.data.length > 0) {
-      renderEl = this.renderScatterplot(this.props)
+    renderEl = this.renderLoadAnimation()
+    if (this.props.data.length > 0 && this.props.chartWidth !== 0) {
+      renderEl = this.renderScatterplot()
     }
     return renderEl
   }
@@ -122,8 +123,9 @@ class Scatterplot extends React.Component {
 Scatterplot.defaultProps = {
   chartHeight: 0,
   chartWidth: 0,
-  xField: 'x',
-  yField: 'y',
+  className: 'scatterplot',
+  xAccessor: 'x',
+  yAccessor: 'y',
   xDomain: [],
   yDomain: [],
   radius: 5,
@@ -138,11 +140,12 @@ Scatterplot.defaultProps = {
 Scatterplot.propTypes = {
   chartHeight: PropTypes.number.isRequired,
   chartWidth: PropTypes.number.isRequired,
+  className: PropTypes.string,
   radius: PropTypes.number,
   xDomain: PropTypes.array,
   yDomain: PropTypes.array,
-  xField: PropTypes.string,
-  yField: PropTypes.string,
+  xAccessor: PropTypes.string,
+  yAccessor: PropTypes.string,
   xScale: PropTypes.any,
   yScale: PropTypes.any,
   data: PropTypes.array,

@@ -6,10 +6,8 @@ class Choropleth extends React.Component {
   constructor (props) {
     super(props)
 
-    this.state = {
-      selectedColorScale: d3.scale.quantile(),
-      unselectedColorScale: d3.scale.quantile()
-    }
+    this.selectedColorScale = d3.scale.quantile()
+    this.unselectedColorScale = d3.scale.quantile()
 
     this.projection = d3.geo.equirectangular()
     this.path = d3.geo.path()
@@ -110,11 +108,11 @@ class Choropleth extends React.Component {
       unselectedColorRange.push(tempUnselectedColorScale(i))
     })
 
-    this.state.selectedColorScale
+    this.selectedColorScale
       .domain(colorDomain)
       .range(selectedColorRange)
 
-    this.state.unselectedColorScale
+    this.unselectedColorScale
       .domain(colorDomain)
       .range(unselectedColorRange)
 
@@ -132,8 +130,8 @@ class Choropleth extends React.Component {
       let color = this.props.unselectedMinColor
       if (typeof datum !== 'undefined') {
         color = datum[this.props.selectedField] === this.props.selectedValue
-          ? this.state.selectedColorScale(datum[this.props.valueField])
-          : this.state.unselectedColorScale(datum[this.props.valueField])
+          ? this.selectedColorScale(datum[this.props.valueField])
+          : this.unselectedColorScale(datum[this.props.valueField])
       }
       return color
     }
@@ -183,7 +181,7 @@ class Choropleth extends React.Component {
   render () {
     let renderEl = null
     renderEl = this.renderLoadAnimation(this.props)
-    if (this.props.data.length > 0) {
+    if (this.props.data.length > 0 && this.props.chartWidth !== 0) {
       renderEl = this.renderMap(this.props)
     }
     return renderEl
