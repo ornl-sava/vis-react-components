@@ -1,16 +1,16 @@
 import React, { PropTypes } from 'react'
-import d3 from 'd3'
+import * as d3 from 'd3'
 import topojson from 'topojson'
 
 class Choropleth extends React.Component {
   constructor (props) {
     super(props)
 
-    this.selectedColorScale = d3.scale.quantile()
-    this.unselectedColorScale = d3.scale.quantile()
+    this.selectedColorScale = d3.scaleQuantile()
+    this.unselectedColorScale = d3.scaleQuantile()
 
-    this.projection = d3.geo.equirectangular()
-    this.path = d3.geo.path()
+    this.projection = d3.geoEquirectangular()
+    this.path = d3.geoPath()
       .projection(this.projection)
 
     this.tooltipData = this.tooltipData.bind(this)
@@ -84,12 +84,12 @@ class Choropleth extends React.Component {
       .projection(this.projection)
 
     // Generate scale to determine class for coloring
-    let tempSelectedColorScale = d3.scale.linear()
+    let tempSelectedColorScale = d3.scaleLinear()
       .domain([0, this.props.numColorCat])
       .range([this.props.selectedMinColor, this.props.selectedMaxColor])
       .interpolate(d3.interpolateHcl)
 
-    let tempUnselectedColorScale = d3.scale.linear()
+    let tempUnselectedColorScale = d3.scaleLinear()
       .domain([0, this.props.numColorCat])
       .range([this.props.unselectedMinColor, this.props.unselectedMaxColor])
       .interpolate(d3.interpolateHcl)

@@ -3,11 +3,11 @@ import { IndexRedirect, Route, Router, browserHistory } from 'react-router'
 
 import App from './App'
 import HistogramExample from './HistogramExample'
-// import HeatmapExample from './HeatmapExample'
-// import ScatterplotExample from './ScatterplotExample'
-// import ChoroplethExample from './ChoroplethExample'
-// import ScatterHeatmapExample from './ScatterHeatmapExample'
-// import CircumshakerExample from './CircumshakerExample'
+import HeatmapExample from './HeatmapExample'
+import ScatterplotExample from './ScatterplotExample'
+import ChoroplethExample from './ChoroplethExample'
+import CircumshakerExample from './CircumshakerExample'
+import ScatterHeatmapExample from './ScatterHeatmapExample'
 // import TopicsExample from './TopicsExample'
 
 const reactRouterRoutes = (
@@ -15,14 +15,14 @@ const reactRouterRoutes = (
     <Route path='/' component={App}>
       <IndexRedirect to='/histogram' />
       <Route path='/histogram' component={HistogramExample} />
+      <Route path='/heatmap' component={HeatmapExample} />
+      <Route path='/scatterplot' component={ScatterplotExample} />
+      <Route path='/choropleth' component={ChoroplethExample} />
+      <Route path='/circumshaker' component={CircumshakerExample} />
+      <Route path='/scatterHeatmap' component={ScatterHeatmapExample} />
+      {/* <Route path='/topics' component={TopicsExample} /> */}
     </Route>
   </Router>
 )
 
-// <Route path='/heatmap' component={HeatmapExample} />
-// <Route path='/scatterplot' component={ScatterplotExample} />
-// <Route path='/choropleth' component={ChoroplethExample} />
-// <Route path='/scatterHeatmap' component={ScatterHeatmapExample} />
-// <Route path='/circumshaker' component={CircumshakerExample} />
-// <Route path='/topics' component={TopicsExample} />
 export default reactRouterRoutes
