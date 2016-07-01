@@ -46,7 +46,7 @@ class StoryViewer extends React.Component {
     this.setState({currentID: newID})
   }
   _onMoveClick (tooltipData) {
-    // console.log('moveClick', tooltipData)
+    //  console.log('moveClick', tooltipData)
     let sIndex = 0
     this.initTopics(this.props)
     if (tooltipData.label === 'back') {
@@ -192,7 +192,13 @@ class StoryViewer extends React.Component {
         let posX = props.xScale(k)
         let fontSize = 12
         let cName = this.tType[k] + (this.state.storyInd + 1).toString() + '-index-' + i
-        let topicColor = {stroke: this.prefScale(data[0].split(/:|-/, 1)[0])}
+        // let topicColor = {stroke: this.prefScale(data[0].split(/:|-/, 1)[0])}
+        let topicColor = {stroke: 'black'}
+        if (k === 0) {
+          topicColor = {stroke: 'green'}
+        } else if (k === 2) {
+          topicColor = {stroke: 'purple'}
+        }
         // console.log('tColor', topicColor)
         let text = this.trimText(data[0], barWidth, fontSize)
         let barTxtStyle = this.buildAText(fontSize.toString() + 'px', 'black')
@@ -218,16 +224,19 @@ class StoryViewer extends React.Component {
         if (arr[0] === 0) {
           // enduring (n-1)
           endCurr.story.push({dataInd: 2, index: arr[1]})
+          endCurr.barStyle.stroke = 'purple'
           matchBar = timeStepBars[2][arr[1]]
           dataMatch = [{x: endCurr.x + barWidth, y: endCurr.y + midBar}, {x: matchBar.x, y: matchBar.y + midBar}]
         } else if (arr[0] === 1) {
           // hr (n)
           endCurr.story.push({dataInd: 0, index: arr[1]})
+          endCurr.barStyle.stroke = 'green'
           matchBar = timeStepBars[0][arr[1]]
           dataMatch = [{x: endCurr.x, y: endCurr.y + midBar}, {x: matchBar.x + barWidth, y: matchBar.y + midBar}]
         }
         matchBar.story = [{dataInd: 1, index: parseFloat(i)}]
         if (index !== 0) {
+          endCurr.barStyle.stroke = 'black'
           let story = endCurr.story
           timeStepBars[story[0].dataInd][story[0].index].story.push(story[1])
           matchBar.story.push(story[0])
@@ -295,7 +304,6 @@ class StoryViewer extends React.Component {
       if (i === 0 || i === 1) {
         type = type + ': ' + (this.state.storyInd + 1).toString()
       } else { type = type + ': ' + this.state.storyInd.toString() }
-      console.log('type', type)
       let info = this.state.currentID[i].map((data, index) => {
         return (
           <text key={this.tType[i] + 'info-' + index} fontSize='30px' x={this.props.xScale(3) - this.props.xScale(0) / 2 + 10} y={startPos + 50 + index * 50} >{data}</text>
