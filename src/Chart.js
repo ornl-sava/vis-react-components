@@ -1,7 +1,7 @@
 import React, { PropTypes, Children, cloneElement } from 'react'
 import debounce from 'lodash.debounce'
-import d3 from 'd3'
-import d3Tip from 'd3-tip'
+import * as d3 from 'd3'
+// import d3Tip from 'd3-tip'
 
 import Axis from './Axis'
 import Legend from './Legend'
@@ -10,19 +10,19 @@ import Settings from './Settings'
 class Chart extends React.Component {
   _onEnter (tooltipData, svgElement) {
     if (tooltipData && this.tip) {
-      this.tip.show(tooltipData, svgElement)
+      // this.tip.show(tooltipData, svgElement)
     }
   }
   _onLeave (tooltipData, svgElement) {
     if (tooltipData && this.tip) {
-      this.tip.hide(tooltipData, svgElement)
+      // this.tip.hide(tooltipData, svgElement)
     }
   }
   constructor (props) {
     super(props)
     this.onEnter = this._onEnter.bind(this)
     this.onLeave = this._onLeave.bind(this)
-    this.tip = props.tipFunction ? d3Tip().attr('class', 'd3-tip').html(props.tipFunction) : props.tipFunction
+    // this.tip = props.tipFunction ? d3Tip().attr('class', 'd3-tip').html(props.tipFunction) : props.tipFunction
     this.setScale = this.setScale.bind(this)
     this.state = {
       chartWidth: props.width,
@@ -37,21 +37,22 @@ class Chart extends React.Component {
     // Setup xScale
     let scale = null
     if (/ordinal/.test(scaleType)) {
-      scale = d3.scale.ordinal()
+      // scale = d3.scaleOrdinal()
       if (scaleType === 'ordinalBand') {
-        scale.rangeRoundBands(range)
+        // scale.rangeRoundBands(range)
+        scale = d3.scaleBand()
       } else {
-        scale.rangePoints(range)
+        scale = d3.scalePoint()
       }
     } else if (scaleType === 'temporal') {
-      scale = d3.time.scale.utc()
+      scale = d3.scaleTime()
     } else if (scaleType === 'log') {
-      scale = d3.scale.log()
+      scale = d3.scaleLog()
     } else if (scaleType === 'power') {
-      scale = d3.scale.pow().exponent(0.5)
+      scale = d3.scalePow().exponent(0.5)
     } else {
       scaleType = 'linear'
-      scale = d3.scale.linear()
+      scale = d3.scaleLinear()
     }
     scale.type = scaleType
     return scale
@@ -85,9 +86,9 @@ class Chart extends React.Component {
     this._handleResize = debounce(this.resizeChart.bind(this), 500)
     window.addEventListener('resize', this._handleResize, false)
     this.resizeChart()
-    if (this.tip) {
-      d3.select(this.refs.svgRoot).call(this.tip)
-    }
+    // if (this.tip) {
+    //   d3.select(this.refs.svgRoot).call(this.tip)
+    // }
   }
   componentWillUnmount () {
     window.removeEventListener('resize', this._handleResize, false)
@@ -105,21 +106,8 @@ class Chart extends React.Component {
     // container.select('.reset')
     //   .attr('x', chartWidth - 40)
     //   .attr('y', -props.margin.top + 1)
-    if (props.yScaleType === 'ordinalBand') {
-      this.yScale.rangeRoundBands([chartHeight, 0])
-    } else if (props.yScaleType === 'ordinalPoint') {
-      this.yScale.rangePoints([chartHeight, 0])
-    } else {
-      this.yScale.range([chartHeight, 0])
-    }
-
-    if (props.xScaleType === 'ordinalBand') {
-      this.xScale.rangeRoundBands([0, chartWidth])
-    } else if (props.xScaleType === 'ordinalPoint') {
-      this.xScale.rangePoints([0, chartWidth])
-    } else {
-      this.xScale.range([0, chartWidth])
-    }
+    this.yScale.range([chartHeight, 0])
+    this.xScale.range([0, chartWidth])
 
     this.setState({chartWidth, chartHeight}, () => { this.forceUpdate() })
   }
@@ -197,8 +185,7 @@ Chart.defaultProps = {
   title: '',
   xAxis: {
     type: 'x',
-    orient: 'bottom',
-    tickValues: false
+    orient: 'bottom'
   },
   yAxis: {
     type: 'y',

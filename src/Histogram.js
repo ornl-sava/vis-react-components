@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react'
-import d3 from 'd3'
+import * as d3 from 'd3'
 
 import Bar from './Bar'
 
@@ -60,7 +60,7 @@ class Histogram extends React.Component {
     let sortArr = []
     data[0].bins.sort((a, b) => {
       let i = 0
-      if (props.sortBy === props.xAccessor) {
+      if (props.sortBy === 'x') {
         i = props.sortOrder === 'ascending'
           ? d3.ascending(a[props.xAccessor], b[props.xAccessor])
           : d3.descending(a[props.xAccessor], b[props.xAccessor])

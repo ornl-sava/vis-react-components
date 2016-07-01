@@ -75,7 +75,7 @@ class HistogramExample extends React.Component {
             return defaultValue === null ? 'Default' : defaultValue.charAt(0).toUpperCase() + defaultValue.slice(1)
           },
           onChange: (value) => {
-            localStorage.setItem(id + '_yScaleType', JSON.stringify(value))
+            localStorage.setItem(id + '_yScaleType', JSON.stringify(value.toLowerCase()))
             this.setState({
               yScaleType: value.toLowerCase()
             })
@@ -88,7 +88,11 @@ class HistogramExample extends React.Component {
           ],
           defaultSelected: () => {
             let defaultValue = this.state.sortBy
-            return defaultValue === null ? 'Default' : defaultValue
+            return defaultValue === null
+              ? 'Default'
+              : defaultValue === 'x'
+                ? 'Key'
+                : 'Document Count'
           },
           onChange: (value) => {
             let newValue = value === 'Default'
@@ -96,9 +100,9 @@ class HistogramExample extends React.Component {
               : value === 'Key'
                 ? 'x'
                 : 'y'
-            localStorage.setItem(id + '_sortBy', JSON.stringify(value))
+            localStorage.setItem(id + '_sortBy', JSON.stringify(newValue))
             this.setState({
-              sortBy: newValue.toLowerCase()
+              sortBy: newValue
             })
           }
         }, {
@@ -109,15 +113,15 @@ class HistogramExample extends React.Component {
           ],
           defaultSelected: () => {
             let defaultValue = this.state.sortOrder
-            return defaultValue === null ? 'Default' : defaultValue
+            return defaultValue === null ? 'Default' : defaultValue.charAt(0).toUpperCase() + defaultValue.slice(1)
           },
           onChange: (value) => {
             let newValue = value === 'Default'
               ? null
               : value
-            localStorage.setItem(id + '_sortOrder', JSON.stringify(value))
+            localStorage.setItem(id + '_sortOrder', JSON.stringify(newValue === null ? null : newValue.toLowerCase()))
             this.setState({
-              sortOrder: newValue.toLowerCase()
+              sortOrder: newValue === null ? null : newValue.toLowerCase()
             })
           }
         }
@@ -143,7 +147,6 @@ class HistogramExample extends React.Component {
             <Histogram padding={0.0} outerPadding={0.0} addOverlay onBarClick={onBarClick} />
           </Chart>
         </div>
-
       </div>
     )
   }
