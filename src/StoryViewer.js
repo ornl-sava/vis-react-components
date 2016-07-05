@@ -38,11 +38,16 @@ class StoryViewer extends React.Component {
     // this.setState({selectedTopics: []})
   }
   _onClick (tooltipData) {
-    // show event list
-    // console.log('clicked', tooltipData)
-    let newID = this.state.currentID
+    // resetting topic info
+    let newID = [[], [], []]
     let { dataInd, index } = tooltipData
+    // getting topic information for clicked topic
     newID[dataInd] = this.currData[dataInd][index]
+    // getting topic information of related topics
+    this.barData[dataInd][index].story.map((sData) => {
+      newID[sData.dataInd] = this.currData[sData.dataInd][sData.index]
+    })
+    // re-render with new topic info
     this.setState({currentID: newID})
   }
   _onMoveClick (tooltipData) {
@@ -64,17 +69,6 @@ class StoryViewer extends React.Component {
     this.initTopics(this.props, sIndex)
     this.setState({storyInd: sIndex, currentID: [[], [], []]})
   }
-  _onDClick (tooltipData) {
-    // console.log('doubleClicked', tooltipData)
-    let newID = [[], [], []]
-    let { dataInd, index } = tooltipData
-    newID[dataInd] = this.currData[dataInd][index]
-    // console.log('newID', this.barData[dataInd][index])
-    this.barData[dataInd][index].story.map((sData) => {
-      newID[sData.dataInd] = this.currData[sData.dataInd][sData.index]
-    })
-    this.setState({currentID: newID})
-  }
   constructor (props) {
     super(props)
     this.state = {
@@ -86,7 +80,6 @@ class StoryViewer extends React.Component {
     this.onEnter = this._onEnter.bind(this)
     this.onLeave = this._onLeave.bind(this)
     this.onClick = this._onClick.bind(this)
-    this.onDoubleClick = this._onDClick.bind(this)
     this.onMoveClick = this._onMoveClick.bind(this)
     // might not need pref scale if not coloring bars
     this.prefScale = d3.scale.category20()
@@ -104,9 +97,10 @@ class StoryViewer extends React.Component {
     return true
     // return nextProps.data.length !== this.props.data.length || nextProps.loading !== this.props.loading
   }
-  componentWillUpdate (nextProps) {
-    // nextProps.colorView.state
-    // this.setState[{dataUp: 0}]
+  componentWillUpdate (nextProps, nextState) {
+    if (nextState.storyInd !== this.state.storyInd) {
+      console.log('letting you know')
+    }
   }
   componentWillReceiveProps (nextProps) {
     let xDomain = [0, 1, 2, 3]
@@ -168,7 +162,7 @@ class StoryViewer extends React.Component {
   initTopics (props, storyInd) {
     let paddedWidth = props.chartWidth * (1 - props.padding).toFixed(2)
     let barWidth = Math.ceil(paddedWidth / (4 + (props.outerPadding * 2)))
-    let barHeight = 20
+    let barHeight = 10
     // let lineData = []
     // console.log('storyData0', storyData[0])
     // setting current story
@@ -282,7 +276,7 @@ class StoryViewer extends React.Component {
         let key = 'bar-' + i + index
         return (
           <g key={key}>
-            <TextBar {...data} onEnter={this.onEnter} onLeave={this.onLeave} onClick={this.onClick} onDoubleClick={this.onDoubleClick} />
+            <TextBar {...data} onEnter={this.onEnter} onLeave={this.onLeave} onClick={this.onClick} />
           </g>
         )
       })
@@ -302,16 +296,16 @@ class StoryViewer extends React.Component {
       let startPos = 100 + (this.props.chartHeight - 100) / 3 * i
       let type = this.tType[i].toString().split(/-/, 1)
       if (i === 0 || i === 1) {
-        type = type + ': ' + (this.state.storyInd + 1).toString()
-      } else { type = type + ': ' + this.state.storyInd.toString() }
+        type = type + (this.state.storyInd + 1).toString() + ': '
+      } else { type = type + this.state.storyInd.toString() + ': ' }
       let info = this.state.currentID[i].map((data, index) => {
         return (
-          <text key={this.tType[i] + 'info-' + index} fontSize='30px' x={this.props.xScale(3) - this.props.xScale(0) / 2 + 10} y={startPos + 50 + index * 50} >{data}</text>
+          <text key={this.tType[i] + 'info-' + index} fontSize='14px' x={this.props.xScale(3) - this.props.xScale(0) / 2 + 10} y={startPos + 20 + index * 16} >{data}</text>
         )
       })
       svgInfo[i] = (
         <g key={'view' + i}>
-          <text fontSize='100px' x={this.props.xScale(3) - this.props.xScale(0) / 2} y={startPos} >{type}</text>
+          <text fontSize='20px' x={this.props.xScale(3) - this.props.xScale(0) / 2} y={startPos} style={{fontWeight: 'bold', textDecoration: 'underline'}}>{type}</text>
           {info}
         </g>
       )
