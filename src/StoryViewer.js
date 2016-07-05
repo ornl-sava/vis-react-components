@@ -48,7 +48,6 @@ class StoryViewer extends React.Component {
   _onMoveClick (tooltipData) {
     //  console.log('moveClick', tooltipData)
     let sIndex = 0
-    this.initTopics(this.props)
     if (tooltipData.label === 'back') {
       if (this.state.storyInd !== 0) {
         sIndex = this.state.storyInd - 1
@@ -62,6 +61,7 @@ class StoryViewer extends React.Component {
         sIndex = 0
       }
     }
+    this.initTopics(this.props, sIndex)
     this.setState({storyInd: sIndex, currentID: [[], [], []]})
   }
   _onDClick (tooltipData) {
@@ -117,7 +117,7 @@ class StoryViewer extends React.Component {
       this.statArr[i] = new Array(nextProps.data[i].length)
     }
     this.prefScale.domain(nextProps.colorDomain)
-    this.initTopics(nextProps)
+    this.initTopics(nextProps, 0)
   }
   componentWillMount () {
     // console.log('willMountChartHeight', this.props.chartHeight)
@@ -165,21 +165,21 @@ class StoryViewer extends React.Component {
     return text
   }
 
-  initTopics (props) {
+  initTopics (props, storyInd) {
     let paddedWidth = props.chartWidth * (1 - props.padding).toFixed(2)
     let barWidth = Math.ceil(paddedWidth / (4 + (props.outerPadding * 2)))
     let barHeight = 20
     // let lineData = []
     // console.log('storyData0', storyData[0])
     // setting current story
-    this.currStory = storyData[this.state.storyInd]
+    this.currStory = storyData[storyInd]
     props.xScale.rangeRoundBands([0, props.chartWidth], props.padding, props.outerPadding)
     let timeStepBars = []
     console.log('zero', props.xScale(0))
     // setting up data for (ex: hr[01], end[01]. end[00])
-    this.currData[0] = hrTopics[this.state.storyInd + 1]
-    this.currData[1] = eTopics[this.state.storyInd + 1]
-    this.currData[2] = eTopics[this.state.storyInd + 0]
+    this.currData[0] = hrTopics[storyInd + 1]
+    this.currData[1] = eTopics[storyInd + 1]
+    this.currData[2] = eTopics[storyInd + 0]
     // cycling through data for particular story index
     for (let k = 0; k < 3; k++) {
       // making bar data for each data set
@@ -191,7 +191,7 @@ class StoryViewer extends React.Component {
         let posY = this.props.chartHeight / Object.keys(this.currData[k]).length * i
         let posX = props.xScale(k)
         let fontSize = 12
-        let cName = this.tType[k] + (this.state.storyInd + 1).toString() + '-index-' + i
+        let cName = this.tType[k] + (storyInd + 1).toString() + '-index-' + i
         // let topicColor = {stroke: this.prefScale(data[0].split(/:|-/, 1)[0])}
         let topicColor = {stroke: 'black'}
         if (k === 0) {
@@ -271,7 +271,7 @@ class StoryViewer extends React.Component {
     this.moveBars = (
       <g key={'movers'}>
         {moveButt}
-        <text fontSize={moveFontS} x={moveStart} y={90} >{'hour' + (this.state.storyInd + 1).toString()}</text>
+        <text fontSize={moveFontS} x={moveStart} y={90} >{'hour' + (storyInd + 1).toString()}</text>
       </g>
     )
   }
