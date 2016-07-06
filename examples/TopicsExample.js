@@ -9,6 +9,7 @@ import topicData from './data/topics.json'
 // import Tester from '../src/Tester'
 import StoryViewer from '../src/StoryViewer'
 import eTopics from '../examples/data/for-hci/enduring-topics-listed.json'
+import storyData from '../examples/data/for-hci/stories.json'
 
 const hTop = 60 * (20 + 15)
 
@@ -73,12 +74,49 @@ const allDataComb = (n) => {
   return comData
 }
 
+const setUpData = () => {
+  let newData = []
+  newData.push({})
+  let firstData = Object.keys(eTopics[0]).map((scrap, index) => {
+    let data = eTopics[0][index]
+    newData[0][index] = {events: data, story: []}
+    return {events: data, story: []}
+  })
+  let mapData = storyData.map((data, index) => {
+    newData.push({})
+    return Object.keys(data).map((scrap, key) => {
+      let sData = data[key]
+      // console.log(eTopics[index + 1])
+      if (sData.length > 1 || sData[0][0] === 1) {
+        return sData.map((d, i) => {
+          // check if from merge or new topic formation (1)
+          let s = []
+          // check if from merge and connect to previous enduring (0)
+          if (d[0] === 0) {
+            s.push(d[1])
+            newData[index + 1][key] = {events: eTopics[index + 1][key], story: s}
+            return (
+              {events: eTopics[index + 1], story: s}
+            )
+          }
+        })
+      }
+    })
+  })
+  mapData.unshift(firstData)
+  // using newData because this.topicData is returning undefined in some cases.
+  // might be troublesome later on...
+  mapData = newData
+  return mapData
+}
+
 const tData = (n) => {
+  let topics = setUpData()
   let comData = []
   for (let i = 0; i < n; i++) {
-    comData[i] = eTopics[i]
+    comData[i] = topics[i]
   }
-  console.log('tData', comData)
+  // console.log('tData', comData)
   return comData
 }
 
@@ -97,6 +135,7 @@ class TopicsContainer extends React.Component {
     }
     this.toolTipFunction = toolTipFunction
     this.onClick = this._onBarClick.bind(this)
+    this.topicData = []
   }
   _onBarClick (toggleList) {
     // takes toggle list and updates clickArray state
@@ -134,11 +173,10 @@ class TopicsContainer extends React.Component {
     // if the data didn't go beyond this ... loading wouldn't be set to false
     this.setState({data: fakeData, loading: false, status: 'OK'})
   }
-  /* <div className='row' >
-    <Tester className='col-md-04' />
-  </div> */
   render () {
     console.log('realData', allData)
+    console.log('fakeData', fakeData)
+    // this.setUpData()
     let {className, ...props} = this.props
     return (
       <div className={className}>
