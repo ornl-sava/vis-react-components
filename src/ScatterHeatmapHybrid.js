@@ -1,6 +1,5 @@
 import React, { PropTypes } from 'react'
 import d3 from 'd3'
-import moment from 'moment'
 
 const binByNumeric = (data, accessor, range, numBins) => {
   var bins = []
@@ -71,8 +70,8 @@ export class HybridScatterHeatmap extends React.Component {
 
     header.append('text')
         .attr('class', 'label time')
-        .text('Displaying events from ' + moment(this.endTime).format('YYYY-MM-DD h:mm:ss') + ' to ' +
-          moment(this.props.startTime).format('YYYY-MM-DD h:mm:ss'))
+        .text('Displaying events from ' + d3.time.format('%x %X')(new Date(this.endTime)) + ' to ' +
+          d3.time.format('%x %X')(new Date(this.props.startTime)))
 
     header.append('text')
         .attr('class', 'label reset')
@@ -409,8 +408,8 @@ export class HybridScatterHeatmap extends React.Component {
     var chart = svg.select('.chart')
 
     chart.select('.header .time')
-      .text('Displaying events from ' + moment(this.endTime).format('YYYY-MM-DD h:mm:ss') + ' to ' +
-        moment(this.props.startTime).format('YYYY-MM-DD h:mm:ss'))
+      .text('Displaying events from ' + d3.time.format('%x %X')(new Date(this.endTime)) + ' to ' +
+        d3.time.format('%x %X')(new Date(this.props.startTime)))
 
     chart.select('.x.axis')
       .call(d3.svg.axis().orient('bottom').scale(this.state.xScale).ticks(5).tickFormat((a) => {
