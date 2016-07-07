@@ -236,7 +236,7 @@ export class HybridScatterHeatmap extends React.Component {
         })
 
     // Bind Bins
-    let bins = rows.selectAll('.bin')
+    var bins = rows.selectAll('.bin')
       .data((d) => d, (d, i) => i)
 
     let self = this
@@ -247,9 +247,6 @@ export class HybridScatterHeatmap extends React.Component {
     // Enter + Update Bins
     bins
       .enter().append('rect')
-        .attr('opacity', (d, i) => {
-          return 1 - heatmap[d.rowIndex][i].active
-        })
         .attr('class', 'bin')
         .on('click.heatmap.' + this.props.clsName, function (d, i) { // Need to have reference to dynamic scope for access to d3 element, so no es6
           self.props.heatmapOnClick(d, i)
@@ -263,6 +260,9 @@ export class HybridScatterHeatmap extends React.Component {
         .on('mouseout.heatmap.' + this.props.clsName, (d, i) => this.props.heatmapOnMouseOut(d, i))
       .merge(bins)
         .transition().duration(100)
+        .attr('opacity', (d, i) => {
+          return 1 - heatmap[d.rowIndex][i].active
+        })
         .attr('x', (d) => {
           return this.state.xScale(this.endTime + d.key)
         })
@@ -286,63 +286,61 @@ export class HybridScatterHeatmap extends React.Component {
     let columnMarkers = heatmapData.selectAll('.markerCol')
       .data(heatmap[0], (d, i) => i)
 
-    columnMarkers.enter().append('rect')
-      .attr('class', 'markerCol')
-      .on('click.markerCol', (d, i) => {
-        if (d3.event.shiftKey) {
-          // Iterate over the columns corresponding bins and flip their activity
-          for (let row = 0; row < this.props.heatmapVertDivisions; row++) {
-            heatmap[row][i].active = 1 - heatmap[row][i].active
-            d3.select(bins[row][i])
-              .style('opacity', 1 - heatmap[row][i].active)
-          }
-          self.updateChart()
-        } else {
-          let index = this.state.expandedSectionNumbers.indexOf(i)
-          let toExpand = null
-          if (index > -1) {
-            toExpand = this.state.expandedSectionNumbers
-            toExpand.splice(index, 1)
-          } else {
-            let chartWidth = root.offsetWidth - this.props.margin.left - this.props.margin.right
-            let originalBlockSize = chartWidth * (1 / this.props.heatmapHorzDivisions)
-            let expandedBlockSize = originalBlockSize * this.state.rangeExpansionFactor
-            let pending = (this.state.expandedSectionNumbers.length + 1) * expandedBlockSize
-            if (pending >= chartWidth || this.state.expandedSectionNumbers.length + 1 === this.props.heatmapHorzDivisions) {
-              toExpand = this.state.expandedSectionNumbers
-            } else {
-              toExpand = this.state.expandedSectionNumbers
-                .concat(i)
-                .sort((a, b) => {
-                  return a - b
-                })
+    columnMarkers
+      .enter().append('rect')
+        .attr('class', 'markerCol')
+        .on('click.markerCol', (d, i) => {
+          if (d3.event.shiftKey) {
+            // Iterate over the columns corresponding bins and flip their activity
+            for (let row = 0; row < this.props.heatmapVertDivisions; row++) {
+              heatmap[row][i].active = 1 - heatmap[row][i].active
             }
+            self.updateChart()
+          } else {
+            let index = this.state.expandedSectionNumbers.indexOf(i)
+            let toExpand = null
+            if (index > -1) {
+              toExpand = this.state.expandedSectionNumbers
+              toExpand.splice(index, 1)
+            } else {
+              let chartWidth = root.offsetWidth - this.props.margin.left - this.props.margin.right
+              let originalBlockSize = chartWidth * (1 / this.props.heatmapHorzDivisions)
+              let expandedBlockSize = originalBlockSize * this.state.rangeExpansionFactor
+              let pending = (this.state.expandedSectionNumbers.length + 1) * expandedBlockSize
+              if (pending >= chartWidth || this.state.expandedSectionNumbers.length + 1 === this.props.heatmapHorzDivisions) {
+                toExpand = this.state.expandedSectionNumbers
+              } else {
+                toExpand = this.state.expandedSectionNumbers
+                  .concat(i)
+                  .sort((a, b) => {
+                    return a - b
+                  })
+              }
+            }
+            this.setState({
+              expandedSectionNumbers: toExpand
+            }, () => {
+              self.resizeChart()
+            })
           }
-          this.setState({
-            expandedSectionNumbers: toExpand
-          }, () => {
-            self.resizeChart()
-          })
-        }
-      })
-
-    columnMarkers.transition().duration(100)
-      .attr('x', (d, i) => {
-        return this.state.xScale(this.endTime + d.key)
-      })
-      .attr('y', (d, i) => {
-        return -(heatmapHeightBand / 4) - 3
-      })
-      .attr('fill', (d, i) => {
-        let count = 0
-        for (let row = 0; row < this.props.heatmapVertDivisions; row++) {
-          count += heatmap[row][i].count
-        }
-        let color = this.state.heatmapColorScale(count)
-        return color
-      })
-      .attr('width', (d) => binWidth(d))
-      .attr('height', () => heatmapHeightBand / 4)
+        })
+      .merge(columnMarkers).transition().duration(100)
+        .attr('x', (d, i) => {
+          return this.state.xScale(this.endTime + d.key)
+        })
+        .attr('y', (d, i) => {
+          return -(heatmapHeightBand / 4) - 3
+        })
+        .attr('fill', (d, i) => {
+          let count = 0
+          for (let row = 0; row < this.props.heatmapVertDivisions; row++) {
+            count += heatmap[row][i].count
+          }
+          let color = this.state.heatmapColorScale(count)
+          return color
+        })
+        .attr('width', (d) => binWidth(d))
+        .attr('height', () => heatmapHeightBand / 4)
   }
 
   updateScales () {
