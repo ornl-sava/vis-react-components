@@ -151,7 +151,7 @@ class Histogram extends React.Component {
   renderHistogram () {
     let {chartWidth, chartHeight, ...props} = this.props
     let numBins = props.data[0].bins.length
-    let barWidth = (props.xScale.type === 'ordinalBand')
+    let barWidth = /ordinal/.test(props.xScale.type)
       ? props.xScale.bandwidth()
       : chartWidth / numBins
 
