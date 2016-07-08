@@ -22,7 +22,7 @@ const toolTipFunction2 = (d) => {
   let timeFormat = d3.timeFormat('%c')
   if (d.value > 0) {
     toolTip =
-      '<span class="title">' + timeFormat(new Date(+d.key)) + '</span>' +
+      '<span class="title">' + timeFormat(d.key) + '</span>' +
       d3.format(',')(d.value)
   }
 

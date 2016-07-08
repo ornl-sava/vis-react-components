@@ -40,9 +40,7 @@ class Chart extends React.Component {
     // Setup xScale
     let scale = null
     if (/ordinal/.test(scaleType)) {
-      // scale = d3.scaleOrdinal()
       if (scaleType === 'ordinalBand') {
-        // scale.rangeRoundBands(range)
         scale = d3.scaleBand()
       } else {
         scale = d3.scalePoint()

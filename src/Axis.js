@@ -57,6 +57,7 @@ class Axis extends React.Component {
 
     let tickCount = 0
     let tickValues = props.tickValues
+    let tickFormatter = null
 
     if (props.data.length > 0 && props.scale.domain().length > 0 && props.scale.range().length > 0) {
       // Use custom tick count if it exist
@@ -67,11 +68,11 @@ class Axis extends React.Component {
       }
 
       // If scale type is ordinal truncate labels
-      if (/ordinal+/.test(props.scale.type)) {
+      if (/ordinal/.test(props.scale.type)) {
         let maxWidth = 0
         let fontSize = 12
         if (props.orient === 'top' || props.orient === 'bottom') {
-          let binWidth = Math.floor((props.scale.range()[tickCount - 1] / tickCount))
+          let binWidth = Math.floor((props.scale.step()))
           maxWidth = Math.floor(binWidth / fontSize)
         } else {
           if (props.orient === 'left') {
@@ -80,21 +81,23 @@ class Axis extends React.Component {
             maxWidth = props.margin.right
           }
         }
-        this.axis.tickFormat((d) => {
+        tickFormatter = (d) => {
           return truncateLabel(d, maxWidth)
-        })
+        }
       }
 
       // Use custom tickFormatter if it exist
       if (props.tickFormat) {
-        this.axis.tickFormat((d, i) => {
+        tickFormatter = (d, i) => {
           return props.tickFormat(d, i)
-        })
+        }
       }
     }
 
     this.setAxis(props)
+
     this.axis
+      .tickFormat(tickFormatter)
       .tickValues(tickValues)
       .ticks(tickCount)
     selection.call(this.axis)
