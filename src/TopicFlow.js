@@ -142,12 +142,9 @@ class TopicFlow extends React.Component {
       props.xScale.rangeRoundBands([0, props.chartWidth], props.padding, props.outerPadding)
     }
     // GETTING TOPIC BAR INFORMATION
-    console.log('dataAAA', props.data)
     let svgTopicBars = props.data.map((dataArr, index) => {
-      console.log('dataArr.length', dataArr)
       return Object.keys(dataArr).map((key, i) => {
         let data = dataArr[key].events
-        console.log('HOUR', dataArr[key].hour)
         if (data[0] == null) {
           data[0] = 'EMPTY'
         }
@@ -171,24 +168,19 @@ class TopicFlow extends React.Component {
         barData.push(bar)
       })
     })
-    barData.map((data, index) => {
-      let hour = data.tooltipData.hour
-      console.log('index', index, 'hour', hour)
-    })
     // GETTING CONNECTING LINE INFORMATION (EDGES)
     barData.map((data, index) => {
       let story = data.tooltipData.story
       let hour = data.tooltipData.hour
       let dataMatch = []
-      console.log('hour', hour, 'story', story, 'id', data.tooltipData.topicID)
+      // console.log('hour', hour, 'story', story, 'id', data.tooltipData.topicID)
       if (story[0] != null) {
-        // console.log('story', story)
         let prevTopic = barData.filter((prData, prInd) => {
           if (prData.tooltipData.hour === (hour - 1) && prData.tooltipData.topicID === story[0]) {
             return true
           } else { return false }
         })
-        console.log('prevTopic', prevTopic)
+        // console.log('prevTopic', prevTopic)
         if (prevTopic[0] != null) {
           // console.log('prevTopicNot', prevTopic[0])
           // console.log('prevTopicX', prevTopic[0].x)

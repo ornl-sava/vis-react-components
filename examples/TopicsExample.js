@@ -95,7 +95,7 @@ const setUpData = () => {
   // ADDING REMAINING TIMESTEPS BY USING STORY DATA AS TOPIC FILTER
   let mapData = storyData.map((data, index) => {
     newData.push([])
-    console.log('data', newData[index])
+    // console.log('data', newData[index])
     // GOING THROUGH TOPICS FOR TIMESTEP - INDEX
     return Object.keys(data).map((scrap, key) => {
       let sData = data[key]
@@ -105,13 +105,12 @@ const setUpData = () => {
         let s = []
         // GOING THROUGH STORIES ([0||1][?], [0||1][?], [0||1][?])
         return sData.map((d, i) => {
-          console.log('hour', index + 1, 'topic', key, 'd', d)
+          // console.log('hour', index + 1, 'topic', key, 'd', d)
           // IF STORY OF A MERGE TOPIC [0][?], GET STORY [?]
           if (d[0] === 0) {
             s.push(d[1])
             // IF THE PREVIOUS TIMESTEP DOES NOT INCLUDE TOPIC ADD
             if (newData[index][d[1]] == null) {
-              console.log('null')
               let eventInfo = eTopics[index][d[1]]
               // IF THE EVENTS ARE NON-EXISTANT, MAKE IT EMPTY
               if (eventInfo == null) {
@@ -151,6 +150,10 @@ const setUpData = () => {
   mapData = newData
   return mapData
 }
+
+const makeAdjacencyList = () => {
+}
+const aList = makeAdjacencyList
 
 const tData = (n, start) => {
   let num = n
@@ -220,6 +223,7 @@ class TopicsContainer extends React.Component {
     this.setState({data: allData, loading: false, status: 'OK'})
   }
   render () {
+    console.log('aList', aList)
     console.log('realData', allData)
     console.log('fakeData', fakeData)
     // this.setUpData()

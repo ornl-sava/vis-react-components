@@ -272,8 +272,6 @@ class StoryViewer extends React.Component {
     )
   }
   renderTopics () {
-    // console.log('SVRenderID', this.state.currentID)
-    console.log('barData', this.barData)
     let svgBins = this.barData.map((array, index) => {
       let bIndex = this.state.currentID[index]
       return array.map((data, i) => {
