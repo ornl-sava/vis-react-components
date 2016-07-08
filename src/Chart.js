@@ -106,7 +106,22 @@ class Chart extends React.Component {
     //   .attr('x', chartWidth - 40)
     //   .attr('y', -props.margin.top + 1)
     this.yScale.range([chartHeight, 0])
+    if (props.yAxis.innerPadding) {
+      this.yScale.paddingInner(props.yAxis.innerPadding)
+    }
+
+    if (props.yAxis.outerPadding) {
+      this.yScale.paddingOuter(props.yAxis.outerPadding)
+    }
+
     this.xScale.range([0, chartWidth])
+    if (props.xAxis.innerPadding) {
+      this.xScale.paddingInner(props.xAxis.innerPadding)
+    }
+
+    if (props.xAxis.outerPadding) {
+      this.xScale.paddingOuter(props.xAxis.outerPadding)
+    }
 
     this.setState({chartWidth, chartHeight}, () => { this.forceUpdate() })
   }
@@ -184,17 +199,22 @@ Chart.defaultProps = {
   title: '',
   xAxis: {
     type: 'x',
-    orient: 'bottom'
+    orient: 'bottom',
+    innerPadding: null,
+    outerPadding: null
   },
   yAxis: {
     type: 'y',
-    orient: 'left'
+    orient: 'left',
+    innerPadding: null,
+    outerPadding: null
   },
   legend: false,
   margin: {top: 15, right: 10, bottom: 20, left: 80},
   width: 0,
   height: 250,
-  rangePadding: 25,
+  innerPadding: null,
+  outerPadding: null,
   xScaleType: 'ordinalBand',
   yScaleType: 'linear',
   tipFunction: null
@@ -241,7 +261,6 @@ Chart.propTypes = {
   xScaleType: PropTypes.string,
   xDomain: PropTypes.array,
   yScaleType: PropTypes.string,
-  rangePadding: PropTypes.number,
   data: PropTypes.oneOfType([
     React.PropTypes.object,
     React.PropTypes.array

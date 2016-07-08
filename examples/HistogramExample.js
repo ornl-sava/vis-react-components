@@ -134,17 +134,26 @@ class HistogramExample extends React.Component {
       <div>
         <div>
           <Chart title='Histogram - Layered bars based on data order' width={800} height={200} data={histogramData} {...this.state} settings={this.settings} tipFunction={toolTipFunction}>
-            <Histogram padding={0.0} outerPadding={0.0} addOverlay xAccessor='key'yAccessor='count' onBarClick={onBarClick} />
+            <Histogram addOverlay xAccessor='key'yAccessor='count' onBarClick={onBarClick} />
           </Chart>
         </div>
         <div>
-          <Chart title='Stacked Histogram - Stacked bars based on data order' width={800} height={200} sortBy={'y'} sortOrder={'Ascending'} data={stackedHistogramData} tipFunction={toolTipFunction}>
+          <Chart title='Stacked Histogram - Stacked bars based on data order'
+            width={800} height={200}
+            sortBy={'y'} sortOrder={'Ascending'}
+            xAxis={{
+              type: 'x',
+              orient: 'bottom',
+              innerPadding: 0.2,
+              outerPadding: 0.4
+            }}
+            data={stackedHistogramData} tipFunction={toolTipFunction}>
             <Histogram type='stacked' addOverlay />
           </Chart>
         </div>
         <div>
           <Chart title='Temporal Histogram' xScaleType='temporal' width={800} height={200} data={temporalData} tipFunction={toolTipFunction}>
-            <Histogram padding={0.0} outerPadding={0.0} addOverlay onBarClick={onBarClick} />
+            <Histogram addOverlay onBarClick={onBarClick} />
           </Chart>
         </div>
       </div>
