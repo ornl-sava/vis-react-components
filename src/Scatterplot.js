@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react'
-import d3 from 'd3'
+import * as d3 from 'd3'
 
 class Scatterplot extends React.Component {
   constructor (props) {
