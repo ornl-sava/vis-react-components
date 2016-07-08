@@ -10,6 +10,7 @@ import topicData from './data/topics.json'
 import StoryViewer from '../src/StoryViewer'
 import eTopics from '../examples/data/for-hci/enduring-topics-listed.json'
 import storyData from '../examples/data/for-hci/stories.json'
+import eventNames from '../examples/data/for-hci/enduring-22-model.json'
 
 const hTop = 60 * (20 + 15)
 
@@ -25,20 +26,28 @@ const toolTipFunction = (tooltipData) => {
 
 // gets unique prefixes
 const getPrefixes = (data) => {
-  // getting data in right format
-  let fData = Object.keys(data).map(key => { return topicData[key][0] })
-  fData = fData.map((arr, i) => {
+  // GET THE PREFIXES
+  let fData = data.map((arr, i) => {
     if (arr == null) {
       arr = 'EMPTY'
     }
     let arrPref = arr.split(/:|-/, 1)
     return arrPref[0]
   })
-  return fData.filter((arr, i) => {
+  // FILTER OUT REPEATS
+  let noRepeats = fData.filter((arr, i) => {
     return fData.indexOf(arr) === i
   })
+  // IF NO EMPTY PREFIX, ADD
+  if (noRepeats.indexOf('EMPTY') < 0) {
+    noRepeats.push('EMPTY')
+  }
+  return noRepeats
 }
-const prefixes = getPrefixes(topicData)
+const fakeEventNames = Object.keys(topicData).map(key => { return topicData[key][0] })
+const fakePrefixes = getPrefixes(fakeEventNames)
+console.log('oldPref', fakePrefixes)
+const prefixes = getPrefixes(eventNames.column)
 
 // generates random data based on source
 const getRandData = (topicData, amt) => {
@@ -76,29 +85,62 @@ const allDataComb = (n) => {
 
 const setUpData = () => {
   let newData = []
-  newData.push({})
+  // ADDING FIRST TIMESTEP
+  newData.push([])
   let firstData = Object.keys(eTopics[0]).map((scrap, index) => {
     let data = eTopics[0][index]
-    newData[0][index] = {events: data, story: []}
+    newData[0][index] = {events: data, story: [], topicID: index, hour: 0}
     return {events: data, story: []}
   })
+  // ADDING REMAINING TIMESTEPS BY USING STORY DATA AS TOPIC FILTER
   let mapData = storyData.map((data, index) => {
-    newData.push({})
+    newData.push([])
+    console.log('data', newData[index])
+    // GOING THROUGH TOPICS FOR TIMESTEP - INDEX
     return Object.keys(data).map((scrap, key) => {
       let sData = data[key]
-      // console.log(eTopics[index + 1])
+      // FROM MERGE || NEW TOPIC [1][?]
       if (sData.length > 1 || sData[0][0] === 1) {
+        // START STORY AT EMPTY
+        let s = []
+        // GOING THROUGH STORIES ([0||1][?], [0||1][?], [0||1][?])
         return sData.map((d, i) => {
-          // check if from merge or new topic formation (1)
-          let s = []
-          // check if from merge and connect to previous enduring (0)
+          console.log('hour', index + 1, 'topic', key, 'd', d)
+          // IF STORY OF A MERGE TOPIC [0][?], GET STORY [?]
           if (d[0] === 0) {
             s.push(d[1])
-            newData[index + 1][key] = {events: eTopics[index + 1][key], story: s}
-            return (
-              {events: eTopics[index + 1], story: s}
-            )
+            // IF THE PREVIOUS TIMESTEP DOES NOT INCLUDE TOPIC ADD
+            if (newData[index][d[1]] == null) {
+              console.log('null')
+              let eventInfo = eTopics[index][d[1]]
+              // IF THE EVENTS ARE NON-EXISTANT, MAKE IT EMPTY
+              if (eventInfo == null) {
+                eventInfo = 'EMPTY'
+              }
+              newData[index][d[1]] = {
+                events: eventInfo,
+                story: [],
+                topicID: d[1],
+                hour: index
+              }
+            }
           }
+          // IF THE STORY IS NULL OR ON FIRST INDEX ADD INFO
+          if (s[0] != null || i === 0) {
+            let eventInfo = eTopics[index + 1][key]
+            if (eventInfo == null) {
+              eventInfo = 'EMPTY'
+            }
+            newData[index + 1][key] = {
+              events: eventInfo,
+              story: s,
+              topicID: key,
+              hour: index + 1
+            }
+          }
+          return (
+            newData[index + 1][key]
+          )
         })
       }
     })
@@ -110,19 +152,23 @@ const setUpData = () => {
   return mapData
 }
 
-const tData = (n) => {
+const tData = (n, start) => {
+  let num = n
   let topics = setUpData()
-  let comData = []
-  for (let i = 0; i < n; i++) {
-    comData[i] = topics[i]
+  if (n + start > topics.length - 1) {
+    num = topics.length - 1 - start
   }
-  // console.log('tData', comData)
+  let comData = []
+  for (let i = 0; i < num; i++) {
+    comData[i] = topics[start + i]
+  }
+  console.log('tData', comData)
   return comData
 }
 
 const nData = 7
 const fakeData = allDataComb(nData)
-const allData = tData(nData)
+const allData = tData(nData, 0)
 
 class TopicsContainer extends React.Component {
   constructor (props) {
@@ -171,7 +217,7 @@ class TopicsContainer extends React.Component {
     // doesn't re-render if setting state twice
     // this would be where it updates data..
     // if the data didn't go beyond this ... loading wouldn't be set to false
-    this.setState({data: fakeData, loading: false, status: 'OK'})
+    this.setState({data: allData, loading: false, status: 'OK'})
   }
   render () {
     console.log('realData', allData)
@@ -188,8 +234,8 @@ class TopicsContainer extends React.Component {
             <TopicFlow className='col-md-10' {...props} clickArray={this.state.clickArray} colorView={this.refs.colorView} onBarClick={this.onClick} />
           </Chart>
         </div>
-        <div className='row' >
-          <Chart className='col-md-12' {...props} {...this.state} tipFunction={this.toolTipFunction} yAxis={false} xAxis={false} height={1000} margin={{top: 40, right: 10, bottom: 10, left: 80}} >
+        <div className='row' style={{overflow: 'scroll'}}>
+          <Chart className='col-md-12' {...props} {...this.state} tipFunction={this.toolTipFunction} yAxis={false} xAxis={false} height={1000} margin={{top: 40, right: 10, bottom: 10, left: 80}} width={5000}>
             <StoryViewer className='col-md-12' {...props} clickArray={this.state.clickArray} colorView={this.refs.colorView} onBarClick={this.onClick} />
           </Chart>
         </div>
