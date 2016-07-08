@@ -24,7 +24,7 @@ class Bar extends React.Component {
     this._onMouseLeave()
   }
   render () {
-    let { className, data, name, ...other } = this.props
+    let { className, data, name, width, height, y } = this.props
     className = className ? 'histogram-bar ' + className : 'histogram-bar'
     return (
       <rect
@@ -32,7 +32,9 @@ class Bar extends React.Component {
         data-name={name}
         data-x={data.x}
         data-y={data.y}
-        {...other}
+        width={width}
+        height={height}
+        y={y}
         onClick={this.onClick}
         onMouseEnter={this.onMouseEnter}
         onMouseLeave={this.onMouseLeave}

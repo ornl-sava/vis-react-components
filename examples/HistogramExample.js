@@ -1,5 +1,5 @@
 import React from 'react'
-import d3 from 'd3'
+import * as d3 from 'd3'
 
 import { Chart, Histogram } from '../src'
 import { histogramData, temporalHistogramData, stackedHistogramData } from './data/exampleData'
@@ -29,10 +29,10 @@ const toolTipFunction = (tooltipData) => {
   }, 0)
   let toolTip =
     '<span class="title">' + d.label + '</span>' +
-    '</span>Total: ' + d3.format('n')(total) +
+    '</span>Total: ' + d3.format(',')(total) +
     '<br /><small>'
   toolTip += d.stackCounts.reduceRight((prev, count, index) => {
-    return prev + d.stackNames[index] + ' : ' + d3.format('n')(count) + '<br />'
+    return prev + d.stackNames[index] + ' : ' + d3.format(',')(count) + '<br />'
   }, '')
   toolTip += '</small>'
   return toolTip
@@ -75,7 +75,7 @@ class HistogramExample extends React.Component {
             return defaultValue === null ? 'Default' : defaultValue.charAt(0).toUpperCase() + defaultValue.slice(1)
           },
           onChange: (value) => {
-            localStorage.setItem(id + '_yScaleType', JSON.stringify(value))
+            localStorage.setItem(id + '_yScaleType', JSON.stringify(value.toLowerCase()))
             this.setState({
               yScaleType: value.toLowerCase()
             })
@@ -88,7 +88,11 @@ class HistogramExample extends React.Component {
           ],
           defaultSelected: () => {
             let defaultValue = this.state.sortBy
-            return defaultValue === null ? 'Default' : defaultValue
+            return defaultValue === null
+              ? 'Default'
+              : defaultValue === 'x'
+                ? 'Key'
+                : 'Document Count'
           },
           onChange: (value) => {
             let newValue = value === 'Default'
@@ -96,9 +100,9 @@ class HistogramExample extends React.Component {
               : value === 'Key'
                 ? 'x'
                 : 'y'
-            localStorage.setItem(id + '_sortBy', JSON.stringify(value))
+            localStorage.setItem(id + '_sortBy', JSON.stringify(newValue))
             this.setState({
-              sortBy: newValue.toLowerCase()
+              sortBy: newValue
             })
           }
         }, {
@@ -109,15 +113,15 @@ class HistogramExample extends React.Component {
           ],
           defaultSelected: () => {
             let defaultValue = this.state.sortOrder
-            return defaultValue === null ? 'Default' : defaultValue
+            return defaultValue === null ? 'Default' : defaultValue.charAt(0).toUpperCase() + defaultValue.slice(1)
           },
           onChange: (value) => {
             let newValue = value === 'Default'
               ? null
               : value
-            localStorage.setItem(id + '_sortOrder', JSON.stringify(value))
+            localStorage.setItem(id + '_sortOrder', JSON.stringify(newValue === null ? null : newValue.toLowerCase()))
             this.setState({
-              sortOrder: newValue.toLowerCase()
+              sortOrder: newValue === null ? null : newValue.toLowerCase()
             })
           }
         }
@@ -130,20 +134,28 @@ class HistogramExample extends React.Component {
       <div>
         <div>
           <Chart title='Histogram - Layered bars based on data order' width={800} height={200} data={histogramData} {...this.state} settings={this.settings} tipFunction={toolTipFunction}>
-            <Histogram padding={0.0} outerPadding={0.0} addOverlay xAccessor='key'yAccessor='count' onBarClick={onBarClick} />
+            <Histogram addOverlay xAccessor='key'yAccessor='count' onBarClick={onBarClick} />
           </Chart>
         </div>
         <div>
-          <Chart title='Stacked Histogram - Stacked bars based on data order' width={800} height={200} sortBy={'y'} sortOrder={'Ascending'} data={stackedHistogramData} tipFunction={toolTipFunction}>
+          <Chart title='Stacked Histogram - Stacked bars based on data order'
+            width={800} height={200}
+            sortBy={'y'} sortOrder={'Ascending'}
+            xAxis={{
+              type: 'x',
+              orient: 'bottom',
+              innerPadding: 0.2,
+              outerPadding: 0.4
+            }}
+            data={stackedHistogramData} tipFunction={toolTipFunction}>
             <Histogram type='stacked' addOverlay />
           </Chart>
         </div>
         <div>
           <Chart title='Temporal Histogram' xScaleType='temporal' width={800} height={200} data={temporalData} tipFunction={toolTipFunction}>
-            <Histogram padding={0.0} outerPadding={0.0} addOverlay onBarClick={onBarClick} />
+            <Histogram addOverlay onBarClick={onBarClick} />
           </Chart>
         </div>
-
       </div>
     )
   }

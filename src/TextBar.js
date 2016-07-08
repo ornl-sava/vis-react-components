@@ -19,9 +19,13 @@ class TextBar extends React.Component {
     // console.log('toolTip', this.props.tooltipData)
     this.props.onClick(this.props.tooltipData)
   }
+  _onDoubleClick () {
+    this.props.onDoubleClick(this.props.tooltipData)
+  }
   constructor (props) {
     super(props)
     this.onClick = this._onClick.bind(this)
+    this.onDoubleClick = this._onDoubleClick.bind(this)
     this.onEnter = this._onMouseEnter.bind(this)
     this.onLeave = this._onMouseLeave.bind(this)
   }
@@ -63,7 +67,7 @@ class TextBar extends React.Component {
     return (
       <g>
         <text className={this.props.className + ' text'} x={this.props.x + this.getTxtAlign()} y={this.props.y + this.props.height / 2} style={this.props.textStyle} onClick={this.onClick} onMouseEnter={this.onEnter} > {props.text} </text>
-        <Bar className={className + ' barTopic'} {...props} onClick={this.onClick} onEnter={this.onEnter} onLeave={this.onLeave} style={this.props.barStyle} />
+        <Bar className={className + ' barTopic'} {...props} onClick={this.onClick} onDoubleClick={this.onDoubleClick} onEnter={this.onEnter} onLeave={this.onLeave} style={this.props.barStyle} />
       </g>
     )
   }
@@ -74,6 +78,9 @@ TextBar.defaultProps = {
   width: 0,
   className: 'txtBar',
   onClick: () => null,
+  onDoubleClick: () => null,
+  onEnter: () => null,
+  onLeave: () => null,
   tooltipData: {},
   x: 0,
   y: 0,
@@ -89,6 +96,7 @@ TextBar.propTypes = {
   height: PropTypes.number.isRequired,
   width: PropTypes.number.isRequired,
   onClick: PropTypes.func,
+  onDoubleClick: PropTypes.func,
   onEnter: PropTypes.func,
   onLeave: PropTypes.func,
   tooltipData: PropTypes.object,

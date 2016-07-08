@@ -1,5 +1,5 @@
 import React from 'react'
-import d3 from 'd3'
+import * as d3 from 'd3'
 
 import { Chart, Choropleth } from '../src'
 import { choroplethData } from './data/exampleData'
@@ -8,7 +8,7 @@ import map from './data/world-110.json'
 const toolTipFunction = (d) => {
   var toolTip =
     '<span class="title">' + d.key + '</span>' +
-    d3.format('n')(d.value)
+    d3.format(',')(d.value)
   return toolTip
 }
 

@@ -232,6 +232,15 @@ class TopicFlow extends React.Component {
         } else {
           svgBins.unshift(cData(this.barData[i]))
         }
+      } else {
+        // this greys the topic bars instead of not rendering
+        nData = JSON.parse(JSON.stringify(this.barData[i]))
+        nData.barStyle.stroke = '#e2e2eb'
+        nData.barStyle.strokeOpacity = 0.6
+        nData.textStyle.fill = '#e2e2eb'
+        nData.textStyle.fillOpacity = 0.6
+        console.log('nData', nData)
+        svgBins.unshift(cData(nData))
       }
     }
     return (

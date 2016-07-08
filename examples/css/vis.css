@@ -451,7 +451,7 @@ nav ul li .active {
 }
 .barTopic.Selected{
   stroke-width: 6;
-  stroke: black;
+  stroke: #00ccff;
 }
 
 .lineMatch{
