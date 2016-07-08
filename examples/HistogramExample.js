@@ -1,5 +1,5 @@
 import React from 'react'
-import d3 from 'd3'
+import * as d3 from 'd3'
 
 import { Chart, Histogram } from '../src'
 import { histogramData, temporalHistogramData, stackedHistogramData } from './data/exampleData'
@@ -29,10 +29,10 @@ const toolTipFunction = (tooltipData) => {
   }, 0)
   let toolTip =
     '<span class="title">' + d.label + '</span>' +
-    '</span>Total: ' + d3.format('n')(total) +
+    '</span>Total: ' + d3.format(',')(total) +
     '<br /><small>'
   toolTip += d.stackCounts.reduceRight((prev, count, index) => {
-    return prev + d.stackNames[index] + ' : ' + d3.format('n')(count) + '<br />'
+    return prev + d.stackNames[index] + ' : ' + d3.format(',')(count) + '<br />'
   }, '')
   toolTip += '</small>'
   return toolTip

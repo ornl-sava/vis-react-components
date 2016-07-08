@@ -1,5 +1,5 @@
 import React from 'react'
-import d3 from 'd3'
+import * as d3 from 'd3'
 
 import { Chart, Heatmap } from '../src'
 
@@ -11,7 +11,7 @@ const toolTipFunction1 = (d) => {
   if (d.value > 0) {
     toolTip =
       '<span class="title">' + d.key + '</span>' +
-      d3.format('n')(d.value)
+      d3.format(',')(d.value)
   }
 
   return toolTip
@@ -19,11 +19,11 @@ const toolTipFunction1 = (d) => {
 
 const toolTipFunction2 = (d) => {
   let toolTip = '<span> No Data </span>'
-  let timeFormat = d3.time.format('%c')
+  let timeFormat = d3.timeFormat('%c')
   if (d.value > 0) {
     toolTip =
       '<span class="title">' + timeFormat(new Date(+d.key)) + '</span>' +
-      d3.format('n')(d.value)
+      d3.format(',')(d.value)
   }
 
   return toolTip
@@ -71,7 +71,7 @@ const chartProps2 = {
     tickCount: linearTemporalHeatmapData[0].bins.length + 1,
     tickValues: linearTemporalHeatmapData[0].bins.map((d) => new Date(d.key)),
     tickFormat: (d, i) => {
-      let timeFormat = d3.time.format('%X')
+      let timeFormat = d3.timeFormat('%X')
       return timeFormat(d)
     },
     orient: 'bottom'
