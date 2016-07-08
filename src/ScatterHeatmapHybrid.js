@@ -225,7 +225,7 @@ export class HybridScatterHeatmap extends React.Component {
     rows.exit().remove()
 
     // Enter + Update rows
-    rows
+    rows = rows
       .enter().append('g')
         .attr('class', 'row')
       .merge(rows)
@@ -250,9 +250,6 @@ export class HybridScatterHeatmap extends React.Component {
         .attr('class', 'bin')
         .on('click.heatmap.' + this.props.clsName, function (d, i) { // Need to have reference to dynamic scope for access to d3 element, so no es6
           self.props.heatmapOnClick(d, i)
-          let bin = d3.select(this)
-          let opacity = bin.style('opacity')
-          bin.style('opacity', 1 - opacity)
           heatmap[d.rowIndex][i].active = 1 - heatmap[d.rowIndex][i].active
           self.updateChart()
         })
@@ -261,7 +258,7 @@ export class HybridScatterHeatmap extends React.Component {
       .merge(bins)
         .transition().duration(100)
         .attr('opacity', (d, i) => {
-          return 1 - heatmap[d.rowIndex][i].active
+          return heatmap[d.rowIndex][i].active ? 0 : 1
         })
         .attr('x', (d) => {
           return this.state.xScale(this.endTime + d.key)
