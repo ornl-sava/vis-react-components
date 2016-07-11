@@ -105,7 +105,6 @@ const setUpData = () => {
         let s = []
         // GOING THROUGH STORIES ([0||1][?], [0||1][?], [0||1][?])
         return sData.map((d, i) => {
-          // console.log('hour', index + 1, 'topic', key, 'd', d)
           // IF STORY OF A MERGE TOPIC [0][?], GET STORY [?]
           if (d[0] === 0) {
             s.push(d[1])
@@ -153,18 +152,13 @@ const setUpData = () => {
 
 const makeAdjacencyList = () => {
   let tuneIn = (adjList, story, index) => {
-    // console.log('tInIndex', index, 'tInStory', story)
-    // console.log(adjList)
     let piece = adjList[index].story
     let sArr = story.concat(index)
-    // console.log('tIPiece', adjList[index].story, 'sArr', sArr)
     // if there is a story go to it
     if (piece[0] != null) {
       // update the stories
-      // console.log('loop', sArr)
       return tuneIn(adjList, sArr, piece[0])
     } else {
-      // console.log('finalsArr', sArr)
       return sArr
     }
   }
@@ -195,6 +189,7 @@ const makeAdjacencyList = () => {
       })
     })
   })
+  // LOOKS FOR A STORY THAT HAS AN INDEX GREATER THAN CURRENT
   let checkGreater = (arr, index) => {
     let notChecked = true
     arr.every((eD, eI) => {
@@ -206,21 +201,18 @@ const makeAdjacencyList = () => {
   }
   for (let i = adjacencyList.length - 1; i >= 0; i--) {
     let d = adjacencyList[i]
-    // console.log('forD', d)
-    // make check for if the story index is > than the current index
-    // that way not doing extra work
     if (d.story[0] != null) {
-      // DONT ADD STORIES IF ALREADY ADDED
+      // CHECK TO SEE IF STORY FILLED ALREADY
       if (checkGreater(d.story, i)) {
+        // LOOPING THROUGH STORIES
         d.story.map((sD, sI) => {
+          // CYCLES FOR ALL THE STORIES OF THAT TOPIC
           let newS = tuneIn(adjacencyList, [i], sD)
           for (let j = 0; j < newS.length; j++) {
             let s = newS[j]
             let newSCopy = JSON.parse(JSON.stringify(newS))
             newSCopy.splice(j, 1)
-            // console.log('sIndex', s, 'copy', newSCopy)
             adjacencyList[s].story = newSCopy
-            // console.log('adjListS', adjacencyList[s].story)
           }
         })
       }
