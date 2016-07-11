@@ -27,12 +27,13 @@ class TopicFlow extends React.Component {
   _onEnter (toolTipData, svgElement) {
     let props = this.props
     props.onEnter(toolTipData, svgElement)
-    this.setState({selectedTopics: toolTipData.label, move: false})
+    console.log('story', toolTipData)
+    this.setState({selectedTopics: toolTipData.label, move: false, selectedT: toolTipData.story.concat(toolTipData.adjI)})
   }
   _onLeave (toolTipData, svgElement) {
     let props = this.props
     props.onLeave(toolTipData, svgElement)
-    this.setState({selectedTopics: [], move: false})
+    this.setState({selectedTopics: [], move: false, selectedT: []})
   }
   _onClick () {
     // I thought I could call the other onClick and do something with it
@@ -47,6 +48,7 @@ class TopicFlow extends React.Component {
       dataUp: 0,
       currentID: [],
       selectedTopics: [],
+      selectedT: [],
       moveX: 0,
       move: false
     }
@@ -143,19 +145,19 @@ class TopicFlow extends React.Component {
     }
     console.log('tFAdjList', props.adjacencyList)
     // GETTING TOPIC BAR INFORMATION
-    let svgTopicBars = props.data.map((dataArr, index) => {
-      return Object.keys(dataArr).map((key, i) => {
-        let data = dataArr[key].events
+    let svgTopicBars = props.adjacencyList.map((dataArr, i) => {
+      if (dataArr.hour < props.numTData) {
+        let data = dataArr.events
         if (data[0] == null) {
           data[0] = 'EMPTY'
         }
-        let posY = this.props.yScale(i)
-        let posX = props.xScale(index)
+        let posY = this.props.yScale(dataArr.topicID)
+        let posX = props.xScale(dataArr.hour)
         let fontSize = 12
         // CLASSNAME NEEDS SIMPLE NAMES
         let cName = data[0].toString().split(/:|-/, 1) + '-' + i.toString()
         let topicColor = {stroke: this.prefScale(data[0].split(/:|-/, 1)[0])}
-        cName += this.statArr[index][i]
+        // cName += this.statArr[index][i]
         if (this.state.currentID === data[0]) {
           cName += ' Selected'
           topicColor = {stroke: '#e67300'}
@@ -165,31 +167,26 @@ class TopicFlow extends React.Component {
         // SETTING TEXT STYLE
         let barTxtStyle = this.buildAText(fontSize.toString() + 'px', 'black')
         let bar = this.buildABar(data, cName, text, barHeight, barWidth, posX, posY, topicColor, barTxtStyle)
-        bar.tooltipData = {label: bar.data[0], counts: bar.data.length, story: dataArr[key].story, topicID: dataArr[key].topicID, hour: dataArr[key].hour}
+        bar.tooltipData = {label: bar.data[0], counts: bar.data.length, story: dataArr.story, topicID: dataArr.topicID, hour: dataArr.hour, prevStory: dataArr.prevStory, adjI: i}
         barData.push(bar)
-      })
+      }
     })
+    console.log('BarData', barData.length)
     // GETTING CONNECTING LINE INFORMATION (EDGES)
     barData.map((data, index) => {
-      let story = data.tooltipData.story
-      let hour = data.tooltipData.hour
+      let story = data.tooltipData.prevStory
+      // let hour = data.tooltipData.hour
       let dataMatch = []
       // console.log('hour', hour, 'story', story, 'id', data.tooltipData.topicID)
       if (story[0] != null) {
-        let prevTopic = barData.filter((prData, prInd) => {
-          if (prData.tooltipData.hour === (hour - 1) && prData.tooltipData.topicID === story[0]) {
-            return true
-          } else { return false }
-        })
-        // console.log('prevTopic', prevTopic)
-        if (prevTopic[0] != null) {
-          // console.log('prevTopicNot', prevTopic[0])
-          // console.log('prevTopicX', prevTopic[0].x)
-          dataMatch = [{x: data.x, y: data.y + barHeight / 2}, {x: prevTopic[0].x + barWidth, y: prevTopic[0].y + barHeight / 2}]
+        let arrIndex = []
+        story.map((s, i) => {
+          dataMatch = [{x: data.x, y: data.y + barHeight / 2}, {x: barData[s].x + barWidth, y: barData[s].y + barHeight / 2}]
           if (this.props.lineType === 'curved') {
-            lineData.push(diagMaker(dataMatch))
-          } else { lineData.push(lineMaker(dataMatch)) }
-        }
+            arrIndex = lineData.push(diagMaker(dataMatch))
+          } else { arrIndex = lineData.push(lineMaker(dataMatch)) }
+          data.tooltipData.lineIndex = arrIndex - 1
+        })
       }
     })
     this.barData = barData
@@ -202,7 +199,9 @@ class TopicFlow extends React.Component {
       let key = 'bar-' + i
       let nData = []
       if (this.state.selectedTopics[0] != null) {
-        if (this.state.selectedTopics.toString() === this.barData[i].data[0].toString()) {
+        // if (this.state.selectedTopics.toString() === this.barData[i].data[0].toString())
+        // console.log(this.state.selectedT)
+        if (this.state.selectedT.indexOf(i) >= 0) {
           nData = JSON.parse(JSON.stringify(this.barData[i]))
           nData.sel = true
           nData.barStyle.stroke = '#00ccff'
@@ -210,21 +209,29 @@ class TopicFlow extends React.Component {
         }
       }
       let cData = (data) => {
+        let lineInfo = []
+        if (data.tooltipData.lineIndex != null) {
+          lineInfo = (
+            <path className={data.data[0] + ' lineMatch -' + i} d={this.lineData[data.tooltipData.lineIndex]} style={data.barStyle} ></path>
+          )
+        }
         return (
           <g className='bin' key={key}>
             <TextBar {...data} onEnter={this.onEnter} onLeave={this.onLeave} />
-            <path className={data.data[0] + ' lineMatch -' + i} d={this.lineData[i]} style={data.barStyle} ></path>
+            {lineInfo}
           </g>
         )
       }
+      // IF TOPICS SELECTED BY LEGEND KEY
       if (this.props.clickArray[this.barData[i].data[0].toString().split(/:|-/, 1)]) {
         if (nData.sel) {
+          // PUSHES MOUSED OVER TOPICS TO THE FRONT
           svgBins.push(cData(nData))
         } else {
           svgBins.unshift(cData(this.barData[i]))
         }
       } else {
-        // this greys the topic bars instead of not rendering
+        // GREYS OUT TOPIC BARS NOT SELECTED BY LEGEND KEY
         nData = JSON.parse(JSON.stringify(this.barData[i]))
         nData.barStyle.stroke = '#e2e2eb'
         nData.barStyle.strokeOpacity = 0.6

@@ -171,8 +171,8 @@ const makeAdjacencyList = () => {
   let topics = setUpData()
   let adjacencyList = []
   topics.map((data, index) => {
-    Object.keys(data).map((i, scrap) => {
-      let d = data[i]
+    Object.keys(data).map((key, i) => {
+      let d = data[key]
       let s = []
       // NEITHER NEW TOPIC OR HOUR 0
       if (d.story[0] != null) {
@@ -188,28 +188,42 @@ const makeAdjacencyList = () => {
       }
       adjacencyList.push({
         story: s,
+        prevStory: s,
         events: d.events,
-        topicID: d.topicID,
+        topicID: i,
         hour: d.hour
       })
     })
   })
+  let checkGreater = (arr, index) => {
+    let notChecked = true
+    arr.every((eD, eI) => {
+      if (eD > index) {
+        notChecked = false
+      }
+    })
+    return notChecked
+  }
   for (let i = adjacencyList.length - 1; i >= 0; i--) {
     let d = adjacencyList[i]
     // console.log('forD', d)
     // make check for if the story index is > than the current index
     // that way not doing extra work
     if (d.story[0] != null) {
-      d.story.map((sD, sI) => {
-        // DONT ADD STORIES IF ALREADY ADDED
-        if (sD < i) {
+      // DONT ADD STORIES IF ALREADY ADDED
+      if (checkGreater(d.story, i)) {
+        d.story.map((sD, sI) => {
           let newS = tuneIn(adjacencyList, [i], sD)
-          // console.log('sortofMAdeit', newS)
-          newS.map((s, i) => {
-            adjacencyList[s].story = adjacencyList[s].story.concat(newS.splice(i))
-          })
-        }
-      })
+          for (let j = 0; j < newS.length; j++) {
+            let s = newS[j]
+            let newSCopy = JSON.parse(JSON.stringify(newS))
+            newSCopy.splice(j, 1)
+            // console.log('sIndex', s, 'copy', newSCopy)
+            adjacencyList[s].story = newSCopy
+            // console.log('adjListS', adjacencyList[s].story)
+          }
+        })
+      }
     }
   }
   console.log('topicsList', topics)
