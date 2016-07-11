@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react'
-import d3 from 'd3'
+import * as d3 from 'd3'
 
 class Circumshaker extends React.Component {
   constructor (props) {
@@ -12,7 +12,7 @@ class Circumshaker extends React.Component {
 
     this.depth = 0
     this.radius = 0
-    this.nodeSizeScale = d3.scale.linear()
+    this.nodeSizeScale = d3.scaleLinear()
 
     this.onClick = this.onClick.bind(this)
     this.onEnter = this.onEnter.bind(this)

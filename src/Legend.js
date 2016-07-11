@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react'
-import d3 from 'd3'
+import * as d3 from 'd3'
 
 // Copy pasted from:
 // http://stackoverflow.com/questions/6491463/accessing-nested-javascript-objects-with-string-key
@@ -48,10 +48,10 @@ class Legend extends React.Component {
           )
         })}
         <text x={0} y={14}>
-          {d3.format('n')(Math.round(colorScale.domain()[0]))}
+          {d3.format(',')(Math.round(colorScale.domain()[0]))}
         </text>
         <text x={(colorScale.range().length) * legendBlockWidth} y={15} textAnchor='end'>
-          {d3.format('n')(Math.round(colorScale.domain()[colorScale.domain().length - 1]))}
+          {d3.format(',')(Math.round(colorScale.domain()[colorScale.domain().length - 1]))}
         </text>
       </g>
     )

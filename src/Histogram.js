@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react'
-import d3 from 'd3'
+import * as d3 from 'd3'
 
 import Bar from './Bar'
 
@@ -60,7 +60,7 @@ class Histogram extends React.Component {
     let sortArr = []
     data[0].bins.sort((a, b) => {
       let i = 0
-      if (props.sortBy === props.xAccessor) {
+      if (props.sortBy === 'x') {
         i = props.sortOrder === 'ascending'
           ? d3.ascending(a[props.xAccessor], b[props.xAccessor])
           : d3.descending(a[props.xAccessor], b[props.xAccessor])
@@ -151,13 +151,9 @@ class Histogram extends React.Component {
   renderHistogram () {
     let {chartWidth, chartHeight, ...props} = this.props
     let numBins = props.data[0].bins.length
-    let paddedWidth = chartWidth * (1.0 - props.padding).toFixed(2)
-    let barWidth = Math.floor(paddedWidth / (numBins + (props.outerPadding * 2)))
-    if (typeof props.xScale.rangePoints === 'function') {
-      props.xScale.rangeRoundBands([0, chartWidth], props.padding, props.outerPadding)
-    } else {
-      props.xScale.range([0, chartWidth])
-    }
+    let barWidth = /ordinal/.test(props.xScale.type)
+      ? props.xScale.bandwidth()
+      : chartWidth / numBins
 
     let barData = transpose(props.data.map((histogram, index) => {
       return histogram.bins.map((bin) => {
@@ -235,8 +231,6 @@ class Histogram extends React.Component {
 
 Histogram.defaultProps = {
   addOverlay: true,
-  padding: 0.2,
-  outerPadding: 0.4,
   chartHeight: 0,
   chartWidth: 0,
   className: 'histogram',
@@ -265,8 +259,6 @@ Histogram.propTypes = {
     PropTypes.bool
   ]),
   addOverlay: PropTypes.bool,
-  padding: PropTypes.number.isRequired,
-  outerPadding: PropTypes.number.isRequired,
   chartHeight: PropTypes.number.isRequired,
   chartWidth: PropTypes.number.isRequired,
   className: PropTypes.string.isRequired,

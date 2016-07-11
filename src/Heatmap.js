@@ -1,11 +1,11 @@
 import React, { PropTypes } from 'react'
-import d3 from 'd3'
+import * as d3 from 'd3'
 
 class Heatmap extends React.Component {
   constructor (props) {
     super(props)
 
-    this.colorScale = d3.scale.quantile()
+    this.colorScale = d3.scaleQuantile()
     this.xDomain = this.props.xDomain
     this.yDomain = this.props.yDomain
 
@@ -77,7 +77,7 @@ class Heatmap extends React.Component {
         })
         : d3.max(props.data, (d, i) => d[props.yAccessor.value])
 
-      let tempColorScale = d3.scale.linear()
+      let tempColorScale = d3.scaleLinear()
         .domain([0, yMax])
         .range([props.minColor, props.maxColor])
         .interpolate(d3.interpolateHcl)

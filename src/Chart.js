@@ -1,8 +1,8 @@
 import React, { PropTypes, Children, cloneElement } from 'react'
 import debounce from 'lodash.debounce'
-import d3 from 'd3'
-import d3Tip from 'd3-tip'
+import * as d3 from 'd3'
 
+import Tooltip from './Tooltip'
 import Axis from './Axis'
 import Legend from './Legend'
 import Settings from './Settings'
@@ -10,19 +10,22 @@ import Settings from './Settings'
 class Chart extends React.Component {
   _onEnter (tooltipData, svgElement) {
     if (tooltipData && this.tip) {
-      this.tip.show(tooltipData, svgElement)
+      this.tip.show(svgElement, tooltipData)
     }
   }
   _onLeave (tooltipData, svgElement) {
     if (tooltipData && this.tip) {
-      this.tip.hide(tooltipData, svgElement)
+      this.tip.hide(svgElement, tooltipData)
     }
   }
   constructor (props) {
     super(props)
     this.onEnter = this._onEnter.bind(this)
     this.onLeave = this._onLeave.bind(this)
-    this.tip = props.tipFunction ? d3Tip().attr('class', 'd3-tip').html(props.tipFunction) : props.tipFunction
+
+    this.tip = props.tipFunction
+      ? new Tooltip().attr('className', 'd3-tip').html(props.tipFunction)
+      : props.tipFunction
     this.setScale = this.setScale.bind(this)
     this.state = {
       chartWidth: props.width,
@@ -37,21 +40,20 @@ class Chart extends React.Component {
     // Setup xScale
     let scale = null
     if (/ordinal/.test(scaleType)) {
-      scale = d3.scale.ordinal()
       if (scaleType === 'ordinalBand') {
-        scale.rangeRoundBands(range)
+        scale = d3.scaleBand()
       } else {
-        scale.rangePoints(range)
+        scale = d3.scalePoint()
       }
     } else if (scaleType === 'temporal') {
-      scale = d3.time.scale.utc()
+      scale = d3.scaleTime()
     } else if (scaleType === 'log') {
-      scale = d3.scale.log()
+      scale = d3.scaleLog()
     } else if (scaleType === 'power') {
-      scale = d3.scale.pow().exponent(0.5)
+      scale = d3.scalePow().exponent(0.5)
     } else {
       scaleType = 'linear'
-      scale = d3.scale.linear()
+      scale = d3.scaleLinear()
     }
     scale.type = scaleType
     return scale
@@ -85,12 +87,10 @@ class Chart extends React.Component {
     this._handleResize = debounce(this.resizeChart.bind(this), 500)
     window.addEventListener('resize', this._handleResize, false)
     this.resizeChart()
-    if (this.tip) {
-      d3.select(this.refs.svgRoot).call(this.tip)
-    }
   }
   componentWillUnmount () {
     window.removeEventListener('resize', this._handleResize, false)
+    this.tip.destroy()
   }
   resizeChart () {
     let props = this.props
@@ -105,20 +105,22 @@ class Chart extends React.Component {
     // container.select('.reset')
     //   .attr('x', chartWidth - 40)
     //   .attr('y', -props.margin.top + 1)
-    if (props.yScaleType === 'ordinalBand') {
-      this.yScale.rangeRoundBands([chartHeight, 0])
-    } else if (props.yScaleType === 'ordinalPoint') {
-      this.yScale.rangePoints([chartHeight, 0])
-    } else {
-      this.yScale.range([chartHeight, 0])
+    this.yScale.range([chartHeight, 0])
+    if (props.yAxis.innerPadding && /ordinal/.test(this.yScale.type)) {
+      this.yScale.paddingInner(props.yAxis.innerPadding)
     }
 
-    if (props.xScaleType === 'ordinalBand') {
-      this.xScale.rangeRoundBands([0, chartWidth])
-    } else if (props.xScaleType === 'ordinalPoint') {
-      this.xScale.rangePoints([0, chartWidth])
-    } else {
-      this.xScale.range([0, chartWidth])
+    if (props.yAxis.outerPadding && /ordinal/.test(this.yScale.type)) {
+      this.yScale.paddingOuter(props.yAxis.outerPadding)
+    }
+
+    this.xScale.range([0, chartWidth])
+    if (props.xAxis.innerPadding && /ordinal/.test(this.xScale.type)) {
+      this.xScale.paddingInner(props.xAxis.innerPadding)
+    }
+
+    if (props.xAxis.outerPadding && /ordinal/.test(this.xScale.type)) {
+      this.xScale.paddingOuter(props.xAxis.outerPadding)
     }
 
     this.setState({chartWidth, chartHeight}, () => { this.forceUpdate() })
@@ -198,17 +200,21 @@ Chart.defaultProps = {
   xAxis: {
     type: 'x',
     orient: 'bottom',
-    tickValues: false
+    innerPadding: null,
+    outerPadding: null
   },
   yAxis: {
     type: 'y',
-    orient: 'left'
+    orient: 'left',
+    innerPadding: null,
+    outerPadding: null
   },
   legend: false,
   margin: {top: 15, right: 10, bottom: 20, left: 80},
   width: 0,
   height: 250,
-  rangePadding: 25,
+  innerPadding: null,
+  outerPadding: null,
   xScaleType: 'ordinalBand',
   yScaleType: 'linear',
   tipFunction: null
@@ -255,7 +261,6 @@ Chart.propTypes = {
   xScaleType: PropTypes.string,
   xDomain: PropTypes.array,
   yScaleType: PropTypes.string,
-  rangePadding: PropTypes.number,
   data: PropTypes.oneOfType([
     React.PropTypes.object,
     React.PropTypes.array
