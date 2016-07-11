@@ -152,8 +152,71 @@ const setUpData = () => {
 }
 
 const makeAdjacencyList = () => {
+  let tuneIn = (adjList, story, index) => {
+    // console.log('tInIndex', index, 'tInStory', story)
+    // console.log(adjList)
+    let piece = adjList[index].story
+    let sArr = story.concat(index)
+    // console.log('tIPiece', adjList[index].story, 'sArr', sArr)
+    // if there is a story go to it
+    if (piece[0] != null) {
+      // update the stories
+      // console.log('loop', sArr)
+      return tuneIn(adjList, sArr, piece[0])
+    } else {
+      // console.log('finalsArr', sArr)
+      return sArr
+    }
+  }
+  let topics = setUpData()
+  let adjacencyList = []
+  topics.map((data, index) => {
+    Object.keys(data).map((i, scrap) => {
+      let d = data[i]
+      let s = []
+      // NEITHER NEW TOPIC OR HOUR 0
+      if (d.story[0] != null) {
+        // MIGHT HAVE MULTIPLE STORIES
+        d.story.map((dStory, dI) => {
+          // RIGHT NOW STORY IS ONLY PREVIOUS TOPIC INDEX
+          adjacencyList.map((aLD, aLI) => {
+            if (aLD.topicID === dStory && aLD.hour === index - 1) {
+              s.push(aLI)
+            }
+          })
+        })
+      }
+      adjacencyList.push({
+        story: s,
+        events: d.events,
+        topicID: d.topicID,
+        hour: d.hour
+      })
+    })
+  })
+  for (let i = adjacencyList.length - 1; i >= 0; i--) {
+    let d = adjacencyList[i]
+    // console.log('forD', d)
+    // make check for if the story index is > than the current index
+    // that way not doing extra work
+    if (d.story[0] != null) {
+      d.story.map((sD, sI) => {
+        // DONT ADD STORIES IF ALREADY ADDED
+        if (sD < i) {
+          let newS = tuneIn(adjacencyList, [i], sD)
+          // console.log('sortofMAdeit', newS)
+          newS.map((s, i) => {
+            adjacencyList[s].story = adjacencyList[s].story.concat(newS.splice(i))
+          })
+        }
+      })
+    }
+  }
+  console.log('topicsList', topics)
+  console.log('adjacencyList', adjacencyList)
+  return adjacencyList
 }
-const aList = makeAdjacencyList
+const aList = makeAdjacencyList()
 
 const tData = (n, start) => {
   let num = n
@@ -220,12 +283,13 @@ class TopicsContainer extends React.Component {
     // doesn't re-render if setting state twice
     // this would be where it updates data..
     // if the data didn't go beyond this ... loading wouldn't be set to false
+    // this.props.adjacencyList = aList
     this.setState({data: allData, loading: false, status: 'OK'})
   }
   render () {
-    console.log('aList', aList)
     console.log('realData', allData)
     console.log('fakeData', fakeData)
+    console.log(aList)
     // this.setUpData()
     let {className, ...props} = this.props
     return (
@@ -252,13 +316,15 @@ TopicsContainer.defaultProps = {
   url: '',
   numTData: nData,
   colorDomain: prefixes,
-  className: 'col-md-12'
+  className: 'col-md-12',
+  adjacencyList: aList
 }
 TopicsContainer.propTypes = {
   className: PropTypes.string,
   numTData: PropTypes.number,
   url: PropTypes.string,
-  colorDomain: PropTypes.array
+  colorDomain: PropTypes.array,
+  adjacencyList: PropTypes.array
 }
 
 export default TopicsContainer

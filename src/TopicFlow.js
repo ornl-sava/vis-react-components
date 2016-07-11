@@ -141,6 +141,7 @@ class TopicFlow extends React.Component {
     if (typeof props.xScale.rangePoints === 'function') {
       props.xScale.rangeRoundBands([0, props.chartWidth], props.padding, props.outerPadding)
     }
+    console.log('tFAdjList', props.adjacencyList)
     // GETTING TOPIC BAR INFORMATION
     let svgTopicBars = props.data.map((dataArr, index) => {
       return Object.keys(dataArr).map((key, i) => {
@@ -295,7 +296,8 @@ TopicFlow.defaultProps = {
   barHeight: 20,
   maxTopics: 60,
   lineType: 'curved',
-  clickArray: []
+  clickArray: [],
+  adjacencyList: []
 }
 
 TopicFlow.propTypes = {
@@ -314,7 +316,8 @@ TopicFlow.propTypes = {
   maxTopics: PropTypes.number.isRequired,
   colorDomain: PropTypes.array,
   lineType: PropTypes.string.isRequired,
-  clickArray: PropTypes.any.isRequired
+  clickArray: PropTypes.any.isRequired,
+  adjacencyList: PropTypes.array.isRequired
 }
 
 export default TopicFlow
