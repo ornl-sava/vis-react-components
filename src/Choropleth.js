@@ -233,8 +233,8 @@ Choropleth.propTypes = {
 // Only required for REST calls
 Choropleth.contextTypes = {
   filterField: PropTypes.string,
+  filterString: PropTypes.string,
   filterType: PropTypes.string,
-  params: PropTypes.object,
   updateFilter: PropTypes.func
 }
 
