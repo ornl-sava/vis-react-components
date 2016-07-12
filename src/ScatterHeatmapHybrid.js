@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react'
-import * as d3 from 'd3'
+import { scaleLinear, scaleQuantile, scaleTime, timeSecond, select, timeFormat, interpolateHcl, range, axisBottom, axisLeft } from 'd3'
 
 const binByNumeric = (data, accessor, range, numBins) => {
   let bins = []
@@ -30,10 +30,10 @@ export class HybridScatterHeatmap extends React.Component {
       expandedSectionNumbers: [], // Section #s to divide at
       domainExpansionFactor: 1, // Factor of domain to be used
       rangeExpansionFactor: 2, // Factor to expand range by
-      xScale: d3.scaleTime().nice(d3.timeSecond, 1),
-      yScale: d3.scaleLinear(),
-      scatterColorScale: d3.scaleLinear(),
-      heatmapColorScale: d3.scaleQuantile()
+      xScale: scaleTime().nice(timeSecond, 1),
+      yScale: scaleLinear(),
+      scatterColorScale: scaleLinear(),
+      heatmapColorScale: scaleQuantile()
     }
 
     // Use this to instead of 'let heatmap' to keep active heatmaps from persisting
@@ -55,7 +55,7 @@ export class HybridScatterHeatmap extends React.Component {
     let root = this.refs.root
 
     // Create svg
-    let svg = d3.select(root).append('svg')
+    let svg = select(root).append('svg')
 
     // Create chart
     let chart = svg.append('g')
@@ -70,8 +70,8 @@ export class HybridScatterHeatmap extends React.Component {
 
     header.append('text')
         .attr('class', 'label time')
-        .text('Displaying events from ' + d3.timeFormat('%x %X')(new Date(this.endTime)) + ' to ' +
-          d3.timeFormat('%x %X')(new Date(this.props.startTime)))
+        .text('Displaying events from ' + timeFormat('%x %X')(new Date(this.endTime)) + ' to ' +
+          timeFormat('%x %X')(new Date(this.props.startTime)))
 
     header.append('text')
         .attr('class', 'label reset')
@@ -117,15 +117,15 @@ export class HybridScatterHeatmap extends React.Component {
     this.state.scatterColorScale
       .domain(this.props.yDomain)
       .range([this.props.minScatterColor, this.props.maxScatterColor])
-      .interpolate(d3.interpolateHcl)
+      .interpolate(interpolateHcl)
 
     // Create color scale for heatmap
     let colors = []
-    let tempColorScale = d3.scaleLinear()
+    let tempColorScale = scaleLinear()
       .domain([0, this.props.numColorCat])
       .range([this.props.minHeatmapColor, this.props.maxHeatmapColor])
 
-    d3.range(this.props.numColorCat).map((d) => {
+    range(this.props.numColorCat).map((d) => {
       colors.push(tempColorScale(d))
     })
 
@@ -143,7 +143,7 @@ export class HybridScatterHeatmap extends React.Component {
 
   updateScatter () {
     let root = this.refs.root
-    let chart = d3.select(root).select('svg').select('.chart')
+    let chart = select(root).select('svg').select('.chart')
     let scatterData = chart.select('.scatter.data')
 
     // Flatten and filter heatmap
@@ -180,7 +180,7 @@ export class HybridScatterHeatmap extends React.Component {
 
   updateHeatmap () {
     let root = this.refs.root
-    let chart = d3.select(root).select('svg').select('.chart')
+    let chart = select(root).select('svg').select('.chart')
     let heatmapData = chart.select('.heatmap.data')
 
     // Rebin heatmap
@@ -286,7 +286,7 @@ export class HybridScatterHeatmap extends React.Component {
       .enter().append('rect')
         .attr('class', 'markerCol')
         .on('click.markerCol', (d, i) => {
-          if (d3.event.shiftKey) {
+          if (event.shiftKey) {
             // Iterate over the columns corresponding bins and flip their activity
             for (let row = 0; row < this.props.heatmapVertDivisions; row++) {
               heatmap[row][i].active = 1 - heatmap[row][i].active
@@ -397,26 +397,26 @@ export class HybridScatterHeatmap extends React.Component {
 
   updateAxes () {
     let root = this.refs.root
-    let svg = d3.select(root).select('svg')
+    let svg = select(root).select('svg')
     let chart = svg.select('.chart')
 
     chart.select('.header .time')
-    .text('Displaying events from ' + d3.timeFormat('%x %X')(new Date(this.endTime)) + ' to ' +
-      d3.timeFormat('%x %X')(new Date(this.props.startTime)))
+    .text('Displaying events from ' + timeFormat('%x %X')(new Date(this.endTime)) + ' to ' +
+      timeFormat('%x %X')(new Date(this.props.startTime)))
 
     chart.select('.x.axis')
-      .call(d3.axisBottom().scale(this.state.xScale).ticks(5).tickFormat((a) => {
-        let format = d3.timeFormat('%I:%M:%S')
+      .call(axisBottom().scale(this.state.xScale).ticks(5).tickFormat((a) => {
+        let format = timeFormat('%I:%M:%S')
         return format(a)
       }))
 
     chart.select('.y.axis')
-      .call(d3.axisLeft().scale(this.state.yScale))
+      .call(axisLeft().scale(this.state.yScale))
   }
 
   resizeChart () {
     let root = this.refs.root
-    let svg = d3.select(root).select('svg')
+    let svg = select(root).select('svg')
     let chart = svg.select('.chart')
 
     let chartWidth = root.offsetWidth - this.props.margin.left - this.props.margin.right
@@ -459,13 +459,13 @@ export class HybridScatterHeatmap extends React.Component {
 
     chart.select('.x.axis')
         .attr('transform', 'translate(0,' + chartHeight + ')')
-        .call(d3.axisBottom().scale(this.state.xScale))
+        .call(axisBottom().scale(this.state.xScale))
       .select('.label')
         .attr('x', chartWidth)
         .attr('y', -6)
 
     chart.select('.y.axis')
-        .call(d3.axisLeft().scale(this.state.yScale))
+        .call(axisLeft().scale(this.state.yScale))
       .select('.label')
         .attr('transform', 'rotate(-90)')
         .attr('y', 6)

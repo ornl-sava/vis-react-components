@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react'
-import * as d3 from 'd3'
+import { ascending, descending } from 'd3'
 
 import Bar from './Bar'
 
@@ -62,8 +62,8 @@ class Histogram extends React.Component {
       let i = 0
       if (props.sortBy === 'x') {
         i = props.sortOrder === 'ascending'
-          ? d3.ascending(a[props.xAccessor], b[props.xAccessor])
-          : d3.descending(a[props.xAccessor], b[props.xAccessor])
+          ? ascending(a[props.xAccessor], b[props.xAccessor])
+          : descending(a[props.xAccessor], b[props.xAccessor])
       } else {
         let useBin = (props.sortTypes.indexOf(data[0].type) > -1 || props.sortTypes.length === 0)
         let ya = useBin ? a[props.yAccessor] : 0
@@ -175,7 +175,9 @@ class Histogram extends React.Component {
         if (props.type === 'stacked' && barIndex > 0 && data.className !== '_overlay') {
           data[props.yAccessor] = dataArr[barIndex - 1][props.yAccessor] - data.height
         }
-        return (<Bar {...data} onClick={props.onBarClick} onEnter={props.onEnter} onLeave={props.onLeave} />)
+        return (
+          <Bar {...data} onClick={props.onBarClick} onEnter={props.onEnter} onLeave={props.onLeave} />
+        )
       })
     })
 

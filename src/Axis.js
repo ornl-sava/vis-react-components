@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react'
 import ReactDom from 'react-dom'
-import * as d3 from 'd3'
+import { axisLeft, axisRight, axisTop, axisBottom, select } from 'd3'
 
 // Truncate labels based on maximum allowable characters, where
   // characters should be estimated at 8-10 pixels per character.
@@ -36,13 +36,13 @@ class Axis extends React.Component {
   }
   setAxis (props) {
     if (props.orient === 'left') {
-      this.axis = d3.axisLeft()
+      this.axis = axisLeft()
     } else if (props.orient === 'bottom') {
-      this.axis = d3.axisBottom()
+      this.axis = axisBottom()
     } else if (props.orient === 'top') {
-      this.axis = d3.axisTop()
+      this.axis = axisTop()
     } else if (props.orient === 'right') {
-      this.axis = d3.axisRight()
+      this.axis = axisRight()
     }
     this.axis.scale(props.scale)
   }
@@ -53,7 +53,7 @@ class Axis extends React.Component {
     let thisNode = ReactDom.findDOMNode(this)
     let parentNode = thisNode.parentNode
     let selector = '.' + props.className.replace(/ /g, '.')
-    let selection = d3.select(parentNode).select(selector)
+    let selection = select(parentNode).select(selector)
 
     let tickCount = 0
     let tickValues = props.tickValues

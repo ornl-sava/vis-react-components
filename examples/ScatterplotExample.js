@@ -21,7 +21,11 @@ const commonProps = {
 }
 
 const chartProps1 = {
-  title: 'Linear over Linear',
+  header: () => {
+    return ([
+      <span className='chart-title'>Linear over Linear</span>
+    ])
+  },
   className: 'scatter2',
   xScaleType: 'linear',
   yScaleType: 'linear',
@@ -29,7 +33,11 @@ const chartProps1 = {
 }
 
 const chartProps2 = {
-  title: 'Linear over Ordinal',
+  header: () => {
+    return ([
+      <span className='chart-title'>Linear over Ordinal</span>
+    ])
+  },
   className: 'scatter1',
   xScaleType: 'linear',
   yScaleType: 'ordinalPoint',
@@ -37,7 +45,11 @@ const chartProps2 = {
 }
 
 const chartProps3 = {
-  title: 'Ordinal over Ordinal',
+  header: () => {
+    return ([
+      <span className='chart-title'>Ordinal over Ordinal</span>
+    ])
+  },
   className: 'scatter4',
   xScaleType: 'ordinalPoint',
   yScaleType: 'ordinalPoint',
@@ -45,7 +57,11 @@ const chartProps3 = {
 }
 
 const chartProps4 = {
-  title: 'Ordinal over Linear',
+  header: () => {
+    return ([
+      <span className='chart-title'>Ordinal over Linear</span>
+    ])
+  },
   className: 'scatter3',
   xScaleType: 'ordinalPoint',
   yScaleType: 'linear',

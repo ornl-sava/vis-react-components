@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react'
-import * as d3 from 'd3'
+import { extent } from 'd3'
 
 class Scatterplot extends React.Component {
   constructor (props) {
@@ -25,7 +25,7 @@ class Scatterplot extends React.Component {
         if (/ordinal/.test(props.xScale.type)) {
           xDomain = props.data.map((d) => d[props.xAccessor])
         } else {
-          xDomain = d3.extent(props.data, (d) => d[props.xAccessor])
+          xDomain = extent(props.data, (d) => d[props.xAccessor])
         }
       }
 
@@ -34,7 +34,7 @@ class Scatterplot extends React.Component {
         if (/ordinal/.test(props.yScale.type)) {
           yDomain = props.data.map((d) => d[props.yAccessor])
         } else {
-          yDomain = d3.extent(props.data, (d) => d[props.yAccessor])
+          yDomain = extent(props.data, (d) => d[props.yAccessor])
         }
       }
 

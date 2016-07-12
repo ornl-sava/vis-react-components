@@ -30,13 +30,17 @@ const toolTipFunction2 = (d) => {
 }
 
 const chartCommon = {
-  margin: {top: 15, right: 5, bottom: 50, left: 15},
+  margin: {top: 5, right: 5, bottom: 50, left: 15},
   height: 300,
   legend: true
 }
 
 const chartProps1 = {
-  title: 'Linear over Ordinal',
+  header: () => {
+    return ([
+      <span className='chart-title'>Linear over Ordinal</span>
+    ])
+  },
   data: ordinalLinearHeatmapData,
   xScaleType: 'linear',
   yScaleType: 'ordinalBand',
@@ -57,7 +61,11 @@ const heatmapProps1 = {
 }
 
 const chartProps2 = {
-  title: 'Temporal over Linear',
+  header: () => {
+    return ([
+      <span className='chart-title'>Temporal over Linear</span>
+    ])
+  },
   data: linearTemporalHeatmapData,
   xScaleType: 'temporal',
   yScaleType: 'linear',
@@ -86,7 +94,11 @@ const heatmapProps2 = {
 }
 
 const chartProps3 = {
-  title: 'Ordinal over Ordinal',
+  header: () => {
+    return ([
+      <span className='chart-title'>Ordinal over Ordinal</span>
+    ])
+  },
   data: ordinalOrdinalHeatmapData,
   xScaleType: 'ordinalBand',
   yScaleType: 'ordinalBand'
@@ -104,7 +116,11 @@ const heatmapProps3 = {
 }
 
 const chartProps4 = {
-  title: 'Ordinal over Linear',
+  header: () => {
+    return ([
+      <span className='chart-title'>Ordinal over Linear</span>
+    ])
+  },
   data: linearOrdinalHeatmapData,
   xScaleType: 'ordinalBand',
   yScaleType: 'linear',
