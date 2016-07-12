@@ -1,5 +1,81 @@
 import React, { PropTypes } from 'react'
-import * as d3 from 'd3'
+import ReactTransitionGroup from 'react-addons-transition-group'
+import { scaleLinear, transition, select, easeLinear, range, extent, max, min, set, ascending } from 'd3'
+
+class Node extends React.Component {
+  // constructor (props) {
+  //   super(props)
+  //
+  //
+  // }
+
+  componentWillEnter (callback) {
+    let node = select(this.refs.node)
+    // Get degree, r, and depth and send node flying that direction inward
+    node.transition(this.props.transition)
+      .attr('cx', this.props.cx)
+      .attr('cy', this.props.cy)
+      .attr('r', this.props.r)
+      .on('end', () => {
+        console.log('entered')
+        callback()
+      })
+  }
+
+  componentWillLeave (callback) {
+    let node = select(this.refs.node)
+    // Get degree, r, and depth and send node flying that direction outward
+    node.transition(this.props.transition)
+      .attr('cx', 0)
+      .attr('cy', 0)
+      .attr('r', 0)
+      .on('end', () => {
+        callback()
+      })
+  }
+
+  componentWillUpdate (nextProps) {
+    let node = select(this.refs.node)
+    let componentMoved = node.attr('cx') !== nextProps.cx &&
+      node.attr('cy') !== nextProps.cy &&
+      node.attr('r') !== nextProps.r
+    if (componentMoved) {
+      node.transition(this.props.transition)
+        .attr('cx', nextProps.cx)
+        .attr('cy', nextProps.cy)
+        .attr('r', nextProps.r)
+        .on('end', () => {
+          console.log('update')
+        })
+    }
+  }
+
+  render () {
+    return (
+      <circle
+        ref='node'
+        data-nodeIndex={this.props['data-nodeIndex']}
+        data-nodeKey={this.props['data-nodeKey']}
+        data-nodeValue={this.props['data-nodeValue']}
+        onMouseEnter={this.props.onMouseEnter}
+        onMouseLeave={this.props.onMouseLeave}
+        className={this.props.className} />
+    )
+  }
+}
+
+Node.propTypes = {
+  r: PropTypes.number,
+  cx: PropTypes.number,
+  cy: PropTypes.number,
+  'data-nodeIndex': PropTypes.any,
+  'data-nodeKey': PropTypes.any,
+  'data-nodeValue': PropTypes.any,
+  onMouseEnter: PropTypes.func,
+  onMouseLeave: PropTypes.func,
+  transition: PropTypes.any,
+  className: PropTypes.string
+}
 
 class Circumshaker extends React.Component {
   constructor (props) {
@@ -12,13 +88,17 @@ class Circumshaker extends React.Component {
 
     this.depth = 0
     this.radius = 0
-    this.nodeSizeScale = d3.scaleLinear()
+    this.nodeSizeScale = scaleLinear()
 
     this.onClick = this.onClick.bind(this)
     this.onEnter = this.onEnter.bind(this)
     this.onLeave = this.onLeave.bind(this)
     this.renderLoadAnimation = this.renderLoadAnimation.bind(this)
     this.renderCircumshaker = this.renderCircumshaker.bind(this)
+
+    this.transition = transition()
+      .duration(1000)
+      .ease(easeLinear)
   }
 
   // Update the domain for the shared scale
@@ -85,7 +165,7 @@ class Circumshaker extends React.Component {
       graph.nodes
         .sort((a, b) => {
           if (a.depth !== b.depth) {
-            return d3.ascending(a.depth, b.depth)
+            return ascending(a.depth, b.depth)
           } else {
             let aKids = graph.links.filter((d) => {
               return d.source === a
@@ -103,7 +183,7 @@ class Circumshaker extends React.Component {
 
       // Function to get leafs of a given subtree
       const getNumLeafs = (_node) => {
-        let leafs = d3.set()
+        let leafs = set()
 
         const getNumLeafsHelper = (_links) => {
           _links.forEach((g) => {
@@ -143,11 +223,11 @@ class Circumshaker extends React.Component {
       })
 
       // Determine maximum depth allowed for rendering
-      this.depth = Math.min(d3.max(this.graph.nodes, (d) => d.depth), nextProps.maxDepth)
+      this.depth = Math.min(max(this.graph.nodes, (d) => d.depth), nextProps.maxDepth)
 
       // Determine radius
       // NOTE: This is used as more of a radius 'band'
-      this.radius = d3.min([nextProps.chartWidth, nextProps.chartHeight]) /
+      this.radius = min([nextProps.chartWidth, nextProps.chartHeight]) /
         (this.depth) / 2
 
       // Determine properties used for each node during drawing
@@ -200,7 +280,7 @@ class Circumshaker extends React.Component {
       // Find max node size if not predefined
       let maxSize = nextProps.nodeMaxSize !== null
       ? nextProps.nodeMaxSize
-      : graph.nodes.reduce((prev, curr) => {
+      : Math.min(graph.nodes.reduce((prev, curr) => {
         let r = this.radius * curr.depth
         let theta = curr.startAngle > curr.degree
           ? curr.startAngle - curr.degree
@@ -208,12 +288,12 @@ class Circumshaker extends React.Component {
         theta *= (Math.PI / 180)
         let arcLength = r * theta
         return prev < arcLength || arcLength === 0 ? prev : arcLength
-      }, Math.Infinity)
+      }, Math.Infinity), this.radius / 2)
 
       // Create scale that determines node size
       this.nodeSizeScale
         .range([nextProps.nodeMinSize, maxSize])
-        .domain(d3.extent(this.graph.nodes, (d) => {
+        .domain(extent(this.graph.nodes, (d) => {
           return this.graph.links.filter((g) => {
             return g.source === d || g.target === d
           }).length
@@ -291,50 +371,55 @@ class Circumshaker extends React.Component {
 
     return (
       <g className={this.props.className}>
-        {d3.range(1, this.depth + 1, 1).map((d, i) => {
-          let cocentricCircleProps = {
-            className: 'cocentricCircle',
-            key: i,
-            r: this.radius * d,
-            cx: chartWidth / 2,
-            cy: chartHeight / 2
-          }
-          return (
-            <circle {...cocentricCircleProps} />
-          )
-        })}
-        {this.graph.links.map((d, i) => {
-          let linkProps = {
-            className: 'link',
-            key: i,
-            display: (typeof d.display === 'undefined')
-              ? 'block'
-              : d.display,
-            d: path(d)
-          }
-          return (
-            <path {...linkProps} />
-          )
-        })}
-        {this.graph.nodes.map((d, i) => {
-          let nodeProps = {
-            'data-nodeIndex': i,
-            'data-nodeKey': d.key,
-            'data-nodeValue': d.value,
-            onMouseEnter: this.onEnter,
-            onMouseLeave: this.onLeave,
-            className: 'node',
-            key: i,
-            r: this.nodeSizeScale(this.graph.links.filter((g) => {
-              return g.source === d || g.target === d
-            }).length),
-            cx: d.x,
-            cy: d.y
-          }
-          return (
-            <circle {...nodeProps} />
-          )
-        })}
+        <g>
+          {range(1, this.depth + 1, 1).map((d, i) => {
+            let cocentricCircleProps = {
+              className: 'cocentricCircle',
+              key: i,
+              r: this.radius * d,
+              cx: chartWidth / 2,
+              cy: chartHeight / 2
+            }
+            return (
+              <circle {...cocentricCircleProps} />
+            )
+          })}
+        </g>
+        <g>
+          {this.graph.links.map((d, i) => {
+            let linkProps = {
+              className: 'link',
+              key: i,
+              display: (typeof d.display === 'undefined')
+                ? 'block'
+                : d.display,
+              d: path(d)
+            }
+            return (
+              <path {...linkProps} />
+            )
+          })}
+        </g>
+        <ReactTransitionGroup component='g'>
+          {this.graph.nodes.map((d, i) => {
+            return (
+              <Node
+                key={d.key.replace(/\./g, '')}
+                data-nodeIndex={i}
+                data-nodeKey={d.key}
+                data-nodeValue={d.value}
+                onMouseEnter={this.onEnter}
+                onMouseLeave={this.onLeave}
+                className='node'
+                transition={this.transition}
+                r={this.nodeSizeScale(this.graph.links.filter((g) => {
+                  return g.source === d || g.target === d
+                }).length)}
+                cx={d.x}
+                cy={d.y} />
+            )
+          })}
+        </ReactTransitionGroup>
       </g>
     )
   }

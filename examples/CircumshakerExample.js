@@ -3,7 +3,7 @@ import * as d3 from 'd3'
 
 import { Chart, Circumshaker } from '../src'
 
-const data = {
+const data1 = {
   'source_ip': '124.83.248.123',
   'dest_ip': [
     {
@@ -114,9 +114,53 @@ const data = {
       'doc_count': 1,
       'source_ip': []
     }
-  ],
-  'took': 78
+  ]
 }
+
+const data2 = {
+  'source_ip': '124.83.248.123',
+  'dest_ip': [
+    {
+      'key': 2751196930,
+      'key_as_string': '163.251.239.2',
+      'doc_count': 5,
+      'source_ip': [
+        {
+          'key': 1755075020,
+          'key_as_string': '104.156.81.204',
+          'doc_count': 2
+        },
+        {
+          'key': 1758454856,
+          'key_as_string': '104.207.228.72',
+          'doc_count': 2
+        },
+        {
+          'key': 1753404735,
+          'key_as_string': '104.130.213.63',
+          'doc_count': 1
+        },
+        {
+          'key': 1753429508,
+          'key_as_string': '104.131.54.4',
+          'doc_count': 1
+        },
+        {
+          'key': 1755076044,
+          'key_as_string': '104.156.85.204',
+          'doc_count': 1
+        },
+        {
+          'key': 3494830881,
+          'key_as_string': '208.78.227.33',
+          'doc_count': 1
+        }
+      ]
+    }
+  ]
+}
+
+let holder = data2
 
 const toolTipFunction = (d) => {
   var toolTip =
@@ -129,14 +173,26 @@ const chartProps = {
   tipFunction: toolTipFunction,
   height: 800,
   xAxis: false,
-  yAxis: false,
-  data: data
+  yAxis: false
 }
 
 class CircumshakerExample extends React.Component {
+  componentDidMount () {
+    let flip = true
+    d3.interval(() => {
+      if (flip) {
+        holder = data1
+        flip = !flip
+      } else {
+        holder = data2
+        flip = !flip
+      }
+      this.forceUpdate()
+    }, 3 * 1000)
+  }
   render () {
     return (
-      <Chart {...chartProps}>
+      <Chart {...chartProps} data={holder}>
         <Circumshaker />
       </Chart>
     )
