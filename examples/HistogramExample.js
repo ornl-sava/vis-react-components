@@ -1,7 +1,7 @@
 import React from 'react'
 import * as d3 from 'd3'
 
-import { Chart, Histogram } from '../src'
+import { Chart, Histogram, Settings } from '../src'
 import { histogramData, temporalHistogramData, stackedHistogramData } from './data/exampleData'
 
 // Tooltipdata is an object currently defined in the component
@@ -127,18 +127,37 @@ class HistogramExample extends React.Component {
         }
       ]
     }
+
+    this.header1 = () => {
+      return ([
+        <span className='chart-title'>Histogram - Layered bars based on data order</span>,
+        <Settings settings={this.settings} />
+      ])
+    }
+
+    this.header2 = () => {
+      return ([
+        <span className='chart-title'>Stacked Histogram - Stacked bars based on data order</span>
+      ])
+    }
+
+    this.header3 = () => {
+      return ([
+        <span className='chart-title'>Temporal Histogram</span>
+      ])
+    }
   }
 
   render () {
     return (
       <div>
         <div>
-          <Chart title='Histogram - Layered bars based on data order' width={800} height={200} data={histogramData} {...this.state} settings={this.settings} tipFunction={toolTipFunction}>
+          <Chart header={this.header1} width={800} height={200} data={histogramData} {...this.state} tipFunction={toolTipFunction}>
             <Histogram addOverlay xAccessor='key'yAccessor='count' onBarClick={onBarClick} />
           </Chart>
         </div>
         <div>
-          <Chart title='Stacked Histogram - Stacked bars based on data order'
+          <Chart header={this.header2}
             width={800} height={200}
             sortBy={'y'} sortOrder={'Ascending'}
             xAxis={{
@@ -152,7 +171,7 @@ class HistogramExample extends React.Component {
           </Chart>
         </div>
         <div>
-          <Chart title='Temporal Histogram' xScaleType='temporal' width={800} height={200} data={temporalData} tipFunction={toolTipFunction}>
+          <Chart header={this.header3} xScaleType='temporal' width={800} height={200} data={temporalData} tipFunction={toolTipFunction}>
             <Histogram addOverlay onBarClick={onBarClick} />
           </Chart>
         </div>

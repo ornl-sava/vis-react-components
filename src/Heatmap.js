@@ -1,11 +1,11 @@
 import React, { PropTypes } from 'react'
-import * as d3 from 'd3'
+import { scaleLinear, scaleQuantile, extent, max, interpolateHcl } from 'd3'
 
 class Heatmap extends React.Component {
   constructor (props) {
     super(props)
 
-    this.colorScale = d3.scaleQuantile()
+    this.colorScale = scaleQuantile()
     this.xDomain = this.props.xDomain
     this.yDomain = this.props.yDomain
 
@@ -38,7 +38,7 @@ class Heatmap extends React.Component {
         if (props.xScale.type === 'ordinalBand') {
           xDomain = props.data[0].bins.map((d) => d[props.xAccessor.key])
         } else {
-          xDomain = d3.extent(props.data[0].bins, (d) => d[props.xAccessor.key])
+          xDomain = extent(props.data[0].bins, (d) => d[props.xAccessor.key])
           xDomain[1] = xDomain[1] + offset
         }
       }
@@ -54,7 +54,7 @@ class Heatmap extends React.Component {
         if (props.yScale.type === 'ordinalBand') {
           yDomain = props.data.map((d) => d[props.yAccessor.key])
         } else {
-          yDomain = [0.000001, d3.max(props.data, (d) => d[props.yAccessor.key])]
+          yDomain = [0.000001, max(props.data, (d) => d[props.yAccessor.key])]
           // yDomain[1] = yDomain[1] + offset
         }
       }
@@ -72,15 +72,15 @@ class Heatmap extends React.Component {
 
       // Generate color scale
       let yMax = props.colorPerRow
-        ? d3.max(props.data, (d, i) => {
-          return d3.max(d.bins, (e, j) => e[props.xAccessor.value])
+        ? max(props.data, (d, i) => {
+          return max(d.bins, (e, j) => e[props.xAccessor.value])
         })
-        : d3.max(props.data, (d, i) => d[props.yAccessor.value])
+        : max(props.data, (d, i) => d[props.yAccessor.value])
 
-      let tempColorScale = d3.scaleLinear()
+      let tempColorScale = scaleLinear()
         .domain([0, yMax])
         .range([props.minColor, props.maxColor])
-        .interpolate(d3.interpolateHcl)
+        .interpolate(interpolateHcl)
 
       let colorDomain = [0, 1]
       let colorRange = [props.minColor]
@@ -94,10 +94,10 @@ class Heatmap extends React.Component {
 
       // NOTE: Alternate quantile color generation . . .
       // Generate scale to determine class for coloring
-      // let tempColorScale = d3.scale.linear()
+      // let tempColorScale = scale.linear()
       //   .domain([0, props.numColorCat])
       //   .range([props.minColor, props.maxColor])
-      //   .interpolate(d3.interpolateHcl)
+      //   .interpolate(interpolateHcl)
       //
       // let colorDomain = [0, 1]
       // props.data.forEach((d) => {
@@ -108,7 +108,7 @@ class Heatmap extends React.Component {
       // })
       //
       // let colorRange = []
-      // d3.range(props.numColorCat).map((i) => {
+      // range(props.numColorCat).map((i) => {
       //   colorRange.push(tempColorScale(i))
       // })
 

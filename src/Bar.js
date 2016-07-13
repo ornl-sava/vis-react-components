@@ -74,7 +74,8 @@ Bar.propTypes = {
 Bar.contextTypes = {
   filterField: PropTypes.string,
   filterType: PropTypes.string,
-  params: PropTypes.object,
+  filterString: PropTypes.string,
+  multiSelect: PropTypes.bool,
   updateFilter: PropTypes.func
 }
 

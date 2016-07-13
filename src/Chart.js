@@ -1,11 +1,18 @@
 import React, { PropTypes, Children, cloneElement } from 'react'
 import debounce from 'lodash.debounce'
-import * as d3 from 'd3'
+import {
+  scaleBand,
+  scalePoint,
+  scaleLinear,
+  scaleLog,
+  scalePow,
+  scaleTime,
+  select } from 'd3'
 
 import Tooltip from './Tooltip'
 import Axis from './Axis'
+import Header from './Header'
 import Legend from './Legend'
-import Settings from './Settings'
 
 class Chart extends React.Component {
   _onEnter (tooltipData, svgElement) {
@@ -41,19 +48,19 @@ class Chart extends React.Component {
     let scale = null
     if (/ordinal/.test(scaleType)) {
       if (scaleType === 'ordinalBand') {
-        scale = d3.scaleBand()
+        scale = scaleBand()
       } else {
-        scale = d3.scalePoint()
+        scale = scalePoint()
       }
     } else if (scaleType === 'temporal') {
-      scale = d3.scaleTime()
+      scale = scaleTime()
     } else if (scaleType === 'log') {
-      scale = d3.scaleLog()
+      scale = scaleLog()
     } else if (scaleType === 'power') {
-      scale = d3.scalePow().exponent(0.5)
+      scale = scalePow().exponent(0.5)
     } else {
       scaleType = 'linear'
-      scale = d3.scaleLinear()
+      scale = scaleLinear()
     }
     scale.type = scaleType
     return scale
@@ -76,7 +83,7 @@ class Chart extends React.Component {
       this.yScale = this.setScale(nextProps.yScaleType, [nextState.chartHeight, 0])
       this.resizeChart()
     }
-    return newData || loading || newYScale || newSettings || newSortBy || newSortOrder || newSortTypes
+    return newData || loading || newYScale || newSettings || newSortBy || newSortOrder || newSortTypes || true
   }
   componentWillUpdate (nextProps) {
   }
@@ -95,16 +102,13 @@ class Chart extends React.Component {
   resizeChart () {
     let props = this.props
     let rootRect = this.refs.rootElement.getBoundingClientRect()
-    let svg = d3.select(this.refs.svgRoot)
-    // let container = d3.select(this.refs.container)
+    let svg = select(this.refs.svgRoot)
+    // let container = select(this.refs.container)
     let chartWidth = props.width === 0 ? rootRect.width - props.margin.left - props.margin.right : Math.min((rootRect.width - props.margin.left - props.margin.right), (props.width - props.margin.left - props.margin.right))
     let chartHeight = props.height - props.margin.top - props.margin.bottom
     svg.attr('width', props.width === 0 ? rootRect.width : props.width)
       .attr('height', props.height)
 
-    // container.select('.reset')
-    //   .attr('x', chartWidth - 40)
-    //   .attr('y', -props.margin.top + 1)
     this.yScale.range([chartHeight, 0])
     if (props.yAxis.innerPadding && /ordinal/.test(this.yScale.type)) {
       this.yScale.paddingInner(props.yAxis.innerPadding)
@@ -152,6 +156,7 @@ class Chart extends React.Component {
     let child = this.renderChild()
     return (
       <div ref='rootElement' className={props.className} style={{position: 'relative'}}>
+        <Header chart={this} components={this.props.header} />
         <svg ref='svgRoot'>
           <defs>
             <clipPath id='clip'>
@@ -161,9 +166,6 @@ class Chart extends React.Component {
           <g ref='container' className='container' transform={'translate(' + left + ',' + top + ')'}>
             <g className='component' clipPath={props.clipPath ? 'url(#clip)' : ''}>
               {child}
-            </g>
-            <g className='chart-title'>
-              <text y={-props.margin.top + 1} dy='0.71em'>{props.title.replace(/_/g, ' ')}</text>
             </g>
             {props.xAxis
               ? <Axis className='x axis' margin={margin} {...props.xAxis} data={props.data} scale={this.xScale} {...this.state} />
@@ -179,16 +181,13 @@ class Chart extends React.Component {
             }
           </g>
         </svg>
-        {props.settings
-          ? <Settings settings={props.settings} chart={this} />
-          : undefined
-        }
       </div>
     )
   }
 }
 
 Chart.defaultProps = {
+  header: () => [],
   sortBy: null,
   sortOrder: null,
   sortTypes: [],
@@ -210,7 +209,7 @@ Chart.defaultProps = {
     outerPadding: null
   },
   legend: false,
-  margin: {top: 15, right: 10, bottom: 20, left: 80},
+  margin: {top: 0, right: 10, bottom: 20, left: 80},
   width: 0,
   height: 250,
   innerPadding: null,
@@ -221,6 +220,7 @@ Chart.defaultProps = {
 }
 
 Chart.propTypes = {
+  header: PropTypes.func,
   title: PropTypes.string,
   clipPath: PropTypes.bool,
   scaleAccessor: PropTypes.string,

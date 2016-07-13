@@ -113,8 +113,8 @@ TextBar.propTypes = {
 // Only required for REST calls
 TextBar.contextTypes = {
   filterField: PropTypes.string,
+  filterString: PropTypes.string,
   filterType: PropTypes.string,
-  params: PropTypes.object,
   updateFilter: PropTypes.func
 }
 

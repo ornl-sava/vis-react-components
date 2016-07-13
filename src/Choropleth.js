@@ -1,16 +1,16 @@
 import React, { PropTypes } from 'react'
-import * as d3 from 'd3'
+import { geoPath, geoEquirectangular, scaleLinear, scaleQuantile, interpolateHcl, range } from 'd3'
 import topojson from 'topojson'
 
 class Choropleth extends React.Component {
   constructor (props) {
     super(props)
 
-    this.selectedColorScale = d3.scaleQuantile()
-    this.unselectedColorScale = d3.scaleQuantile()
+    this.selectedColorScale = scaleQuantile()
+    this.unselectedColorScale = scaleQuantile()
 
-    this.projection = d3.geoEquirectangular()
-    this.path = d3.geoPath()
+    this.projection = geoEquirectangular()
+    this.path = geoPath()
       .projection(this.projection)
 
     this.tooltipData = this.tooltipData.bind(this)
@@ -84,15 +84,15 @@ class Choropleth extends React.Component {
       .projection(this.projection)
 
     // Generate scale to determine class for coloring
-    let tempSelectedColorScale = d3.scaleLinear()
+    let tempSelectedColorScale = scaleLinear()
       .domain([0, this.props.numColorCat])
       .range([this.props.selectedMinColor, this.props.selectedMaxColor])
-      .interpolate(d3.interpolateHcl)
+      .interpolate(interpolateHcl)
 
-    let tempUnselectedColorScale = d3.scaleLinear()
+    let tempUnselectedColorScale = scaleLinear()
       .domain([0, this.props.numColorCat])
       .range([this.props.unselectedMinColor, this.props.unselectedMaxColor])
-      .interpolate(d3.interpolateHcl)
+      .interpolate(interpolateHcl)
 
     let colorDomain = [0]
     this.props.data
@@ -103,7 +103,7 @@ class Choropleth extends React.Component {
 
     let selectedColorRange = []
     let unselectedColorRange = []
-    d3.range(this.props.numColorCat).map((i) => {
+    range(this.props.numColorCat).map((i) => {
       selectedColorRange.push(tempSelectedColorScale(i))
       unselectedColorRange.push(tempUnselectedColorScale(i))
     })
@@ -233,8 +233,8 @@ Choropleth.propTypes = {
 // Only required for REST calls
 Choropleth.contextTypes = {
   filterField: PropTypes.string,
+  filterString: PropTypes.string,
   filterType: PropTypes.string,
-  params: PropTypes.object,
   updateFilter: PropTypes.func
 }
 

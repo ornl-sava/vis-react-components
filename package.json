@@ -63,5 +63,8 @@
     "buildDist": "rm -rf ./dist && NODE_ENV=production webpack --progress --colors",
     "build": "npm run buildDist && npm run buildLib",
     "lint": "eslint src --ext .js --ext .jsx --ignore-path .gitignore"
+  },
+  "dependencies": {
+    "react-addons-transition-group": "^15.2.1"
   }
 }
