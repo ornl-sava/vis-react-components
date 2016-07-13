@@ -1,31 +1,23 @@
 import React, { PropTypes } from 'react'
 import ReactTransitionGroup from 'react-addons-transition-group'
-import { scaleLinear, transition, select, easeLinear, range, extent, max, min, set, ascending } from 'd3'
+import { scaleLinear, select, easeLinear, range, extent, max, min, set, ascending } from 'd3'
 
 class Node extends React.Component {
-  // constructor (props) {
-  //   super(props)
-  //
-  //
-  // }
-
   componentWillEnter (callback) {
     let node = select(this.refs.node)
-    // Get degree, r, and depth and send node flying that direction inward
-    node.transition(this.props.transition)
+
+    node.transition().duration(750).ease(easeLinear)
       .attr('cx', this.props.cx)
       .attr('cy', this.props.cy)
       .attr('r', this.props.r)
       .on('end', () => {
-        console.log('entered')
         callback()
       })
   }
 
   componentWillLeave (callback) {
     let node = select(this.refs.node)
-    // Get degree, r, and depth and send node flying that direction outward
-    node.transition(this.props.transition)
+    node.transition().duration(750).ease(easeLinear)
       .attr('cx', 0)
       .attr('cy', 0)
       .attr('r', 0)
@@ -39,14 +31,12 @@ class Node extends React.Component {
     let componentMoved = node.attr('cx') !== nextProps.cx &&
       node.attr('cy') !== nextProps.cy &&
       node.attr('r') !== nextProps.r
+    // Check if leaving
     if (componentMoved) {
-      node.transition(this.props.transition)
+      node.transition().duration(750).ease(easeLinear)
         .attr('cx', nextProps.cx)
         .attr('cy', nextProps.cy)
         .attr('r', nextProps.r)
-        .on('end', () => {
-          console.log('update')
-        })
     }
   }
 
@@ -73,8 +63,43 @@ Node.propTypes = {
   'data-nodeValue': PropTypes.any,
   onMouseEnter: PropTypes.func,
   onMouseLeave: PropTypes.func,
-  transition: PropTypes.any,
   className: PropTypes.string
+}
+
+class Path extends React.Component {
+  componentWillEnter (callback) {
+    let path = select(this.refs.path)
+    path.transition().duration(750).ease(easeLinear)
+      .attr('stroke-opacity', 1)
+      .on('end', () => {
+        callback()
+      })
+  }
+
+  componentWillLeave (callback) {
+    let path = select(this.refs.path)
+    path.transition().duration(750).ease(easeLinear)
+      .style('stroke-opacity', 0)
+      .on('end', () => {
+        callback()
+      })
+  }
+
+  render () {
+    return (
+      <path
+        ref='path'
+        d={this.props.d}
+        className={this.props.className}
+        display={this.props.display} />
+    )
+  }
+}
+
+Path.propTypes = {
+  className: PropTypes.string,
+  display: PropTypes.string,
+  d: PropTypes.string
 }
 
 class Circumshaker extends React.Component {
@@ -95,10 +120,6 @@ class Circumshaker extends React.Component {
     this.onLeave = this.onLeave.bind(this)
     this.renderLoadAnimation = this.renderLoadAnimation.bind(this)
     this.renderCircumshaker = this.renderCircumshaker.bind(this)
-
-    this.transition = transition()
-      .duration(1000)
-      .ease(easeLinear)
   }
 
   // Update the domain for the shared scale
@@ -385,33 +406,32 @@ class Circumshaker extends React.Component {
             )
           })}
         </g>
-        <g>
+        <ReactTransitionGroup component='g'>
           {this.graph.links.map((d, i) => {
             let linkProps = {
               className: 'link',
-              key: i,
+              key: d.source.key.replace(/\W/g, '') + '-' + d.target.key.replace(/\W/g, ''),
               display: (typeof d.display === 'undefined')
                 ? 'block'
                 : d.display,
               d: path(d)
             }
             return (
-              <path {...linkProps} />
+              <Path {...linkProps} />
             )
           })}
-        </g>
+        </ReactTransitionGroup>
         <ReactTransitionGroup component='g'>
           {this.graph.nodes.map((d, i) => {
             return (
               <Node
-                key={d.key.replace(/\./g, '')}
+                key={d.key.replace(/\W/g, '')}
                 data-nodeIndex={i}
                 data-nodeKey={d.key}
                 data-nodeValue={d.value}
                 onMouseEnter={this.onEnter}
                 onMouseLeave={this.onLeave}
                 className='node'
-                transition={this.transition}
                 r={this.nodeSizeScale(this.graph.links.filter((g) => {
                   return g.source === d || g.target === d
                 }).length)}
