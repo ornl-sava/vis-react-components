@@ -474,14 +474,18 @@ nav ul li .active {
 }
 
 .scatter1 {
-	fill: #2171b5
+	fill: #2171b5;
+	clip-path: url(#clip);
 }
 .scatter2 {
-	fill: #7C9B27
+	fill: #7C9B27;
+	clip-path: url(#clip);
 }
 .scatter3 {
-	fill: #E6550D
+	fill: #E6550D;
+	clip-path: url(#clip);
 }
 .scatter4 {
-	fill: #984EA3
+	fill: #984EA3;
+	clip-path: url(#clip);
 }

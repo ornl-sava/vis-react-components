@@ -1,3 +1,4 @@
+// Export components
 export { default as Chart } from './Chart'
 export { default as Axis } from './Axis'
 export { default as Legend } from './Legend'
@@ -9,3 +10,7 @@ export { default as Bar } from './Bar'
 export { default as Scatterplot } from './Scatterplot'
 export { default as Circumshaker } from './Circumshaker'
 export { default as ScatterHeatmapHybrid } from './ScatterHeatmapHybrid'
+export { default as Tooltip } from './Tooltip'
+
+// Export premades
+export * from './premade'

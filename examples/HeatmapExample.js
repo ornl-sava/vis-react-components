@@ -1,7 +1,7 @@
 import React from 'react'
 import * as d3 from 'd3'
 
-import { Chart, Heatmap } from '../src'
+import { HeatmapChart } from '../src'
 
 import { ordinalLinearHeatmapData, linearTemporalHeatmapData, ordinalOrdinalHeatmapData, linearOrdinalHeatmapData } from './data/exampleData'
 
@@ -30,9 +30,8 @@ const toolTipFunction2 = (d) => {
 }
 
 const chartCommon = {
-  margin: {top: 5, right: 5, bottom: 50, left: 15},
-  height: 300,
-  legend: true
+  margin: {top: 5, right: 5, bottom: 50, left: 50},
+  height: 300
 }
 
 const chartProps1 = {
@@ -54,7 +53,7 @@ const chartProps1 = {
     orient: 'bottom'
   }
 }
-
+//
 const heatmapProps1 = {
   labelField: 'key',
   numColorCat: 17
@@ -148,26 +147,18 @@ class HeatmapExample extends React.Component {
       <div className='col-md-12'>
         <div className='row'>
           <div className='col-md-6'>
-            <Chart {...chartCommon} {...chartProps1} tipFunction={toolTipFunction1}>
-              <Heatmap {...heatmapProps1} />
-            </Chart>
+            <HeatmapChart {...chartCommon} {...chartProps1} {...heatmapProps1} tipFunction={toolTipFunction1} />
           </div>
           <div className='col-md-6'>
-            <Chart {...chartCommon} {...chartProps2} tipFunction={toolTipFunction2}>
-              <Heatmap {...heatmapProps2} />
-            </Chart>
+            <HeatmapChart {...chartCommon} {...chartProps2} {...heatmapProps2} tipFunction={toolTipFunction2} />
           </div>
         </div>
         <div className='row'>
           <div className='col-md-6'>
-            <Chart {...chartCommon} {...chartProps3} tipFunction={toolTipFunction1}>
-              <Heatmap {...heatmapProps3} />
-            </Chart>
+            <HeatmapChart {...chartCommon} {...chartProps3} {...heatmapProps3} tipFunction={toolTipFunction1} />
           </div>
           <div className='col-md-6'>
-            <Chart {...chartCommon} {...chartProps4} tipFunction={toolTipFunction1}>
-              <Heatmap {...heatmapProps4} />
-            </Chart>
+            <HeatmapChart {...chartCommon} {...chartProps4} {...heatmapProps4} tipFunction={toolTipFunction1} />
           </div>
         </div>
       </div>
