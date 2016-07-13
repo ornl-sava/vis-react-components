@@ -1,26 +1,24 @@
 import React, { PropTypes } from 'react'
 // import Bar from './Bar'
 import TextBar from './TextBar'
-import d3 from 'd3'
+import * as d3 from 'd3'
 
-const lineMaker = d3.svg.line()
+const lineMaker = (d) => {
+  d3.line()
   .x((d) => {
     return d.x
   })
   .y((d) => {
     return d.y
   })
+}
 
-const diagMaker = d3.svg.diagonal()
-  .source((d) => {
-    return {'x': d[0].y, 'y': d[0].x}
-  })
-  .target((d) => {
-    return {'x': d[1].y, 'y': d[1].x}
-  })
-  .projection((d) => {
-    return [d.y, d.x]
-  })
+const diagMaker = (d) => {
+  return ('M' + d[1].x + ',' + d[1].y +
+  'C' + (d[1].x + d[0].x) / 2 + ',' + d[1].y +
+  ' ' + (d[1].x + d[0].x) / 2 + ',' + d[0].y +
+  ' ' + d[0].x + ',' + d[0].y)
+}
 
 class TopicFlow extends React.Component {
   // grabbing onEnter and Leave functions from chart and making new set of rules
@@ -36,11 +34,11 @@ class TopicFlow extends React.Component {
     this.setState({selectedTopics: [], move: false, selectedT: []})
   }
   _onClick () {
-    // I thought I could call the other onClick and do something with it
-    // but I wouldn't know when to call this to call the other one...
     console.log('moving')
     // this.moveTopics()
     this.setState({moveX: this.state.moveX - 50, move: true})
+  }
+  _onBarClick (tooltipData) {
   }
   constructor (props) {
     super(props)
@@ -55,8 +53,9 @@ class TopicFlow extends React.Component {
     this.onEnter = this._onEnter.bind(this)
     this.onLeave = this._onLeave.bind(this)
     this.onClick = this._onClick.bind(this)
+    this.onBarClick = this._onBarClick.bind(this)
     this.statArr = []
-    this.prefScale = d3.scale.category20()
+    this.prefScale = d3.scaleOrdinal(d3.schemeCategory20)
     this.bins = []
     this.lineData = []
     this.barData = []
@@ -95,6 +94,7 @@ class TopicFlow extends React.Component {
   componentWillUnmount () {
   }
 
+  // right now rx and ry are not being passed down into bar
   buildABar (bin, name, text, height, width, x, y, barStyle, txtStyle) {
     return {
       className: name,
@@ -139,10 +139,10 @@ class TopicFlow extends React.Component {
     let barHeight = 20
     let barData = []
     let lineData = []
-    // CHECKING IF ORDINAL WHICH IT SHOULD ALWAYS BE, GET RID OF
-    if (typeof props.xScale.rangePoints === 'function') {
-      props.xScale.rangeRoundBands([0, props.chartWidth], props.padding, props.outerPadding)
-    }
+    // XSCALE IS ORDINAL
+    props.xScale.range([0, props.chartWidth])
+    props.xScale.paddingInner(props.outerPadding)
+    props.xScale.paddingOuter(props.padding)
     console.log('tFAdjList', props.adjacencyList)
     // GETTING TOPIC BAR INFORMATION
     let svgTopicBars = props.adjacencyList.map((dataArr, i) => {
@@ -157,7 +157,6 @@ class TopicFlow extends React.Component {
         // CLASSNAME NEEDS SIMPLE NAMES
         let cName = data[0].toString().split(/:|-/, 1) + '-' + i.toString()
         let topicColor = {stroke: this.prefScale(data[0].split(/:|-/, 1)[0])}
-        // cName += this.statArr[index][i]
         if (this.state.currentID === data[0]) {
           cName += ' Selected'
           topicColor = {stroke: '#e67300'}
@@ -217,7 +216,7 @@ class TopicFlow extends React.Component {
         }
         return (
           <g className='bin' key={key}>
-            <TextBar {...data} onEnter={this.onEnter} onLeave={this.onLeave} />
+            <TextBar {...data} onEnter={this.onEnter} onLeave={this.onLeave} onClick={this.onBarClick} />
             {lineInfo}
           </g>
         )
@@ -249,7 +248,7 @@ class TopicFlow extends React.Component {
   }
   moveTopics () {
     return (
-      <g transform={'translate(' + this.state.moveX + ',' + 0 + ')'} onClick={this.onClick}>
+      <g transform={'translate(' + this.state.moveX + ',' + 0 + ')'} >
         {this.topics}
       </g>
     )

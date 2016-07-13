@@ -1,29 +1,17 @@
 import React, { PropTypes } from 'react'
 // import Bar from './Bar'
 import TextBar from './TextBar'
-import d3 from 'd3'
+import * as d3 from 'd3'
 import storyData from '../examples/data/for-hci/stories.json'
 import eTopics from '../examples/data/for-hci/enduring-topics-listed.json'
 import hrTopics from '../examples/data/for-hci/hourly-topics-listed.json'
 
-/* const lineMaker = d3.svg.line()
-  .x((d) => {
-    return d.x
-  })
-  .y((d) => {
-    return d.y
-  }) */
-
-const diagMaker = d3.svg.diagonal()
-  .source((d) => {
-    return {'x': d[0].y, 'y': d[0].x}
-  })
-  .target((d) => {
-    return {'x': d[1].y, 'y': d[1].x}
-  })
-  .projection((d) => {
-    return [d.y, d.x]
-  })
+const diagMaker = (d) => {
+  return ('M' + d[0].x + ',' + d[0].y +
+  'C' + (d[0].x + d[1].x) / 2 + ',' + d[0].y +
+  ' ' + (d[0].x + d[1].x) / 2 + ',' + d[1].y +
+  ' ' + d[1].x + ',' + d[1].y)
+}
 
 class StoryViewer extends React.Component {
   // grabbing onEnter and Leave functions from chart and making new set of rules
@@ -84,7 +72,7 @@ class StoryViewer extends React.Component {
     this.onClick = this._onClick.bind(this)
     this.onMoveClick = this._onMoveClick.bind(this)
     // might not need pref scale if not coloring bars
-    this.prefScale = d3.scale.category20()
+    this.prefScale = d3.scaleOrdinal(d3.schemeCategory20)
     this.lineData = []
     this.barData = []
     this.tType = ['hour-Curr-', 'enduring-Curr-', 'enduring-Prev-']
@@ -169,9 +157,9 @@ class StoryViewer extends React.Component {
     // console.log('storyData0', storyData[0])
     // setting current story
     this.currStory = storyData[storyInd]
-    props.xScale.rangeRoundBands([0, props.chartWidth], props.padding, props.outerPadding)
+    props.xScale.rangeRound([0, props.chartWidth])
+    props.xScale.padding(props.padding)
     let timeStepBars = []
-    console.log('zero', props.xScale(0))
     // setting up data for (ex: hr[01], end[01]. end[00])
     this.currData[0] = hrTopics[storyInd + 1]
     this.currData[1] = eTopics[storyInd + 1]

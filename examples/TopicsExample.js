@@ -1,6 +1,7 @@
 // import React from 'react'
 import React, { PropTypes } from 'react'
-import d3 from 'd3'
+import * as d3 from 'd3'
+import { Link } from 'react-router'
 // import {Chart} from 'vis'
 import {Chart} from '../src'
 import TopicFlow from '../src/TopicFlow'
@@ -20,7 +21,8 @@ const toolTipFunction = (tooltipData) => {
   let d = tooltipData
   var toolTip =
     '<span class="title">' + d.label + '</span>' +
-    d3.format('n')(d.counts)
+    '</span>Number of Topics: ' + d3.format(',')(d.counts) +
+    '<br /><small>'
   return toolTip
 }
 
@@ -252,10 +254,11 @@ class TopicsContainer extends React.Component {
       clickArray: []
     }
     this.toolTipFunction = toolTipFunction
-    this.onClick = this._onBarClick.bind(this)
+    this.onGroupClick = this._onGroupClick.bind(this)
+    this.onClick = this._onBarClick
     this.topicData = []
   }
-  _onBarClick (toggleList) {
+  _onGroupClick (toggleList) {
     // takes toggle list and updates clickArray state
     // console.log('toggleList', toggleList)
     this.setState({clickArray: toggleList}, () => {
@@ -302,17 +305,18 @@ class TopicsContainer extends React.Component {
       <div className={className}>
         <div className='row' >
           <Chart className='col-md-2' ref='updateChart2'{...props} {...this.state} tipFunction={this.toolTipFunction} yAxis={false} xAxis={false} xScaleType='linear' height={600}>
-            <ColorView className='col-md-2' {...props} clickArray={this.state.clickArray} ref='colorView' onBarClick={this.onClick} />
+            <ColorView className='col-md-2' {...props} clickArray={this.state.clickArray} ref='colorView' onBarClick={this.onGroupClick} />
           </Chart>
           <Chart className='col-md-10' ref='updateChart' {...props} {...this.state} tipFunction={this.toolTipFunction} yAxis={false} xAxis={false} height={hTop}>
-            <TopicFlow className='col-md-10' {...props} clickArray={this.state.clickArray} colorView={this.refs.colorView} onBarClick={this.onClick} />
+            <TopicFlow className='col-md-10' {...props} clickArray={this.state.clickArray} colorView={this.refs.colorView} />
           </Chart>
         </div>
-        <div className='row' style={{overflow: 'scroll'}}>
+        <div className='row' >
           <Chart className='col-md-12' {...props} {...this.state} tipFunction={this.toolTipFunction} yAxis={false} xAxis={false} height={1000} margin={{top: 40, right: 10, bottom: 10, left: 80}} width={5000}>
-            <StoryViewer className='col-md-12' {...props} clickArray={this.state.clickArray} colorView={this.refs.colorView} onBarClick={this.onClick} />
+            <StoryViewer className='col-md-12' {...props} clickArray={this.state.clickArray} colorView={this.refs.colorView} />
           </Chart>
         </div>
+        <li><Link to='/id' activeClassName='active'>SingleTopic</Link></li>
       </div>
     )
   }

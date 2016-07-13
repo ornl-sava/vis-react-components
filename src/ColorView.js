@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react'
 import TextBar from './TextBar'
-import d3 from 'd3'
+import * as d3 from 'd3'
 
 const layout = (initRowNum, maxColLength, data) => {
   let numCol = data.length / initRowNum
@@ -42,30 +42,16 @@ class ColorView extends React.Component {
     console.log('clicked', toolTipData)
     let index = toolTipData.label
     let newClickArray = this.props.clickArray
-    // might want to move this up and make constant?
-    // used to check if all the topics are selected
-    /* let checkClick = () => {
-      for (let i in newClickArray) {
-        if (!newClickArray[i]) {
-          return false
-        }
-      }
-      return true
-    }*/
-    // if all are clicked the resets it to the only the one being clicked
-    // else toggle on / off
     if (index === 'CLEAR') {
       for (let i in newClickArray) {
         newClickArray[i] = false
       }
       this.colorDomain[toolTipData.counts] = 'ALL'
-      // newClickArray[index] = true
     } else if (index === 'ALL') {
       for (let i in newClickArray) {
         newClickArray[i] = true
       }
       this.colorDomain[toolTipData.counts] = 'CLEAR'
-      // newClickArray[index] = true
     } else {
       newClickArray[index] = !newClickArray[index]
     }
@@ -79,14 +65,14 @@ class ColorView extends React.Component {
     }
     this.onEnter = this._onEnter.bind(this)
     this.onLeave = this._onLeave.bind(this)
-    this.prefScale = d3.scale.category20()
+    this.prefScale = d3.scaleOrdinal(d3.schemeCategory20)
     this.onClick = this._onClick.bind(this)
     if (this.props.spread === 'vertical') {
       this.xScale = this.props.xScale
       this.yScale = this.props.yScale
     } else {
-      this.xScale = d3.scale.ordinal()
-      this.yScale = d3.scale.ordinal()
+      this.xScale = d3.scaleOrdinal()
+      this.yScale = d3.scaleOrdinal()
     }
     this.rData = []
     this.colorDomain = JSON.parse(JSON.stringify(this.props.colorDomain))

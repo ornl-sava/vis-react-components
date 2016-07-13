@@ -24,7 +24,7 @@ class Bar extends React.Component {
     this._onMouseLeave()
   }
   render () {
-    let { className, data, name, width, height, y } = this.props
+    let { className, data, name, width, height, y, x, style } = this.props
     className = className ? 'histogram-bar ' + className : 'histogram-bar'
     return (
       <rect
@@ -34,10 +34,12 @@ class Bar extends React.Component {
         data-y={data.y}
         width={width}
         height={height}
+        x={x}
         y={y}
         onClick={this.onClick}
         onMouseEnter={this.onMouseEnter}
         onMouseLeave={this.onMouseLeave}
+        style={style}
      />)
   }
 }
@@ -48,7 +50,9 @@ Bar.defaultProps = {
   width: 0,
   onClick: () => null,
   tooltipData: null,
-  y: 0
+  y: 0,
+  x: 0,
+  style: {}
 }
 
 Bar.propTypes = {
@@ -61,7 +65,9 @@ Bar.propTypes = {
   onEnter: PropTypes.func,
   onLeave: PropTypes.func,
   tooltipData: PropTypes.object,
-  y: PropTypes.number.isRequired
+  y: PropTypes.number.isRequired,
+  x: PropTypes.number,
+  style: PropTypes.object
 }
 
 // Only required for REST calls
