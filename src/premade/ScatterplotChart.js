@@ -83,7 +83,7 @@ class ScatterplotChart extends React.Component {
   }
 
   onClick (event, data) {
-    this.props.onClick(event)
+    this.props.onClick(event, data)
   }
 
   onEnter (event, data) {
@@ -142,6 +142,8 @@ ScatterplotChart.defaultProps = {
 }
 
 ScatterplotChart.propTypes = {
+  ...Scatterplot.propTypes,
+  ...Chart.propTypes,
   onClick: PropTypes.func,
   onEnter: PropTypes.func,
   onLeave: PropTypes.func,

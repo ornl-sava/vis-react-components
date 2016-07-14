@@ -76,6 +76,7 @@ class Chart extends React.Component {
 }
 
 Chart.defaultProps = {
+  resizeHandler: () => {},
   header: () => [],
   margin: {top: 0, right: 10, bottom: 20, left: 80},
   width: 0,
@@ -83,6 +84,7 @@ Chart.defaultProps = {
 }
 
 Chart.propTypes = {
+  resizeHandler: PropTypes.func,
   header: PropTypes.func,
   children: PropTypes.any,
   className: PropTypes.string,
