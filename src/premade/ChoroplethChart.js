@@ -92,7 +92,7 @@ class ChoroplethChart extends React.Component {
     let props = this.props
     return (
       <Chart ref='chart' {...spreadRelated(Chart, props)} resizeHandler={this.onResize}>
-        <Choropleth className='heatmap' {...spreadRelated(Choropleth, props)}
+        <Choropleth className='circumshaker' {...spreadRelated(Choropleth, props)}
           onEnter={this.onEnter} onLeave={this.onLeave} onClick={this.onClick}
           unselectedColorScale={this.unselectedColorScale} selectedColorScale={this.selectedColorScale} />
         <Legend colorScale={this.selectedColorScale} />

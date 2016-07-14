@@ -1,7 +1,7 @@
 import React from 'react'
 import * as d3 from 'd3'
 
-import { Chart, Circumshaker } from '../src'
+import { CircumshakerChart } from '../src'
 
 const data = {
   'source_ip': '124.83.248.123',
@@ -128,17 +128,13 @@ const toolTipFunction = (d) => {
 const chartProps = {
   tipFunction: toolTipFunction,
   height: 800,
-  xAxis: false,
-  yAxis: false,
   data: data
 }
 
 class CircumshakerExample extends React.Component {
   render () {
     return (
-      <Chart {...chartProps}>
-        <Circumshaker />
-      </Chart>
+      <CircumshakerChart {...chartProps} />
     )
   }
 }
