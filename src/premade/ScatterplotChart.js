@@ -88,14 +88,14 @@ class ScatterplotChart extends React.Component {
 
   onEnter (event, data) {
     if (data && this.tip) {
-      this.tip.show(event.target, data)
+      this.tip.show(event, data)
     }
     this.props.onEnter(event, data)
   }
 
   onLeave (event, data) {
     if (data && this.tip) {
-      this.tip.hide(event.target, data)
+      this.tip.hide(event, data)
     }
     this.props.onLeave(event, data)
   }

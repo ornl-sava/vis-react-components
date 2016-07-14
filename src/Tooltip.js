@@ -4,6 +4,20 @@ const functor = (f) => {
     : f
 }
 
+const getWidth = () => {
+  if (self.innerHeight) {
+    return self.innerWidth
+  }
+
+  if (document.documentElement && document.documentElement.clientWidth) {
+    return document.documentElement.clientWidth
+  }
+
+  if (document.body) {
+    return document.body.clientWidth
+  }
+}
+
 export default class Tooltip {
   constructor () {
     // Init tooltip
@@ -15,23 +29,29 @@ export default class Tooltip {
 
     // Set up defaults
     this._html = ''
+    this._baseClass = ''
     this._offset = [0, 0]
     this._direction = 'n'
+    this._autoDirection = true
   }
 
   destroy () {
     document.body.removeChild(this.tooltip)
   }
 
-  show (node, data) {
-    this.tooltip.classList.add(this._direction)
+  show (event, data) {
+    this.tooltip.className = this._baseClass
     this.tooltip.innerHTML = this._html(data)
     this.tooltip.style.display = 'block'
-    let bbox = this.getScreenBBox(node)
-    let coords = {
-      top: bbox[this._direction].y,
-      left: bbox[this._direction].x
+    let bbox = this.getScreenBBox(event)
+    let direction = this._direction
+    let coords = {}
+    coords.top = bbox[direction].y
+    coords.left = bbox[direction].x
+    if (this._autoDirection) {
+      direction = this.getAutoDirection(bbox, direction, coords)
     }
+    this.tooltip.classList.add(direction)
     this.tooltip.style.top = (coords.top + this._offset[0]) + document.body.scrollTop + 'px'
     this.tooltip.style.left = (coords.left + this._offset[1]) + document.body.scrollLeft + 'px'
     return this
@@ -56,6 +76,13 @@ export default class Tooltip {
     return this
   }
 
+  autoDirection (v) {
+    if (!arguments.length) return this._autoDirection
+    this._autoDirection = v
+
+    return this
+  }
+
   offset (o) {
     if (!arguments.length) return this._offset
     this._offset = functor(o)
@@ -68,6 +95,9 @@ export default class Tooltip {
       return this.tooltip.getAttribute('string')
     } else {
       this.tooltip[attr] = functor(value)
+      if (attr === 'className') {
+        this._baseClass = this.tooltip[attr]
+      }
     }
     return this
   }
@@ -82,11 +112,28 @@ export default class Tooltip {
     return this
   }
 
-  getScreenBBox (target = null) {
-    if (target === null) {
+  // NOTE: Currently assumes a default direction of 'N'
+  // Mutates coords and return corrected direction
+  getAutoDirection (bbox, direction, coords) {
+    if (coords.left < 0) {
+      coords.left = bbox.e.x
+      coords.top = bbox.e.y
+      return 'e'
+    } else if (coords.left + this.tooltip.offsetWidth > getWidth()) {
+      coords.left = bbox.w.x
+      coords.top = bbox.w.y
+      return 'w'
+    } else {
+      return 'n'
+    }
+  }
+
+  getScreenBBox (event = null) {
+    if (event === null) {
       return null
     }
 
+    let target = event.target
     let bbox = {}
     let point = target.ownerSVGElement.createSVGPoint()
     let matrix = target.getScreenCTM()

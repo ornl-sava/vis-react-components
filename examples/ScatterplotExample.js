@@ -8,7 +8,6 @@ const toolTipFunction = (d) => {
 
   toolTip =
     '<span class="title">' + d.x + '</span>' + (d.y)
-
   return toolTip
 }
 
