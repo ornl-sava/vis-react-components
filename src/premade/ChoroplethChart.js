@@ -19,7 +19,7 @@ class ChoroplethChart extends React.Component {
     this.updateColorScales = this.updateColorScales.bind(this)
 
     this.tip = props.tipFunction
-      ? new Tooltip().attr('className', 'd3-tip').html(props.tipFunction)
+      ? new Tooltip().attr('className', 'd3-tip').useMouseCoordinates(true).html(props.tipFunction)
       : props.tipFunction
 
     this.updateColorScales(props, this.state)

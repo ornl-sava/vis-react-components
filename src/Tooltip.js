@@ -33,6 +33,7 @@ export default class Tooltip {
     this._offset = [0, 0]
     this._direction = 'n'
     this._autoDirection = true
+    this._useMouseCoordinates = false
   }
 
   destroy () {
@@ -45,15 +46,24 @@ export default class Tooltip {
     this.tooltip.style.display = 'block'
     let bbox = this.getScreenBBox(event)
     let direction = this._direction
-    let coords = {}
-    coords.top = bbox[direction].y
-    coords.left = bbox[direction].x
+    let coords = {
+      top: bbox[direction].y,
+      left: bbox[direction].x
+    }
     if (this._autoDirection) {
-      direction = this.getAutoDirection(bbox, direction, coords)
+      direction = this.getAutoDirection(bbox, coords)
+    }
+    if (this._useMouseCoordinates) {
+      // NOTE: Currently uses a direction of 'n'
+      coords.top = event.pageY + this._offset[0] - this.tooltip.offsetHeight
+      coords.left = event.pageX + this._offset[1] - this.tooltip.offsetWidth / 2
+    } else {
+      coords.top += this._offset[0] + document.body.scrollTop
+      coords.left += this._offset[1] + document.body.scrollLeft
     }
     this.tooltip.classList.add(direction)
-    this.tooltip.style.top = (coords.top + this._offset[0]) + document.body.scrollTop + 'px'
-    this.tooltip.style.left = (coords.left + this._offset[1]) + document.body.scrollLeft + 'px'
+    this.tooltip.style.top = coords.top + 'px'
+    this.tooltip.style.left = coords.left + 'px'
     return this
   }
 
@@ -79,6 +89,13 @@ export default class Tooltip {
   autoDirection (v) {
     if (!arguments.length) return this._autoDirection
     this._autoDirection = v
+
+    return this
+  }
+
+  useMouseCoordinates (v) {
+    if (!arguments.length) return this._useMouseCoordinates
+    this._useMouseCoordinates = v
 
     return this
   }
@@ -114,7 +131,7 @@ export default class Tooltip {
 
   // NOTE: Currently assumes a default direction of 'N'
   // Mutates coords and return corrected direction
-  getAutoDirection (bbox, direction, coords) {
+  getAutoDirection (bbox, coords) {
     if (coords.left < 0) {
       coords.left = bbox.e.x
       coords.top = bbox.e.y
