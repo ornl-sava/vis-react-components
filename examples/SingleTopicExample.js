@@ -1,6 +1,8 @@
 // import React from 'react'
 import React, { PropTypes } from 'react'
 import * as d3 from 'd3'
+// import {cloud} from '../examples/data/for-hci/cloud'
+import cloud from '../examples/data/for-hci/cloud2'
 // import ReactDom from 'react-dom'
 // import {Chart} from '../src'
 import eTopics from '../examples/data/for-hci/enduring-topics-listed.json'
@@ -18,6 +20,12 @@ const chartProps4 = {
     orient: 'left'
   }
 }
+
+const words = ['hello', 'more', 'pokemon', 'squirtle', 'turutle', 'potter']
+  .map((d) => {
+    return {text: d, size: 10 + Math.random() * 90}
+  })
+console.log(words)
 
 const heatmapProps4 = {
   labelField: 'key',
@@ -75,6 +83,19 @@ const toolTipFunction = (tooltipData) => {
   return toolTip
 }
 
+let wor = [
+  {text: 'guns', 'freq': 94}, {text: 'potato', 'freq': 5}, {text: 'Mr.A', 'freq': 73}, {text: 'shooting', 'freq': 17},
+  {text: 'Mr.B', 'freq': 47}, {text: 'sale', 'freq': 8}, {text: 'plane', 'freq': 27}, {text: 'driver', 'freq': 32},
+  {text: 'killed', 'freq': 41}, {text: 'email', 'freq': 86}, {text: 'gang', 'freq': 98}, {text: 'informant', 'freq': 64}]
+  .map((d, i) => {
+    return {text: d.text, size: d.freq * 2, index: i}
+  })
+console.log(wor)
+
+/* const color = d3.scaleLinear()
+.domain([0, 100])
+.range(['#E4E4E4', '#5D5D5D'])*/
+
 const onBarClick = function (clickEvent) {
   console.groupCollapsed('Bar ' + this.props.data.x)
   console.log(clickEvent.target)
@@ -91,6 +112,7 @@ class SingleTopicExample extends React.Component {
       status: '',
       clickArray: []
     }
+    this.cloud = cloud
   }
   componentWillMount () {
     // console.log('topicData', topicData)
@@ -134,11 +156,42 @@ class SingleTopicExample extends React.Component {
       .style('fill', function (d) { return 'blue' })
     console.log('circle', circle)
   }
-  makeWordCloud () {
+  exWords () {
+    // let root = this.refs.root
+    // let can = document.createElement('canvas')
+    console.log('beforeStuff')
+    // let canvas = d3.select(root).parentNode.appendChild(document.createElement('canvas'))
+    let can = d3.select(root).append('canvas')
+      .attr('width', 800)
+      .attr('height', 600)
+    let canny = can.node().getContext('2d')
+    console.log('canny', canny)
+    // console.log('stuff', canvas.getContext('2d'))
+    console.log('inside exWords')
+    function end (words) { console.log(JSON.stringify(words)) }
+    // let can = (
+    //   <img width={100} height={100} ></img>
+    // )
+    cloud().size([2000, 1600])
+      .canvas(can.node())
+      // .canvas(can)
+      // .canvas(svg)
+      .words(words)
+      .padding(5)
+      .rotate(function () {
+        console.log('rotate')
+        return ~~(Math.random() * 2) * 90
+      })
+      .fontSize(function (d) {
+        console.log('fSize')
+        return d.size
+      })
+      .on('end', end)
+      .start()
   }
   render () {
     this.makeCircle()
-    this.makeWordCloud
+    this.exWords()
     console.log('eList', this.eventList())
     // let {className, ...props} = this.props
     return (
