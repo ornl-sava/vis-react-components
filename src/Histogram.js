@@ -114,6 +114,7 @@ Histogram.propTypes = {
   onClick: PropTypes.func,
   onEnter: PropTypes.func,
   onLeave: PropTypes.func,
+  type: PropTypes.string,
   xAccessor: PropTypes.string.isRequired,
   xScale: PropTypes.any,
   yAccessor: PropTypes.string.isRequired,
