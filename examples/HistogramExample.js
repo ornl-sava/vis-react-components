@@ -1,7 +1,7 @@
 import React from 'react'
 import * as d3 from 'd3'
 
-import { Chart, Histogram, Settings } from '../src'
+import { HistogramChart, Settings } from '../src'
 import { histogramData, temporalHistogramData, stackedHistogramData } from './data/exampleData'
 
 // Tooltipdata is an object currently defined in the component
@@ -38,10 +38,10 @@ const toolTipFunction = (tooltipData) => {
   return toolTip
 }
 
-const onBarClick = function (clickEvent) {
-  console.groupCollapsed('Bar ' + this.props.data.x)
-  console.log(clickEvent.target)
-  console.log(this.props)
+const onBarClick = (event, data) => {
+  console.groupCollapsed('Bar ' + data.label)
+  console.log(event.target)
+  console.log(data)
   console.groupEnd()
 }
 
@@ -152,12 +152,12 @@ class HistogramExample extends React.Component {
     return (
       <div>
         <div>
-          <Chart header={this.header1} width={800} height={200} data={histogramData} {...this.state} tipFunction={toolTipFunction}>
-            <Histogram addOverlay xAccessor='key'yAccessor='count' onBarClick={onBarClick} />
-          </Chart>
+          <HistogramChart header={this.header1} width={800} height={200}
+            data={histogramData} {...this.state} tipFunction={toolTipFunction}
+            addOverlay xAccessor='key' yAccessor='count' onClick={onBarClick} />
         </div>
         <div>
-          <Chart header={this.header2}
+          <HistogramChart
             width={800} height={200}
             sortBy={'y'} sortOrder={'Ascending'}
             xAxis={{
@@ -166,14 +166,14 @@ class HistogramExample extends React.Component {
               innerPadding: 0.2,
               outerPadding: 0.4
             }}
-            data={stackedHistogramData} tipFunction={toolTipFunction}>
-            <Histogram type='stacked' addOverlay />
-          </Chart>
+            data={stackedHistogramData} tipFunction={toolTipFunction}
+            type='stacked' addOverlay
+            />
         </div>
         <div>
-          <Chart header={this.header3} xScaleType='temporal' width={800} height={200} data={temporalData} tipFunction={toolTipFunction}>
-            <Histogram addOverlay onBarClick={onBarClick} />
-          </Chart>
+          <HistogramChart header={this.header3} xScaleType='temporal'
+            width={800} height={200} data={temporalData} tipFunction={toolTipFunction}
+            addOverlay onClick={onBarClick} />
         </div>
       </div>
     )
