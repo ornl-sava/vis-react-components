@@ -25,7 +25,7 @@ class TopicFlow extends React.Component {
   _onEnter (toolTipData, svgElement) {
     let props = this.props
     props.onEnter(toolTipData, svgElement)
-    console.log('story', toolTipData)
+    // console.log('story', toolTipData)
     this.setState({selectedTopics: toolTipData.label, move: false, selectedT: toolTipData.story.concat(toolTipData.adjI)})
   }
   _onLeave (toolTipData, svgElement) {
