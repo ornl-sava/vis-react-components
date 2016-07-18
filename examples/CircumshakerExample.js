@@ -1,5 +1,5 @@
 import React from 'react'
-import * as d3 from 'd3'
+import { format } from 'd3-format'
 
 import { CircumshakerChart } from '../src'
 
@@ -121,7 +121,7 @@ const data = {
 const toolTipFunction = (d) => {
   var toolTip =
     '<span class="title">' + d.label + '</span>' +
-    d3.format(',')(d.count)
+    format(',')(d.count)
   return toolTip
 }
 
