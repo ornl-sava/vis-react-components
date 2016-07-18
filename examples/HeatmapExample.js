@@ -66,7 +66,7 @@ const chartProps2 = {
     ])
   },
   data: linearTemporalHeatmapData,
-  xScaleType: 'temporal',
+  xScaleType: 'time',
   yScaleType: 'linear',
   yAxis: {
     type: 'y',
