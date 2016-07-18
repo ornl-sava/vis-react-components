@@ -13,6 +13,7 @@ class Choropleth extends React.Component {
     this.onClick = this.onClick.bind(this)
     this.onEnter = this.onEnter.bind(this)
     this.onLeave = this.onLeave.bind(this)
+    this.onMove = this.onMove.bind(this)
   }
 
   getDatum (id) {
@@ -44,6 +45,12 @@ class Choropleth extends React.Component {
     let target = event.target
     let id = target.getAttribute('data-id')
     this.props.onLeave(event, this.getDatum(id))
+  }
+
+  onMove (event) {
+    let target = event.target
+    let id = target.getAttribute('data-id')
+    this.props.onMove(event, this.getDatum(id))
   }
 
   render () {
@@ -96,7 +103,8 @@ class Choropleth extends React.Component {
                 fill={getColor(d.id)}
                 onClick={this.onClick}
                 onMouseEnter={this.onEnter}
-                onMouseLeave={this.onLeave} />
+                onMouseLeave={this.onLeave}
+                onMouseMove={this.onMove} />
             )
           })}
         </g>
@@ -123,7 +131,8 @@ Choropleth.defaultProps = {
   selectedValue: 'selected',
   onClick: () => {},
   onEnter: () => {},
-  onLeave: () => {}
+  onLeave: () => {},
+  onMove: () => {}
 }
 
 Choropleth.propTypes = {
@@ -144,7 +153,8 @@ Choropleth.propTypes = {
   selectedValue: PropTypes.string,
   onClick: PropTypes.func,
   onEnter: PropTypes.func,
-  onLeave: PropTypes.func
+  onLeave: PropTypes.func,
+  onMove: PropTypes.func
 }
 
 // Only required for REST calls

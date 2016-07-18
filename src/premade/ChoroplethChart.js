@@ -14,12 +14,13 @@ class ChoroplethChart extends React.Component {
     this.onClick = this.onClick.bind(this)
     this.onEnter = this.onEnter.bind(this)
     this.onLeave = this.onLeave.bind(this)
+    this.onMove = this.onMove.bind(this)
     this.onResize = this.onResize.bind(this)
 
     this.updateColorScales = this.updateColorScales.bind(this)
 
     this.tip = props.tipFunction
-      ? new Tooltip().attr('className', 'd3-tip').useMouseCoordinates(true).html(props.tipFunction)
+      ? new Tooltip().attr('className', 'd3-tip').useMouseCoordinates(true).offset([-12, 0]).html(props.tipFunction)
       : props.tipFunction
 
     this.updateColorScales(props, this.state)
@@ -82,6 +83,13 @@ class ChoroplethChart extends React.Component {
     this.props.onLeave(event, data)
   }
 
+  onMove (event, data) {
+    if (data && this.tip) {
+      this.tip.show(event, data)
+    }
+    this.props.onEnter(event, data)
+  }
+
   onResize () {}
 
   render () {
@@ -89,7 +97,7 @@ class ChoroplethChart extends React.Component {
     return (
       <Chart ref='chart' {...spreadRelated(Chart, props)} resizeHandler={this.onResize}>
         <Choropleth className='circumshaker' {...spreadRelated(Choropleth, props)}
-          onEnter={this.onEnter} onLeave={this.onLeave} onClick={this.onClick}
+          onEnter={this.onEnter} onLeave={this.onLeave} onClick={this.onClick} onMove={this.onMove}
           unselectedColorScale={this.unselectedColorScale} selectedColorScale={this.selectedColorScale} />
         <Legend colorScale={this.selectedColorScale} />
       </Chart>
