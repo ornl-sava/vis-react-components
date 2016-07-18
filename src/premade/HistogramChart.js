@@ -34,7 +34,6 @@ class HistogramChart extends React.Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    // Check for different stuff
     this.updateDomain(nextProps, this.state)
   }
 
@@ -112,6 +111,7 @@ class HistogramChart extends React.Component {
 
       if (props.yScaleType !== this.props.yScaleType) {
         this.yScale = setScale(props.yScaleType)
+        this.updateRange(props, state)
       }
 
       let yDomain = [0.00001, this.getMaxCount(props.data) * 1.1]
