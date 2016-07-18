@@ -20,6 +20,7 @@ class TextBar extends React.Component {
     this.props.onClick(this.props.tooltipData)
   }
   _onDoubleClick () {
+    // not used
     this.props.onDoubleClick(this.props.tooltipData)
   }
   constructor (props) {
@@ -59,6 +60,9 @@ class TextBar extends React.Component {
   }
   componentWillUnmount () {
     this._onMouseLeave()
+  }
+  makeRect () {
+
   }
   render () {
     // console.log('txtBar')

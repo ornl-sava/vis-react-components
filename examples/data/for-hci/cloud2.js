@@ -3,8 +3,8 @@ import * as d3 from 'd3'
 // Algorithm due to Jonathan Feinberg, http://static.mrfeinberg.com/bv_ch03.pdf
 
 const cloudRadians = Math.PI / 180
-const cw = 1 << 11 >> 5
-const ch = 1 << 11
+const cw = 1 << 11 >> 5       // 64
+const ch = 1 << 11            // 2048
 
 export default function () {
   let size = [256, 256]
@@ -25,7 +25,7 @@ export default function () {
   let canvas = cloudCanvas
 
   cloud.canvas = function (_) {
-    // console.log('canvasFunc')
+    // SETS THE CANVAS TO INPUT IF MADE UPON INSTANTIATION
     arguments.length ? (canvas = functor(_), cloud) : canvas
     return arguments.length ? cloud : canvas
   }
@@ -47,7 +47,7 @@ export default function () {
       d.size = ~~fontSize.call(this, d, i)
       d.padding = padding.call(this, d, i)
       return d
-    }).sort((a, b) => { return b.size - a.size })
+    }).sort((a, b) => { return b.size - a.size }) // SORT DESCENDING
 
     if (timer) clearInterval(timer)
     timer = setInterval(step, 0)
@@ -66,7 +66,7 @@ export default function () {
           if (d.hasText && place(board, d, bounds)) {
             tags.push(d)
             // eventa.word(d)
-            eventa.call('word', d)
+            eventa.call('word', this, d)
             if (bounds) cloudBounds(bounds, d)
             else bounds = [{x: d.x + d.x0, y: d.y + d.y0}, {x: d.x + d.x1, y: d.y + d.y1}]
             // Temporary hack
@@ -77,7 +77,8 @@ export default function () {
       }
       if (i >= n) {
         cloud.stop()
-        eventa.call('end', (tags, bounds))
+        // eventa.end(tags, bounds)
+        eventa.call('end', this, tags, bounds)
       }
     }
   }
@@ -91,12 +92,14 @@ export default function () {
   }
 
   function getContext (canvas) {
-    // canvas.width = canvas.height = 1
-    var ratio = Math.sqrt(canvas.getContext('2d').getImageData(0, 0, 1, 1).data.length >> 2)
-    // canvas.width = (cw << 5) / ratio
-    // canvas.height = ch / ratio
-
-    var context = canvas.getContext('2d')
+    canvas.width = canvas.height = 1
+    let ratio = Math.sqrt(canvas.getContext('2d').getImageData(0, 0, 1, 1).data.length >> 2)
+    // ratio = 2
+    console.log('ratio', canvas.getContext('2d').getImageData(0, 0, 1, 1).data.length)
+    canvas.width = (cw << 5) / ratio
+    canvas.height = ch / ratio
+    let context = canvas.getContext('2d')
+    console.log('context', context)
     context.fillStyle = context.strokeStyle = 'red'
     context.textAlign = 'center'
 
@@ -223,6 +226,7 @@ export default function () {
   cloud.on = function () {
     // console.log('onFunc')
     var value = eventa.on.apply(eventa, arguments)
+    console.log(value)
     return arguments.length ? cloud : value
   }
 

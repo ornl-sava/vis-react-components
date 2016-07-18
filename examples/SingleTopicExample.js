@@ -21,11 +21,7 @@ const chartProps4 = {
   }
 }
 
-const words = ['hello', 'more', 'pokemon', 'squirtle', 'turutle', 'potter']
-  .map((d) => {
-    return {text: d, size: 10 + Math.random() * 90}
-  })
-console.log(words)
+const words = ['hello', 'more', 'bear', 'snake', 'turutle', 'data']
 
 const heatmapProps4 = {
   labelField: 'key',
@@ -144,7 +140,7 @@ class SingleTopicExample extends React.Component {
       </g>
     )
   }
-  makeCircle () {
+  /* makeCircle () {
     // Get root
     let root = this.refs.root
     // Create svg
@@ -155,8 +151,8 @@ class SingleTopicExample extends React.Component {
       .attr('r', function (d) { return 60 })
       .style('fill', function (d) { return 'blue' })
     console.log('circle', circle)
-  }
-  exWords () {
+  }*/
+  /* exWords () {
     // let root = this.refs.root
     // let can = document.createElement('canvas')
     console.log('beforeStuff')
@@ -168,29 +164,66 @@ class SingleTopicExample extends React.Component {
     console.log('canny', canny)
     // console.log('stuff', canvas.getContext('2d'))
     console.log('inside exWords')
-    function end (words) { console.log(JSON.stringify(words)) }
+    function end (words) { console.log('words', JSON.stringify(words)) }
     // let can = (
     //   <img width={100} height={100} ></img>
     // )
-    cloud().size([2000, 1600])
+    cloud().size([800, 600])
       .canvas(can.node())
-      // .canvas(can)
-      // .canvas(svg)
       .words(words)
       .padding(5)
-      .rotate(function () {
-        console.log('rotate')
-        return ~~(Math.random() * 2) * 90
-      })
-      .fontSize(function (d) {
-        console.log('fSize')
+      .rotate(function () { return ~~(Math.random() * 2) * 90 })
+      .fontSize(function (d) { return d.size })
+      .on('end', end(words))
+      .start()
+  } */
+  exWords () {
+    let root = this.refs.root
+    let fill = d3.scaleOrdinal(d3.schemeCategory20)
+    let draw = (words) => {
+      let w = 600
+      let h = 450
+      console.log('drawing')
+      d3.select(root).append('svg')
+        // .attr('width', layout.size()[0])
+        // .attr('height', layout.size()[1])
+        .attr('width', w)
+        .attr('height', h)
+        .append('g')
+        .attr('transform', 'translate(' + w / 2 + ',' + h / 2 + ')')
+        .selectAll('text')
+        .data(words)
+        .enter().append('text')
+        .style('font-size', (d) => { return d.size + 'px' })
+        .style('font-family', 'Impact')
+        .style('fill', (d, i) => { return fill(i) })
+        .attr('text-anchor', 'middle')
+        .attr('transform', (d) => {
+          return 'translate(' + [d.x, d.y] + ')rotate(' + d.rotate + ')'
+        })
+        .text((d) => { return d.text })
+    }
+    // console.log(eTopics[0][24])
+    // d.split(/:|-/)[1]
+    let layout = cloud()
+      .size([600, 450])
+      .words(words.map((d) => {
+        return {text: d, size: 10 + Math.random() * 90, test: 'haha'}
+      }))
+      .padding(5)
+      .rotate(() => { return ~~0 })
+      .font('Impact')
+      .fontSize((d) => {
         return d.size
       })
-      .on('end', end)
+      .on('end', (d) => {
+        draw(d)
+      })
       .start()
+    console.log('kysf', layout)
   }
   render () {
-    this.makeCircle()
+    // this.makeCircle()
     this.exWords()
     console.log('eList', this.eventList())
     // let {className, ...props} = this.props
