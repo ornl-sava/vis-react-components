@@ -133,13 +133,13 @@ export default class Tooltip {
   // Mutates coords and return corrected direction
   getAutoDirection (bbox, coords) {
     if (coords.left < 0) {
-      coords.left = bbox.e.x
-      coords.top = bbox.e.y
-      return 'e'
+      coords.left = bbox.ne.x
+      coords.top = bbox.ne.y
+      return 'ne'
     } else if (coords.left + this.tooltip.offsetWidth > getWidth()) {
-      coords.left = bbox.w.x
-      coords.top = bbox.w.y
-      return 'w'
+      coords.left = bbox.nw.x
+      coords.top = bbox.nw.y
+      return 'nw'
     } else {
       return 'n'
     }
