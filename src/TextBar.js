@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react'
 import ReactDom from 'react-dom'
-import Bar from './Bar'
+// import Bar from './Bar'
 
 class TextBar extends React.Component {
   _onMouseEnter () {
@@ -20,6 +20,7 @@ class TextBar extends React.Component {
     this.props.onClick(this.props.tooltipData)
   }
   _onDoubleClick () {
+    // not used
     this.props.onDoubleClick(this.props.tooltipData)
   }
   constructor (props) {
@@ -60,14 +61,32 @@ class TextBar extends React.Component {
   componentWillUnmount () {
     this._onMouseLeave()
   }
+  makeRect () {
+    let rectData = {
+      className: this.props.className + ' barTopic',
+      dataName: {name},
+      width: this.props.width,
+      height: this.props.height,
+      x: this.props.x,
+      y: this.props.y,
+      style: this.props.barStyle
+    }
+    return rectData
+  }
+  // <Bar className={className + ' barTopic'} {...props} onClick={this.onClick} onDoubleClick={this.onDoubleClick} onEnter={this.onEnter} onLeave={this.onLeave} style={this.props.barStyle} />
   render () {
+    let {style, ...rProps} = this.makeRect()
     // console.log('txtBar')
     // console.log('txtBar', this.props.text, this.props.barStyle)
     let {className, ...props} = this.props
     return (
       <g>
-        <text className={this.props.className + ' text'} x={this.props.x + this.getTxtAlign()} y={this.props.y + this.props.height / 2} style={this.props.textStyle} onClick={this.onClick} onMouseEnter={this.onEnter} > {props.text} </text>
-        <Bar className={className + ' barTopic'} {...props} onClick={this.onClick} onDoubleClick={this.onDoubleClick} onEnter={this.onEnter} onLeave={this.onLeave} style={this.props.barStyle} />
+        <text className={className + ' text'} x={this.props.x + this.getTxtAlign()} y={this.props.y + this.props.height / 2} style={this.props.textStyle} > {props.text} </text>
+        <rect
+          {...rProps}
+          style={style}
+        />
+        <rect {...rProps} style={{fill: 'black', fillOpacity: 0}} onClick={this.onClick} onMouseEnter={this.onEnter} onMouseLeave={this.onLeave} />
       </g>
     )
   }

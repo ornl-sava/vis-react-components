@@ -1,57 +1,66 @@
 import React, { PropTypes } from 'react'
 // import Bar from './Bar'
 import TextBar from './TextBar'
-import d3 from 'd3'
+import * as d3 from 'd3'
 
-const lineMaker = d3.svg.line()
+const lineMaker = (d) => {
+  d3.line()
   .x((d) => {
     return d.x
   })
   .y((d) => {
     return d.y
   })
+}
 
-const diagMaker = d3.svg.diagonal()
-  .source((d) => {
-    return {'x': d[0].y, 'y': d[0].x}
-  })
-  .target((d) => {
-    return {'x': d[1].y, 'y': d[1].x}
-  })
-  .projection((d) => {
-    return [d.y, d.x]
-  })
+const diagMaker = (d) => {
+  return ('M' + d[1].x + ',' + d[1].y +
+  'C' + (d[1].x + d[0].x) / 2 + ',' + d[1].y +
+  ' ' + (d[1].x + d[0].x) / 2 + ',' + d[0].y +
+  ' ' + d[0].x + ',' + d[0].y)
+}
 
 class TopicFlow extends React.Component {
   // grabbing onEnter and Leave functions from chart and making new set of rules
   _onEnter (toolTipData, svgElement) {
     let props = this.props
     props.onEnter(toolTipData, svgElement)
-    this.setState({selectedTopics: toolTipData.label})
+    // console.log('story', toolTipData)
+    this.setState({selectedTopics: toolTipData.label, move: false, selectedT: toolTipData.story.concat(toolTipData.adjI)})
   }
   _onLeave (toolTipData, svgElement) {
     let props = this.props
     props.onLeave(toolTipData, svgElement)
-    this.setState({selectedTopics: []})
+    this.setState({selectedTopics: [], move: false, selectedT: []})
   }
   _onClick () {
-    // I thought I could call the other onClick and do something with it
-    // but I wouldn't know when to call this to call the other one...
+    console.log('moving')
+    // this.moveTopics()
+    this.setState({moveX: this.state.moveX - 50, move: true})
+  }
+  _onBarClick (tooltipData) {
   }
   constructor (props) {
     super(props)
     this.state = {
       dataUp: 0,
       currentID: [],
-      selectedTopics: []
+      selectedTopics: [],
+      selectedT: [],
+      moveX: 0,
+      move: false
     }
     this.onEnter = this._onEnter.bind(this)
     this.onLeave = this._onLeave.bind(this)
+    this.onClick = this._onClick.bind(this)
+    this.onBarClick = this._onBarClick.bind(this)
     this.statArr = []
-    this.prefScale = d3.scale.category20()
+    this.prefScale = d3.scaleOrdinal(d3.schemeCategory20)
     this.bins = []
     this.lineData = []
     this.barData = []
+    this.topics = []
+    this.barWidth = 0
   }
   shouldComponentUpdate (nextProps, nextState) {
     if (this.props.data.length <= 0) {
@@ -85,6 +94,7 @@ class TopicFlow extends React.Component {
   componentWillUnmount () {
   }
 
+  // right now rx and ry are not being passed down into bar
   buildABar (bin, name, text, height, width, x, y, barStyle, txtStyle) {
     return {
       className: name,
@@ -125,82 +135,59 @@ class TopicFlow extends React.Component {
   initTopics (props) {
     let paddedWidth = props.chartWidth * (1 - props.padding).toFixed(2)
     let barWidth = Math.ceil(paddedWidth / (props.numTData + (props.outerPadding * 2)))
+    this.barWidth = barWidth
     let barHeight = 20
     let barData = []
     let lineData = []
-    // let selLines = []
-    // just checking if ordinal without checking
-    // might not need to do this, assuming it's always ordinal
-    if (typeof props.xScale.rangePoints === 'function') {
-      props.xScale.rangeRoundBands([0, props.chartWidth], props.padding, props.outerPadding)
-    }
-    // console.log('init')
-    let svgTopicBars = props.data.map((dataArr, index) => {
-      // return Object.keys(dataArr).map((i) => {
-      //  let data = dataArr[i]
-      return dataArr.map((data, i) => {
+    // XSCALE IS ORDINAL
+    props.xScale.range([0, props.chartWidth])
+    props.xScale.paddingInner(props.outerPadding)
+    props.xScale.paddingOuter(props.padding)
+    console.log('tFAdjList', props.adjacencyList)
+    // GETTING TOPIC BAR INFORMATION
+    let svgTopicBars = props.adjacencyList.map((dataArr, i) => {
+      if (dataArr.hour < props.numTData) {
+        let data = dataArr.events
         if (data[0] == null) {
           data[0] = 'EMPTY'
         }
-        // use yScale if want them all starting at top
-        let posY = this.props.yScale(i)
-        // use this if want them uniformly spread
-        // let posY = this.props.chartHeight / dataArr.length * i
-        let posX = props.xScale(index)
+        let posY = this.props.yScale(dataArr.topicID)
+        let posX = props.xScale(dataArr.hour)
         let fontSize = 12
-        // It seems like class name does not like :
+        // CLASSNAME NEEDS SIMPLE NAMES
         let cName = data[0].toString().split(/:|-/, 1) + '-' + i.toString()
-        // checking to see if same topic in previous timeSteps
-        let dataMatch = []
-        if (index + 1 < props.data.length) {
-          for (let k in props.data[index + 1]) {
-            // if (!this.props.data[index + 1].hasOwnProperty(k)) continue
-            if (props.data[index + 1][k][0] === data[0]) {
-              dataMatch = [{x: posX + barWidth, y: posY + barHeight / 2}, {x: props.xScale(index + 1), y: this.props.yScale(k) + barHeight / 2}]
-              // next topic happened
-              this.statArr[index + 1][k] = ' happened'
-              // if current topic happened
-              if (this.statArr[index][i] === ' happened') {
-                this.statArr[index][i] = ' continue'
-              } else {
-                this.statArr[index][i] = ' enter'
-              }
-            }
-          }
-          // if no match made then the topic is exiting
-          if (this.statArr[index][i] !== ' continue' && this.statArr[index][i] !== ' enter') {
-            this.statArr[index][i] = ' exit'
-          }
-        }
-        // assuming the first batch of topics are entering...
-        /* if (index === 0) {
-          stat = ' enter'
-          this.statArr[index][i] = ' enter'
-        } */
         let topicColor = {stroke: this.prefScale(data[0].split(/:|-/, 1)[0])}
-        let linePath = () => {
-          if (dataMatch[0] != null) {
-            if (this.props.lineType === 'curved') {
-              return diagMaker(dataMatch)
-            } else { lineMaker(dataMatch) }
-          } else { return null }
-        }
-        cName += this.statArr[index][i]
         if (this.state.currentID === data[0]) {
           cName += ' Selected'
           topicColor = {stroke: '#e67300'}
         }
-        // eventually might want to check if style sheet is handling this
+        // TRIMMING TEXT IF BEYOND BARS
         let text = this.trimText(data[0], barWidth, fontSize)
+        // SETTING TEXT STYLE
         let barTxtStyle = this.buildAText(fontSize.toString() + 'px', 'black')
         let bar = this.buildABar(data, cName, text, barHeight, barWidth, posX, posY, topicColor, barTxtStyle)
-        bar.tooltipData = {label: bar.data[0], counts: bar.data.length}
+        bar.tooltipData = {label: bar.data[0], counts: bar.data.length, story: dataArr.story, topicID: dataArr.topicID, hour: dataArr.hour, prevStory: dataArr.prevStory, adjI: i}
         barData.push(bar)
-        lineData.push(linePath())
-      })
+      }
     })
-    // init gets called twice, can't do this.barData.push in the mapping loop
-    // because it'll be twice as long as necessary
+    console.log('BarData', barData.length)
+    // GETTING CONNECTING LINE INFORMATION (EDGES)
+    barData.map((data, index) => {
+      let story = data.tooltipData.prevStory
+      // let hour = data.tooltipData.hour
+      let dataMatch = []
+      // console.log('hour', hour, 'story', story, 'id', data.tooltipData.topicID)
+      if (story[0] != null) {
+        let arrIndex = []
+        story.map((s, i) => {
+          dataMatch = [{x: data.x, y: data.y + barHeight / 2}, {x: barData[s].x + barWidth, y: barData[s].y + barHeight / 2}]
+          if (this.props.lineType === 'curved') {
+            arrIndex = lineData.push(diagMaker(dataMatch))
+          } else { arrIndex = lineData.push(lineMaker(dataMatch)) }
+          data.tooltipData.lineIndex = arrIndex - 1
+        })
+      }
+    })
     this.barData = barData
     this.lineData = lineData
     return svgTopicBars
@@ -211,7 +198,9 @@ class TopicFlow extends React.Component {
       let key = 'bar-' + i
       let nData = []
       if (this.state.selectedTopics[0] != null) {
-        if (this.state.selectedTopics.toString() === this.barData[i].data[0].toString()) {
+        // if (this.state.selectedTopics.toString() === this.barData[i].data[0].toString())
+        // console.log(this.state.selectedT)
+        if (this.state.selectedT.indexOf(i) >= 0) {
           nData = JSON.parse(JSON.stringify(this.barData[i]))
           nData.sel = true
           nData.barStyle.stroke = '#00ccff'
@@ -219,33 +208,48 @@ class TopicFlow extends React.Component {
         }
       }
       let cData = (data) => {
+        let lineInfo = []
+        if (data.tooltipData.lineIndex != null) {
+          lineInfo = (
+            <path className={data.data[0] + ' lineMatch -' + i} d={this.lineData[data.tooltipData.lineIndex]} style={data.barStyle} ></path>
+          )
+        }
         return (
           <g className='bin' key={key}>
-            <TextBar {...data} onEnter={this.onEnter} onLeave={this.onLeave} />
-            <path className={data.data[0] + ' lineMatch -' + i} d={this.lineData[i]} style={data.barStyle} ></path>
+            <TextBar {...data} onEnter={this.onEnter} onLeave={this.onLeave} onClick={this.onBarClick} />
+            {lineInfo}
           </g>
         )
       }
+      // IF TOPICS SELECTED BY LEGEND KEY
       if (this.props.clickArray[this.barData[i].data[0].toString().split(/:|-/, 1)]) {
         if (nData.sel) {
+          // PUSHES MOUSED OVER TOPICS TO THE FRONT
           svgBins.push(cData(nData))
         } else {
           svgBins.unshift(cData(this.barData[i]))
         }
       } else {
-        // this greys the topic bars instead of not rendering
+        // GREYS OUT TOPIC BARS NOT SELECTED BY LEGEND KEY
         nData = JSON.parse(JSON.stringify(this.barData[i]))
         nData.barStyle.stroke = '#e2e2eb'
         nData.barStyle.strokeOpacity = 0.6
         nData.textStyle.fill = '#e2e2eb'
         nData.textStyle.fillOpacity = 0.6
-        console.log('nData', nData)
+        // console.log('nData', nData)
         svgBins.unshift(cData(nData))
       }
     }
     return (
       <g>
         {svgBins}
+      </g>
+    )
+  }
+  moveTopics () {
+    return (
+      <g transform={'translate(' + this.state.moveX + ',' + 0 + ')'} >
+        {this.topics}
       </g>
     )
   }
@@ -274,11 +278,16 @@ class TopicFlow extends React.Component {
 
   render () {
     let renderEl = null
-    if (this.props.data.length <= 0) {
-      console.log('probably no data')
-      renderEl = this.renderLoadAnimation(this.props)
+    if (this.state.move) {
+      renderEl = this.moveTopics()
     } else {
-      renderEl = this.renderTopics()
+      if (this.props.data.length <= 0) {
+        console.log('probably no data')
+        renderEl = this.renderLoadAnimation(this.props)
+      } else {
+        this.topics = this.renderTopics()
+        renderEl = this.moveTopics()
+      }
     }
     return renderEl
   }
@@ -293,7 +302,8 @@ TopicFlow.defaultProps = {
   barHeight: 20,
   maxTopics: 60,
   lineType: 'curved',
-  clickArray: []
+  clickArray: [],
+  adjacencyList: []
 }
 
 TopicFlow.propTypes = {
@@ -312,7 +322,8 @@ TopicFlow.propTypes = {
   maxTopics: PropTypes.number.isRequired,
   colorDomain: PropTypes.array,
   lineType: PropTypes.string.isRequired,
-  clickArray: PropTypes.any.isRequired
+  clickArray: PropTypes.any.isRequired,
+  adjacencyList: PropTypes.array.isRequired
 }
 
 export default TopicFlow

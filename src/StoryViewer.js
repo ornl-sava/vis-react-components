@@ -1,29 +1,17 @@
 import React, { PropTypes } from 'react'
 // import Bar from './Bar'
 import TextBar from './TextBar'
-import d3 from 'd3'
+import * as d3 from 'd3'
 import storyData from '../examples/data/for-hci/stories.json'
 import eTopics from '../examples/data/for-hci/enduring-topics-listed.json'
 import hrTopics from '../examples/data/for-hci/hourly-topics-listed.json'
 
-/* const lineMaker = d3.svg.line()
-  .x((d) => {
-    return d.x
-  })
-  .y((d) => {
-    return d.y
-  }) */
-
-const diagMaker = d3.svg.diagonal()
-  .source((d) => {
-    return {'x': d[0].y, 'y': d[0].x}
-  })
-  .target((d) => {
-    return {'x': d[1].y, 'y': d[1].x}
-  })
-  .projection((d) => {
-    return [d.y, d.x]
-  })
+const diagMaker = (d) => {
+  return ('M' + d[0].x + ',' + d[0].y +
+  'C' + (d[0].x + d[1].x) / 2 + ',' + d[0].y +
+  ' ' + (d[0].x + d[1].x) / 2 + ',' + d[1].y +
+  ' ' + d[1].x + ',' + d[1].y)
+}
 
 class StoryViewer extends React.Component {
   // grabbing onEnter and Leave functions from chart and making new set of rules
@@ -39,13 +27,15 @@ class StoryViewer extends React.Component {
   }
   _onClick (tooltipData) {
     // resetting topic info
-    let newID = [[], [], []]
+    let newID = new Array(3)
     let { dataInd, index } = tooltipData
     // getting topic information for clicked topic
-    newID[dataInd] = this.currData[dataInd][index]
+    // newID[dataInd] = this.currData[dataInd][index]
+    newID[dataInd] = parseFloat(index)
     // getting topic information of related topics
     this.barData[dataInd][index].story.map((sData) => {
-      newID[sData.dataInd] = this.currData[sData.dataInd][sData.index]
+      // newID[sData.dataInd] = this.currData[sData.dataInd][sData.index]
+      newID[sData.dataInd] = parseFloat(sData.index)
     })
     // re-render with new topic info
     this.setState({currentID: newID})
@@ -67,14 +57,14 @@ class StoryViewer extends React.Component {
       }
     }
     this.initTopics(this.props, sIndex)
-    this.setState({storyInd: sIndex, currentID: [[], [], []]})
+    this.setState({storyInd: sIndex, currentID: new Array(3)})
   }
   constructor (props) {
     super(props)
     this.state = {
       dataUp: 0,
       storyInd: 0,
-      currentID: [[], [], []],
+      currentID: new Array(3),
       selectedTopics: []
     }
     this.onEnter = this._onEnter.bind(this)
@@ -82,7 +72,7 @@ class StoryViewer extends React.Component {
     this.onClick = this._onClick.bind(this)
     this.onMoveClick = this._onMoveClick.bind(this)
     // might not need pref scale if not coloring bars
-    this.prefScale = d3.scale.category20()
+    this.prefScale = d3.scaleOrdinal(d3.schemeCategory20)
     this.lineData = []
     this.barData = []
     this.tType = ['hour-Curr-', 'enduring-Curr-', 'enduring-Prev-']
@@ -167,9 +157,9 @@ class StoryViewer extends React.Component {
     // console.log('storyData0', storyData[0])
     // setting current story
     this.currStory = storyData[storyInd]
-    props.xScale.rangeRoundBands([0, props.chartWidth], props.padding, props.outerPadding)
+    props.xScale.rangeRound([0, props.chartWidth])
+    props.xScale.padding(props.padding)
     let timeStepBars = []
-    console.log('zero', props.xScale(0))
     // setting up data for (ex: hr[01], end[01]. end[00])
     this.currData[0] = hrTopics[storyInd + 1]
     this.currData[1] = eTopics[storyInd + 1]
@@ -270,10 +260,14 @@ class StoryViewer extends React.Component {
     )
   }
   renderTopics () {
-    // console.log('SVRenderID', this.state.currentID)
     let svgBins = this.barData.map((array, index) => {
+      let bIndex = this.state.currentID[index]
       return array.map((data, i) => {
         let key = 'bar-' + i + index
+        if (i === bIndex) {
+          // do something
+          console.log(bIndex)
+        }
         return (
           <g key={key}>
             <TextBar {...data} onEnter={this.onEnter} onLeave={this.onLeave} onClick={this.onClick} />
@@ -298,11 +292,15 @@ class StoryViewer extends React.Component {
       if (i === 0 || i === 1) {
         type = type + (this.state.storyInd + 1).toString() + ': '
       } else { type = type + this.state.storyInd.toString() + ': ' }
-      let info = this.state.currentID[i].map((data, index) => {
-        return (
-          <text key={this.tType[i] + 'info-' + index} fontSize='14px' x={this.props.xScale(3) - this.props.xScale(0) / 2 + 10} y={startPos + 20 + index * 16} >{data}</text>
-        )
-      })
+      let info = []
+      if (this.state.currentID[i] != null) {
+        let text = this.currData[i][this.state.currentID[i]]
+        info = text.map((data, index) => {
+          return (
+            <text key={this.tType[i] + 'info-' + index} fontSize='14px' x={this.props.xScale(3) - this.props.xScale(0) / 2 + 10} y={startPos + 20 + index * 16} >{data}</text>
+          )
+        })
+      }
       svgInfo[i] = (
         <g key={'view' + i}>
           <text fontSize='20px' x={this.props.xScale(3) - this.props.xScale(0) / 2} y={startPos} style={{fontWeight: 'bold', textDecoration: 'underline'}}>{type}</text>
