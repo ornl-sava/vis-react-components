@@ -1,27 +1,29 @@
 import React, { PropTypes } from 'react'
-import ReactDom from 'react-dom'
 
 class Bar extends React.Component {
-  _onMouseEnter () {
-    if (this.props.tooltipData) {
-      let thisNode = ReactDom.findDOMNode(this)
-      this.props.onEnter(this.props.tooltipData, thisNode)
-    }
-  }
-  _onMouseLeave () {
-    if (this.props.tooltipData) {
-      let thisNode = ReactDom.findDOMNode(this)
-      this.props.onLeave(this.props.tooltipData, thisNode)
-    }
-  }
   constructor (props) {
     super(props)
-    this.onClick = props.onClick.bind(this)
+    this.onClick = this._onClick.bind(this)
     this.onMouseEnter = this._onMouseEnter.bind(this)
     this.onMouseLeave = this._onMouseLeave.bind(this)
   }
   componentWillUnmount () {
     this._onMouseLeave()
+  }
+  _onClick (event) {
+    if (this.props.tooltipData) {
+      this.props.onClick(event, this.props.tooltipData)
+    }
+  }
+  _onMouseEnter (event) {
+    if (this.props.tooltipData) {
+      this.props.onEnter(event, this.props.tooltipData)
+    }
+  }
+  _onMouseLeave (event) {
+    if (this.props.tooltipData) {
+      this.props.onLeave(event, this.props.tooltipData)
+    }
   }
   render () {
     let { className, data, name, width, height, y, x, style } = this.props
@@ -68,15 +70,6 @@ Bar.propTypes = {
   y: PropTypes.number.isRequired,
   x: PropTypes.number,
   style: PropTypes.object
-}
-
-// Only required for REST calls
-Bar.contextTypes = {
-  filterField: PropTypes.string,
-  filterType: PropTypes.string,
-  filterString: PropTypes.string,
-  multiSelect: PropTypes.bool,
-  updateFilter: PropTypes.func
 }
 
 export default Bar

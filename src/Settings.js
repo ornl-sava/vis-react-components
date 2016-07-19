@@ -65,7 +65,7 @@ class Settings extends React.Component {
     let settings = props.settings
     let chart = props.chart
     let margin = chart.props.margin
-    let width = chart.state.chartWidth
+    let width = chart.chartWidth
 
     let longestLen = 0
     longestLen = settings.options.reduce((a, b) => {

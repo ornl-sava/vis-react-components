@@ -1,7 +1,8 @@
 import React from 'react'
-import * as d3 from 'd3'
+import { timeFormat } from 'd3-time-format'
+import { format } from 'd3-format'
 
-import { Chart, Heatmap } from '../src'
+import { HeatmapChart } from '../src'
 
 import { ordinalLinearHeatmapData, linearTemporalHeatmapData, ordinalOrdinalHeatmapData, linearOrdinalHeatmapData } from './data/exampleData'
 
@@ -11,7 +12,7 @@ const toolTipFunction1 = (d) => {
   if (d.value > 0) {
     toolTip =
       '<span class="title">' + d.key + '</span>' +
-      d3.format(',')(d.value)
+      format(',')(d.value)
   }
 
   return toolTip
@@ -19,20 +20,18 @@ const toolTipFunction1 = (d) => {
 
 const toolTipFunction2 = (d) => {
   let toolTip = '<span> No Data </span>'
-  let timeFormat = d3.timeFormat('%c')
   if (d.value > 0) {
     toolTip =
-      '<span class="title">' + timeFormat(d.key) + '</span>' +
-      d3.format(',')(d.value)
+      '<span class="title">' + timeFormat('%c')(d.key) + '</span>' +
+      format(',')(d.value)
   }
 
   return toolTip
 }
 
 const chartCommon = {
-  margin: {top: 5, right: 5, bottom: 50, left: 15},
-  height: 300,
-  legend: true
+  margin: {top: 5, right: 5, bottom: 50, left: 50},
+  height: 300
 }
 
 const chartProps1 = {
@@ -54,7 +53,7 @@ const chartProps1 = {
     orient: 'bottom'
   }
 }
-
+//
 const heatmapProps1 = {
   labelField: 'key',
   numColorCat: 17
@@ -67,7 +66,7 @@ const chartProps2 = {
     ])
   },
   data: linearTemporalHeatmapData,
-  xScaleType: 'temporal',
+  xScaleType: 'time',
   yScaleType: 'linear',
   yAxis: {
     type: 'y',
@@ -79,8 +78,7 @@ const chartProps2 = {
     tickCount: linearTemporalHeatmapData[0].bins.length + 1,
     tickValues: linearTemporalHeatmapData[0].bins.map((d) => new Date(d.key)),
     tickFormat: (d, i) => {
-      let timeFormat = d3.timeFormat('%X')
-      return timeFormat(d)
+      return timeFormat('%X')(d)
     },
     orient: 'bottom'
   }
@@ -148,26 +146,18 @@ class HeatmapExample extends React.Component {
       <div className='col-md-12'>
         <div className='row'>
           <div className='col-md-6'>
-            <Chart {...chartCommon} {...chartProps1} tipFunction={toolTipFunction1}>
-              <Heatmap {...heatmapProps1} />
-            </Chart>
+            <HeatmapChart {...chartCommon} {...chartProps1} {...heatmapProps1} tipFunction={toolTipFunction1} />
           </div>
           <div className='col-md-6'>
-            <Chart {...chartCommon} {...chartProps2} tipFunction={toolTipFunction2}>
-              <Heatmap {...heatmapProps2} />
-            </Chart>
+            <HeatmapChart {...chartCommon} {...chartProps2} {...heatmapProps2} tipFunction={toolTipFunction2} />
           </div>
         </div>
         <div className='row'>
           <div className='col-md-6'>
-            <Chart {...chartCommon} {...chartProps3} tipFunction={toolTipFunction1}>
-              <Heatmap {...heatmapProps3} />
-            </Chart>
+            <HeatmapChart {...chartCommon} {...chartProps3} {...heatmapProps3} tipFunction={toolTipFunction1} />
           </div>
           <div className='col-md-6'>
-            <Chart {...chartCommon} {...chartProps4} tipFunction={toolTipFunction1}>
-              <Heatmap {...heatmapProps4} />
-            </Chart>
+            <HeatmapChart {...chartCommon} {...chartProps4} {...heatmapProps4} tipFunction={toolTipFunction1} />
           </div>
         </div>
       </div>

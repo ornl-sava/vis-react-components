@@ -1,29 +1,38 @@
 import React, { PropTypes } from 'react'
-import * as d3 from 'd3'
+import { ascending, set, min, max, extent, range } from 'd3'
 
+import { setScale } from './util/d3'
+
+// NOTE: This component was built around data that was not concise.
+// Flip flopping key used was required. Once data is changed,
+// code will be fixed
 class Circumshaker extends React.Component {
   constructor (props) {
     super(props)
 
-    this.graph = {
-      nodes: [],
-      links: []
-    }
+    this.graph = {}
 
     this.depth = 0
     this.radius = 0
-    this.nodeSizeScale = d3.scaleLinear()
+    this.nodeSizeScale = setScale('linear')
+
+    this.generateGraph = this.generateGraph.bind(this)
 
     this.onClick = this.onClick.bind(this)
     this.onEnter = this.onEnter.bind(this)
     this.onLeave = this.onLeave.bind(this)
-    this.renderLoadAnimation = this.renderLoadAnimation.bind(this)
-    this.renderCircumshaker = this.renderCircumshaker.bind(this)
+    this.getDatum = this.getDatum.bind(this)
+
+    this.generateGraph(props)
   }
 
   // Update the domain for the shared scale
   componentWillReceiveProps (nextProps) {
-    if (Object.keys(nextProps.data).length > 0) {
+    this.generateGraph(nextProps)
+  }
+
+  generateGraph (props) {
+    if (Object.keys(props.data).length > 0) {
       let graph = this.graph
 
       // Instantiate nodes and links
@@ -37,6 +46,7 @@ class Circumshaker extends React.Component {
         let node = (depth !== 0)
           ? {key: data.key_as_string, value: data.doc_count, depth: depth}
           : {key: data.source_ip, value: data.dest_ip.length, depth: 0}
+        node.data = data
 
         // Find possible duplicates
         let duplicate = (graph.nodes.filter((d) => d.key === node.key))
@@ -79,13 +89,13 @@ class Circumshaker extends React.Component {
       }
 
       // Populate graph
-      generateGraph(nextProps.data)
+      generateGraph(props.data)
 
       // Sort nodes and set parents to null
       graph.nodes
         .sort((a, b) => {
           if (a.depth !== b.depth) {
-            return d3.ascending(a.depth, b.depth)
+            return ascending(a.depth, b.depth)
           } else {
             let aKids = graph.links.filter((d) => {
               return d.source === a
@@ -103,7 +113,7 @@ class Circumshaker extends React.Component {
 
       // Function to get leafs of a given subtree
       const getNumLeafs = (_node) => {
-        let leafs = d3.set()
+        let leafs = set()
 
         const getNumLeafsHelper = (_links) => {
           _links.forEach((g) => {
@@ -143,11 +153,11 @@ class Circumshaker extends React.Component {
       })
 
       // Determine maximum depth allowed for rendering
-      this.depth = Math.min(d3.max(this.graph.nodes, (d) => d.depth), nextProps.maxDepth)
+      this.depth = Math.min(max(this.graph.nodes, (d) => d.depth), props.maxDepth)
 
       // Determine radius
       // NOTE: This is used as more of a radius 'band'
-      this.radius = d3.min([nextProps.chartWidth, nextProps.chartHeight]) /
+      this.radius = min([props.chartWidth, props.chartHeight]) /
         (this.depth) / 2
 
       // Determine properties used for each node during drawing
@@ -158,8 +168,8 @@ class Circumshaker extends React.Component {
       // wedge - degree 'space' allotted for a node
       // radius - radius used for drawing node
       graph.nodes.forEach((d, i) => {
-        d.x = nextProps.chartWidth / 2
-        d.y = nextProps.chartHeight / 2
+        d.x = props.chartWidth / 2
+        d.y = props.chartHeight / 2
         d.degree = 0
         d.startAngle = 0
         d.wedge = 360
@@ -198,8 +208,8 @@ class Circumshaker extends React.Component {
       })
 
       // Find max node size if not predefined
-      let maxSize = nextProps.nodeMaxSize !== null
-      ? nextProps.nodeMaxSize
+      let maxSize = props.nodeMaxSize !== null
+      ? props.nodeMaxSize
       : graph.nodes.reduce((prev, curr) => {
         let r = this.radius * curr.depth
         let theta = curr.startAngle > curr.degree
@@ -212,8 +222,8 @@ class Circumshaker extends React.Component {
 
       // Create scale that determines node size
       this.nodeSizeScale
-        .range([nextProps.nodeMinSize, maxSize])
-        .domain(d3.extent(this.graph.nodes, (d) => {
+        .range([props.nodeMinSize, maxSize])
+        .domain(extent(this.graph.nodes, (d) => {
           return this.graph.links.filter((g) => {
             return g.source === d || g.target === d
           }).length
@@ -222,15 +232,16 @@ class Circumshaker extends React.Component {
   }
 
   onClick (event) {
-    this.props.onClick(event)
+    let target = event.target
+    this.props.onClick(event, this.getDatum(target))
   }
 
   onEnter (event) {
-    let node = event.target
-    this.props.onEnter(this.tooltipData(node), node)
+    let target = event.target
+    this.props.onEnter(event, this.getDatum(target))
 
     // Only display linking paths
-    let nodeIndex = node.getAttribute('data-nodeIndex')
+    let nodeIndex = target.getAttribute('data-nodeIndex')
     let gNode = this.graph.nodes[nodeIndex]
     this.graph.links.forEach((d, i) => {
       d.display = (d.source === gNode || d.target === gNode)
@@ -243,28 +254,27 @@ class Circumshaker extends React.Component {
   }
 
   onLeave (event) {
-    let node = event.target
-    this.props.onLeave(this.tooltipData(node), node)
+    let target = event.target
+    this.props.onLeave(event, this.getDatum(target))
 
     // Display all paths once again
     this.graph.links.forEach((d, i) => {
       d.display = 'block'
     })
-    // NOTE: This might not be the most efficient
-    // look into betters way sometime
+    // NOTE: This might not be the most efficient ... may need better way
     this.forceUpdate()
   }
 
-  tooltipData (node) {
-    let label = node.getAttribute('data-nodeKey')
-    let count = node.getAttribute('data-nodeValue')
+  getDatum (target) {
+    let label = target.getAttribute('data-nodeKey')
+    let count = target.getAttribute('data-nodeValue')
     return {
       label,
       count
     }
   }
 
-  renderCircumshaker () {
+  render () {
     let {chartWidth, chartHeight} = this.props
 
     const det = (a, b, c) => {
@@ -291,7 +301,7 @@ class Circumshaker extends React.Component {
 
     return (
       <g className={this.props.className}>
-        {d3.range(1, this.depth + 1, 1).map((d, i) => {
+        {range(1, this.depth + 1, 1).map((d, i) => {
           let cocentricCircleProps = {
             className: 'cocentricCircle',
             key: i,
@@ -323,6 +333,7 @@ class Circumshaker extends React.Component {
             'data-nodeValue': d.value,
             onMouseEnter: this.onEnter,
             onMouseLeave: this.onLeave,
+            onClick: this.onClick,
             className: 'node',
             key: i,
             r: this.nodeSizeScale(this.graph.links.filter((g) => {
@@ -338,36 +349,6 @@ class Circumshaker extends React.Component {
       </g>
     )
   }
-
-  renderLoadAnimation () {
-    let {chartWidth, chartHeight, ...props} = this.props
-    let xPos = Math.floor(chartWidth / 2)
-    let yPos = Math.floor(chartHeight / 2)
-    let messageText = 'Loading data...'
-    if (!props.loading) {
-      if (props.status === 'Failed to fetch') {
-        messageText = 'Can\'t connect to API URL'
-      } else if (props.status !== 'OK') {
-        messageText = 'Error retrieving data: ' + props.status
-      } else {
-        messageText = 'No data returned!'
-      }
-    }
-    return (
-      <g className='loading-message'>
-        <text x={xPos} y={yPos}>{messageText}</text>
-      </g>
-    )
-  }
-
-  render () {
-    let renderEl = null
-    renderEl = this.renderLoadAnimation()
-    if (Object.keys(this.props.data).length > 0 && this.props.chartWidth !== 0) {
-      renderEl = this.renderCircumshaker()
-    }
-    return renderEl
-  }
 }
 
 Circumshaker.defaultProps = {
@@ -375,13 +356,7 @@ Circumshaker.defaultProps = {
   nodeMaxSize: null,
   maxDepth: 3,
   labelField: 'label',
-  chartHeight: 0,
-  chartWidth: 0,
-  className: 'Circumshaker',
   data: {},
-  dataLoading: false,
-  status: '',
-  type: '',
   onClick: () => {},
   onEnter: () => {},
   onLeave: () => {}
@@ -392,16 +367,13 @@ Circumshaker.propTypes = {
   nodeMaxSize: PropTypes.number,
   maxDepth: PropTypes.number,
   labelField: PropTypes.string,
-  chartHeight: PropTypes.number.isRequired,
-  chartWidth: PropTypes.number.isRequired,
-  className: PropTypes.string.isRequired,
+  chartHeight: PropTypes.number,
+  chartWidth: PropTypes.number,
+  className: PropTypes.string,
   data: PropTypes.object,
-  dataLoading: PropTypes.bool,
   onClick: PropTypes.func,
   onEnter: PropTypes.func,
-  onLeave: PropTypes.func,
-  status: PropTypes.string,
-  type: PropTypes.string
+  onLeave: PropTypes.func
 }
 
 export default Circumshaker

@@ -22,18 +22,22 @@ class Axis extends React.Component {
     this.axis = null
     this.setAxis(this.props)
   }
+
   componentDidMount () {
     this.resizeAxis()
   }
+
   componentDidUpdate () {
     // console.log(this.props.type + ' did update')
     this.resizeAxis()
   }
+
   componentWillReceiveProps (nextProps) {
     // console.log(this.props.type + ' will receive props')
     let range = nextProps.scale.range()[1] - nextProps.scale.range()[0]
     this.setState({range})
   }
+
   setAxis (props) {
     if (props.orient === 'left') {
       this.axis = axisLeft()
@@ -59,7 +63,7 @@ class Axis extends React.Component {
     let tickValues = props.tickValues
     let tickFormatter = null
 
-    if (props.data.length > 0 && props.scale.domain().length > 0 && props.scale.range().length > 0) {
+    if (props.scale.domain().length > 0 && props.scale.range().length > 0) {
       // Use custom tick count if it exist
       if (props.tickCount) {
         tickCount = props.tickCount
