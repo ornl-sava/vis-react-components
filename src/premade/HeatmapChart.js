@@ -3,7 +3,11 @@ import { extent, max, interpolateHcl } from 'd3'
 
 import { setScale } from '../util/d3'
 import { spreadRelated } from '../util/react'
-import { Chart, Axis, Tooltip, Heatmap, Legend } from '../.'
+import Chart from '../Chart'
+import Axis from '../Axis'
+import Tooltip from '../Tooltip'
+import Heatmap from '../Heatmap'
+import Legend from '../Legend'
 
 class HeatmapChart extends React.Component {
   constructor (props) {
@@ -32,6 +36,10 @@ class HeatmapChart extends React.Component {
 
   componentWillReceiveProps (nextProps) {
     this.updateDomain(nextProps, this.state)
+  }
+
+  componentWillUnmount () {
+    this.tip.destroy()
   }
 
   updateDomain (props, state) {

@@ -4,6 +4,7 @@ const functor = (f) => {
     : f
 }
 
+// Cross browser helpers
 const getWidth = () => {
   if (self.innerHeight) {
     return self.innerWidth
@@ -15,6 +16,26 @@ const getWidth = () => {
 
   if (document.body) {
     return document.body.clientWidth
+  }
+}
+
+const scrollTop = () => {
+  if (document.documentElement && document.documentElement.scrollTop) {
+    return document.documentElement.scrollTop
+  }
+
+  if (document.body) {
+    return document.body.scrollTop
+  }
+}
+
+const scrollLeft = () => {
+  if (document.documentElement && document.documentElement.scrollLeft) {
+    return document.documentElement.scrollLeft
+  }
+
+  if (document.body) {
+    return document.body.scrollLeft
   }
 }
 
@@ -58,8 +79,8 @@ export default class Tooltip {
       coords.top = event.pageY + this._offset[0] - this.tooltip.offsetHeight
       coords.left = event.pageX + this._offset[1] - this.tooltip.offsetWidth / 2
     } else {
-      coords.top += this._offset[0] + document.body.scrollTop
-      coords.left += this._offset[1] + document.body.scrollLeft
+      coords.top += this._offset[0] + scrollTop()
+      coords.left += this._offset[1] + scrollLeft()
     }
     this.tooltip.classList.add(direction)
     this.tooltip.style.top = coords.top + 'px'
@@ -133,11 +154,11 @@ export default class Tooltip {
   // Mutates coords and return corrected direction
   getAutoDirection (bbox, coords) {
     if (coords.left < 0) {
-      coords.left = bbox.ne.x
+      coords.left = bbox.ne.x - bbox.width
       coords.top = bbox.ne.y
       return 'ne'
     } else if (coords.left + this.tooltip.offsetWidth > getWidth()) {
-      coords.left = bbox.nw.x
+      coords.left = bbox.nw.x + bbox.width
       coords.top = bbox.nw.y
       return 'nw'
     } else {
@@ -157,6 +178,8 @@ export default class Tooltip {
     let tbbox = target.getBBox()
     let width = tbbox.width
     let height = tbbox.height
+    bbox.width = width
+    bbox.height = height
     let x = tbbox.x
     let y = tbbox.y
 

@@ -66,13 +66,4 @@ Bar.propTypes = {
   y: PropTypes.number.isRequired
 }
 
-// Only required for REST calls
-Bar.contextTypes = {
-  filterField: PropTypes.string,
-  filterType: PropTypes.string,
-  filterString: PropTypes.string,
-  multiSelect: PropTypes.bool,
-  updateFilter: PropTypes.func
-}
-
 export default Bar

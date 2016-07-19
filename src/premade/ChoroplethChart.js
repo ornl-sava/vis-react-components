@@ -3,7 +3,10 @@ import { range, interpolateHcl } from 'd3'
 
 import { setScale } from '../util/d3'
 import { spreadRelated } from '../util/react'
-import { Chart, Tooltip, Choropleth, Legend } from '../.'
+import Chart from '../Chart'
+import Tooltip from '../Tooltip'
+import Choropleth from '../Choropleth'
+import Legend from '../Legend'
 
 class ChoroplethChart extends React.Component {
   constructor (props) {
@@ -26,6 +29,10 @@ class ChoroplethChart extends React.Component {
     this.updateColorScales(props, this.state)
   }
 
+  componentWillUnmount () {
+    this.tip.destroy()
+  }
+
   componentWillReceiveProps (nextProps) {
     this.updateColorScales(nextProps, this.state)
   }
@@ -33,25 +40,25 @@ class ChoroplethChart extends React.Component {
   updateColorScales (props, state) {
     // Generate scale to determine class for coloring
     let tempSelectedColorScale = setScale('linear')
-      .domain([0, this.props.numColorCat])
-      .range([this.props.selectedMinColor, this.props.selectedMaxColor])
+      .domain([0, props.numColorCat])
+      .range([props.selectedMinColor, props.selectedMaxColor])
       .interpolate(interpolateHcl)
 
     let tempUnselectedColorScale = setScale('linear')
-      .domain([0, this.props.numColorCat])
-      .range([this.props.unselectedMinColor, this.props.unselectedMaxColor])
+      .domain([0, props.numColorCat])
+      .range([props.unselectedMinColor, props.unselectedMaxColor])
       .interpolate(interpolateHcl)
 
     let colorDomain = [0]
-    this.props.data
+    props.data
       .forEach((d) => {
-        let datum = d[this.props.valueField]
+        let datum = d[props.valueField]
         if (datum > 0) colorDomain.push(datum)
       })
 
     let selectedColorRange = []
     let unselectedColorRange = []
-    range(this.props.numColorCat).map((i) => {
+    range(props.numColorCat).map((i) => {
       selectedColorRange.push(tempSelectedColorScale(i))
       unselectedColorRange.push(tempUnselectedColorScale(i))
     })

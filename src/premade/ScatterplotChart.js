@@ -3,7 +3,10 @@ import { extent } from 'd3'
 
 import { setScale } from '../util/d3'
 import { spreadRelated } from '../util/react'
-import { Chart, Axis, Tooltip, Scatterplot } from '../.'
+import Chart from '../Chart'
+import Axis from '../Axis'
+import Tooltip from '../Tooltip'
+import Scatterplot from '../Scatterplot'
 
 class ScatterplotChart extends React.Component {
   constructor (props) {
@@ -31,6 +34,10 @@ class ScatterplotChart extends React.Component {
 
   componentWillReceiveProps (nextProps) {
     this.updateDomain(nextProps, this.state)
+  }
+
+  componentWillUnmount () {
+    this.tip.destroy()
   }
 
   updateDomain (props, state) {

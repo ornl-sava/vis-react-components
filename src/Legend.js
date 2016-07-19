@@ -3,11 +3,10 @@ import { format } from 'd3'
 
 class Legend extends React.Component {
   render () {
-    if (colorScale === null) {
+    let { colorScale, chartWidth, chartHeight, margin } = this.props
+    if (colorScale === null || colorScale.range().length === 0) {
       return <g />
     }
-
-    let { colorScale, chartWidth, chartHeight, margin } = this.props
 
     let x = 0
     let y = (chartHeight + margin.top) + margin.bottom / 2

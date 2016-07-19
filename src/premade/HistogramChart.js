@@ -3,7 +3,10 @@ import { ascending, descending } from 'd3'
 
 import { setScale } from '../util/d3'
 import { spreadRelated } from '../util/react'
-import { Chart, Axis, Tooltip, Histogram } from '../.'
+import Chart from '../Chart'
+import Axis from '../Axis'
+import Tooltip from '../Tooltip'
+import Histogram from '../Histogram'
 
 class HistogramChart extends React.Component {
   constructor (props) {
@@ -35,6 +38,10 @@ class HistogramChart extends React.Component {
 
   componentWillReceiveProps (nextProps) {
     this.updateDomain(nextProps, this.state)
+  }
+
+  componentWillUnmount () {
+    this.tip.destroy()
   }
 
   sortData (data, props, state) {
@@ -102,7 +109,7 @@ class HistogramChart extends React.Component {
   }
 
   updateDomain (props, state) {
-    if (props.data.length > 0) {
+    if (props.data.length > 0 && props.data[0].bins.length > 0) {
       let domainData = props.data
       if (props.sortBy !== null && props.sortOrder !== null) {
         // Simple deep copy of data to prevent mutation of props

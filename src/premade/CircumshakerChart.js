@@ -1,7 +1,9 @@
 import React, { PropTypes } from 'react'
 
 import { spreadRelated } from '../util/react'
-import { Chart, Tooltip, Circumshaker } from '../.'
+import Chart from '../Chart'
+import Tooltip from '../Tooltip'
+import Circumshaker from '../Circumshaker'
 
 class CircumshakerChart extends React.Component {
   constructor (props) {
@@ -14,6 +16,10 @@ class CircumshakerChart extends React.Component {
     this.tip = props.tipFunction
       ? new Tooltip().attr('className', 'd3-tip').html(props.tipFunction)
       : props.tipFunction
+  }
+
+  componentWillUnmount () {
+    this.tip.destroy()
   }
 
   onClick (event, data) {

@@ -10,6 +10,11 @@ const transpose = (a) => {
 }
 
 class Histogram extends React.Component {
+  constructor (props) {
+    super(props)
+
+    this.renderBars = this.renderBars.bind(this)
+  }
   addOverlay (barData) {
     let props = this.props
     for (let i = 0; i < barData.length; i++) {
@@ -42,7 +47,7 @@ class Histogram extends React.Component {
     }
   }
 
-  render () {
+  renderBars () {
     let {chartWidth, chartHeight, ...props} = this.props
     let numBins = props.data[0].bins.length
     let barWidth = /ordinal/.test(props.xScale.type)
@@ -92,6 +97,14 @@ class Histogram extends React.Component {
         {svgBins}
       </g>
     )
+  }
+
+  render () {
+    if (this.props.data.length > 0) {
+      return this.renderBars()
+    } else {
+      return (<g />)
+    }
   }
 }
 
