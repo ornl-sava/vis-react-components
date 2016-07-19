@@ -140,53 +140,33 @@ class SingleTopicExample extends React.Component {
       </g>
     )
   }
-  /* makeCircle () {
-    // Get root
-    let root = this.refs.root
-    // Create svg
-    let svg = d3.select(root).append('svg')
-    // TRYING D3
-    // ReactDom.findDOMNode(this)
-    let circle = svg.append('circle')
-      .attr('r', function (d) { return 60 })
-      .style('fill', function (d) { return 'blue' })
-    console.log('circle', circle)
-  }*/
-  /* exWords () {
-    // let root = this.refs.root
-    // let can = document.createElement('canvas')
-    console.log('beforeStuff')
-    // let canvas = d3.select(root).parentNode.appendChild(document.createElement('canvas'))
-    let can = d3.select(root).append('canvas')
-      .attr('width', 800)
-      .attr('height', 600)
-    let canny = can.node().getContext('2d')
-    console.log('canny', canny)
-    // console.log('stuff', canvas.getContext('2d'))
-    console.log('inside exWords')
-    function end (words) { console.log('words', JSON.stringify(words)) }
-    // let can = (
-    //   <img width={100} height={100} ></img>
-    // )
-    cloud().size([800, 600])
-      .canvas(can.node())
-      .words(words)
-      .padding(5)
-      .rotate(function () { return ~~(Math.random() * 2) * 90 })
-      .fontSize(function (d) { return d.size })
-      .on('end', end(words))
-      .start()
-  } */
+  eventListFreq () {
+    let freqColor = d3.scaleLinear()
+      .domain([40, 100])
+      .range(['#2375B9', '#0F2B42'])
+    let data = eTopics[0][24].map((d) => {
+      return {text: d, freq: Math.random() * 40 + 10}
+    })
+    let eList = []
+    for (let i = 0; i < data.length; i++) {
+      eList.push(<text key={'EventList-' + i} className='summaryVal' style={{fontSize: data[i].freq + 'px', fontFamily: 'Impact', color: freqColor(data[i].freq)}}> {data[i].text} </text>)
+      eList.push(<br />)
+    }
+    return (
+      <g key='list'>
+        <text key={'EventList'} className='summaryVal' fontSize='20px' ><b><u>Event List :</u></b></text><br />
+        {eList}
+      </g>
+    )
+  }
   exWords () {
+    let w = 600
+    let h = 450
     let root = this.refs.root
     let fill = d3.scaleOrdinal(d3.schemeCategory20)
     let draw = (words) => {
-      let w = 600
-      let h = 450
       console.log('drawing')
       d3.select(root).append('svg')
-        // .attr('width', layout.size()[0])
-        // .attr('height', layout.size()[1])
         .attr('width', w)
         .attr('height', h)
         .append('g')
@@ -206,7 +186,7 @@ class SingleTopicExample extends React.Component {
     // console.log(eTopics[0][24])
     // d.split(/:|-/)[1]
     let layout = cloud()
-      .size([600, 450])
+      .size([w, h])
       .words(words.map((d) => {
         return {text: d, size: 10 + Math.random() * 90, test: 'haha'}
       }))
@@ -224,7 +204,7 @@ class SingleTopicExample extends React.Component {
   }
   render () {
     // this.makeCircle()
-    this.exWords()
+    // this.exWords()
     console.log('eList', this.eventList())
     // let {className, ...props} = this.props
     return (
@@ -245,6 +225,7 @@ class SingleTopicExample extends React.Component {
             <span className='summaryTitle'><b>interval: </b></span>
             <span className='summaryVal'>{'1 min'}</span><br /><br />
             <div ref='root' className={'wordCloud'} />
+            {this.eventListFreq()}
           </div>
           <div className='col-md-2'>
             <text key={'AVG_P'} className='summaryTitle' fontSize='20px' ><b>{'Average Priority Score'}</b></text><br />
