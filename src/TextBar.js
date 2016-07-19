@@ -62,16 +62,17 @@ class TextBar extends React.Component {
     this._onMouseLeave()
   }
   makeRect () {
+    let {className, text, width, height, x, y, barStyle, ...props} = this.props
     let rectData = {
-      className: this.props.className + ' barTopic',
-      dataName: {name},
-      width: this.props.width,
-      height: this.props.height,
-      x: this.props.x,
-      y: this.props.y,
-      style: this.props.barStyle
+      className: className + ' barTopic',
+      dataName: text,
+      width: width,
+      height: height,
+      x: x,
+      y: y,
+      style: barStyle
     }
-    return rectData
+    return Object.assign(rectData, props)
   }
   // <Bar className={className + ' barTopic'} {...props} onClick={this.onClick} onDoubleClick={this.onDoubleClick} onEnter={this.onEnter} onLeave={this.onLeave} style={this.props.barStyle} />
   render () {

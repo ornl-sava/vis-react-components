@@ -1,6 +1,6 @@
 // import React from 'react'
 import React, { PropTypes } from 'react'
-import * as d3 from 'd3'
+import { format } from 'd3'
 import { Link } from 'react-router'
 // import {Chart} from 'vis'
 import {Chart} from '../src'
@@ -21,7 +21,7 @@ const toolTipFunction = (tooltipData) => {
   let d = tooltipData
   var toolTip =
     '<span class="title">' + d.label + '</span>' +
-    '</span>Number of Topics: ' + d3.format(',')(d.counts) +
+    '</span>Number of Topics: ' + format(',')(d.counts) +
     '<br /><small>'
   return toolTip
 }

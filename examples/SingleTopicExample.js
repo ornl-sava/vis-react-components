@@ -1,6 +1,6 @@
 // import React from 'react'
 import React, { PropTypes } from 'react'
-import * as d3 from 'd3'
+import { format, scaleLinear, scaleOrdinal, schemeCategory20, select } from 'd3'
 // import {cloud} from '../examples/data/for-hci/cloud'
 import cloud from '../examples/data/for-hci/cloud2'
 // import ReactDom from 'react-dom'
@@ -46,7 +46,7 @@ const toolTipFunction1 = (d) => {
   if (d.value > 0) {
     toolTip =
       '<span class="title">' + d.key + '</span>' +
-      d3.format(',')(d.value)
+      format(',')(d.value)
   }
 
   return toolTip
@@ -70,10 +70,10 @@ const toolTipFunction = (tooltipData) => {
   }, 0)
   let toolTip =
     '<span class="title">' + d.label + '</span>' +
-    '</span>Total: ' + d3.format(',')(total) +
+    '</span>Total: ' + format(',')(total) +
     '<br /><small>'
   toolTip += d.stackCounts.reduceRight((prev, count, index) => {
-    return prev + d.stackNames[index] + ' : ' + d3.format(',')(count) + '<br />'
+    return prev + d.stackNames[index] + ' : ' + format(',')(count) + '<br />'
   }, '')
   toolTip += '</small>'
   return toolTip
@@ -141,7 +141,7 @@ class SingleTopicExample extends React.Component {
     )
   }
   eventListFreq () {
-    let freqColor = d3.scaleLinear()
+    let freqColor = scaleLinear()
       .domain([40, 100])
       .range(['#2375B9', '#0F2B42'])
     let data = eTopics[0][24].map((d) => {
@@ -163,10 +163,10 @@ class SingleTopicExample extends React.Component {
     let w = 600
     let h = 450
     let root = this.refs.root
-    let fill = d3.scaleOrdinal(d3.schemeCategory20)
+    let fill = scaleOrdinal(schemeCategory20)
     let draw = (words) => {
       console.log('drawing')
-      d3.select(root).append('svg')
+      select(root).append('svg')
         .attr('width', w)
         .attr('height', h)
         .append('g')
