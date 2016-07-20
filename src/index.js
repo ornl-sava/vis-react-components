@@ -13,7 +13,6 @@ export { default as ScatterHeatmapHybrid } from './ScatterHeatmapHybrid'
 export { default as Tooltip } from './Tooltip'
 export { default as TopicFlow } from './TopicFlow'
 export { default as TextBar } from './TextBar'
-export { default as StoryViewer } from './StoryViewer'
 export { default as ColorView } from './ColorView'
 
 // Export premades

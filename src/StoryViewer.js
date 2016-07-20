@@ -379,7 +379,10 @@ StoryViewer.propTypes = {
   barHeight: PropTypes.number.isRequired,
   maxTopics: PropTypes.number.isRequired,
   colorDomain: PropTypes.array,
-  lineType: PropTypes.string.isRequired
+  lineType: PropTypes.string.isRequired,
+  storyData: PropTypes.any,
+  hrTopics: PropTypes.any,
+  eTopics: PropTypes.any
 }
 
 export default StoryViewer
