@@ -297,7 +297,6 @@ TopicFlow.defaultProps = {
 }
 
 TopicFlow.propTypes = {
-  className: PropTypes.string.isRequired,
   loading: PropTypes.bool,
   padding: PropTypes.number.isRequired,
   outerPadding: PropTypes.number.isRequired,

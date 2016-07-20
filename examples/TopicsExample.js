@@ -3,7 +3,7 @@ import { format } from 'd3'
 import { Link } from 'react-router'
 
 import TopicsChart from '../src/premade/TopicsChart'
-// import StoryViewer from '../src/StoryViewer'
+import StoryViewerExample from './StoryViewerExample'
 
 import topicData from './data/topics.json'
 import eTopics from '../examples/data/for-hci/enduring-topics-listed.json'
@@ -258,6 +258,9 @@ class TopicsContainer extends React.Component {
             <StoryViewer className='col-md-12' {...props} clickArray={this.state.clickArray} colorView={this.refs.colorView} />
           </Chart>
         </div>*/}
+        <div className='row' >
+          <StoryViewerExample colorDomain={prefixes} />
+        </div>
         <li><Link to='/id' activeClassName='active'>SingleTopic</Link></li>
       </div>
     )

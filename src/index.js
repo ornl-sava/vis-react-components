@@ -14,6 +14,7 @@ export { default as Tooltip } from './Tooltip'
 export { default as TopicFlow } from './TopicFlow'
 export { default as TextBar } from './TextBar'
 export { default as ColorView } from './ColorView'
+export { default as StoryViewer } from './StoryViewer'
 
 // Export premades
 export * from './premade'
