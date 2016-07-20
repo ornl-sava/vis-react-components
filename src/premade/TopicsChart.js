@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react'
 import { spreadRelated } from '../util/react'
-import {Chart} from '../'
+import Chart from '../Chart'
 import TopicFlow from '../TopicFlow'
 import ColorView from '../ColorView'
 
