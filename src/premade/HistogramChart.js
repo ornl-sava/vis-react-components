@@ -111,11 +111,14 @@ class HistogramChart extends React.Component {
   updateDomain (props, state) {
     if (props.data.length > 0 && props.data[0].bins.length > 0) {
       let domainData = props.data
+
+      // Do sorting if set
       if (props.sortBy !== null && props.sortOrder !== null) {
         // Simple deep copy of data to prevent mutation of props
         domainData = this.sortData(JSON.parse(JSON.stringify(props.data)), props, state)
       }
 
+      // Change y scale if altered
       if (props.yScaleType !== this.props.yScaleType) {
         this.yScale = setScale(props.yScaleType)
         this.updateRange(props, state)
@@ -124,7 +127,13 @@ class HistogramChart extends React.Component {
       let yDomain = [0.00001, this.getMaxCount(props.data) * 1.1]
       let xDomain = domainData[0].bins.map((bin) => bin[props.xAccessor])
 
-      if (xDomain[0] instanceof Date) {
+      if (this.xScale.type === 'linear' || this.xScaleType === 'log' || this.xScale.type === 'power') {
+        this.interval = xDomain[1] - xDomain[0]
+        xDomain = [
+          xDomain[0],
+          xDomain[xDomain.length - 1] + this.interval
+        ]
+      } else if (this.xScale.type === 'time' || this.xScale.type === 'timeUtc') {
         let interval = xDomain[1].getTime() - xDomain[0].getTime()
         this.interval = interval
         // Add one more interval to the domain so all bins can be rendered property
