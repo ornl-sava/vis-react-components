@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react'
 
 import Bar from './Bar'
+import BrushX from './BrushX'
 
 // Copied from http://stackoverflow.com/questions/4492678/swap-rows-with-columns-transposition-of-a-matrix-in-javascript
 // Used that version to be concise
@@ -92,11 +93,12 @@ class Histogram extends React.Component {
         </g>
       )
     })
-    return (
-      <g>
-        {svgBins}
-      </g>
-    )
+    let el = props.brush
+      ? <BrushX width={props.xScale.range()[1]} height={props.yScale.range()[0]} scale={props.xScale}>
+      {svgBins}
+      </BrushX>
+      : <g>{svgBins}</g>
+    return el
   }
 
   render () {
@@ -120,6 +122,7 @@ Histogram.defaultProps = {
 
 Histogram.propTypes = {
   addOverlay: PropTypes.bool,
+  brush: PropTypes.bool,
   chartHeight: PropTypes.number,
   chartWidth: PropTypes.number,
   className: PropTypes.string,
