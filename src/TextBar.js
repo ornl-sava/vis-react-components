@@ -62,14 +62,17 @@ class TextBar extends React.Component {
     this._onMouseLeave()
   }
   makeRect () {
+    let {className, text, width, height, x, y, barStyle, rx, ry} = this.props
     let rectData = {
-      className: this.props.className + ' barTopic',
-      dataName: {name},
-      width: this.props.width,
-      height: this.props.height,
-      x: this.props.x,
-      y: this.props.y,
-      style: this.props.barStyle
+      className: className + ' barTopic',
+      dataName: text,
+      width: width,
+      height: height,
+      x: x,
+      y: y,
+      style: barStyle,
+      rx: rx,
+      ry: ry
     }
     return rectData
   }
@@ -103,6 +106,8 @@ TextBar.defaultProps = {
   tooltipData: {},
   x: 0,
   y: 0,
+  rx: 0,
+  ry: 0,
   font: 12,
   textAlign: 'left',
   textStyle: { textAnchor: 'start', fontSize: '12px' },
@@ -121,12 +126,15 @@ TextBar.propTypes = {
   tooltipData: PropTypes.object,
   x: PropTypes.number.isRequired,
   y: PropTypes.number.isRequired,
+  rx: PropTypes.number,
+  ry: PropTypes.number,
   font: PropTypes.number.isRequired,
   barStyle: PropTypes.object,
   textStyle: PropTypes.object,
   textAlign: PropTypes.string.isRequired,
   text: PropTypes.string.isRequired,
-  sel: PropTypes.bool.isRequired
+  sel: PropTypes.bool.isRequired,
+  data: PropTypes.any
 }
 
 // Only required for REST calls

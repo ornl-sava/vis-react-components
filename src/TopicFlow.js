@@ -1,7 +1,8 @@
 import React, { PropTypes } from 'react'
-// import Bar from './Bar'
-import TextBar from './TextBar'
 import * as d3 from 'd3'
+import { setScale } from './util/d3'
+
+import TextBar from './TextBar'
 
 const lineMaker = (d) => {
   d3.line()
@@ -23,14 +24,11 @@ const diagMaker = (d) => {
 class TopicFlow extends React.Component {
   // grabbing onEnter and Leave functions from chart and making new set of rules
   _onEnter (toolTipData, svgElement) {
-    let props = this.props
-    props.onEnter(toolTipData, svgElement)
-    // console.log('story', toolTipData)
+    this.props.onEnter(toolTipData, svgElement)
     this.setState({selectedTopics: toolTipData.label, move: false, selectedT: toolTipData.story.concat(toolTipData.adjI)})
   }
   _onLeave (toolTipData, svgElement) {
-    let props = this.props
-    props.onLeave(toolTipData, svgElement)
+    this.props.onLeave(toolTipData, svgElement)
     this.setState({selectedTopics: [], move: false, selectedT: []})
   }
   _onClick () {
@@ -43,24 +41,32 @@ class TopicFlow extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
-      dataUp: 0,
+      dataUp: false,
       currentID: [],
       selectedTopics: [],
       selectedT: [],
       moveX: 0,
       move: false
     }
+    this.xScale = setScale('ordinalBand')
+    this.yScale = setScale('ordinalBand')
+    this.prefScale = d3.scaleOrdinal(d3.schemeCategory20)
+
+    this.updateDomain = this.updateDomain.bind(this)
+    this.updateRange = this.updateRange.bind(this)
+
+    this.updateDomain(props)
+    this.updateRange(props)
+
     this.onEnter = this._onEnter.bind(this)
     this.onLeave = this._onLeave.bind(this)
     this.onClick = this._onClick.bind(this)
     this.onBarClick = this._onBarClick.bind(this)
-    this.statArr = []
-    this.prefScale = d3.scaleOrdinal(d3.schemeCategory20)
-    this.bins = []
     this.lineData = []
     this.barData = []
     this.topics = []
     this.barWidth = 0
+    this.bins = this.initTopics(props)
   }
   shouldComponentUpdate (nextProps, nextState) {
     if (this.props.data.length <= 0) {
@@ -70,31 +76,23 @@ class TopicFlow extends React.Component {
     return true
     // return nextProps.data.length !== this.props.data.length || nextProps.loading !== this.props.loading
   }
-  componentWillUpdate (nextProps) {
-    // nextProps.colorView.state
-    // this.setState[{dataUp: 0}]
-  }
   componentWillReceiveProps (nextProps) {
-    let xDomain = Object.keys(nextProps.data)
-    this.props.xScale.domain(xDomain)
-    this.props.yScale.domain([nextProps.maxTopics + 2, 0.00001])
-    this.statArr = new Array(nextProps.data.length)
-    for (let i = 0; i < nextProps.data.length; i++) {
-      this.statArr[i] = new Array(nextProps.data[i].length)
-    }
-    this.prefScale.domain(nextProps.colorDomain)
     this.bins = this.initTopics(nextProps)
   }
-  componentWillMount () {
-    // console.log('willMountChartHeight', this.props.chartHeight)
+  updateDomain (props) {
+    let xDomain = Object.keys(props.data)
+    this.xScale
+      .domain(xDomain)
+    this.yScale
+      .domain(d3.range(-1, props.maxTopics + 2, 1))
   }
-  // React LifeCycle method - called after initial render
-  componentDidMount () {
+  updateRange (props) {
+    this.xScale
+      .range([0, props.chartHeight])
+    this.yScale
+      .range([0, props.chartHeight])
+    this.prefScale.domain(props.colorDomain)
   }
-  componentWillUnmount () {
-  }
-
-  // right now rx and ry are not being passed down into bar
   buildABar (bin, name, text, height, width, x, y, barStyle, txtStyle) {
     return {
       className: name,
@@ -140,10 +138,9 @@ class TopicFlow extends React.Component {
     let barData = []
     let lineData = []
     // XSCALE IS ORDINAL
-    props.xScale.range([0, props.chartWidth])
-    props.xScale.paddingInner(props.outerPadding)
-    props.xScale.paddingOuter(props.padding)
-    console.log('tFAdjList', props.adjacencyList)
+    this.xScale.range([0, props.chartWidth])
+    this.xScale.paddingInner(props.outerPadding)
+    this.xScale.paddingOuter(props.padding)
     // GETTING TOPIC BAR INFORMATION
     let svgTopicBars = props.adjacencyList.map((dataArr, i) => {
       if (dataArr.hour < props.numTData) {
@@ -151,8 +148,8 @@ class TopicFlow extends React.Component {
         if (data[0] == null) {
           data[0] = 'EMPTY'
         }
-        let posY = this.props.yScale(dataArr.topicID)
-        let posX = props.xScale(dataArr.hour)
+        let posY = this.yScale(dataArr.topicID)
+        let posX = this.xScale(dataArr.hour)
         let fontSize = 12
         // CLASSNAME NEEDS SIMPLE NAMES
         let cName = data[0].toString().split(/:|-/, 1) + '-' + i.toString()
@@ -170,7 +167,7 @@ class TopicFlow extends React.Component {
         barData.push(bar)
       }
     })
-    console.log('BarData', barData.length)
+    // console.log('TF-BarData', barData)
     // GETTING CONNECTING LINE INFORMATION (EDGES)
     barData.map((data, index) => {
       let story = data.tooltipData.prevStory
@@ -188,6 +185,7 @@ class TopicFlow extends React.Component {
         })
       }
     })
+    // console.log('TF-lineData', lineData)
     this.barData = barData
     this.lineData = lineData
     return svgTopicBars
@@ -248,34 +246,11 @@ class TopicFlow extends React.Component {
   }
   moveTopics () {
     return (
-      <g transform={'translate(' + this.state.moveX + ',' + 0 + ')'} >
+      <g className='topicFlow' transform={'translate(' + this.state.moveX + ',' + 0 + ')'} >
         {this.topics}
       </g>
     )
   }
-
-  // gives text if loading data
-  renderLoadAnimation (props) {
-    let {chartWidth, chartHeight} = props
-    let xPos = Math.floor(chartWidth / 2)
-    let yPos = Math.floor(chartHeight / 2)
-    let messageText = 'Loading data...'
-    if (!props.loading) {
-      if (props.status === 'Failed to fetch') {
-        messageText = 'Can\'t connect to API URL'
-      } else if (props.status !== 'OK') {
-        messageText = 'Error retrieving data: ' + props.status
-      } else {
-        messageText = 'No data returned!'
-      }
-    }
-    return (
-      <g className='loading-message'>
-        <text x={xPos} y={yPos}>{messageText}</text>
-      </g>
-    )
-  }
-
   render () {
     let renderEl = null
     if (this.state.move) {
@@ -283,7 +258,7 @@ class TopicFlow extends React.Component {
     } else {
       if (this.props.data.length <= 0) {
         console.log('probably no data')
-        renderEl = this.renderLoadAnimation(this.props)
+        renderEl = <g></g>
       } else {
         this.topics = this.renderTopics()
         renderEl = this.moveTopics()
@@ -303,16 +278,15 @@ TopicFlow.defaultProps = {
   maxTopics: 60,
   lineType: 'curved',
   clickArray: [],
-  adjacencyList: []
+  adjacencyList: [],
+  onEnter: () => {},
+  onLeave: () => {}
 }
 
 TopicFlow.propTypes = {
-  className: PropTypes.string.isRequired,
   loading: PropTypes.bool,
   padding: PropTypes.number.isRequired,
   outerPadding: PropTypes.number.isRequired,
-  xScale: PropTypes.any,
-  yScale: PropTypes.any,
   data: PropTypes.any.isRequired,
   status: PropTypes.string,
   chartHeight: PropTypes.number.isRequired,
@@ -323,7 +297,9 @@ TopicFlow.propTypes = {
   colorDomain: PropTypes.array,
   lineType: PropTypes.string.isRequired,
   clickArray: PropTypes.any.isRequired,
-  adjacencyList: PropTypes.array.isRequired
+  adjacencyList: PropTypes.array.isRequired,
+  onEnter: PropTypes.func,
+  onLeave: PropTypes.func
 }
 
 export default TopicFlow

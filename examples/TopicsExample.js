@@ -1,27 +1,21 @@
-// import React from 'react'
-import React, { PropTypes } from 'react'
-import * as d3 from 'd3'
+import React from 'react'
+import { format } from 'd3'
 import { Link } from 'react-router'
-// import {Chart} from 'vis'
-import {Chart} from '../src'
-import TopicFlow from '../src/TopicFlow'
-import ColorView from '../src/ColorView'
+
+import TopicsChart from '../src/premade/TopicsChart'
+import StoryViewerExample from './StoryViewerExample'
+
 import topicData from './data/topics.json'
-// import Tester from '../src/Tester'
-import StoryViewer from '../src/StoryViewer'
 import eTopics from '../examples/data/for-hci/enduring-topics-listed.json'
 import storyData from '../examples/data/for-hci/stories.json'
 import eventNames from '../examples/data/for-hci/enduring-22-model.json'
 
-const hTop = 60 * (20 + 15)
-
-// when cursor over bar it spits out data
+// DISPLAYS INFO OF SVG OBJECT THAT MOUSE IS ON
 const toolTipFunction = (tooltipData) => {
-  // console.log('toolFData', tooltipData)
   let d = tooltipData
   var toolTip =
     '<span class="title">' + d.label + '</span>' +
-    '</span>Number of Topics: ' + d3.format(',')(d.counts) +
+    '</span>Number of Topics: ' + format(',')(d.counts) +
     '<br /><small>'
   return toolTip
 }
@@ -220,8 +214,8 @@ const makeAdjacencyList = () => {
       }
     }
   }
-  console.log('topicsList', topics)
-  console.log('adjacencyList', adjacencyList)
+  // console.log('topicsList', topics)
+  // console.log('adjacencyList', adjacencyList)
   return adjacencyList
 }
 const aList = makeAdjacencyList()
@@ -236,7 +230,6 @@ const tData = (n, start) => {
   for (let i = 0; i < num; i++) {
     comData[i] = topics[start + i]
   }
-  console.log('tData', comData)
   return comData
 }
 
@@ -244,97 +237,34 @@ const nData = 7
 const fakeData = allDataComb(nData)
 const allData = tData(nData, 0)
 
+const chartProps = {
+  tipFunction: toolTipFunction,
+  data: allData,
+  adjacencyList: aList,
+  colorDomain: prefixes,
+  numTData: nData
+}
+
 class TopicsContainer extends React.Component {
-  constructor (props) {
-    super(props)
-    this.state = {
-      data: [],
-      loading: true,
-      status: '',
-      clickArray: []
-    }
-    this.toolTipFunction = toolTipFunction
-    this.onGroupClick = this._onGroupClick.bind(this)
-    this.onClick = this._onBarClick
-    this.topicData = []
-  }
-  _onGroupClick (toggleList) {
-    // takes toggle list and updates clickArray state
-    // console.log('toggleList', toggleList)
-    this.setState({clickArray: toggleList}, () => {
-      this.refs.updateChart.forceUpdate()
-      this.refs.updateChart2.forceUpdate()
-    })
-  }
-  componentWillMount () {
-    // console.log('topicData', topicData)
-  }
-  componentDidMount () {
-    let setClickArr = {}
-    for (let i = 0; i < this.props.colorDomain.length; i++) {
-      setClickArr[this.props.colorDomain[i]] = true
-    }
-    this.setState({clickArray: setClickArr})
-    this.fetchData(this.props)
-  }
-  shouldComponentUpdate (nextProps, nextState) {
-    // this.fetchData(nextProps)
-    // return nextState.loading !== this.state.loading
-    return true
-  }
-  componentWillReceiveProps (nextProps) {
-    // this.fetchData(this.props)
-    this.setState({loading: true})
-    return true
-  }
-  fetchData (nextProps) {
-    this.setState({data: [], loading: true, status: ''})
-    // doesn't re-render if setting state twice
-    // this would be where it updates data..
-    // if the data didn't go beyond this ... loading wouldn't be set to false
-    // this.props.adjacencyList = aList
-    this.setState({data: allData, loading: false, status: 'OK'})
-  }
   render () {
     console.log('realData', allData)
     console.log('fakeData', fakeData)
     console.log(aList)
-    // this.setUpData()
-    let {className, ...props} = this.props
     return (
-      <div className={className}>
-        <div className='row' >
-          <Chart className='col-md-2' ref='updateChart2'{...props} {...this.state} tipFunction={this.toolTipFunction} yAxis={false} xAxis={false} xScaleType='linear' height={600}>
-            <ColorView className='col-md-2' {...props} clickArray={this.state.clickArray} ref='colorView' onBarClick={this.onGroupClick} />
-          </Chart>
-          <Chart className='col-md-10' ref='updateChart' {...props} {...this.state} tipFunction={this.toolTipFunction} yAxis={false} xAxis={false} height={hTop}>
-            <TopicFlow className='col-md-10' {...props} clickArray={this.state.clickArray} colorView={this.refs.colorView} />
-          </Chart>
-        </div>
-        <div className='row' >
+      <div className={'col-md-12'}>
+        <TopicsChart {...chartProps} />
+        {/* <div className='row' >
           <Chart className='col-md-12' {...props} {...this.state} tipFunction={this.toolTipFunction} yAxis={false} xAxis={false} height={1000} margin={{top: 40, right: 10, bottom: 10, left: 80}} width={5000}>
             <StoryViewer className='col-md-12' {...props} clickArray={this.state.clickArray} colorView={this.refs.colorView} />
           </Chart>
+        </div>*/}
+        <div className='row' >
+          <StoryViewerExample colorDomain={prefixes} />
         </div>
         <li><Link to='/id' activeClassName='active'>SingleTopic</Link></li>
       </div>
     )
   }
-}
-
-TopicsContainer.defaultProps = {
-  url: '',
-  numTData: nData,
-  colorDomain: prefixes,
-  className: 'col-md-12',
-  adjacencyList: aList
-}
-TopicsContainer.propTypes = {
-  className: PropTypes.string,
-  numTData: PropTypes.number,
-  url: PropTypes.string,
-  colorDomain: PropTypes.array,
-  adjacencyList: PropTypes.array
 }
 
 export default TopicsContainer

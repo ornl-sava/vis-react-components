@@ -1,12 +1,12 @@
 // import React from 'react'
 import React, { PropTypes } from 'react'
-import * as d3 from 'd3'
+import { format, scaleLinear, scaleOrdinal, schemeCategory20, select } from 'd3'
 // import {cloud} from '../examples/data/for-hci/cloud'
 import cloud from '../examples/data/for-hci/cloud2'
 // import ReactDom from 'react-dom'
 // import {Chart} from '../src'
 import eTopics from '../examples/data/for-hci/enduring-topics-listed.json'
-import { Chart, Heatmap, Histogram } from '../src'
+import { HeatmapChart, HistogramChart } from '../src'
 import {linearOrdinalHeatmapData, temporalHistogramData} from './data/exampleData'
 
 const chartProps4 = {
@@ -46,7 +46,7 @@ const toolTipFunction1 = (d) => {
   if (d.value > 0) {
     toolTip =
       '<span class="title">' + d.key + '</span>' +
-      d3.format(',')(d.value)
+      format(',')(d.value)
   }
 
   return toolTip
@@ -70,23 +70,14 @@ const toolTipFunction = (tooltipData) => {
   }, 0)
   let toolTip =
     '<span class="title">' + d.label + '</span>' +
-    '</span>Total: ' + d3.format(',')(total) +
+    '</span>Total: ' + format(',')(total) +
     '<br /><small>'
   toolTip += d.stackCounts.reduceRight((prev, count, index) => {
-    return prev + d.stackNames[index] + ' : ' + d3.format(',')(count) + '<br />'
+    return prev + d.stackNames[index] + ' : ' + format(',')(count) + '<br />'
   }, '')
   toolTip += '</small>'
   return toolTip
 }
-
-let wor = [
-  {text: 'guns', 'freq': 94}, {text: 'potato', 'freq': 5}, {text: 'Mr.A', 'freq': 73}, {text: 'shooting', 'freq': 17},
-  {text: 'Mr.B', 'freq': 47}, {text: 'sale', 'freq': 8}, {text: 'plane', 'freq': 27}, {text: 'driver', 'freq': 32},
-  {text: 'killed', 'freq': 41}, {text: 'email', 'freq': 86}, {text: 'gang', 'freq': 98}, {text: 'informant', 'freq': 64}]
-  .map((d, i) => {
-    return {text: d.text, size: d.freq * 2, index: i}
-  })
-console.log(wor)
 
 /* const color = d3.scaleLinear()
 .domain([0, 100])
@@ -109,6 +100,11 @@ class SingleTopicExample extends React.Component {
       clickArray: []
     }
     this.cloud = cloud
+    this.header3 = () => {
+      return ([
+        <span className='chart-title'>Temporal Histogram</span>
+      ])
+    }
   }
   componentWillMount () {
     // console.log('topicData', topicData)
@@ -141,7 +137,7 @@ class SingleTopicExample extends React.Component {
     )
   }
   eventListFreq () {
-    let freqColor = d3.scaleLinear()
+    let freqColor = scaleLinear()
       .domain([40, 100])
       .range(['#2375B9', '#0F2B42'])
     let data = eTopics[0][24].map((d) => {
@@ -163,10 +159,10 @@ class SingleTopicExample extends React.Component {
     let w = 600
     let h = 450
     let root = this.refs.root
-    let fill = d3.scaleOrdinal(d3.schemeCategory20)
+    let fill = scaleOrdinal(schemeCategory20)
     let draw = (words) => {
       console.log('drawing')
-      d3.select(root).append('svg')
+      select(root).append('svg')
         .attr('width', w)
         .attr('height', h)
         .append('g')
@@ -228,22 +224,22 @@ class SingleTopicExample extends React.Component {
             {this.eventListFreq()}
           </div>
           <div className='col-md-2'>
-            <text key={'AVG_P'} className='summaryTitle' fontSize='20px' ><b>{'Average Priority Score'}</b></text><br />
-            <Chart xScaleType='temporal' width={800} height={200} data={temporalData} tipFunction={toolTipFunction}>
-              <Histogram addOverlay onBarClick={onBarClick} />
-            </Chart>
+            <text key={'AVG_P'} className='summaryTitle' fontSize='20px' ><b>{'Average Priority Score: ' + Math.random()}</b></text><br />
+            <HistogramChart header={this.header3} xScaleType='time'
+              width={800} height={200} data={temporalData} tipFunction={toolTipFunction}
+              addOverlay onClick={onBarClick} />
           </div>
           <div className='col-md-2'>
-            <text key={'AVG_A'} className='summaryTitle' fontSize='20px' ><b>{'Average Anomaly Score'}</b></text><br />
-            <Chart xScaleType='temporal' width={800} height={200} data={temporalData} tipFunction={toolTipFunction}>
-              <Histogram addOverlay onBarClick={onBarClick} />
-            </Chart>
+            <text key={'AVG_A'} className='summaryTitle' fontSize='20px' ><b>{'Average Anomaly Score: ' + Math.random()}</b></text><br />
+            <HistogramChart header={this.header3} xScaleType='time'
+              width={800} height={200} data={temporalData} tipFunction={toolTipFunction}
+              addOverlay onClick={onBarClick} />
           </div>
           <div className='col-md-2'>
-            <text key={'AVG_I'} className='summaryTitle' fontSize='20px' ><b>{'Average Interesting Score'}</b></text><br />
-            <Chart xScaleType='temporal' width={800} height={200} data={temporalData} tipFunction={toolTipFunction}>
-              <Histogram addOverlay onBarClick={onBarClick} />
-            </Chart>
+            <text key={'AVG_I'} className='summaryTitle' fontSize='20px' ><b>{'Average Interesting Score: ' + Math.random()}</b></text><br />
+            <HistogramChart header={this.header3} xScaleType='time'
+              width={800} height={200} data={temporalData} tipFunction={toolTipFunction}
+              addOverlay onClick={onBarClick} />
           </div>
         </div>
         <div className='row'>
@@ -255,9 +251,7 @@ class SingleTopicExample extends React.Component {
         </div>
         <div className='row'>
           <div className='col-md-11'>
-            <Chart {...chartCommon} {...chartProps4} tipFunction={toolTipFunction1}>
-              <Heatmap {...heatmapProps4} />
-            </Chart>
+            <HeatmapChart {...chartCommon} {...chartProps4} {...heatmapProps4} tipFunction={toolTipFunction1} />
           </div>
         </div>
       </div>
