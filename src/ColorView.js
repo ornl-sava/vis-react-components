@@ -298,7 +298,6 @@ ColorView.propTypes = {
   onBarClick: PropTypes.func,
   clickArray: PropTypes.any.isRequired,
   spread: PropTypes.string.isRequired,
-  className: PropTypes.string.isRequired,
   loading: PropTypes.bool,
   padding: PropTypes.number.isRequired,
   outerPadding: PropTypes.number.isRequired,
