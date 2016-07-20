@@ -41,7 +41,7 @@ class ColorView extends React.Component {
   _onLeave (toolTipData, svgElement) {
   }
   _onClick (toolTipData) {
-    console.log('clicked', toolTipData)
+    // console.log('clicked', toolTipData)
     let index = toolTipData.label
     let newClickArray = this.props.clickArray
     if (index === 'CLEAR') {
@@ -98,7 +98,6 @@ class ColorView extends React.Component {
   componentWillUpdate (nextProps) {
   }
   componentWillReceiveProps (nextProps) {
-    console.log('cWRP-CV')
     this.data = nextProps.colorDomain
     this.updateDR(nextProps)
   }
@@ -118,7 +117,6 @@ class ColorView extends React.Component {
     this.prefScale.domain(props.colorDomain)
     if (props.spread === 'vertical') {
       this.xScale.domain([0, 1])
-      console.log('CV-uDR-range', range(props.colorDomain.length + 2, 0.0, -1))
       this.yScale
         .domain(range(props.colorDomain.length + 2, -1, -1))
         .range([props.chartHeight, 0])
@@ -170,7 +168,6 @@ class ColorView extends React.Component {
     let colorBars = []
     if (this.props.spread === 'vertical') {
       let barHeight = this.yScale(1) - this.yScale(0)
-      console.log('CV-rT-bHeight', this.yScale(0))
       let barWidth = props.chartWidth * 0.9
       let fontSize = barHeight * 0.8
       let barTxtStyle = this.buildAText(fontSize.toString() + 'px', 'black')

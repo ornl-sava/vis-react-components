@@ -79,15 +79,6 @@ const toolTipFunction = (tooltipData) => {
   return toolTip
 }
 
-let wor = [
-  {text: 'guns', 'freq': 94}, {text: 'potato', 'freq': 5}, {text: 'Mr.A', 'freq': 73}, {text: 'shooting', 'freq': 17},
-  {text: 'Mr.B', 'freq': 47}, {text: 'sale', 'freq': 8}, {text: 'plane', 'freq': 27}, {text: 'driver', 'freq': 32},
-  {text: 'killed', 'freq': 41}, {text: 'email', 'freq': 86}, {text: 'gang', 'freq': 98}, {text: 'informant', 'freq': 64}]
-  .map((d, i) => {
-    return {text: d.text, size: d.freq * 2, index: i}
-  })
-console.log(wor)
-
 /* const color = d3.scaleLinear()
 .domain([0, 100])
 .range(['#E4E4E4', '#5D5D5D'])*/

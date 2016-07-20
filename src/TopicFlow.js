@@ -25,7 +25,6 @@ class TopicFlow extends React.Component {
   // grabbing onEnter and Leave functions from chart and making new set of rules
   _onEnter (toolTipData, svgElement) {
     this.props.onEnter(toolTipData, svgElement)
-    console.log('story', toolTipData)
     this.setState({selectedTopics: toolTipData.label, move: false, selectedT: toolTipData.story.concat(toolTipData.adjI)})
   }
   _onLeave (toolTipData, svgElement) {
@@ -53,8 +52,6 @@ class TopicFlow extends React.Component {
     this.yScale = setScale('ordinalBand')
     this.prefScale = d3.scaleOrdinal(d3.schemeCategory20)
 
-    console.log('TF-c-props', props)
-
     this.updateDomain = this.updateDomain.bind(this)
     this.updateRange = this.updateRange.bind(this)
 
@@ -80,27 +77,20 @@ class TopicFlow extends React.Component {
     // return nextProps.data.length !== this.props.data.length || nextProps.loading !== this.props.loading
   }
   componentWillReceiveProps (nextProps) {
-    console.log('TF-cWRP')
     this.bins = this.initTopics(nextProps)
   }
   updateDomain (props) {
-    console.log('TF-UD')
     let xDomain = Object.keys(props.data)
-    console.log('TF-xDomain', xDomain)
     this.xScale
       .domain(xDomain)
     this.yScale
       .domain(d3.range(-1, props.maxTopics + 2, 1))
   }
   updateRange (props) {
-    console.log('TF-height', props.chartHeight)
-    console.log('TF-UR')
     this.xScale
       .range([0, props.chartHeight])
     this.yScale
       .range([0, props.chartHeight])
-    console.log('TF-uR-yScale', this.yScale(40))
-    console.log('TF-uR-colorDomain', props.colorDomain)
     this.prefScale.domain(props.colorDomain)
   }
   buildABar (bin, name, text, height, width, x, y, barStyle, txtStyle) {
@@ -144,7 +134,6 @@ class TopicFlow extends React.Component {
     let paddedWidth = props.chartWidth * (1 - props.padding).toFixed(2)
     let barWidth = Math.ceil(paddedWidth / (props.numTData + (props.outerPadding * 2)))
     this.barWidth = barWidth
-    console.log('TF-iT-barWidth', barWidth)
     let barHeight = 20
     let barData = []
     let lineData = []
@@ -178,7 +167,7 @@ class TopicFlow extends React.Component {
         barData.push(bar)
       }
     })
-    console.log('TF-BarData', barData)
+    // console.log('TF-BarData', barData)
     // GETTING CONNECTING LINE INFORMATION (EDGES)
     barData.map((data, index) => {
       let story = data.tooltipData.prevStory
@@ -202,7 +191,6 @@ class TopicFlow extends React.Component {
     return svgTopicBars
   }
   renderTopics () {
-    console.log('TF-rT')
     let svgBins = []
     for (let i = 0; i < this.barData.length; i++) {
       let key = 'bar-' + i
@@ -241,7 +229,6 @@ class TopicFlow extends React.Component {
         }
       } else {
         // GREYS OUT TOPIC BARS NOT SELECTED BY LEGEND KEY
-        console.log('grey')
         nData = JSON.parse(JSON.stringify(this.barData[i]))
         nData.barStyle.stroke = '#e2e2eb'
         nData.barStyle.strokeOpacity = 0.6

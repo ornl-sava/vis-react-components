@@ -44,7 +44,6 @@ class TopicsChart extends React.Component {
     return true
   }
   render () {
-    console.log('adjacencyList-TC', this.props.adjacencyList)
     let props = this.props
     return (
       <div className='row' >

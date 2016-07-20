@@ -65,7 +65,6 @@ class StoryViewer extends React.Component {
       currentID: new Array(3),
       selectedTopics: []
     }
-    console.log('SV-props', props)
     this.xScale = setScale('ordinalBand')
     this.yScale = setScale('ordinalBand')
     this.prefScale = d3.scaleOrdinal(d3.schemeCategory20)
@@ -87,10 +86,6 @@ class StoryViewer extends React.Component {
     this.initTopics(props, 0)
   }
   shouldComponentUpdate (nextProps, nextState) {
-    if (this.props.data.length <= 0) {
-      console.log('SVprobNoDataWillRProps')
-      this.setState({dataUp: 1})
-    }
     return true
     // return nextProps.data.length !== this.props.data.length || nextProps.loading !== this.props.loading
   }
@@ -114,13 +109,9 @@ class StoryViewer extends React.Component {
 
   updateDR (props) {
     // let xDomain = [0, 1, 2, 3]
-    console.log(props.chartWidth)
     this.xScale
       .domain(d3.range(0, 4, 1))
       .range([0, props.chartWidth])
-    console.log('SV-uDR-xScale', this.xScale(1))
-    console.log('SV-uDR-range', d3.range(0, 3, 1))
-    console.log('SV-uDR-colDom', props.colorDomain)
     this.yScale
       .domain(d3.range(props.maxTopics + 2, -1, -1))
       .range([0, props.chartHeight])
@@ -180,7 +171,6 @@ class StoryViewer extends React.Component {
     this.currData[1] = this.props.eTopics[storyInd + 1]
     this.currData[2] = this.props.eTopics[storyInd + 0]
     // cycling through data for particular story index
-    console.log('SV-iT-currData', this.currData)
     for (let k = 0; k < 3; k++) {
       // making bar data for each data set
       let currBars = Object.keys(this.currData[k]).map((i) => {
@@ -190,7 +180,6 @@ class StoryViewer extends React.Component {
         }
         let posY = this.props.chartHeight / Object.keys(this.currData[k]).length * i
         let posX = this.xScale(k + 1)
-        console.log('SV-iT-posX', posX)
         let fontSize = 12
         let cName = this.tType[k] + (storyInd + 1).toString() + '-index-' + i
         // let topicColor = {stroke: this.prefScale(data[0].split(/:|-/, 1)[0])}
