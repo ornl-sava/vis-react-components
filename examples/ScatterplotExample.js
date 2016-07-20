@@ -13,7 +13,6 @@ const toolTipFunction = (d) => {
 
 const commonProps = {
   margin: {top: 15, right: 5, bottom: 50, left: 15},
-  width: 800,
   height: 300
 }
 

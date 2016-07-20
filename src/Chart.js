@@ -7,6 +7,7 @@ import Header from './Header'
 class Chart extends React.Component {
   constructor (props) {
     super(props)
+
     this.chartWidth = props.width
     this.chartHeight = props.height
   }
