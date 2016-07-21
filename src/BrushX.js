@@ -19,7 +19,6 @@ class BrushX extends React.Component {
   }
   componentDidUpdate (prevProps, prevState) {
     if (this.props.width !== prevProps.width || this.props.height !== prevProps.height) {
-      this.count = 0
       let thisNode = findDOMNode(this)
       let selection = select(thisNode)
       this.brush = brushX()
@@ -39,22 +38,27 @@ class BrushX extends React.Component {
     this.selection = domain
   }
   calculateSelection (domain) {
-    let dateScale = /time/.test(this.props.scale.type)
+    let { interval, scale } = this.props
+    let dateScale = /time/.test(scale.type)
     if (dateScale) {
-      domain[0] = domain[0].getTime()
-      domain[1] = domain[1].getTime()
+      domain = domain.map((val) => { return val.getTime() })
     }
-    let interval = this.props.children[1].props.children[0].props.data.x - this.props.children[0].props.children[0].props.data.x
-    let range = this.props.children.reduce((prev, current) => {
-      let xVal = dateScale ? current.props.children[0].props.data.x.getTime() : current.props.children[0].props.data.x
-      let begin = prev[0] >= xVal && prev[0] < xVal + interval ? xVal : prev[0]
-      let end = prev[1] > xVal && prev[1] < xVal + interval ? xVal : prev[1]
-      if (begin === end) {
-        end += interval
+    let nIntervals = Math.abs(scale.domain()[1] - scale.domain()[0]) / interval
+    let out = domain.slice()
+    for (let i = 0; i < nIntervals; i++) {
+      let xVal = dateScale ? scale.domain()[0].getTime() : scale.domain()[0]
+      xVal += interval * i
+      if (domain[0] >= xVal && domain[0] < xVal + interval) {
+        out[0] = xVal
       }
-      return [new Date(begin), new Date(end)]
-    }, domain)
-    return range
+      if (domain[1] > xVal && domain[1] < xVal + interval) {
+        out[1] = xVal
+      }
+    }
+    if (out[0] === out[1]) {
+      out[1] += interval
+    }
+    return dateScale ? [new Date(out[0]), new Date(out[1])] : out
   }
   render () {
     // console.log('brush selection is : ' + this.state.selection)
@@ -71,6 +75,7 @@ BrushX.propTypes = {
   children: PropTypes.node,
   width: PropTypes.number.isRequired,
   height: PropTypes.number.isRequired,
+  interval: PropTypes.number.isRequired,
   scale: PropTypes.func.isRequired
 }
 

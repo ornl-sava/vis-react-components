@@ -93,11 +93,14 @@ class Histogram extends React.Component {
         </g>
       )
     })
-    let el = props.brush
-      ? <BrushX width={props.xScale.range()[1]} height={props.yScale.range()[0]} scale={props.xScale}>
-      {svgBins}
+
+    let el = <g>{svgBins}</g>
+    if (barData.length > 1 && props.brush) {
+      let interval = Math.abs(barData[1][0].data[props.xAccessor] - barData[0][0].data[props.xAccessor])
+      el = <BrushX width={props.xScale.range()[1]} height={props.yScale.range()[0]} interval={interval} scale={props.xScale}>
+        {svgBins}
       </BrushX>
-      : <g>{svgBins}</g>
+    }
     return el
   }
 
