@@ -2,12 +2,20 @@ import React, { PropTypes } from 'react'
 // import { findDOMNode } from 'react-dom'
 import { brushX, select, event as d3Event } from 'd3'
 class BrushX extends React.Component {
-  _start () {
+  constructor (props) {
+    super(props)
+    this.selection = null
+    this.state = {
+      selection: this.selection
+    }
   }
   _brush () {
     this.applySelection()
   }
   _end () {
+    if (this.state.selection !== this.selection) {
+      this.setState({selection: this.selection})
+    }
   }
   componentDidMount () {
     select('body')
@@ -29,12 +37,11 @@ class BrushX extends React.Component {
   }
   componentDidUpdate (prevProps, prevState) {
     if (this.props.width !== prevProps.width || this.props.height !== prevProps.height) {
-      this.count = 0
       let thisNode = this.refs.brush
       let selection = select(thisNode)
       this.brush = brushX()
+        .handleSize(6)
         .extent([[0, 0], [this.props.width, this.props.height]])
-        .on('start', this._start.bind(this))
         .on('brush', this._brush.bind(this))
         .on('end', this._end.bind(this))
       selection.call(this.brush)
@@ -50,26 +57,34 @@ class BrushX extends React.Component {
         .call(this.brush.move, domain.map(this.props.scale))
     select(thisNode).select('.overlay')
       .attr('pointer-events', 'none')
+
+    this.selection = domain
   }
-  calculateSelection (domain, expand) {
-    let dateScale = /time/.test(this.props.scale.type)
+  calculateSelection (domain) {
+    let { interval, scale } = this.props
+    let dateScale = /time/.test(scale.type)
     if (dateScale) {
-      domain[0] = domain[0].getTime()
-      domain[1] = domain[1].getTime()
+      domain = domain.map((val) => { return val.getTime() })
     }
-    let interval = this.props.children[1].props.children[0].props.data.x - this.props.children[0].props.children[0].props.data.x
-    let range = this.props.children.reduce((prev, current) => {
-      let xVal = dateScale ? current.props.children[0].props.data.x.getTime() : current.props.children[0].props.data.x
-      let begin = prev[0] >= xVal && prev[0] < xVal + interval ? xVal : prev[0]
-      let end = prev[1] > xVal && prev[1] < xVal + interval ? xVal : prev[1]
-      if (expand || begin === end) {
-        end += interval
+    let nIntervals = Math.abs(scale.domain()[1] - scale.domain()[0]) / interval
+    let out = domain.slice()
+    for (let i = 0; i < nIntervals; i++) {
+      let xVal = dateScale ? scale.domain()[0].getTime() : scale.domain()[0]
+      xVal += interval * i
+      if (domain[0] >= xVal && domain[0] < xVal + interval) {
+        out[0] = xVal
       }
-      return [new Date(begin), new Date(end)]
-    }, domain)
-    return range
+      if (domain[1] > xVal && domain[1] < xVal + interval) {
+        out[1] = xVal
+      }
+    }
+    if (out[0] === out[1]) {
+      out[1] += interval
+    }
+    return dateScale ? [new Date(out[0]), new Date(out[1])] : out
   }
   render () {
+    // console.log('brush selection is : ' + this.state.selection)
     return (
       <g>
         {this.props.children}
@@ -86,6 +101,7 @@ BrushX.propTypes = {
   children: PropTypes.node,
   width: PropTypes.number.isRequired,
   height: PropTypes.number.isRequired,
+  interval: PropTypes.number.isRequired,
   scale: PropTypes.func.isRequired
 }
 
