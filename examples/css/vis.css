@@ -5,7 +5,10 @@ body {
 	font: 14px "Helvetica Neue", sans-serif;
 	margin: 0;
 }
-
+.brush .handle {
+  fill: #eee;
+  stroke: #000;
+}
 .chart {
 	fill: #fff;
 }
