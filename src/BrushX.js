@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react'
-import { findDOMNode } from 'react-dom'
+// import { findDOMNode } from 'react-dom'
 import { brushX, select, event as d3Event } from 'd3'
 class BrushX extends React.Component {
   _start () {
@@ -9,10 +9,28 @@ class BrushX extends React.Component {
   }
   _end () {
   }
+  componentDidMount () {
+    select('body')
+      .on('keydown', () => {
+        console.log('what')
+        if (d3Event.keyCode === 16) {
+          document.body.style.cursor = 'crosshair'
+          select(this.refs.brush).select('.overlay')
+            .attr('pointer-events', 'all')
+        }
+      })
+      .on('keyup', () => {
+        if (d3Event.keyCode === 16) {
+          document.body.style.cursor = 'default'
+          select(this.refs.brush).select('.overlay')
+            .attr('pointer-events', 'none')
+        }
+      })
+  }
   componentDidUpdate (prevProps, prevState) {
     if (this.props.width !== prevProps.width || this.props.height !== prevProps.height) {
       this.count = 0
-      let thisNode = findDOMNode(this)
+      let thisNode = this.refs.brush
       let selection = select(thisNode)
       this.brush = brushX()
         .extent([[0, 0], [this.props.width, this.props.height]])
@@ -20,14 +38,18 @@ class BrushX extends React.Component {
         .on('brush', this._brush.bind(this))
         .on('end', this._end.bind(this))
       selection.call(this.brush)
+      selection.select('.overlay')
+        .attr('pointer-events', 'none')
     }
   }
   applySelection () {
     if (d3Event.sourceEvent.type === 'brush') return
     let domain = this.calculateSelection(d3Event.selection.map(this.props.scale.invert))
-    let thisNode = findDOMNode(this)
+    let thisNode = this.refs.brush
     select(thisNode)
         .call(this.brush.move, domain.map(this.props.scale))
+    select(thisNode).select('.overlay')
+      .attr('pointer-events', 'none')
   }
   calculateSelection (domain, expand) {
     let dateScale = /time/.test(this.props.scale.type)
@@ -49,7 +71,10 @@ class BrushX extends React.Component {
   }
   render () {
     return (
-      <g className='brush'>{this.props.children}</g>
+      <g>
+        {this.props.children}
+        <g ref='brush' className='brush' />
+      </g>
     )
   }
 }
