@@ -6,8 +6,8 @@ body {
 	margin: 0;
 }
 .brush .handle {
-  fill: #eee;
-  stroke: #000;
+  fill: #AAA;
+  stroke: #999;
 }
 .chart {
 	fill: #fff;

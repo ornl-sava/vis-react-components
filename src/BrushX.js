@@ -23,7 +23,7 @@ class BrushX extends React.Component {
       let thisNode = findDOMNode(this)
       let selection = select(thisNode)
       this.brush = brushX()
-        .handleSize(3)
+        .handleSize(6)
         .extent([[0, 0], [this.props.width, this.props.height]])
         .on('brush', this._brush.bind(this))
         .on('end', this._end.bind(this))
