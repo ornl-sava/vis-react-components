@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react'
-// import { findDOMNode } from 'react-dom'
+import { findDOMNode } from 'react-dom'
 import { brushX, select, event as d3Event } from 'd3'
 class BrushX extends React.Component {
   constructor (props) {
@@ -13,31 +13,11 @@ class BrushX extends React.Component {
     this.applySelection()
   }
   _end () {
-    if (this.state.selection !== this.selection) {
-      this.setState({selection: this.selection})
-    }
-  }
-  componentDidMount () {
-    select('body')
-      .on('keydown', () => {
-        console.log('what')
-        if (d3Event.keyCode === 16) {
-          document.body.style.cursor = 'crosshair'
-          select(this.refs.brush).select('.overlay')
-            .attr('pointer-events', 'all')
-        }
-      })
-      .on('keyup', () => {
-        if (d3Event.keyCode === 16) {
-          document.body.style.cursor = 'default'
-          select(this.refs.brush).select('.overlay')
-            .attr('pointer-events', 'none')
-        }
-      })
+    this.setState({selection: this.selection})
   }
   componentDidUpdate (prevProps, prevState) {
     if (this.props.width !== prevProps.width || this.props.height !== prevProps.height) {
-      let thisNode = this.refs.brush
+      let thisNode = findDOMNode(this)
       let selection = select(thisNode)
       this.brush = brushX()
         .handleSize(6)
@@ -45,19 +25,14 @@ class BrushX extends React.Component {
         .on('brush', this._brush.bind(this))
         .on('end', this._end.bind(this))
       selection.call(this.brush)
-      selection.select('.overlay')
-        .attr('pointer-events', 'none')
     }
   }
   applySelection () {
     if (d3Event.sourceEvent.type === 'brush') return
     let domain = this.calculateSelection(d3Event.selection.map(this.props.scale.invert))
-    let thisNode = this.refs.brush
+    let thisNode = findDOMNode(this)
     select(thisNode)
         .call(this.brush.move, domain.map(this.props.scale))
-    select(thisNode).select('.overlay')
-      .attr('pointer-events', 'none')
-
     this.selection = domain
   }
   calculateSelection (domain) {
@@ -86,10 +61,7 @@ class BrushX extends React.Component {
   render () {
     // console.log('brush selection is : ' + this.state.selection)
     return (
-      <g>
-        {this.props.children}
-        <g ref='brush' className='brush' />
-      </g>
+      <g className='brush'>{this.props.children}</g>
     )
   }
 }

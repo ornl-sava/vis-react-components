@@ -11,6 +11,7 @@ class Bar extends React.Component {
     this._onMouseLeave()
   }
   _onClick (event) {
+    console.log('click')
     if (this.props.tooltipData) {
       this.props.onClick(event, this.props.tooltipData)
     }
@@ -47,6 +48,7 @@ class Bar extends React.Component {
 }
 
 Bar.defaultProps = {
+  brushed: false,
   height: 0,
   name: '',
   width: 0,
@@ -58,6 +60,7 @@ Bar.defaultProps = {
 }
 
 Bar.propTypes = {
+  brushed: PropTypes.bool.isRequired,
   className: PropTypes.string,
   data: PropTypes.object,
   height: PropTypes.number.isRequired,
