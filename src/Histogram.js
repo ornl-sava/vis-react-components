@@ -13,8 +13,12 @@ const transpose = (a) => {
 class Histogram extends React.Component {
   constructor (props) {
     super(props)
-
+    this.onMouseLeave = this._onMouseLeave.bind(this)
     this.renderBars = this.renderBars.bind(this)
+  }
+  _onMouseLeave (event) {
+    console.log('mouse leave')
+    this.props.onLeave(event, {})
   }
   getOverlay (barData) {
     let props = this.props
@@ -40,7 +44,7 @@ class Histogram extends React.Component {
       let xPos = props.xScale(barData[i][0].data[props.xAccessor])
       return (
         <g className='overlay-bin' key={'overlay-' + i.toString()} transform={'translate(' + xPos + ',' + yPos + ')'}>
-          <Bar {...overlayObj} onEnter={props.onEnter} onLeave={props.onLeave} />
+          <Bar {...overlayObj} onEnter={props.onEnter} />
         </g>
       )
     })
@@ -90,7 +94,7 @@ class Histogram extends React.Component {
           data[props.yAccessor] = dataArr[barIndex - 1][props.yAccessor] - data.height
         }
         return (
-          <Bar {...data} onClick={props.onClick} onEnter={props.onEnter} onLeave={props.onLeave} />
+          <Bar {...data} onClick={props.onClick} onEnter={props.onEnter} />
         )
       })
     })
@@ -115,7 +119,7 @@ class Histogram extends React.Component {
     // let el = <g>{svgBins}</g>
     if (barData.length > 1 && props.brushed) {
       let interval = Math.abs(barData[1][0].data[props.xAccessor] - barData[0][0].data[props.xAccessor])
-      el = <g>
+      el = <g onMouseLeave={this.onMouseLeave}>
         <BrushX width={props.xScale.range()[1]} height={props.yScale.range()[0]} interval={interval} scale={props.xScale}>
           {svgBins}
         </BrushX>
