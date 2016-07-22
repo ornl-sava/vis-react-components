@@ -206,7 +206,6 @@ const chartProps = {
 
 class TopicsContainer extends React.Component {
   render () {
-    console.log(aList)
     return (
       <Chart className='col-md-12' tipFunction={toolTipFunction} yAxis={false} xAxis={false} height={1000}>
         <ForceDirectedGraph {...chartProps} />

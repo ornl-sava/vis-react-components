@@ -5,18 +5,24 @@ import * as d3 from 'd3'
 class ForceDirectedGraph extends React.Component {
   constructor (props) {
     super(props)
+    this.state = {
+      nodes: JSON.parse(JSON.stringify(props.nodes)),
+      links: JSON.parse(JSON.stringify(props.links))
+    }
+
+    this.nodes = props.nodes
+    this.links = props.links
 
     this.colScale = d3.scaleOrdinal(d3.schemeCategory10)
     this.xScale = setScale('ordinalBand')
 
     this.aList = props.adjacencyList
 
-    this.nodes = []
-    this.links = []
-    this.simData = []
-
     this.updateDR = this.updateDR.bind(this)
     this.updateDR(props)
+
+    this.simulation = d3.forceSimulation()
+    this.setSim(props)
 
     this.onClick = this.onClick.bind(this)
     this.onEnter = this.onEnter.bind(this)
@@ -24,8 +30,7 @@ class ForceDirectedGraph extends React.Component {
   }
 
   shouldComponentUpdate (nextProps, nextState) {
-    // makeCircles
-    // let's simulate
+    // PUT SET SIM HERE
     // if props haven't changed...so this might not even be necesary?
     return false
   }
@@ -58,95 +63,133 @@ class ForceDirectedGraph extends React.Component {
     return this.props.data[i]
   }
 
-  /* letsSimulate (props) {
-   let ticked = (d, i) => {
-    this.simData(i) = {
-      x1:
-      y1:
-      x2:
-      y2:
-
-    }
-    //  link
-    //      .attr("x1", function(d) { return d.source.x; })
-    //      .attr("y1", function(d) { return d.source.y; })
-    //      .attr("x2", function(d) { return d.target.x; })
-    //      .attr("y2", function(d) { return d.target.y; });
-    //  node
-    //      .attr("cx", function(d) { return d.x; })
-    //      .attr("cy", function(d) { return d.y; });
-   }
-
-    let simulation = d3.forceSimulation()
-      .force('link', d3.forceLink())
-      .force('charge', d3.forceManyBody())
-      .force('center', d3.forceCenter(props.width / 2, props.height / 2))
-
-    simulation
-       .nodes(this.nodes)
-       .on('tick', (d, i) => { ticked(d, i) })
-
-    simulation.force('link')
-       .links(this.links)
-  }*/
-
-  makeCircles (props) {
-    let nodes = []
-    let links = []
-    this.aList.map((d, i) => {
-      if (d.hour < props.numTData) {
-        let circleProps = {
-          'data-id': d.topicID,
-          'r': props.radius,
-          'cx': Math.random() * this.xScale.bandwidth() + this.xScale(d.hour),
-          'cy': Math.random() * props.chartHeight,
-          'fill': this.colScale(d.hour)
-          // 'onMouseEnter': this.onEnter,
-          // 'onMouseLeave': this.onLeave,
-          // 'onClick': this.onClick
-        }
-        nodes.push(
-          <circle key={'cir-id' + i + '-hr-' + d.hour} {...circleProps} />
-        )
+  draw (props) {
+    console.log('FDG-draw-props', props)
+    let nodeList = []
+    let linkList = []
+    console.log('FDG-draw-state', this.state)
+    // console.log('FDG-draw-radius', props.radius)
+    this.state.nodes.map((d, i) => {
+      let circleProps = {
+        'data-id': i,
+        'r': props.radius,
+        'cx': Math.random() * this.xScale.bandwidth() + this.xScale(d.hour),
+        'cy': Math.random() * props.chartHeight,
+        'fill': this.colScale(d.hour),
+        'data-events': d.events
+        // 'onMouseEnter': this.onEnter,
+        // 'onMouseLeave': this.onLeave,
+        // 'onClick': this.onClick
       }
+      nodeList.push(
+        <circle key={'cir-id' + i + '-hr-' + d.hour} {...circleProps} />
+      )
     })
-    this.aList.map((data, index) => {
-      if (data.hour < props.numTData) {
-        return data.story.map((d) => {
-          if (d > index && d < nodes.length) {
-            let lineData = {
-              x1: nodes[index].props.cx,
-              y1: nodes[index].props.cy,
-              x2: nodes[d].props.cx,
-              y2: nodes[d].props.cy,
-              style: {stroke: '#cdd5e4', strokeWidth: 2}
-            }
-            links.push(
-              <line key={'line-id' + links.length} {...lineData} />
-            )
-          }
-        })
+    this.state.links.map((data, index) => {
+      let lineData = {
+        x1: nodeList[data.source].props.cx,
+        y1: nodeList[data.source].props.cy,
+        x2: nodeList[data.target].props.cx,
+        y2: nodeList[data.target].props.cy,
+        style: {stroke: '#cdd5e4', strokeWidth: 2}
       }
+      linkList.push(
+        <line key={'line-id' + linkList.length} {...lineData} />
+      )
     })
-    this.nodes = nodes
-    this.links = links
-    this.simData = new Array(this.nodes.length)
     return (
       <g>
-        {links}
-        {nodes}
+        {linkList}
+        {nodeList}
       </g>
     )
+  }
+
+  drawSim (props) {
+    console.log('FDG-draw-props', props)
+    let nodeList = []
+    let linkList = []
+    console.log('FDG-draw-state', this.state)
+    // console.log('FDG-draw-radius', props.radius)
+    this.state.nodes.map((d, i) => {
+      let circleProps = {
+        'data-id': i,
+        'r': props.radius,
+        'cx': d.x,
+        'cy': d.y,
+        'fill': this.colScale(d.hour),
+        'data-events': d.events
+        // 'onMouseEnter': this.onEnter,
+        // 'onMouseLeave': this.onLeave,
+        // 'onClick': this.onClick
+      }
+      nodeList.push(
+        <circle key={'cir-id' + i + '-hr-' + d.hour} {...circleProps} />
+      )
+    })
+    this.state.links.map((data, index) => {
+      let lineData = {
+        x1: data.source.x,
+        y1: data.source.y,
+        x2: data.target.x,
+        y2: data.target.y,
+        style: {stroke: '#cdd5e4', strokeWidth: 2}
+      }
+      linkList.push(
+        <line key={'line-id' + linkList.length} {...lineData} />
+      )
+    })
+    return (
+      <g>
+        {linkList}
+        {nodeList}
+      </g>
+    )
+  }
+
+  setSim (props) {
+    this.simulation
+      .force('link', d3.forceLink().id(function (d, i) { return i }))
+      .force('charge', d3.forceManyBody().strength(1))
+      .force('center', d3.forceCenter(props.chartWidth / 2, props.chartHeight / 2))
+
+    this.simulation
+        .nodes(this.nodes)
+        .on('tick', (d, i) => {
+          // console.log('FDG-sS-on-d-this', d, '-', this)
+          this.simUpdate(d, i)
+        })
+
+    this.simulation.force('link')
+        .links(this.links)
+  }
+
+  simUpdate (d, i) {
+    // console.log('FDG-sU-d-i', d, '-', i)
+    // console.log('FDG-nodes', this.nodes)
+    this.setState({nodes: this.nodes, links: this.links})
   }
 
   render () {
+    console.log('FDG-r')
     let props = this.props
+    let el = this.drawSim(props)
     return (
       <g className={props.className + 'fdg'}>
-        {this.makeCircles(props)}
+        {el}
       </g>
     )
   }
+}
+
+ForceDirectedGraph.defaultProps = {
+  xAccessor: 'x',
+  yAccessor: 'y',
+  radius: 5,
+  onClick: () => {},
+  onEnter: () => {},
+  onLeave: () => {},
+  className: ''
 }
 
 ForceDirectedGraph.propTypes = {
@@ -163,16 +206,6 @@ ForceDirectedGraph.propTypes = {
   onClick: PropTypes.func,
   onEnter: PropTypes.func,
   onLeave: PropTypes.func
-}
-
-ForceDirectedGraph.defaultProps = {
-  xAccessor: 'x',
-  yAccessor: 'y',
-  radius: 5,
-  onClick: () => {},
-  onEnter: () => {},
-  onLeave: () => {},
-  className: ''
 }
 
 export default ForceDirectedGraph
