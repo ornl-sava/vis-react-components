@@ -22,6 +22,7 @@ class Histogram extends React.Component {
     for (let i = 0; i < barData.length; i++) {
       let overlayObj = Object.assign({}, barData[i][0])
       overlayObj.className = '_overlay'
+      overlayObj.brushed = props.brushed
       overlayObj.key = overlayObj.className + '-' + overlayObj.data[props.xAccessor]
       overlayObj[props.yAccessor] = 1
       overlayObj.tooltipData = {}
@@ -112,7 +113,7 @@ class Histogram extends React.Component {
       {overlayBins}
     </g>
     // let el = <g>{svgBins}</g>
-    if (barData.length > 1 && props.brush) {
+    if (barData.length > 1 && props.brushed) {
       let interval = Math.abs(barData[1][0].data[props.xAccessor] - barData[0][0].data[props.xAccessor])
       el = <g>
         <BrushX width={props.xScale.range()[1]} height={props.yScale.range()[0]} interval={interval} scale={props.xScale}>
@@ -145,7 +146,7 @@ Histogram.defaultProps = {
 
 Histogram.propTypes = {
   addOverlay: PropTypes.bool,
-  brush: PropTypes.bool,
+  brushed: PropTypes.bool,
   chartHeight: PropTypes.number,
   chartWidth: PropTypes.number,
   className: PropTypes.string,

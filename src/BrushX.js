@@ -9,9 +9,6 @@ class BrushX extends React.Component {
       selection: this.selection
     }
   }
-  _start () {
-    console.log('woo')
-  }
   _brush () {
     this.applySelection()
   }
@@ -25,7 +22,6 @@ class BrushX extends React.Component {
       this.brush = brushX()
         .handleSize(6)
         .extent([[0, 0], [this.props.width, this.props.height]])
-        .on('start', this._brush.bind(this))
         .on('brush', this._brush.bind(this))
         .on('end', this._end.bind(this))
       selection.call(this.brush)

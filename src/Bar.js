@@ -1,6 +1,4 @@
 import React, { PropTypes } from 'react'
-import { findDOMNode } from 'react-dom'
-import { select } from 'd3'
 
 class Bar extends React.Component {
   constructor (props) {
@@ -8,23 +6,14 @@ class Bar extends React.Component {
     this.onClick = this._onClick.bind(this)
     this.onMouseEnter = this._onMouseEnter.bind(this)
     this.onMouseLeave = this._onMouseLeave.bind(this)
-    this.onMouseDown = this._onMouseDown.bind(this)
   }
   componentWillUnmount () {
     this._onMouseLeave()
   }
   _onClick (event) {
+    console.log('click')
     if (this.props.tooltipData) {
       this.props.onClick(event, this.props.tooltipData)
-    }
-  }
-  _onMouseDown (event) {
-    console.log('mouse down!')
-    if (this.props.tooltipData) {
-      let thisNode = findDOMNode(this)
-      let selection = select(thisNode)
-      selection.attr('pointer-events', 'none')
-      // this.props.onEnter(event, this.props.tooltipData)
     }
   }
   _onMouseEnter (event) {
@@ -53,13 +42,13 @@ class Bar extends React.Component {
         onClick={this.onClick}
         onMouseEnter={this.onMouseEnter}
         onMouseLeave={this.onMouseLeave}
-        onMouseDown={this.onMouseDown}
         style={style}
      />)
   }
 }
 
 Bar.defaultProps = {
+  brushed: false,
   height: 0,
   name: '',
   width: 0,
@@ -71,6 +60,7 @@ Bar.defaultProps = {
 }
 
 Bar.propTypes = {
+  brushed: PropTypes.bool.isRequired,
   className: PropTypes.string,
   data: PropTypes.object,
   height: PropTypes.number.isRequired,
