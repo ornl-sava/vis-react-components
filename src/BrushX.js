@@ -13,9 +13,7 @@ class BrushX extends React.Component {
     this.applySelection()
   }
   _end () {
-    if (this.state.selection !== this.selection) {
-      this.setState({selection: this.selection})
-    }
+    this.setState({selection: this.selection})
   }
   componentDidUpdate (prevProps, prevState) {
     if (this.props.width !== prevProps.width || this.props.height !== prevProps.height) {
