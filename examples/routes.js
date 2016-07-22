@@ -10,6 +10,7 @@ import CircumshakerExample from './CircumshakerExample'
 import ScatterHeatmapExample from './ScatterHeatmapExample'
 import TopicsExample from './TopicsExample'
 import SingleTopicExample from './SingleTopicExample'
+import ForceDirectedGraphExample from './ForceDirectedGraphExample'
 
 const reactRouterRoutes = (
   <Router history={browserHistory}>
@@ -23,6 +24,7 @@ const reactRouterRoutes = (
       <Route path='/scatterHeatmap' component={ScatterHeatmapExample} />
       <Route path='/topics' component={TopicsExample} />
       <Route path='/id' component={SingleTopicExample} />
+      <Route path='/forceDirected' component={ForceDirectedGraphExample} />
     </Route>
   </Router>
 )
