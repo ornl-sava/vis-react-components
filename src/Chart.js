@@ -48,9 +48,7 @@ class Chart extends React.Component {
   }
 
   render () {
-    let props = this.props
-    let width = this.chartWidth + props.margin.left + props.margin.right
-    let height = this.chartHeight + props.margin.top + props.margin.bottom
+    let {width, height, ...props} = this.props
     let left = props.margin.left
     let top = props.margin.top
     return (
@@ -62,8 +60,8 @@ class Chart extends React.Component {
               <rect width={this.chartWidth} height={this.chartHeight} />
             </clipPath>
           </defs>
-          <g ref='container' className='container' transform={'translate(' + left + ',' + top + ')'}>
-            <g className='component'>
+          <g className='vis-container' transform={'translate(' + left + ',' + top + ')'}>
+            <g className='vis-component'>
               {(this.chartWidth === 0 || this.chartHeight === 0)
                 ? undefined
                 : this.renderChildren()

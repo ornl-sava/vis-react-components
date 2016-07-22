@@ -143,7 +143,7 @@ class HistogramExample extends React.Component {
 
     this.header3 = () => {
       return ([
-        <span className='chart-title'>Temporal Histogram</span>
+        <span className='chart-title'>Temporal Histogram - Brush selection</span>
       ])
     }
   }
@@ -173,7 +173,7 @@ class HistogramExample extends React.Component {
         <div>
           <HistogramChart header={this.header3} xScaleType='time'
             width={800} height={200} data={temporalData} tipFunction={toolTipFunction}
-            addOverlay onClick={onBarClick} />
+            addOverlay onClick={onBarClick} brush />
         </div>
       </div>
     )
