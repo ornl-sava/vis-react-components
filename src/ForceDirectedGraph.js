@@ -30,9 +30,8 @@ class ForceDirectedGraph extends React.Component {
   }
 
   shouldComponentUpdate (nextProps, nextState) {
-    // PUT SET SIM HERE
     // if props haven't changed...so this might not even be necesary?
-    return false
+    return true
   }
 
   onClick (event) {
@@ -61,6 +60,29 @@ class ForceDirectedGraph extends React.Component {
   getDatum (target) {
     let i = target.getAttribute('data-id')
     return this.props.data[i]
+  }
+
+  setSim (props) {
+    this.simulation
+      .force('link', d3.forceLink().id(function (d, i) { return i }))
+      .force('charge', d3.forceManyBody().strength(-5))
+      .force('center', d3.forceCenter(props.chartWidth / 2, props.chartHeight / 2))
+
+    this.simulation
+        .nodes(this.nodes)
+        .on('tick', (d, i) => {
+          // console.log('FDG-sS-on-d-this', d, '-', this)
+          this.simUpdate(d, i)
+        })
+
+    this.simulation.force('link')
+        .links(this.links)
+  }
+
+  simUpdate (d, i) {
+    // console.log('FDG-sU-d-i', d, '-', i)
+    // console.log('FDG-nodes', this.nodes)
+    this.setState({nodes: this.nodes, links: this.links})
   }
 
   draw (props) {
@@ -145,29 +167,6 @@ class ForceDirectedGraph extends React.Component {
         {nodeList}
       </g>
     )
-  }
-
-  setSim (props) {
-    this.simulation
-      .force('link', d3.forceLink().id(function (d, i) { return i }))
-      .force('charge', d3.forceManyBody().strength(1))
-      .force('center', d3.forceCenter(props.chartWidth / 2, props.chartHeight / 2))
-
-    this.simulation
-        .nodes(this.nodes)
-        .on('tick', (d, i) => {
-          // console.log('FDG-sS-on-d-this', d, '-', this)
-          this.simUpdate(d, i)
-        })
-
-    this.simulation.force('link')
-        .links(this.links)
-  }
-
-  simUpdate (d, i) {
-    // console.log('FDG-sU-d-i', d, '-', i)
-    // console.log('FDG-nodes', this.nodes)
-    this.setState({nodes: this.nodes, links: this.links})
   }
 
   render () {
