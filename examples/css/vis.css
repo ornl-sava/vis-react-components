@@ -31,7 +31,9 @@ body {
 	stroke-width: 1px;
 	opacity: 0;
 }
-
+.histogram-bar._brushing {
+	pointer-events: none;
+}
 .histogram-bar._overlay:hover {
 	opacity: 0.2;
 	pointer-events: none;

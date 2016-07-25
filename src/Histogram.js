@@ -17,7 +17,6 @@ class Histogram extends React.Component {
     this.renderBars = this.renderBars.bind(this)
   }
   _onMouseLeave (event) {
-    console.log('mouse leave')
     this.props.onLeave(event, {})
   }
   getOverlay (barData) {
@@ -36,6 +35,7 @@ class Histogram extends React.Component {
       overlayObj.tooltipData.stackCounts = barData[i].map((bar) => { return bar.data[props.yAccessor] })
       overlayObj.tooltipData.yPos = barData[i][0][props.yAccessor]
       overlayObj.tooltipData.xPos = props.xScale(barData[i][0].data[props.xAccessor])
+      overlayObj.width = Math.floor(overlayObj.width + 2)
       overlayObj.height = props.yScale.range()[0]
       overlayData.push(overlayObj)
     }
@@ -44,7 +44,7 @@ class Histogram extends React.Component {
       let xPos = props.xScale(barData[i][0].data[props.xAccessor])
       return (
         <g className='overlay-bin' key={'overlay-' + i.toString()} transform={'translate(' + xPos + ',' + yPos + ')'}>
-          <Bar {...overlayObj} onEnter={props.onEnter} />
+          <Bar {...overlayObj} onEnter={props.onEnter} onLeave={props.onLeave} />
         </g>
       )
     })
@@ -94,7 +94,7 @@ class Histogram extends React.Component {
           data[props.yAccessor] = dataArr[barIndex - 1][props.yAccessor] - data.height
         }
         return (
-          <Bar {...data} onClick={props.onClick} onEnter={props.onEnter} />
+          <Bar {...data} onClick={props.onClick} onEnter={props.onEnter} onLeave={props.onLeave} />
         )
       })
     })
@@ -112,7 +112,7 @@ class Histogram extends React.Component {
       )
     })
 
-    let el = <g>
+    let el = <g onMouseLeave={this.onMouseLeave}>
       <g>{svgBins}</g>
       {overlayBins}
     </g>

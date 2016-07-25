@@ -22,7 +22,7 @@ class Bar extends React.Component {
   }
   _onMouseEnter (event) {
     if (this.props.tooltipData) {
-      console.log('mouse enter')
+      // console.log('mouse enter')
       this.props.onEnter(event, this.props.tooltipData)
     }
   }
