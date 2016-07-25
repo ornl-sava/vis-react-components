@@ -1,5 +1,6 @@
 import React from 'react'
-import { format } from 'd3'
+// import { format } from 'd3'
+import * as d3 from 'd3'
 import Chart from '../src/Chart'
 
 import ForceDirectedGraph from '../src/ForceDirectedGraph.js'
@@ -13,7 +14,7 @@ const toolTipFunction = (tooltipData) => {
   let d = tooltipData
   var toolTip =
     '<span class="title">' + d.label + '</span>' +
-    '</span>Number of Topics: ' + format(',')(d.counts) +
+    '</span>Number of Topics: ' + d3.format(',')(d.counts) +
     '<br /><small>'
   return toolTip
 }

@@ -21,6 +21,8 @@ class ForceDirectedGraph extends React.Component {
     this.updateDR = this.updateDR.bind(this)
     this.updateDR(props)
 
+    this.falseStart(props)
+
     this.simulation = d3.forceSimulation()
     this.setSim(props)
 
@@ -123,11 +125,17 @@ class ForceDirectedGraph extends React.Component {
     this.simulation.force('link')
         .links(this.links)
   }
-
   simUpdate (d, i) {
     // console.log('FDG-sU-d-i', d, '-', i)
     // console.log('FDG-nodes', this.nodes)
     this.setState({nodes: this.nodes, links: this.links})
+  }
+
+  falseStart (props) {
+    this.nodes.map((d, i) => {
+      d.x = Math.random() * this.xScale.bandwidth() + this.xScale(d.hour)
+      d.y = Math.random() * props.chartHeight
+    })
   }
 
   draw (props) {
