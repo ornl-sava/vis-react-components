@@ -156,15 +156,16 @@ class StoryViewer extends React.Component {
   }
 
   initTopics (props, storyInd) {
+    this.xScale.rangeRound([0, props.chartWidth])
+    this.xScale.padding(props.padding)
     let paddedWidth = props.chartWidth * (1 - props.padding).toFixed(2)
     let barWidth = Math.ceil(paddedWidth / (4 + (props.outerPadding * 2)))
+    barWidth = this.xScale.bandwidth()
     let barHeight = 10
     // let lineData = []
     // console.log('storyData0', storyData[0])
     // setting current story
     this.currStory = this.props.storyData[storyInd]
-    this.xScale.rangeRound([0, props.chartWidth])
-    this.xScale.padding(props.padding)
     let timeStepBars = []
     // setting up data for (ex: hr[01], end[01]. end[00])
     this.currData[0] = this.props.hrTopics[storyInd + 1]
