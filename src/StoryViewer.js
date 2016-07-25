@@ -1,29 +1,15 @@
 import React, { PropTypes } from 'react'
-// import Bar from './Bar'
+import { setScale } from './util/d3'
+import * as d3 from 'd3'
+
 import TextBar from './TextBar'
-import d3 from 'd3'
-import storyData from '../examples/data/for-hci/stories.json'
-import eTopics from '../examples/data/for-hci/enduring-topics-listed.json'
-import hrTopics from '../examples/data/for-hci/hourly-topics-listed.json'
 
-/* const lineMaker = d3.svg.line()
-  .x((d) => {
-    return d.x
-  })
-  .y((d) => {
-    return d.y
-  }) */
-
-const diagMaker = d3.svg.diagonal()
-  .source((d) => {
-    return {'x': d[0].y, 'y': d[0].x}
-  })
-  .target((d) => {
-    return {'x': d[1].y, 'y': d[1].x}
-  })
-  .projection((d) => {
-    return [d.y, d.x]
-  })
+const diagMaker = (d) => {
+  return ('M' + d[0].x + ',' + d[0].y +
+  'C' + (d[0].x + d[1].x) / 2 + ',' + d[0].y +
+  ' ' + (d[0].x + d[1].x) / 2 + ',' + d[1].y +
+  ' ' + d[1].x + ',' + d[1].y)
+}
 
 class StoryViewer extends React.Component {
   // grabbing onEnter and Leave functions from chart and making new set of rules
@@ -39,13 +25,15 @@ class StoryViewer extends React.Component {
   }
   _onClick (tooltipData) {
     // resetting topic info
-    let newID = [[], [], []]
+    let newID = new Array(3)
     let { dataInd, index } = tooltipData
     // getting topic information for clicked topic
-    newID[dataInd] = this.currData[dataInd][index]
+    // newID[dataInd] = this.currData[dataInd][index]
+    newID[dataInd] = parseFloat(index)
     // getting topic information of related topics
     this.barData[dataInd][index].story.map((sData) => {
-      newID[sData.dataInd] = this.currData[sData.dataInd][sData.index]
+      // newID[sData.dataInd] = this.currData[sData.dataInd][sData.index]
+      newID[sData.dataInd] = parseFloat(sData.index)
     })
     // re-render with new topic info
     this.setState({currentID: newID})
@@ -57,43 +45,47 @@ class StoryViewer extends React.Component {
       if (this.state.storyInd !== 0) {
         sIndex = this.state.storyInd - 1
       } else {
-        sIndex = storyData.length - 1
+        sIndex = this.props.storyData.length - 1
       }
     } else if (tooltipData.label === 'forward') {
-      if (this.state.storyInd !== storyData.length - 1) {
+      if (this.state.storyInd !== this.props.storyData.length - 1) {
         sIndex = this.state.storyInd + 1
       } else {
         sIndex = 0
       }
     }
     this.initTopics(this.props, sIndex)
-    this.setState({storyInd: sIndex, currentID: [[], [], []]})
+    this.setState({storyInd: sIndex, currentID: new Array(3)})
   }
   constructor (props) {
     super(props)
     this.state = {
       dataUp: 0,
       storyInd: 0,
-      currentID: [[], [], []],
+      currentID: new Array(3),
       selectedTopics: []
     }
+    this.xScale = setScale('ordinalBand')
+    this.yScale = setScale('ordinalBand')
+    this.prefScale = d3.scaleOrdinal(d3.schemeCategory20)
+
+    this.updateDR = this.updateDR.bind(this)
+
+    this.updateDR(props)
+
     this.onEnter = this._onEnter.bind(this)
     this.onLeave = this._onLeave.bind(this)
     this.onClick = this._onClick.bind(this)
     this.onMoveClick = this._onMoveClick.bind(this)
-    // might not need pref scale if not coloring bars
-    this.prefScale = d3.scale.category20()
     this.lineData = []
     this.barData = []
     this.tType = ['hour-Curr-', 'enduring-Curr-', 'enduring-Prev-']
     this.currStory = []
     this.currData = []
+
+    this.initTopics(props, 0)
   }
   shouldComponentUpdate (nextProps, nextState) {
-    if (this.props.data.length <= 0) {
-      console.log('SVprobNoDataWillRProps')
-      this.setState({dataUp: 1})
-    }
     return true
     // return nextProps.data.length !== this.props.data.length || nextProps.loading !== this.props.loading
   }
@@ -103,14 +95,7 @@ class StoryViewer extends React.Component {
     }
   }
   componentWillReceiveProps (nextProps) {
-    let xDomain = [0, 1, 2, 3]
-    this.props.xScale.domain(xDomain)
-    this.props.yScale.domain([nextProps.maxTopics + 2, 0.00001])
-    this.statArr = new Array(nextProps.data.length)
-    for (let i = 0; i < nextProps.data.length; i++) {
-      this.statArr[i] = new Array(nextProps.data[i].length)
-    }
-    this.prefScale.domain(nextProps.colorDomain)
+    this.updateDR(nextProps)
     this.initTopics(nextProps, 0)
   }
   componentWillMount () {
@@ -120,6 +105,17 @@ class StoryViewer extends React.Component {
   componentDidMount () {
   }
   componentWillUnmount () {
+  }
+
+  updateDR (props) {
+    // let xDomain = [0, 1, 2, 3]
+    this.xScale
+      .domain(d3.range(0, 4, 1))
+      .range([0, props.chartWidth])
+    this.yScale
+      .domain(d3.range(props.maxTopics + 2, -1, -1))
+      .range([0, props.chartHeight])
+    this.prefScale.domain(props.colorDomain)
   }
 
   buildABar (bin, name, text, height, width, x, y, barStyle, txtStyle) {
@@ -166,14 +162,14 @@ class StoryViewer extends React.Component {
     // let lineData = []
     // console.log('storyData0', storyData[0])
     // setting current story
-    this.currStory = storyData[storyInd]
-    props.xScale.rangeRoundBands([0, props.chartWidth], props.padding, props.outerPadding)
+    this.currStory = this.props.storyData[storyInd]
+    this.xScale.rangeRound([0, props.chartWidth])
+    this.xScale.padding(props.padding)
     let timeStepBars = []
-    console.log('zero', props.xScale(0))
     // setting up data for (ex: hr[01], end[01]. end[00])
-    this.currData[0] = hrTopics[storyInd + 1]
-    this.currData[1] = eTopics[storyInd + 1]
-    this.currData[2] = eTopics[storyInd + 0]
+    this.currData[0] = this.props.hrTopics[storyInd + 1]
+    this.currData[1] = this.props.eTopics[storyInd + 1]
+    this.currData[2] = this.props.eTopics[storyInd + 0]
     // cycling through data for particular story index
     for (let k = 0; k < 3; k++) {
       // making bar data for each data set
@@ -183,7 +179,7 @@ class StoryViewer extends React.Component {
           data[0] = 'EMPTY'
         }
         let posY = this.props.chartHeight / Object.keys(this.currData[k]).length * i
-        let posX = props.xScale(k)
+        let posX = this.xScale(k + 1)
         let fontSize = 12
         let cName = this.tType[k] + (storyInd + 1).toString() + '-index-' + i
         // let topicColor = {stroke: this.prefScale(data[0].split(/:|-/, 1)[0])}
@@ -243,8 +239,8 @@ class StoryViewer extends React.Component {
     let moveLabels = ['back', 'forward']
     let moveFontS = 20
     let moveBH = moveFontS + 10
-    let moveStart = props.xScale(0) / 8
-    let moveBW = (props.xScale(0) - moveStart) / 3
+    let moveStart = this.xScale(0) / 8
+    let moveBW = (this.xScale(0) - moveStart) / 3
     let moveButt = moveLabels.map((label, i) => {
       let data = label
       let posY = 20
@@ -265,15 +261,18 @@ class StoryViewer extends React.Component {
     this.moveBars = (
       <g key={'movers'}>
         {moveButt}
-        <text fontSize={moveFontS} x={moveStart} y={90} >{'hour' + (storyInd + 1).toString()}</text>
       </g>
     )
   }
   renderTopics () {
-    // console.log('SVRenderID', this.state.currentID)
     let svgBins = this.barData.map((array, index) => {
+      let bIndex = this.state.currentID[index]
       return array.map((data, i) => {
         let key = 'bar-' + i + index
+        if (i === bIndex) {
+          // do something
+          console.log(bIndex)
+        }
         return (
           <g key={key}>
             <TextBar {...data} onEnter={this.onEnter} onLeave={this.onLeave} onClick={this.onClick} />
@@ -298,14 +297,18 @@ class StoryViewer extends React.Component {
       if (i === 0 || i === 1) {
         type = type + (this.state.storyInd + 1).toString() + ': '
       } else { type = type + this.state.storyInd.toString() + ': ' }
-      let info = this.state.currentID[i].map((data, index) => {
-        return (
-          <text key={this.tType[i] + 'info-' + index} fontSize='14px' x={this.props.xScale(3) - this.props.xScale(0) / 2 + 10} y={startPos + 20 + index * 16} >{data}</text>
-        )
-      })
+      let info = []
+      if (this.state.currentID[i] != null) {
+        let text = this.currData[i][this.state.currentID[i]]
+        info = text.map((data, index) => {
+          return (
+            <text key={this.tType[i] + 'info-' + index} fontSize='14px' x={this.xScale(0) / 8 + 10} y={startPos + 20 + index * 16} >{data}</text>
+          )
+        })
+      }
       svgInfo[i] = (
         <g key={'view' + i}>
-          <text fontSize='20px' x={this.props.xScale(3) - this.props.xScale(0) / 2} y={startPos} style={{fontWeight: 'bold', textDecoration: 'underline'}}>{type}</text>
+          <text fontSize='20px' x={this.xScale(0) / 8} y={startPos} style={{fontWeight: 'bold', textDecoration: 'underline'}}>{type}</text>
           {info}
         </g>
       )
@@ -346,7 +349,7 @@ class StoryViewer extends React.Component {
 
   render () {
     let renderEl = null
-    if (this.props.data.length <= 0) {
+    if (this.props.storyData.length <= 0) {
       console.log('probably no data')
       renderEl = this.renderLoadAnimation(this.props)
     } else {
@@ -364,16 +367,15 @@ StoryViewer.defaultProps = {
   chartWidth: 0,
   barHeight: 20,
   maxTopics: 60,
-  lineType: 'curved'
+  lineType: 'curved',
+  onEnter: () => null,
+  onLeave: () => null
 }
 
 StoryViewer.propTypes = {
-  className: PropTypes.string.isRequired,
   loading: PropTypes.bool,
   padding: PropTypes.number.isRequired,
   outerPadding: PropTypes.number.isRequired,
-  xScale: PropTypes.any,
-  yScale: PropTypes.any,
   data: PropTypes.any,
   status: PropTypes.string,
   chartHeight: PropTypes.number.isRequired,
@@ -381,7 +383,12 @@ StoryViewer.propTypes = {
   barHeight: PropTypes.number.isRequired,
   maxTopics: PropTypes.number.isRequired,
   colorDomain: PropTypes.array,
-  lineType: PropTypes.string.isRequired
+  lineType: PropTypes.string.isRequired,
+  storyData: PropTypes.any,
+  hrTopics: PropTypes.any,
+  eTopics: PropTypes.any,
+  onEnter: PropTypes.func,
+  onLeave: PropTypes.func
 }
 
 export default StoryViewer

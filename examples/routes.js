@@ -8,7 +8,8 @@ import ScatterplotExample from './ScatterplotExample'
 import ChoroplethExample from './ChoroplethExample'
 import CircumshakerExample from './CircumshakerExample'
 import ScatterHeatmapExample from './ScatterHeatmapExample'
-// import TopicsExample from './TopicsExample'
+import TopicsExample from './TopicsExample'
+import SingleTopicExample from './SingleTopicExample'
 
 const reactRouterRoutes = (
   <Router history={browserHistory}>
@@ -20,7 +21,8 @@ const reactRouterRoutes = (
       <Route path='/choropleth' component={ChoroplethExample} />
       <Route path='/circumshaker' component={CircumshakerExample} />
       <Route path='/scatterHeatmap' component={ScatterHeatmapExample} />
-      {/* <Route path='/topics' component={TopicsExample} /> */}
+      <Route path='/topics' component={TopicsExample} />
+      <Route path='/id' component={SingleTopicExample} />
     </Route>
   </Router>
 )

@@ -1,130 +1,37 @@
 import React, { PropTypes } from 'react'
 import ReactTransitionGroup from 'react-addons-transition-group'
-import { scaleLinear, select, easeLinear, range, extent, max, min, set, ascending } from 'd3'
+import { extent, max, min, range, ascending, set } from 'd3'
 
-class Node extends React.Component {
-  componentWillEnter (callback) {
-    let node = select(this.refs.node)
-
-    node.transition().duration(750).ease(easeLinear)
-      .attr('cx', this.props.cx)
-      .attr('cy', this.props.cy)
-      .attr('r', this.props.r)
-      .on('end', () => {
-        callback()
-      })
-  }
-
-  componentWillLeave (callback) {
-    let node = select(this.refs.node)
-    node.transition().duration(750).ease(easeLinear)
-      .attr('cx', 0)
-      .attr('cy', 0)
-      .attr('r', 0)
-      .on('end', () => {
-        callback()
-      })
-  }
-
-  componentWillUpdate (nextProps) {
-    let node = select(this.refs.node)
-    let componentMoved = node.attr('cx') !== nextProps.cx &&
-      node.attr('cy') !== nextProps.cy &&
-      node.attr('r') !== nextProps.r
-    // Check if leaving
-    if (componentMoved) {
-      node.transition().duration(750).ease(easeLinear)
-        .attr('cx', nextProps.cx)
-        .attr('cy', nextProps.cy)
-        .attr('r', nextProps.r)
-    }
-  }
-
-  render () {
-    return (
-      <circle
-        ref='node'
-        data-nodeIndex={this.props['data-nodeIndex']}
-        data-nodeKey={this.props['data-nodeKey']}
-        data-nodeValue={this.props['data-nodeValue']}
-        onMouseEnter={this.props.onMouseEnter}
-        onMouseLeave={this.props.onMouseLeave}
-        className={this.props.className} />
-    )
-  }
-}
-
-Node.propTypes = {
-  r: PropTypes.number,
-  cx: PropTypes.number,
-  cy: PropTypes.number,
-  'data-nodeIndex': PropTypes.any,
-  'data-nodeKey': PropTypes.any,
-  'data-nodeValue': PropTypes.any,
-  onMouseEnter: PropTypes.func,
-  onMouseLeave: PropTypes.func,
-  className: PropTypes.string
-}
-
-class Path extends React.Component {
-  componentWillEnter (callback) {
-    let path = select(this.refs.path)
-    path.transition().duration(750).ease(easeLinear)
-      .attr('stroke-opacity', 1)
-      .on('end', () => {
-        callback()
-      })
-  }
-
-  componentWillLeave (callback) {
-    let path = select(this.refs.path)
-    path.transition().duration(750).ease(easeLinear)
-      .style('stroke-opacity', 0)
-      .on('end', () => {
-        callback()
-      })
-  }
-
-  render () {
-    return (
-      <path
-        ref='path'
-        d={this.props.d}
-        className={this.props.className}
-        display={this.props.display} />
-    )
-  }
-}
-
-Path.propTypes = {
-  className: PropTypes.string,
-  display: PropTypes.string,
-  d: PropTypes.string
-}
+import SVGComponent from './SVGComponent'
+import { setScale } from './util/d3'
 
 class Circumshaker extends React.Component {
   constructor (props) {
     super(props)
 
-    this.graph = {
-      nodes: [],
-      links: []
-    }
+    this.graph = {}
 
     this.depth = 0
     this.radius = 0
-    this.nodeSizeScale = scaleLinear()
+
+    this.nodeSizeScale = setScale('linear')
+
+    this.generateGraph = this.generateGraph.bind(this)
 
     this.onClick = this.onClick.bind(this)
     this.onEnter = this.onEnter.bind(this)
     this.onLeave = this.onLeave.bind(this)
-    this.renderLoadAnimation = this.renderLoadAnimation.bind(this)
-    this.renderCircumshaker = this.renderCircumshaker.bind(this)
+
+    this.generateGraph(props)
   }
 
   // Update the domain for the shared scale
   componentWillReceiveProps (nextProps) {
-    if (Object.keys(nextProps.data).length > 0) {
+    this.generateGraph(nextProps)
+  }
+
+  generateGraph (props) {
+    if (Object.keys(props.data).length > 0) {
       let graph = this.graph
 
       // Instantiate nodes and links
@@ -138,6 +45,7 @@ class Circumshaker extends React.Component {
         let node = (depth !== 0)
           ? {key: data.key_as_string, value: data.doc_count, depth: depth}
           : {key: data.source_ip, value: data.dest_ip.length, depth: 0}
+        node.data = data
 
         // Find possible duplicates
         let duplicate = (graph.nodes.filter((d) => d.key === node.key))
@@ -180,7 +88,7 @@ class Circumshaker extends React.Component {
       }
 
       // Populate graph
-      generateGraph(nextProps.data)
+      generateGraph(props.data)
 
       // Sort nodes and set parents to null
       graph.nodes
@@ -244,11 +152,11 @@ class Circumshaker extends React.Component {
       })
 
       // Determine maximum depth allowed for rendering
-      this.depth = Math.min(max(this.graph.nodes, (d) => d.depth), nextProps.maxDepth)
+      this.depth = Math.min(max(this.graph.nodes, (d) => d.depth), props.maxDepth)
 
       // Determine radius
       // NOTE: This is used as more of a radius 'band'
-      this.radius = min([nextProps.chartWidth, nextProps.chartHeight]) /
+      this.radius = min([props.chartWidth, props.chartHeight]) /
         (this.depth) / 2
 
       // Determine properties used for each node during drawing
@@ -259,8 +167,8 @@ class Circumshaker extends React.Component {
       // wedge - degree 'space' allotted for a node
       // radius - radius used for drawing node
       graph.nodes.forEach((d, i) => {
-        d.x = nextProps.chartWidth / 2
-        d.y = nextProps.chartHeight / 2
+        d.x = props.chartWidth / 2
+        d.y = props.chartHeight / 2
         d.degree = 0
         d.startAngle = 0
         d.wedge = 360
@@ -299,8 +207,8 @@ class Circumshaker extends React.Component {
       })
 
       // Find max node size if not predefined
-      let maxSize = nextProps.nodeMaxSize !== null
-      ? nextProps.nodeMaxSize
+      let maxSize = props.nodeMaxSize !== null
+      ? props.nodeMaxSize
       : Math.min(graph.nodes.reduce((prev, curr) => {
         let r = this.radius * curr.depth
         let theta = curr.startAngle > curr.degree
@@ -313,7 +221,7 @@ class Circumshaker extends React.Component {
 
       // Create scale that determines node size
       this.nodeSizeScale
-        .range([nextProps.nodeMinSize, maxSize])
+        .range([props.nodeMinSize, maxSize])
         .domain(extent(this.graph.nodes, (d) => {
           return this.graph.links.filter((g) => {
             return g.source === d || g.target === d
@@ -322,17 +230,15 @@ class Circumshaker extends React.Component {
     }
   }
 
-  onClick (event) {
-    this.props.onClick(event)
+  onClick (event, data, index) {
+    this.props.onClick(event, data, index)
   }
 
-  onEnter (event) {
-    let node = event.target
-    this.props.onEnter(this.tooltipData(node), node)
+  onEnter (event, data, index) {
+    this.props.onEnter(event, data, index)
 
     // Only display linking paths
-    let nodeIndex = node.getAttribute('data-nodeIndex')
-    let gNode = this.graph.nodes[nodeIndex]
+    let gNode = this.graph.nodes[index]
     this.graph.links.forEach((d, i) => {
       d.display = (d.source === gNode || d.target === gNode)
         ? 'block'
@@ -343,29 +249,18 @@ class Circumshaker extends React.Component {
     this.forceUpdate()
   }
 
-  onLeave (event) {
-    let node = event.target
-    this.props.onLeave(this.tooltipData(node), node)
+  onLeave (event, data, index) {
+    this.props.onLeave(event, data, index)
 
     // Display all paths once again
     this.graph.links.forEach((d, i) => {
       d.display = 'block'
     })
-    // NOTE: This might not be the most efficient
-    // look into betters way sometime
+    // NOTE: This might not be the most efficient ... may need better way
     this.forceUpdate()
   }
 
-  tooltipData (node) {
-    let label = node.getAttribute('data-nodeKey')
-    let count = node.getAttribute('data-nodeValue')
-    return {
-      label,
-      count
-    }
-  }
-
-  renderCircumshaker () {
+  render () {
     let {chartWidth, chartHeight} = this.props
 
     const det = (a, b, c) => {
@@ -394,44 +289,53 @@ class Circumshaker extends React.Component {
       <g className={this.props.className}>
         <g>
           {range(1, this.depth + 1, 1).map((d, i) => {
-            let cocentricCircleProps = {
-              className: 'cocentricCircle',
-              key: i,
-              r: this.radius * d,
-              cx: chartWidth / 2,
-              cy: chartHeight / 2
-            }
             return (
-              <circle {...cocentricCircleProps} />
+              <circle
+                className='cocentricCircle'
+                key={i}
+                r={this.radius * d}
+                cx={chartWidth / 2}
+                cy={chartHeight / 2} />
             )
           })}
         </g>
-        <ReactTransitionGroup component='g'>
-          {this.graph.links.map((d, i) => {
-            let linkProps = {
-              className: 'link',
-              key: d.source.key.replace(/\W/g, '') + '-' + d.target.key.replace(/\W/g, ''),
-              display: (typeof d.display === 'undefined')
+        {this.graph.links.map((d, i) => {
+          return (
+            <path
+              key={d.source.key.replace(/\W/g, '') + '-' + d.target.key.replace(/\W/g, '')}
+              className='link'
+              d={path(d)}
+              display={typeof d.display === 'undefined'
                 ? 'block'
-                : d.display,
-              d: path(d)
-            }
-            return (
-              <Path {...linkProps} />
-            )
-          })}
-        </ReactTransitionGroup>
+                : d.display
+              } />
+          )
+        })}
         <ReactTransitionGroup component='g'>
           {this.graph.nodes.map((d, i) => {
             return (
-              <Node
+              <SVGComponent
                 key={d.key.replace(/\W/g, '')}
-                data-nodeIndex={i}
-                data-nodeKey={d.key}
-                data-nodeValue={d.value}
+                className='node'
+                Component='circle'
+                data={d}
+                index={i}
+                onClick={this.onClick}
                 onMouseEnter={this.onEnter}
                 onMouseLeave={this.onLeave}
-                className='node'
+                onUpdate={{
+                  duration: 500,
+                  delay: 0,
+                  ease: 'cubic'
+                }}
+                onExit={{
+                  duration: 1000,
+                  delay: 0,
+                  ease: 'linear',
+                  cx: 0,
+                  cy: 0,
+                  r: 0
+                }}
                 r={this.nodeSizeScale(this.graph.links.filter((g) => {
                   return g.source === d || g.target === d
                 }).length)}
@@ -443,36 +347,6 @@ class Circumshaker extends React.Component {
       </g>
     )
   }
-
-  renderLoadAnimation () {
-    let {chartWidth, chartHeight, ...props} = this.props
-    let xPos = Math.floor(chartWidth / 2)
-    let yPos = Math.floor(chartHeight / 2)
-    let messageText = 'Loading data...'
-    if (!props.loading) {
-      if (props.status === 'Failed to fetch') {
-        messageText = 'Can\'t connect to API URL'
-      } else if (props.status !== 'OK') {
-        messageText = 'Error retrieving data: ' + props.status
-      } else {
-        messageText = 'No data returned!'
-      }
-    }
-    return (
-      <g className='loading-message'>
-        <text x={xPos} y={yPos}>{messageText}</text>
-      </g>
-    )
-  }
-
-  render () {
-    let renderEl = null
-    renderEl = this.renderLoadAnimation()
-    if (Object.keys(this.props.data).length > 0 && this.props.chartWidth !== 0) {
-      renderEl = this.renderCircumshaker()
-    }
-    return renderEl
-  }
 }
 
 Circumshaker.defaultProps = {
@@ -480,13 +354,7 @@ Circumshaker.defaultProps = {
   nodeMaxSize: null,
   maxDepth: 3,
   labelField: 'label',
-  chartHeight: 0,
-  chartWidth: 0,
-  className: 'Circumshaker',
   data: {},
-  dataLoading: false,
-  status: '',
-  type: '',
   onClick: () => {},
   onEnter: () => {},
   onLeave: () => {}
@@ -497,16 +365,13 @@ Circumshaker.propTypes = {
   nodeMaxSize: PropTypes.number,
   maxDepth: PropTypes.number,
   labelField: PropTypes.string,
-  chartHeight: PropTypes.number.isRequired,
-  chartWidth: PropTypes.number.isRequired,
-  className: PropTypes.string.isRequired,
+  chartHeight: PropTypes.number,
+  chartWidth: PropTypes.number,
+  className: PropTypes.string,
   data: PropTypes.object,
-  dataLoading: PropTypes.bool,
   onClick: PropTypes.func,
   onEnter: PropTypes.func,
-  onLeave: PropTypes.func,
-  status: PropTypes.string,
-  type: PropTypes.string
+  onLeave: PropTypes.func
 }
 
 export default Circumshaker

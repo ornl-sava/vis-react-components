@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react'
 import ReactDom from 'react-dom'
-import Bar from './Bar'
+// import Bar from './Bar'
 
 class TextBar extends React.Component {
   _onMouseEnter () {
@@ -20,6 +20,7 @@ class TextBar extends React.Component {
     this.props.onClick(this.props.tooltipData)
   }
   _onDoubleClick () {
+    // not used
     this.props.onDoubleClick(this.props.tooltipData)
   }
   constructor (props) {
@@ -60,14 +61,35 @@ class TextBar extends React.Component {
   componentWillUnmount () {
     this._onMouseLeave()
   }
+  makeRect () {
+    let {className, text, width, height, x, y, barStyle, rx, ry} = this.props
+    let rectData = {
+      className: className + ' barTopic',
+      dataName: text,
+      width: width,
+      height: height,
+      x: x,
+      y: y,
+      style: barStyle,
+      rx: rx,
+      ry: ry
+    }
+    return rectData
+  }
+  // <Bar className={className + ' barTopic'} {...props} onClick={this.onClick} onDoubleClick={this.onDoubleClick} onEnter={this.onEnter} onLeave={this.onLeave} style={this.props.barStyle} />
   render () {
+    let {style, ...rProps} = this.makeRect()
     // console.log('txtBar')
     // console.log('txtBar', this.props.text, this.props.barStyle)
     let {className, ...props} = this.props
     return (
       <g>
-        <text className={this.props.className + ' text'} x={this.props.x + this.getTxtAlign()} y={this.props.y + this.props.height / 2} style={this.props.textStyle} onClick={this.onClick} onMouseEnter={this.onEnter} > {props.text} </text>
-        <Bar className={className + ' barTopic'} {...props} onClick={this.onClick} onDoubleClick={this.onDoubleClick} onEnter={this.onEnter} onLeave={this.onLeave} style={this.props.barStyle} />
+        <text className={className + ' text'} x={this.props.x + this.getTxtAlign()} y={this.props.y + this.props.height / 2} style={this.props.textStyle} > {props.text} </text>
+        <rect
+          {...rProps}
+          style={style}
+        />
+        <rect {...rProps} style={{fill: 'black', fillOpacity: 0}} onClick={this.onClick} onMouseEnter={this.onEnter} onMouseLeave={this.onLeave} />
       </g>
     )
   }
@@ -84,6 +106,8 @@ TextBar.defaultProps = {
   tooltipData: {},
   x: 0,
   y: 0,
+  rx: 0,
+  ry: 0,
   font: 12,
   textAlign: 'left',
   textStyle: { textAnchor: 'start', fontSize: '12px' },
@@ -102,19 +126,22 @@ TextBar.propTypes = {
   tooltipData: PropTypes.object,
   x: PropTypes.number.isRequired,
   y: PropTypes.number.isRequired,
+  rx: PropTypes.number,
+  ry: PropTypes.number,
   font: PropTypes.number.isRequired,
   barStyle: PropTypes.object,
   textStyle: PropTypes.object,
   textAlign: PropTypes.string.isRequired,
   text: PropTypes.string.isRequired,
-  sel: PropTypes.bool.isRequired
+  sel: PropTypes.bool.isRequired,
+  data: PropTypes.any
 }
 
 // Only required for REST calls
 TextBar.contextTypes = {
   filterField: PropTypes.string,
+  filterString: PropTypes.string,
   filterType: PropTypes.string,
-  params: PropTypes.object,
   updateFilter: PropTypes.func
 }
 

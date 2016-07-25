@@ -1,6 +1,8 @@
 import React, { PropTypes } from 'react'
+import { scaleOrdinal, schemeCategory20, range } from 'd3'
+import { setScale } from './util/d3'
+
 import TextBar from './TextBar'
-import d3 from 'd3'
 
 const layout = (initRowNum, maxColLength, data) => {
   let numCol = data.length / initRowNum
@@ -39,33 +41,19 @@ class ColorView extends React.Component {
   _onLeave (toolTipData, svgElement) {
   }
   _onClick (toolTipData) {
-    console.log('clicked', toolTipData)
+    // console.log('clicked', toolTipData)
     let index = toolTipData.label
     let newClickArray = this.props.clickArray
-    // might want to move this up and make constant?
-    // used to check if all the topics are selected
-    /* let checkClick = () => {
-      for (let i in newClickArray) {
-        if (!newClickArray[i]) {
-          return false
-        }
-      }
-      return true
-    }*/
-    // if all are clicked the resets it to the only the one being clicked
-    // else toggle on / off
     if (index === 'CLEAR') {
       for (let i in newClickArray) {
         newClickArray[i] = false
       }
       this.colorDomain[toolTipData.counts] = 'ALL'
-      // newClickArray[index] = true
     } else if (index === 'ALL') {
       for (let i in newClickArray) {
         newClickArray[i] = true
       }
       this.colorDomain[toolTipData.counts] = 'CLEAR'
-      // newClickArray[index] = true
     } else {
       newClickArray[index] = !newClickArray[index]
     }
@@ -77,20 +65,28 @@ class ColorView extends React.Component {
       dataUp: 0,
       currentID: []
     }
+    if (this.props.spread === 'vertical') {
+      this.xScale = setScale('ordinalBand')
+      this.yScale = setScale('ordinalBand')
+    } else {
+      this.xScale = setScale('ordinal')
+      this.yScale = setScale('ordinal')
+    }
+
+    this.updateDR = this.updateDR.bind(this)
+
+    this.data = props.colorDomain
+
     this.onEnter = this._onEnter.bind(this)
     this.onLeave = this._onLeave.bind(this)
-    this.prefScale = d3.scale.category20()
+    this.prefScale = scaleOrdinal(schemeCategory20)
     this.onClick = this._onClick.bind(this)
-    if (this.props.spread === 'vertical') {
-      this.xScale = this.props.xScale
-      this.yScale = this.props.yScale
-    } else {
-      this.xScale = d3.scale.ordinal()
-      this.yScale = d3.scale.ordinal()
-    }
+
     this.rData = []
     this.colorDomain = JSON.parse(JSON.stringify(this.props.colorDomain))
     this.colorDomain.push('CLEAR')
+
+    this.updateDR(props)
   }
   shouldComponentUpdate (nextProps, nextState) {
     if (this.props.colorDomain == null) {
@@ -102,16 +98,8 @@ class ColorView extends React.Component {
   componentWillUpdate (nextProps) {
   }
   componentWillReceiveProps (nextProps) {
-    if (this.props.spread === 'vertical') {
-      this.xScale.domain([0, 1])
-      this.yScale.domain([nextProps.colorDomain.length + 2, 0.00001])
-    } else {
-      this.rData = layout(2, 10, this.props.colorDomain)
-      this.yScale.domain(Object.keys(this.rData))
-      this.yScale.rangeRoundBands([0, this.props.chartHeight], this.props.padding, this.props.outerPadding)
-    }
-    this.prefScale.domain(nextProps.colorDomain)
     this.data = nextProps.colorDomain
+    this.updateDR(nextProps)
   }
   componentWillMount () {
     // console.log('willMountChartHeight', this.props.chartHeight)
@@ -121,10 +109,22 @@ class ColorView extends React.Component {
     // console.log('didMountChartHeight', this.props.chartHeight)
     if (this.props.colorDomain == null) {
       console.log('probNoDataDidMount')
-      this.setState({dataUp: 1})
     }
   }
   componentWillUnmount () {
+  }
+  updateDR (props) {
+    this.prefScale.domain(props.colorDomain)
+    if (props.spread === 'vertical') {
+      this.xScale.domain([0, 1])
+      this.yScale
+        .domain(range(props.colorDomain.length + 2, -1, -1))
+        .range([props.chartHeight, 0])
+    } else {
+      this.rData = layout(2, 10, props.colorDomain)
+      this.yScale.domain(Object.keys(this.rData))
+      this.yScale.rangeRoundBands([0, props.chartHeight], props.padding, props.outerPadding)
+    }
   }
   // add tool tip data here later so I don't have to call it in set up
   buildABar (bin, text, height, width, x, y, barStyle, txtStyle) {
@@ -167,12 +167,12 @@ class ColorView extends React.Component {
   renderTopics (props) {
     let colorBars = []
     if (this.props.spread === 'vertical') {
-      let barHeight = this.yScale(1)
+      let barHeight = this.yScale(1) - this.yScale(0)
       let barWidth = props.chartWidth * 0.9
       let fontSize = barHeight * 0.8
       let barTxtStyle = this.buildAText(fontSize.toString() + 'px', 'black')
       // checking if ordinal or not
-      if (typeof props.xScale.rangePoints === 'function') {
+      if (typeof this.xScale.rangePoints === 'function') {
         this.xScale.rangeRoundBands([0, props.chartWidth], props.padding, props.outerPadding)
       } else {
         this.xScale.range([0, props.chartWidth])
@@ -240,7 +240,7 @@ class ColorView extends React.Component {
       )
     })
     return (
-      <g>
+      <g className='colorView' >
         {svgBins}
       </g>
     )
@@ -295,7 +295,6 @@ ColorView.propTypes = {
   onBarClick: PropTypes.func,
   clickArray: PropTypes.any.isRequired,
   spread: PropTypes.string.isRequired,
-  className: PropTypes.string.isRequired,
   loading: PropTypes.bool,
   padding: PropTypes.number.isRequired,
   outerPadding: PropTypes.number.isRequired,

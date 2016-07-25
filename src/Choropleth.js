@@ -1,27 +1,22 @@
 import React, { PropTypes } from 'react'
-import { geoPath, geoEquirectangular, scaleLinear, scaleQuantile, interpolateHcl, range } from 'd3'
+import { geoPath, geoEquirectangular } from 'd3'
 import topojson from 'topojson'
 
 class Choropleth extends React.Component {
   constructor (props) {
     super(props)
-
-    this.selectedColorScale = scaleQuantile()
-    this.unselectedColorScale = scaleQuantile()
-
     this.projection = geoEquirectangular()
     this.path = geoPath()
       .projection(this.projection)
 
-    this.tooltipData = this.tooltipData.bind(this)
+    this.getDatum = this.getDatum.bind(this)
     this.onClick = this.onClick.bind(this)
     this.onEnter = this.onEnter.bind(this)
     this.onLeave = this.onLeave.bind(this)
-    this.renderLoadAnimation = this.renderLoadAnimation.bind(this)
-    this.renderMap = this.renderMap.bind(this)
+    this.onMove = this.onMove.bind(this)
   }
 
-  tooltipData (id) {
+  getDatum (id) {
     // Get datum based on id
     let index = -1
     this.props.data.forEach((d, i) => {
@@ -31,41 +26,34 @@ class Choropleth extends React.Component {
       }
     })
 
-    let datum = this.props.data[index]
-    let count = (typeof datum === 'undefined')
-      ? 0
-      : datum[this.props.valueField]
-
-    let tooltipData = {
-      key: id,
-      value: count
-    }
-
-    return tooltipData
+    return this.props.data[index]
   }
 
   onClick (event) {
-    let node = event.target
-    let id = node.getAttribute('data-id')
-    this.props.onClick.apply(this, [id])
-
-    // Call this to remove tooltip
-    this.props.onLeave(this.tooltipData(id), node)
+    let target = event.target
+    let id = target.getAttribute('data-id')
+    this.props.onClick(event, this.getDatum(id))
   }
 
   onEnter (event) {
-    let node = event.target
-    let id = node.getAttribute('data-id')
-    this.props.onEnter(this.tooltipData(id), node)
+    let target = event.target
+    let id = target.getAttribute('data-id')
+    this.props.onEnter(event, this.getDatum(id))
   }
 
   onLeave (event) {
-    let node = event.target
-    let id = node.getAttribute('data-id')
-    this.props.onLeave(this.tooltipData(id), node)
+    let target = event.target
+    let id = target.getAttribute('data-id')
+    this.props.onLeave(event, this.getDatum(id))
   }
 
-  renderMap () {
+  onMove (event) {
+    let target = event.target
+    let id = target.getAttribute('data-id')
+    this.props.onMove(event, this.getDatum(id))
+  }
+
+  render () {
     // Get map bounds and scaling
     let mapBounds = this.path.bounds(topojson.feature(this.props.map, this.props.map.objects.countries))
     let mapScale = this.projection.scale()
@@ -83,39 +71,6 @@ class Choropleth extends React.Component {
     this.path
       .projection(this.projection)
 
-    // Generate scale to determine class for coloring
-    let tempSelectedColorScale = scaleLinear()
-      .domain([0, this.props.numColorCat])
-      .range([this.props.selectedMinColor, this.props.selectedMaxColor])
-      .interpolate(interpolateHcl)
-
-    let tempUnselectedColorScale = scaleLinear()
-      .domain([0, this.props.numColorCat])
-      .range([this.props.unselectedMinColor, this.props.unselectedMaxColor])
-      .interpolate(interpolateHcl)
-
-    let colorDomain = [0]
-    this.props.data
-      .forEach((d) => {
-        let datum = d[this.props.valueField]
-        if (datum > 0) colorDomain.push(datum)
-      })
-
-    let selectedColorRange = []
-    let unselectedColorRange = []
-    range(this.props.numColorCat).map((i) => {
-      selectedColorRange.push(tempSelectedColorScale(i))
-      unselectedColorRange.push(tempUnselectedColorScale(i))
-    })
-
-    this.selectedColorScale
-      .domain(colorDomain)
-      .range(selectedColorRange)
-
-    this.unselectedColorScale
-      .domain(colorDomain)
-      .range(unselectedColorRange)
-
     // Helper to get datum and return color
     const getColor = (id) => {
       // Find associated datum
@@ -130,8 +85,8 @@ class Choropleth extends React.Component {
       let color = this.props.unselectedMinColor
       if (typeof datum !== 'undefined') {
         color = datum[this.props.selectedField] === this.props.selectedValue
-          ? this.selectedColorScale(datum[this.props.valueField])
-          : this.unselectedColorScale(datum[this.props.valueField])
+          ? this.props.selectedColorScale(datum[this.props.valueField])
+          : this.props.unselectedColorScale(datum[this.props.valueField])
       }
       return color
     }
@@ -140,13 +95,17 @@ class Choropleth extends React.Component {
       <g>
         <g>
           {topojson.feature(this.props.map, this.props.map.objects.countries).features.map((d, i) => {
-            return (<path key={i}
-              data-id={d.id}
-              d={this.path(d, i)}
-              fill={getColor(d.id)}
-              onClick={this.onClick}
-              onMouseEnter={this.onEnter}
-              onMouseLeave={this.onLeave} />)
+            return (
+              <path
+                key={i}
+                data-id={d.id}
+                d={this.path(d, i)}
+                fill={getColor(d.id)}
+                onClick={this.onClick}
+                onMouseEnter={this.onEnter}
+                onMouseLeave={this.onLeave}
+                onMouseMove={this.onMove} />
+            )
           })}
         </g>
         <g>
@@ -157,35 +116,6 @@ class Choropleth extends React.Component {
       </g>
     )
   }
-
-  renderLoadAnimation () {
-    let xPos = Math.floor(this.props.chartWidth / 2)
-    let yPos = Math.floor(this.props.chartHeight / 2)
-    let messageText = 'Loading data...'
-    if (!this.props.loading) {
-      if (this.props.status === 'Failed to fetch') {
-        messageText = 'Can\'t connect to API URL'
-      } else if (this.props.status !== 'OK') {
-        messageText = 'Error retrieving data: ' + this.props.status
-      } else {
-        messageText = 'No data returned!'
-      }
-    }
-    return (
-      <g className='loading-message'>
-        <text x={xPos} y={yPos}>{messageText}</text>
-      </g>
-    )
-  }
-
-  render () {
-    let renderEl = null
-    renderEl = this.renderLoadAnimation(this.props)
-    if (this.props.data.length > 0 && this.props.chartWidth !== 0) {
-      renderEl = this.renderMap(this.props)
-    }
-    return renderEl
-  }
 }
 
 Choropleth.defaultProps = {
@@ -194,47 +124,44 @@ Choropleth.defaultProps = {
   unselectedMinColor: '#f7f7f7',
   unselectedMaxColor: '#636363',
   numColorCat: 20,
-  chartHeight: 0,
-  chartWidth: 0,
-  className: 'choropleth',
   data: [],
   keyField: 'key',
   valueField: 'value',
-  loading: false,
-  status: '',
-  type: '',
+  selectedField: 'selectedField',
+  selectedValue: 'selected',
   onClick: () => {},
   onEnter: () => {},
-  onLeave: () => {}
+  onLeave: () => {},
+  onMove: () => {}
 }
 
 Choropleth.propTypes = {
+  selectedColorScale: PropTypes.func,
+  unselectedColorScale: PropTypes.func,
   selectedMinColor: PropTypes.string,
   selectedMaxColor: PropTypes.string,
   unselectedMinColor: PropTypes.string,
   unselectedMaxColor: PropTypes.string,
   numColorCat: PropTypes.number,
   map: PropTypes.object.isRequired,
-  chartHeight: PropTypes.number.isRequired,
-  chartWidth: PropTypes.number.isRequired,
-  className: PropTypes.string.isRequired,
   data: PropTypes.array,
+  chartWidth: PropTypes.number,
+  chartHeight: PropTypes.number,
   keyField: PropTypes.string,
   valueField: PropTypes.string,
   selectedField: PropTypes.string,
   selectedValue: PropTypes.string,
-  loading: PropTypes.bool,
   onClick: PropTypes.func,
   onEnter: PropTypes.func,
   onLeave: PropTypes.func,
-  status: PropTypes.string
+  onMove: PropTypes.func
 }
 
 // Only required for REST calls
 Choropleth.contextTypes = {
   filterField: PropTypes.string,
+  filterString: PropTypes.string,
   filterType: PropTypes.string,
-  params: PropTypes.object,
   updateFilter: PropTypes.func
 }
 

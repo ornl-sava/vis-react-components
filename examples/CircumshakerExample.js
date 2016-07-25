@@ -1,7 +1,7 @@
 import React from 'react'
-import * as d3 from 'd3'
+import { interval, format } from 'd3'
 
-import { Chart, Circumshaker } from '../src'
+import { CircumshakerChart } from '../src'
 
 const data1 = {
   'source_ip': '124.83.248.123',
@@ -164,22 +164,20 @@ let holder = data2
 
 const toolTipFunction = (d) => {
   var toolTip =
-    '<span class="title">' + d.label + '</span>' +
-    d3.format(',')(d.count)
+    '<span class="title">' + d.key + '</span>' +
+    format(',')(d.value)
   return toolTip
 }
 
 const chartProps = {
   tipFunction: toolTipFunction,
-  height: 800,
-  xAxis: false,
-  yAxis: false
+  height: 800
 }
 
 class CircumshakerExample extends React.Component {
   componentDidMount () {
     let flip = true
-    d3.interval(() => {
+    this.flipper = interval(() => {
       if (flip) {
         holder = data1
         flip = !flip
@@ -190,11 +188,12 @@ class CircumshakerExample extends React.Component {
       this.forceUpdate()
     }, 3 * 1000)
   }
+  componentWillUnmount () {
+    clearInterval(this.flipper)
+  }
   render () {
     return (
-      <Chart {...chartProps} data={holder}>
-        <Circumshaker />
-      </Chart>
+      <CircumshakerChart {...chartProps} data={holder} />
     )
   }
 }
