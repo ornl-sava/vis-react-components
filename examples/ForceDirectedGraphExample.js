@@ -171,6 +171,12 @@ const getNodes = () => {
       })
     }
   })
+  for (let i = 0; i < nData; i++) {
+    nodes.push({
+      events: 'hour-' + i,
+      hour: i
+    })
+  }
   return nodes
 }
 const nodes = getNodes()
@@ -179,6 +185,11 @@ const getLinks = () => {
   let links = []
   aList.map((data, index) => {
     if (data.hour < nData) {
+      links.push({
+        source: nodes.length - (nData - data.hour),
+        target: index,
+        value: nData
+      })
       return data.story.map((d) => {
         // The node is at a hour greater than the current node
         // The node is within the current batch of nodes being viewed

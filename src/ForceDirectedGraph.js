@@ -67,7 +67,7 @@ class ForceDirectedGraph extends React.Component {
     // console.log('FFG-oDStart-i', i)
     this.nodes[i].fx = this.nodePos[0] = pos[0]
     this.nodes[i].fy = this.nodePos[1] = pos[1]
-    this.simulation.alphaTarget(0.6).restart()
+    this.simulation.alphaTarget(0.3).restart()
   }
   onDrag (event) {
     if (this.isDrag) {
@@ -110,7 +110,7 @@ class ForceDirectedGraph extends React.Component {
       // .alphaDecay(0.1) // slower start
       .alphaMin(0.01)
       .force('link', d3.forceLink().id(function (d, i) { return i }))
-      .force('charge', d3.forceManyBody().strength(-5).distanceMax(500))
+      .force('charge', d3.forceManyBody().strength(-30).distanceMax(500))
       .force('center', d3.forceCenter(props.chartWidth / 2, props.chartHeight / 2))
 
     this.simulation
