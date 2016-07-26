@@ -36,6 +36,12 @@ body {
 	stroke-width: 0px;
 	opacity: 0;
 }
+.histogram-bar._overlay.brushed {
+	cursor: crosshair;
+}
+.histogram-bar._overlay.brushed.selection {
+	cursor: move;
+}
 .histogram-bar._overlay.brushed:hover {
 	opacity: 0;
 	stroke-width: 0px;
