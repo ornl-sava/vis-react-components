@@ -3,6 +3,12 @@ import { setScale } from './util/d3'
 import * as d3 from 'd3'
 import Tooltip from './Tooltip'
 
+const bezierLine = (node1, node2) => {
+  return ('M' + node1.x + ',' + node1.y +
+  'S' + node1.x + ',' + (node1.y + node2.y) / 2 +
+  ' ' + node2.x + ',' + node2.y)
+}
+
 class ForceDirectedGraph extends React.Component {
   constructor (props) {
     super(props)
@@ -11,8 +17,8 @@ class ForceDirectedGraph extends React.Component {
       links: JSON.parse(JSON.stringify(props.links))
     }
 
-    this.nodes = props.nodes
-    this.links = props.links
+    this.nodes = JSON.parse(JSON.stringify(props.nodes))
+    this.links = JSON.parse(JSON.stringify(props.links))
 
     this.colScale = d3.scaleOrdinal(d3.schemeCategory10)
     this.xScale = setScale('ordinalBand')
@@ -45,28 +51,44 @@ class ForceDirectedGraph extends React.Component {
     this.onDragEnd = this.onDragEnd.bind(this)
   }
 
+  componentWillMount () {
+    // using the nodes with the x and y values attached in falseStart
+    this.setState({nodes: this.nodes, links: this.links})
+  }
+
   shouldComponentUpdate (nextProps, nextState) {
     // need to have a catch for if the props change rather than state...
     return true
   }
 
+  componentWillUnmount () {
+    console.log('FDG-cWU')
+    this.simulation.stop()
+  }
+
   onDClick (event) {
-    if (this.state.simOn) {
+    if (this.simOn) {
       console.log('FDG-onDC-simOn')
-      this.simOn = true
+      this.simOn = false
+      // both don't need to be on... play with alpha
       this.setSim(this.props)
       this.simulation.restart()
     } else {
       console.log('FDG-onDC-simOff')
-      this.simOn = false
+      this.simOn = true
       this.simulation.stop()
       this.falseStart(this.props)
+      this.setState({nodes: this.nodes, links: this.links})
     }
   }
 
   onEnter (event) {
     let target = this.getDatum(event.target)
-    let tooltipD = {label: 'Hour-' + target.hour, counts: target.events.length}
+    let type = 'Node'
+    if (target.events.indexOf('parent-') >= 0) {
+      type = 'Parent'
+    }
+    let tooltipD = {label: type + ' at Hour ' + target.hour, counts: target.events.length}
     if (target && this.props.tipFunction) {
       this.tip.show(event, tooltipD)
     }
@@ -96,10 +118,15 @@ class ForceDirectedGraph extends React.Component {
   }
   onDrag (event) {
     if (this.isDrag) {
+      let target = this.getDatum(event.target)
+      let tooltipD = {label: ' ', counts: target.events.length}
       let i = this.getIndex(event.target)
       this.nodes[i].fx = (event.clientX - this.pos[0]) + this.nodePos[0]
       this.nodes[i].fy = (event.clientY - this.pos[1]) + this.nodePos[1]
-      // console.log('FFG-oD', event.clientX, event.clientY)
+      // hiding tool tip on drag
+      if (target && this.props.tipFunction) {
+        this.tip.hide(event, tooltipD)
+      }
     }
   }
   onDragEnd (event) {
@@ -141,7 +168,6 @@ class ForceDirectedGraph extends React.Component {
     this.simulation
         .nodes(this.nodes)
         .on('tick', (d, i) => {
-          // console.log('FDG-sS-on-d-this', d, '-', this)
           this.simUpdate(d, i)
         })
 
@@ -149,8 +175,6 @@ class ForceDirectedGraph extends React.Component {
         .links(this.links)
   }
   simUpdate (d, i) {
-    // console.log('FDG-sU-d-i', d, '-', i)
-    // console.log('FDG-nodes', this.nodes)
     this.setState({nodes: this.nodes, links: this.links})
   }
 
@@ -160,10 +184,9 @@ class ForceDirectedGraph extends React.Component {
       d.y = Math.random() * props.chartHeight
     })
     this.links.map((d, i) => {
-      d.source = this.nodes[d.source]
-      d.target = this.nodes[d.target]
+      d.source = this.nodes[props.links[i].source]
+      d.target = this.nodes[props.links[i].target]
     })
-    // this.setState({nodes: this.nodes, links: this.links})
   }
 
   drawSim (props) {
@@ -194,19 +217,25 @@ class ForceDirectedGraph extends React.Component {
       )
     })
     this.state.links.map((data, index) => {
-      let lineData = {
-        x1: data.source.x,
-        y1: data.source.y,
-        x2: data.target.x,
-        y2: data.target.y,
-        style: {stroke: '#cdd5e4', strokeWidth: 2}
+      if (props.isCurved) {
+        linkList.push(
+          <path key={'line-id-' + linkList.length} className='lineMatch' d={bezierLine(data.source, data.target)} style={{stroke: '#cdd5e4', strokeWidth: 2}} />
+        )
+      } else {
+        let lineData = {
+          x1: data.source.x,
+          y1: data.source.y,
+          x2: data.target.x,
+          y2: data.target.y,
+          style: {stroke: '#cdd5e4', strokeWidth: 2}
+        }
+        linkList.push(
+          <line key={'line-id' + linkList.length} {...lineData} />
+        )
       }
-      linkList.push(
-        <line key={'line-id' + linkList.length} {...lineData} />
-      )
     })
     return (
-      <g>
+      <g onDoubleClick={this.onDClick}>
         {linkList}
         {nodeList}
       </g>
@@ -215,8 +244,9 @@ class ForceDirectedGraph extends React.Component {
 
   render () {
     // console.log('FDG-r')
+    let el = null
     let props = this.props
-    let el = this.drawSim(props)
+    el = this.drawSim(props)
     return (
       <g className={props.className + 'fdg'}>
         {el}
@@ -233,7 +263,8 @@ ForceDirectedGraph.defaultProps = {
   onEnter: () => {},
   onLeave: () => {},
   className: '',
-  tipFunction: () => {}
+  tipFunction: () => {},
+  isCurved: true
 }
 
 ForceDirectedGraph.propTypes = {
@@ -250,7 +281,8 @@ ForceDirectedGraph.propTypes = {
   data: PropTypes.array,
   onClick: PropTypes.func,
   onEnter: PropTypes.func,
-  onLeave: PropTypes.func
+  onLeave: PropTypes.func,
+  isCurved: PropTypes.bool
 }
 
 export default ForceDirectedGraph

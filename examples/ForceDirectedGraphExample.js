@@ -160,7 +160,7 @@ const makeAdjacencyList = () => {
 }
 const aList = makeAdjacencyList()
 
-const nData = 7
+const nData = 3
 
 const getNodes = () => {
   let nodes = []
@@ -174,7 +174,7 @@ const getNodes = () => {
   })
   for (let i = 0; i < nData; i++) {
     nodes.push({
-      events: 'hour-' + i,
+      events: 'parent- ' + i,
       hour: i
     })
   }
@@ -195,6 +195,10 @@ const getLinks = () => {
         // The node is at a hour greater than the current node
         // The node is within the current batch of nodes being viewed
         if (d > index && d < nodes.length) {
+        // seperated topics
+        // if (d === index + 1 && d < nodes.length) {
+        // only direct connections...needs a tweak...some aren't direct
+        // if (aList[d].hour === data.hour + 1 && d < nodes.length) {
           links.push({
             source: index,
             target: d,
@@ -215,6 +219,7 @@ const chartProps = {
   nodes: nodes,
   links: links
 }
+console.log('numNodes-', nodes.length, '-numLinks-', links.length)
 
 class TopicsContainer extends React.Component {
   render () {
