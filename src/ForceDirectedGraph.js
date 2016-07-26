@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react'
 import { setScale } from './util/d3'
 import * as d3 from 'd3'
+import Tooltip from './Tooltip'
 
 class ForceDirectedGraph extends React.Component {
   constructor (props) {
@@ -26,6 +27,9 @@ class ForceDirectedGraph extends React.Component {
     this.simulation = d3.forceSimulation()
     this.setSim(props)
 
+    this.tip = props.tipFunction
+      ? new Tooltip().attr('className', 'd3-tip').html(props.tipFunction)
+      : props.tipFunction
     this.onClick = this.onClick.bind(this)
     this.onEnter = this.onEnter.bind(this)
     this.onLeave = this.onLeave.bind(this)
@@ -50,12 +54,20 @@ class ForceDirectedGraph extends React.Component {
   }
 
   onEnter (event) {
-    let target = event.target
-    this.props.onEnter(event, this.getDatum(target))
+    let target = this.getDatum(event.target)
+    let tooltipD = {label: 'Hour-' + target.hour, counts: target.events.length}
+    if (target && this.props.tipFunction) {
+      this.tip.show(event, tooltipD)
+    }
+    this.props.onEnter(event, target)
   }
   onLeave (event) {
-    let target = event.target
-    this.props.onLeave(event, this.getDatum(target))
+    let target = this.getDatum(event.target)
+    let tooltipD = {label: 'Hour-' + target.hour, counts: target.events.length}
+    if (target && this.props.tipFunction) {
+      this.tip.hide(event, tooltipD)
+    }
+    this.props.onLeave(event, target)
   }
 
   onDragStart (event) {
@@ -138,48 +150,6 @@ class ForceDirectedGraph extends React.Component {
     })
   }
 
-  draw (props) {
-    // console.log('FDG-draw-props', props)
-    let nodeList = []
-    let linkList = []
-    // console.log('FDG-draw-state', this.state)
-    // console.log('FDG-draw-radius', props.radius)
-    this.state.nodes.map((d, i) => {
-      let circleProps = {
-        'data-id': i,
-        'r': props.radius,
-        'cx': Math.random() * this.xScale.bandwidth() + this.xScale(d.hour),
-        'cy': Math.random() * props.chartHeight,
-        'fill': this.colScale(d.hour),
-        'data-events': d.events
-        // 'onMouseEnter': this.onEnter,
-        // 'onMouseLeave': this.onLeave,
-        // 'onClick': this.onClick
-      }
-      nodeList.push(
-        <circle key={'cir-id' + i + '-hr-' + d.hour} {...circleProps} />
-      )
-    })
-    this.state.links.map((data, index) => {
-      let lineData = {
-        x1: nodeList[data.source].props.cx,
-        y1: nodeList[data.source].props.cy,
-        x2: nodeList[data.target].props.cx,
-        y2: nodeList[data.target].props.cy,
-        style: {stroke: '#cdd5e4', strokeWidth: 2}
-      }
-      linkList.push(
-        <line key={'line-id' + linkList.length} {...lineData} />
-      )
-    })
-    return (
-      <g>
-        {linkList}
-        {nodeList}
-      </g>
-    )
-  }
-
   drawSim (props) {
     // console.log('FDG-draw-props', props)
     let nodeList = []
@@ -189,7 +159,9 @@ class ForceDirectedGraph extends React.Component {
     let events = {
       'onMouseMove': this.onDrag,
       'onMouseDown': this.onDragStart,
-      'onMouseUp': this.onDragEnd
+      'onMouseUp': this.onDragEnd,
+      'onMouseEnter': this.onEnter,
+      'onMouseLeave': this.onLeave
     }
     this.state.nodes.map((d, i) => {
       let circleProps = {
@@ -198,7 +170,8 @@ class ForceDirectedGraph extends React.Component {
         'cx': d.x,
         'cy': d.y,
         'fill': this.colScale(d.hour),
-        'data-events': d.events
+        'events': d.events,
+        'hour': d.hour
         // 'onMouseEnter': this.onEnter,
         // 'onMouseLeave': this.onLeave,
         // 'onClick': this.onClick
@@ -246,7 +219,8 @@ ForceDirectedGraph.defaultProps = {
   onClick: () => {},
   onEnter: () => {},
   onLeave: () => {},
-  className: ''
+  className: '',
+  tipFunction: () => {}
 }
 
 ForceDirectedGraph.propTypes = {
@@ -255,6 +229,7 @@ ForceDirectedGraph.propTypes = {
   className: PropTypes.string,
   radius: PropTypes.number,
   adjacencyList: PropTypes.any,
+  tipFunction: PropTypes.func,
   nodes: PropTypes.array.isRequired,
   links: PropTypes.array.isRequired,
   xScale: PropTypes.any,
