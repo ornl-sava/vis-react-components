@@ -23,14 +23,17 @@ class ForceDirectedGraph extends React.Component {
     this.updateDR(props)
 
     this.falseStart(props)
+    // console.log('FDG-c-nodes', this.links[0].source.x)
 
     this.simulation = d3.forceSimulation()
     this.setSim(props)
 
+    this.onDClick = this.onDClick.bind(this)
+    this.simOn = false
+
     this.tip = props.tipFunction
       ? new Tooltip().attr('className', 'd3-tip').html(props.tipFunction)
       : props.tipFunction
-    this.onClick = this.onClick.bind(this)
     this.onEnter = this.onEnter.bind(this)
     this.onLeave = this.onLeave.bind(this)
 
@@ -47,10 +50,18 @@ class ForceDirectedGraph extends React.Component {
     return true
   }
 
-  onClick (event) {
-    this.simulation.stop()
-    let target = event.target
-    this.props.onClick(event, this.getDatum(target))
+  onDClick (event) {
+    if (this.state.simOn) {
+      console.log('FDG-onDC-simOn')
+      this.simOn = true
+      this.setSim(this.props)
+      this.simulation.restart()
+    } else {
+      console.log('FDG-onDC-simOff')
+      this.simOn = false
+      this.simulation.stop()
+      this.falseStart(this.props)
+    }
   }
 
   onEnter (event) {
@@ -148,6 +159,11 @@ class ForceDirectedGraph extends React.Component {
       d.x = Math.random() * this.xScale.bandwidth() + this.xScale(d.hour)
       d.y = Math.random() * props.chartHeight
     })
+    this.links.map((d, i) => {
+      d.source = this.nodes[d.source]
+      d.target = this.nodes[d.target]
+    })
+    // this.setState({nodes: this.nodes, links: this.links})
   }
 
   drawSim (props) {
@@ -172,9 +188,6 @@ class ForceDirectedGraph extends React.Component {
         'fill': this.colScale(d.hour),
         'events': d.events,
         'hour': d.hour
-        // 'onMouseEnter': this.onEnter,
-        // 'onMouseLeave': this.onLeave,
-        // 'onClick': this.onClick
       }
       nodeList.push(
         <circle key={'cir-id' + i + '-hr-' + d.hour} {...events} {...circleProps} />
