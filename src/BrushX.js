@@ -1,6 +1,9 @@
 import React, { PropTypes } from 'react'
 import { findDOMNode } from 'react-dom'
 import { brushX, select, event as d3Event } from 'd3'
+
+let handleHeight = 0
+
 class BrushX extends React.Component {
   constructor (props) {
     super(props)
@@ -15,16 +18,34 @@ class BrushX extends React.Component {
   _end () {
     this.setState({selection: this.selection})
   }
+  resizePath (d) {
+    let e = +(d === 'e')
+    let x = e ? 1 : -1
+    let y = handleHeight / 3
+    return 'M' + (0.5 * x) + ',' + y +
+     'A6,6 0 0 ' + e + ' ' + (6.5 * x) + ',' + (y + 6) +
+     'V' + (2 * y - 6) +
+     'A6,6 0 0 ' + e + ' ' + (0.5 * x) + ',' + (2 * y) +
+     'Z' +
+     'M' + (2.5 * x) + ',' + (y + 8) +
+     'V' + (2 * y - 8) +
+     'M' + (4.5 * x) + ',' + (y + 8) +
+     'V' + (2 * y - 8)
+  }
   componentDidUpdate (prevProps, prevState) {
     if (this.props.width !== prevProps.width || this.props.height !== prevProps.height) {
       let thisNode = findDOMNode(this)
       let selection = select(thisNode)
       this.brush = brushX()
-        .handleSize(8)
         .extent([[0, 0], [this.props.width, this.props.height]])
         .on('brush', this._brush.bind(this))
         .on('end', this._end.bind(this))
       selection.call(this.brush)
+      handleHeight = this.props.height
+      selection = select(thisNode).selectAll('.handle')
+        .append('path')
+        .attr('d', this.resizePath)
+      // console.log(handles)
     }
   }
   applySelection () {

@@ -35,7 +35,6 @@ class Histogram extends React.Component {
       overlayObj.tooltipData.stackCounts = barData[i].map((bar) => { return bar.data[props.yAccessor] })
       overlayObj.tooltipData.yPos = barData[i][0][props.yAccessor]
       overlayObj.tooltipData.xPos = props.xScale(barData[i][0].data[props.xAccessor])
-      overlayObj.width = Math.floor(overlayObj.width + 2)
       overlayObj.height = props.yScale.range()[0]
       overlayData.push(overlayObj)
     }
