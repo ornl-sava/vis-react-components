@@ -73,9 +73,11 @@ class ForceDirectedGraph extends React.Component {
       // both don't need to be on... play with alpha
       this.setSim(this.props)
       this.simulation.restart()
+      this.isDrag = false
     } else {
       console.log('FDG-onDC-simOff')
       this.simOn = true
+      this.isDrag = false
       this.simulation.stop()
       this.falseStart(this.props)
       this.setState({nodes: this.nodes, links: this.links})
@@ -84,11 +86,11 @@ class ForceDirectedGraph extends React.Component {
 
   onEnter (event) {
     let target = this.getDatum(event.target)
-    let type = 'Node'
+    let type = 'Node '
     if (target.events.indexOf('parent-') >= 0) {
       type = 'Parent'
     }
-    let tooltipD = {label: type + ' at Hour ' + target.hour, counts: target.events.length}
+    let tooltipD = {label: type + event.target.getAttribute('data-id') + ' at Hour ' + target.hour, counts: target.events.length}
     if (target && this.props.tipFunction) {
       this.tip.show(event, tooltipD)
     }
@@ -179,14 +181,18 @@ class ForceDirectedGraph extends React.Component {
   }
 
   falseStart (props) {
-    this.nodes.map((d, i) => {
-      d.x = Math.random() * this.xScale.bandwidth() + this.xScale(d.hour)
-      d.y = Math.random() * props.chartHeight
-    })
-    this.links.map((d, i) => {
-      d.source = this.nodes[props.links[i].source]
-      d.target = this.nodes[props.links[i].target]
-    })
+    if (props.dataType === 'list') {
+      this.nodes.map((d, i) => {
+        d.x = Math.random() * this.xScale.bandwidth() + this.xScale(d.hour)
+        d.y = Math.random() * props.chartHeight
+      })
+      this.links.map((d, i) => {
+        d.source = this.nodes[props.links[i].source]
+        d.target = this.nodes[props.links[i].target]
+      })
+    } else {
+      // this.nodes = d3.tree.nodes()
+    }
   }
 
   drawSim (props) {
@@ -227,7 +233,8 @@ class ForceDirectedGraph extends React.Component {
           y1: data.source.y,
           x2: data.target.x,
           y2: data.target.y,
-          style: {stroke: '#cdd5e4', strokeWidth: 2}
+          style: {stroke: '#cdd5e4', strokeWidth: 2},
+          data: data
         }
         linkList.push(
           <line key={'line-id' + linkList.length} {...lineData} />
@@ -264,7 +271,8 @@ ForceDirectedGraph.defaultProps = {
   onLeave: () => {},
   className: '',
   tipFunction: () => {},
-  isCurved: true
+  isCurved: true,
+  dataType: 'list'
 }
 
 ForceDirectedGraph.propTypes = {
@@ -282,7 +290,8 @@ ForceDirectedGraph.propTypes = {
   onClick: PropTypes.func,
   onEnter: PropTypes.func,
   onLeave: PropTypes.func,
-  isCurved: PropTypes.bool
+  isCurved: PropTypes.bool,
+  dataType: PropTypes.string.isRequired
 }
 
 export default ForceDirectedGraph

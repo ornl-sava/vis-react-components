@@ -162,6 +162,23 @@ const aList = makeAdjacencyList()
 
 const nData = 3
 
+const makeTree = () => {
+  let treeList = {hour: -1, children: []}
+  for (let i = 0; i < nData; i++) {
+    treeList.children.push({hour: i, children: []})
+  }
+  aList.map((d, i) => {
+    if (d.hour < nData) {
+      treeList.children[d.hour].children.push({
+        hour: d.hour, events: d.events
+      })
+    }
+  })
+  return treeList
+}
+const tree = makeTree()
+console.log('FDGE-tree', tree)
+
 const getNodes = () => {
   let nodes = []
   aList.map((d, i) => {
@@ -172,12 +189,13 @@ const getNodes = () => {
       })
     }
   })
-  for (let i = 0; i < nData; i++) {
-    nodes.push({
+  for (let i = nData - 1; i >= 0; i--) {
+    nodes.unshift({
       events: 'parent- ' + i,
       hour: i
     })
   }
+  // console.log('FDGE-nodes', nodes)
   return nodes
 }
 const nodes = getNodes()
@@ -187,27 +205,28 @@ const getLinks = () => {
   aList.map((data, index) => {
     if (data.hour < nData) {
       links.push({
-        source: nodes.length - (nData - data.hour),
-        target: index,
-        value: nData
+        source: data.hour,
+        target: index + nData,
+        value: 1000
       })
       return data.story.map((d) => {
         // The node is at a hour greater than the current node
         // The node is within the current batch of nodes being viewed
-        if (d > index && d < nodes.length) {
+        if ((d + nData) > (index + nData) && (d + nData) < nodes.length) {
         // seperated topics
-        // if (d === index + 1 && d < nodes.length) {
-        // only direct connections...needs a tweak...some aren't direct
-        // if (aList[d].hour === data.hour + 1 && d < nodes.length) {
+        // if (false) {
+        // only direct connections
+        // if (aList[d + nData].hour === data.hour + 1 && (d + nData) < nodes.length) {
           links.push({
-            source: index,
-            target: d,
+            source: index + nData,
+            target: d + nData,
             value: d - index
           })
         }
       })
     }
   })
+  // console.log('FDGE-links', links)
   return links
 }
 const links = getLinks()
@@ -224,9 +243,11 @@ console.log('numNodes-', nodes.length, '-numLinks-', links.length)
 class TopicsContainer extends React.Component {
   render () {
     return (
-      <Chart className='col-md-12' tipFunction={toolTipFunction} yAxis={false} xAxis={false} height={1000} margin={{top: 40, right: 10, bottom: 10, left: 80}}>
-        <ForceDirectedGraph {...chartProps} />
-      </Chart>
+      <div>
+        <Chart className='col-md-12' tipFunction={toolTipFunction} yAxis={false} xAxis={false} height={1000} margin={{top: 40, right: 10, bottom: 10, left: 80}}>
+          <ForceDirectedGraph {...chartProps} />
+        </Chart>
+      </div>
     )
   }
 }
