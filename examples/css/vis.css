@@ -10,10 +10,10 @@ body {
   stroke: #666;
 }
 .handle {
-	fill: #fff;
-  stroke: #000;
-  stroke-opacity: 0.5;
-  stroke-width: 1.5px;
+	fill: #666;
+  /*stroke: #000;*/
+  /*stroke-opacity: 0.1;*/
+  /*stroke-width: 1.5px;*/
 }
 .chart {
 	fill: #fff;
