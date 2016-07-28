@@ -150,13 +150,16 @@ export class HybridScatterHeatmap extends React.Component {
     let scatterData = chart.select('.scatter.data')
 
     // Flatten and filter heatmap
-    let data = heatmap.reduce((a, b) => {
-      return a.concat(b.filter((d) => {
-        return d.active
-      }))
-    }, []).reduce((a, b) => {
-      return a.concat(b)
-    }, [])
+    let data = []
+    for (let i = 0; i < heatmap.length; i++) {
+      for (let j = 0; j < heatmap[i].length; j++) {
+        if (heatmap[i][j].active) {
+          for (let k = 0; k < heatmap[i][j].length; k++) {
+            data.push(heatmap[i][j][k])
+          }
+        }
+      }
+    }
 
     // Bind subset of data for scatter
     let points = scatterData.selectAll('.point')
@@ -188,19 +191,21 @@ export class HybridScatterHeatmap extends React.Component {
 
     // Rebin heatmap
     let tempHeatmap = binByNumeric(this.props.data, 'score', [0, 6], this.props.heatmapVertDivisions).reverse()
-    tempHeatmap.forEach((d, i, arr) => {
-      arr[i] = binByNumeric(d, 'time', [this.endTime, this.props.startTime], this.props.heatmapHorzDivisions)
-      arr[i].forEach((f, j) => {
-        f.rowIndex = i
-        f.yKey = d.key
-        f.yStep = d.step
-        f.active = (typeof heatmap === 'undefined') ? false
+    for (let i = 0; i < tempHeatmap.length; i++) {
+      let d = tempHeatmap[i]
+      tempHeatmap[i] = binByNumeric(d, 'time', [this.endTime, this.props.startTime], this.props.heatmapHorzDivisions)
+      for (let j = 0; j < tempHeatmap[i].length; j++) {
+        tempHeatmap[i][j].rowIndex = i
+        tempHeatmap[i][j].yKey = d.key
+        tempHeatmap[i][j].yStep = d.step
+        tempHeatmap[i][j].active = (typeof heatmap === 'undefined')
+          ? false
           : heatmap[i][j].active
-      })
-      arr[i].key = d.key
-      arr[i].step = d.step
-      arr[i].count = d.count
-    })
+      }
+      tempHeatmap[i].key = d.key
+      tempHeatmap[i].step = d.step
+      tempHeatmap[i].count = d.count
+    }
 
     heatmap = tempHeatmap
 
