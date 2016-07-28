@@ -135,10 +135,6 @@ class HeatmapChart extends React.Component {
     }
   }
 
-  shouldComponentUpdate (nextProps, nextState) {
-    return true
-  }
-
   onClick (event, data) {
     this.props.onClick(event, data)
   }

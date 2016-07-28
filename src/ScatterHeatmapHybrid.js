@@ -6,10 +6,13 @@ const binByNumeric = (data, accessor, range, numBins) => {
   let step = (range[1] - range[0]) / numBins
 
   for (let i = 0; i < numBins; i++) {
-    let bin = data.filter((d) => {
-      return d[accessor] < (range[0] + ((i + 1) * step)) &&
-        d[accessor] >= (range[0] + (i * step))
-    })
+    let bin = []
+    for (let j = 0; j < data.length; j++) {
+      if (data[j][accessor] < (range[0] + ((i + 1) * step)) &&
+          data[j][accessor] >= (range[0] + (i * step))) {
+        bin.push(data[j])
+      }
+    }
     bin.key = i * step
     bin.step = step
     bin.count = bin.length
