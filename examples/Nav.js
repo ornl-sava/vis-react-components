@@ -13,6 +13,7 @@ class Nav extends React.Component {
           <li><Link to='/scatterHeatmap' activeClassName='active'>Scatter Heatmap Hybrid</Link></li>
           <li><Link to='/circumshaker' activeClassName='active'>Circumshaker</Link></li>
           <li><Link to='/topics' activeClassName='active'>Topics</Link></li>
+          <li><Link to='/forceDirected' activeClassName='active'>Force-Directed</Link></li>
         </ul>
       </nav>
     )
