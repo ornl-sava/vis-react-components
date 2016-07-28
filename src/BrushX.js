@@ -11,12 +11,17 @@ class BrushX extends React.Component {
     }
   }
   _start () {
+    this.applySelection()
   }
   _brush () {
     this.applySelection()
   }
   _end () {
-    this.setState({selection: this.selection})
+    if (!this.state.selection ||
+    this.selection[0].toString() !== this.state.selection[0].toString() ||
+    this.selection[1].toString() !== this.state.selection[1].toString()) {
+      this.setState({selection: this.selection})
+    }
   }
   // Normally we'd append a path to the handle <g>
   // but as of D3 v4 the handles is now a <rect>
@@ -31,17 +36,21 @@ class BrushX extends React.Component {
       .style('ry', '6')
   }
   componentDidUpdate (prevProps, prevState) {
+    // if (this.props.width !== prevProps.width || this.props.height !== prevProps.height) {
+    let thisNode = findDOMNode(this)
+    let selection = select(thisNode)
     if (this.props.width !== prevProps.width || this.props.height !== prevProps.height) {
-      let thisNode = findDOMNode(this)
-      let selection = select(thisNode)
       this.brush = brushX()
         .extent([[0, 0], [this.props.width, this.props.height]])
         .on('start', this._start.bind(this))
         .on('brush', this._brush.bind(this))
         .on('end', this._end.bind(this))
       selection.call(this.brush)
-      this.setBrushDimensions()
     }
+    if (this.state.selection) {
+      selection.call(this.brush.move, this.state.selection.map(this.props.scale))
+    }
+    this.setBrushDimensions()
   }
   applySelection () {
     if (d3Event.sourceEvent.type === 'brush') return
