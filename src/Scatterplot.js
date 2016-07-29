@@ -34,17 +34,15 @@ class Scatterplot extends React.Component {
     return (
       <g className={props.className}>
         {this.props.data.map((d, i) => {
-          let circleProps = {
-            'data-i': i,
-            'r': props.radius,
-            'cx': props.xScale(d[props.xAccessor]),
-            'cy': props.yScale(d[props.yAccessor]),
-            'onMouseEnter': this.onEnter,
-            'onMouseLeave': this.onLeave,
-            'onClick': this.onClick
-          }
           return (
-            <circle key={i} {...circleProps} />
+            <circle key={i}
+              data-i={i}
+              r={props.radius}
+              cx={props.xScale(d[props.xAccessor])}
+              cy={props.yScale(d[props.yAccessor])}
+              onMouseEnter={this.onEnter}
+              onMouseLeave={this.onLeave}
+              onClick={this.onClick} />
           )
         })}
       </g>

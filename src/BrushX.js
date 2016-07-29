@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react'
 import { findDOMNode } from 'react-dom'
 import { brushX, select, event as d3Event } from 'd3'
+
 class BrushX extends React.Component {
   constructor (props) {
     super(props)
@@ -9,28 +10,60 @@ class BrushX extends React.Component {
       selection: this.selection
     }
   }
+  componentDidMount () {
+    this.initBrush()
+  }
+  initBrush () {
+    let thisNode = findDOMNode(this)
+    let selection = select(thisNode)
+    this.brush = brushX()
+      .extent([[0, 0], [this.props.width, this.props.height]])
+      .on('start', this._start.bind(this))
+      .on('brush', this._brush.bind(this))
+      .on('end', this._end.bind(this))
+    selection.call(this.brush)
+    this.setBrushDimensions()
+  }
+  _start () {
+    this.applySelection()
+  }
   _brush () {
     this.applySelection()
   }
   _end () {
-    if (this.state.selection !== this.selection) {
+    if (!this.state.selection ||
+    this.selection[0].toString() !== this.state.selection[0].toString() ||
+    this.selection[1].toString() !== this.state.selection[1].toString()) {
       this.setState({selection: this.selection})
     }
+    // this.setBrushDimensions()
+  }
+  // Normally we'd append a path to the handle <g>
+  // but as of D3 v4 the handles is now a <rect>
+  setBrushDimensions () {
+    let h = this.props.height / 5
+    let y = this.props.height / 2 - (h / 2)
+    select(findDOMNode(this)).selectAll('.handle')
+      .style('width', 7)
+      .style('height', h)
+      .style('y', y)
+      .style('rx', '6')
+      .style('ry', '6')
+      .style('fill', '#666')
   }
   componentDidUpdate (prevProps, prevState) {
     if (this.props.width !== prevProps.width || this.props.height !== prevProps.height) {
+      this.initBrush()
+    }
+    if (this.state.selection) {
       let thisNode = findDOMNode(this)
       let selection = select(thisNode)
-      this.brush = brushX()
-        .handleSize(6)
-        .extent([[0, 0], [this.props.width, this.props.height]])
-        .on('brush', this._brush.bind(this))
-        .on('end', this._end.bind(this))
-      selection.call(this.brush)
+      selection.call(this.brush.move, this.state.selection.map(this.props.scale))
     }
+    // this.setBrushDimensions()
   }
   applySelection () {
-    if (d3Event.sourceEvent.type === 'brush') return
+    if (!d3Event.sourceEvent || d3Event.sourceEvent.type === 'brush') return
     let domain = this.calculateSelection(d3Event.selection.map(this.props.scale.invert))
     let thisNode = findDOMNode(this)
     select(thisNode)
