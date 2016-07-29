@@ -49,6 +49,9 @@ class HistogramExample extends React.Component {
   constructor (props) {
     super(props)
 
+    this.onChart1Enter = this.onChart1Enter.bind(this)
+    this.onChart1Leave = this.onChart1Leave.bind(this)
+
     let id = 'histogram_endpoint'
     let sortBy = JSON.parse(localStorage.getItem(id + '_sortBy'))
     let sortOrder = JSON.parse(localStorage.getItem(id + '_sortOrder'))
@@ -58,7 +61,11 @@ class HistogramExample extends React.Component {
       sortBy: (sortBy === 'Default') ? null : sortBy,
       sortOrder: (sortOrder === 'Default') ? null : sortOrder,
       sortTypes: ['two'],
-      yScaleType: (yScaleType === 'Default') ? null : yScaleType
+      yScaleType: (yScaleType === 'Default') ? null : yScaleType,
+      chart1xAxis: {
+        type: 'x',
+        orient: 'bottom'
+      }
     }
 
     this.settings = {
@@ -148,12 +155,32 @@ class HistogramExample extends React.Component {
     }
   }
 
+  onChart1Enter (event, data) {
+    this.setState({
+      xAxis: {
+        type: 'x',
+        orient: 'bottom',
+        tickValues: [data.label]
+      }
+    })
+  }
+
+  onChart1Leave (event, data) {
+    this.setState({
+      xAxis: {
+        type: 'x',
+        orient: 'bottom'
+      }
+    })
+  }
+
   render () {
     return (
       <div>
         <div>
           <HistogramChart header={this.header1} width={800} height={200}
             data={histogramData} {...this.state} tipFunction={toolTipFunction}
+            onEnter={this.onChart1Enter} onLeave={this.onChart1Leave}
             addOverlay xAccessor='key' yAccessor='count' onClick={onBarClick} />
         </div>
         <div>
