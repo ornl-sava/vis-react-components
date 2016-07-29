@@ -162,6 +162,22 @@ const aList = makeAdjacencyList()
 
 const nData = 3
 
+let makeTreeData = () => {
+  let ind = 0
+  let treeList = {hour: -1, children: [], index: ind++, events: 'root-', id: ind}
+  for (let i = 0; i < nData; i++) {
+    treeList.children.push(Object.assign({}, {hour: i, children: [], index: ind++, events: 'parent-', id: ind}))
+  }
+  aList.map((d, i) => {
+    if (d.hour < nData) {
+      treeList.children[d.hour].children.push(Object.assign({}, {
+        hour: d.hour, events: d.events, index: ind++, id: ind
+      }))
+    }
+  })
+  return treeList
+}
+
 let makeTree = () => {
   let ind = 0
   let treeList = {hour: -1, children: [], index: ind++, events: 'root-', id: ind}
@@ -217,7 +233,8 @@ const treeChartProps = {
   numTData: nData, // not sure if needed
   nodes: treeNodes,
   links: treeLinks,
-  adjacencyList: nodeLinkAList()
+  adjacencyList: nodeLinkAList(),
+  data: makeTreeData()
 }
 console.log('numNodes-', treeNodes.length, '-numLinks-', treeLinks.length)
 
@@ -225,7 +242,7 @@ class TopicsContainer extends React.Component {
   render () {
     return (
       <div>
-        {<Chart className='col-md-12' tipFunction={toolTipFunction} yAxis={false} xAxis={false} height={1000} width={1000} >
+        {<Chart className='col-md-12' tipFunction={toolTipFunction} yAxis={false} xAxis={false} height={1000} >
           <ForceDirectedGraphTree {...treeChartProps} />
         </Chart>}
       </div>
