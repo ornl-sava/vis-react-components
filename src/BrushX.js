@@ -14,6 +14,7 @@ class BrushX extends React.Component {
     this.initBrush()
   }
   initBrush () {
+    console.log('initBrush called')
     let thisNode = findDOMNode(this)
     let selection = select(thisNode)
     this.brush = brushX()
@@ -49,7 +50,6 @@ class BrushX extends React.Component {
       .style('ry', '6')
   }
   componentDidUpdate (prevProps, prevState) {
-    // if (this.props.width !== prevProps.width || this.props.height !== prevProps.height) {
     if (this.props.width !== prevProps.width || this.props.height !== prevProps.height) {
       this.initBrush()
     }
