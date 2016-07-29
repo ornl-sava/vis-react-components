@@ -11,6 +11,7 @@ import ScatterHeatmapExample from './ScatterHeatmapExample'
 import TopicsExample from './TopicsExample'
 import SingleTopicExample from './SingleTopicExample'
 import ForceDirectedGraphExample from './ForceDirectedGraphExample'
+import ForceDirectedTreeGraphExample from './ForceDirectedTreeGraphExample'
 
 const reactRouterRoutes = (
   <Router history={browserHistory}>
@@ -25,6 +26,7 @@ const reactRouterRoutes = (
       <Route path='/topics' component={TopicsExample} />
       <Route path='/id' component={SingleTopicExample} />
       <Route path='/forceDirected' component={ForceDirectedGraphExample} />
+      <Route path='/forceDirectedTree' component={ForceDirectedTreeGraphExample} />
     </Route>
   </Router>
 )

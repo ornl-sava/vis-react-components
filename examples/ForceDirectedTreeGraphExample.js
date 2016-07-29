@@ -2,9 +2,8 @@ import React from 'react'
 // import { format } from 'd3'
 import * as d3 from 'd3'
 import Chart from '../src/Chart'
-import { Link } from 'react-router'
 
-import ForceDirectedGraph from '../src/ForceDirectedGraph.js'
+import ForceDirectedGraphTree from '../src/ForceDirectedGraphTree.js'
 
 import eTopics from '../examples/data/for-hci/enduring-topics-listed.json'
 import storyData from '../examples/data/for-hci/stories.json'
@@ -163,87 +162,72 @@ const aList = makeAdjacencyList()
 
 const nData = 3
 
-const getNodes = () => {
-  let nodes = []
+let makeTree = () => {
+  let ind = 0
+  let treeList = {hour: -1, children: [], index: ind++, events: 'root-', id: ind}
+  for (let i = 0; i < nData; i++) {
+    treeList.children.push(Object.assign({}, {hour: i, children: [], index: ind++, events: 'parent-', id: ind}))
+  }
   aList.map((d, i) => {
     if (d.hour < nData) {
-      nodes.push({
-        events: d.events,
-        hour: d.hour,
-        ind: i + nData,
-        id: i + nData
-      })
+      treeList.children[d.hour].children.push(Object.assign({}, {
+        hour: d.hour, events: d.events, index: ind++, id: ind
+      }))
     }
   })
-  for (let i = nData - 1; i >= 0; i--) {
-    nodes.unshift({
-      events: 'parent- ' + i,
-      hour: i,
-      ind: i,
-      id: i
-    })
-  }
-  // console.log('FDGE-nodes', nodes)
-  return nodes
+  let rootNode = d3.hierarchy(treeList)
+  // d3.tree(treeList).size([1000, 1000])
+  return rootNode
 }
-const nodes = getNodes()
+let rootNode = makeTree()
+  .sum((d) => { return d.value })
+  .sort((a, b) => { return b.height - a.height || b.value - a.value })
 
-const getLinks = () => {
-  let links = []
-  aList.map((data, index) => {
-    if (data.hour < nData) {
-      links.push({
-        source: data.hour,
-        target: index + nData,
-        value: 1000
-      })
-      return data.story.map((d) => {
-        // The node is at a hour greater than the current node
-        // The node is within the current batch of nodes being viewed
-        if ((d + nData) > (index + nData) && (d + nData) < nodes.length) {
-        // seperated topics
-        // if (false) {
-        // only direct connections
-        // if (aList[d + nData].hour === data.hour + 1 && (d + nData) < nodes.length) {
-          links.push({
-            source: index + nData,
-            target: d + nData,
-            value: d - index
-          })
-        }
-      })
-    }
-  })
-  // console.log('FDGE-links', links)
-  return links
-}
-const links = getLinks()
+let tree = d3.tree().size([800, 1000])
+tree(rootNode)
+const treeNodes = rootNode.descendants()
+// console.log('FDGE-rootNode', rootNode)
+// console.log('FDGE-treeNodes', treeNodes)
+let treeLinks = rootNode.links()
+// console.log('FDGE-treeLinks', treeLinks)
 
 const nodeLinkAList = () => {
   let newAList = []
-  links.map((d, i) => {
-    newAList.push({source: d.source, target: d.target})
+  // console.log('FDGE-nAL', newAList)
+  let newLinks = []
+  rootNode.each((node) => {
+    if (node !== rootNode) { // Don’t include the root’s parent, if any.
+      newLinks.push({source: node.parent.data.index, target: node.data.index})
+    }
+  })
+  // console.log('newLinks', newLinks)
+  for (let j = 0; j < treeNodes.length; j++) {
+    newAList.push([])
+  }
+  // newAList.fill(new Array(0))
+  newLinks.map((d, i) => {
+    newAList[d.source].push(d.target)
   })
   return newAList
 }
+// console.log('FDGE-nodeLinkList', nodeLinkAList())
 
-const chartProps = {
+const treeChartProps = {
   tipFunction: toolTipFunction,
-  adjacencyList: nodeLinkAList(),
-  numTData: nData,
-  nodes: nodes,
-  links: links
+  numTData: nData, // not sure if needed
+  nodes: treeNodes,
+  links: treeLinks,
+  adjacencyList: nodeLinkAList()
 }
-console.log('numNodes-', nodes.length, '-numLinks-', links.length)
+console.log('numNodes-', treeNodes.length, '-numLinks-', treeLinks.length)
 
 class TopicsContainer extends React.Component {
   render () {
     return (
       <div>
-        <Chart className='col-md-12' tipFunction={toolTipFunction} yAxis={false} xAxis={false} height={1000} margin={{top: 40, right: 10, bottom: 10, left: 80}}>
-          <ForceDirectedGraph {...chartProps} />
-        </Chart>
-        <li><Link to='/forceDirectedTree' activeClassName='active'>SingleTopic</Link></li>
+        {<Chart className='col-md-12' tipFunction={toolTipFunction} yAxis={false} xAxis={false} height={1000} width={1000} >
+          <ForceDirectedGraphTree {...treeChartProps} />
+        </Chart>}
       </div>
     )
   }
