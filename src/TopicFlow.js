@@ -131,16 +131,15 @@ class TopicFlow extends React.Component {
   }
 
   initTopics (props) {
-    let paddedWidth = props.chartWidth * (1 - props.padding).toFixed(2)
-    let barWidth = Math.ceil(paddedWidth / (props.numTData + (props.outerPadding * 2)))
-    this.barWidth = barWidth
-    let barHeight = 20
-    let barData = []
-    let lineData = []
     // XSCALE IS ORDINAL
     this.xScale.range([0, props.chartWidth])
     this.xScale.paddingInner(props.outerPadding)
     this.xScale.paddingOuter(props.padding)
+    let barWidth = this.xScale.bandwidth()
+    this.barWidth = barWidth
+    let barHeight = 20
+    let barData = []
+    let lineData = []
     // GETTING TOPIC BAR INFORMATION
     let svgTopicBars = props.adjacencyList.map((dataArr, i) => {
       if (dataArr.hour < props.numTData) {

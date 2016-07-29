@@ -13,25 +13,42 @@ const transpose = (a) => {
 class Histogram extends React.Component {
   constructor (props) {
     super(props)
-
+    this.onMouseLeave = this._onMouseLeave.bind(this)
     this.renderBars = this.renderBars.bind(this)
   }
-  addOverlay (barData) {
+  _onMouseLeave (event) {
+    this.props.onLeave(event, {})
+  }
+  getOverlay (barData) {
     let props = this.props
+    let overlayData = []
     for (let i = 0; i < barData.length; i++) {
       let overlayObj = Object.assign({}, barData[i][0])
       overlayObj.className = '_overlay'
+      overlayObj.brushed = props.brushed
       overlayObj.key = overlayObj.className + '-' + overlayObj.data[props.xAccessor]
       overlayObj[props.yAccessor] = 1
       overlayObj.tooltipData = {}
+      overlayObj.data.y = barData[i].reduce((prev, curr) => { return prev + curr.data[props.yAccessor] }, 0)
       overlayObj.tooltipData.label = barData[i][0].data[props.xAccessor]
-      overlayObj.tooltipData.stackNames = barData[i].reduce((prev, bar) => { return bar ? [bar.name].concat(prev) : [''].concat(prev) }, [])
-      overlayObj.tooltipData.stackCounts = barData[i].reduce((prev, bar) => { return bar ? [bar.data[props.yAccessor]].concat(prev) : [0].concat(prev) }, [])
+      overlayObj.tooltipData.stackNames = barData[i].map((bar) => { return bar.name })
+      overlayObj.tooltipData.stackCounts = barData[i].map((bar) => { return bar.data[props.yAccessor] })
       overlayObj.tooltipData.yPos = barData[i][0][props.yAccessor]
       overlayObj.tooltipData.xPos = props.xScale(barData[i][0].data[props.xAccessor])
       overlayObj.height = props.yScale.range()[0]
-      barData[i].push(Object.assign(overlayObj, this.state))
+      overlayData.push(overlayObj)
     }
+    let overlayBins = overlayData.map((overlayObj, i) => {
+      let yPos = 0
+      let xPos = props.xScale(barData[i][0].data[props.xAccessor])
+      return (
+        <g className='overlay-bin' key={'overlay-' + i.toString()} transform={'translate(' + xPos + ',' + yPos + ')'}>
+          <Bar {...overlayObj} onEnter={props.onEnter} onLeave={props.onLeave} />
+        </g>
+      )
+    })
+
+    return overlayBins
   }
 
   buildABar (bin, name, type, height, width, y) {
@@ -63,9 +80,9 @@ class Histogram extends React.Component {
         return this.buildABar(bin, props.data[index].name, props.data[index].type, barHeight, barWidth, yPos)
       })
     }))
-
+    let overlayBins = []
     if (props.addOverlay === true) {
-      this.addOverlay(barData)
+      overlayBins = this.getOverlay(barData)
     }
     let svgBars = barData.map((dataArr, index) => {
       return dataArr.map((data, barIndex) => {
@@ -94,12 +111,19 @@ class Histogram extends React.Component {
       )
     })
 
-    let el = <g>{svgBins}</g>
-    if (barData.length > 1 && props.brush) {
+    let el = <g onMouseLeave={this.onMouseLeave}>
+      <g>{svgBins}</g>
+      {overlayBins}
+    </g>
+    // let el = <g>{svgBins}</g>
+    if (barData.length > 1 && props.brushed) {
       let interval = Math.abs(barData[1][0].data[props.xAccessor] - barData[0][0].data[props.xAccessor])
-      el = <BrushX width={props.xScale.range()[1]} height={props.yScale.range()[0]} interval={interval} scale={props.xScale}>
-        {svgBins}
-      </BrushX>
+      el = <g onMouseLeave={this.onMouseLeave}>
+        <BrushX width={props.xScale.range()[1]} height={props.yScale.range()[0]} interval={interval} scale={props.xScale}>
+          {svgBins}
+        </BrushX>
+        {overlayBins}
+      </g>
     }
     return el
   }
@@ -125,7 +149,7 @@ Histogram.defaultProps = {
 
 Histogram.propTypes = {
   addOverlay: PropTypes.bool,
-  brush: PropTypes.bool,
+  brushed: PropTypes.bool,
   chartHeight: PropTypes.number,
   chartWidth: PropTypes.number,
   className: PropTypes.string,

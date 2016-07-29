@@ -41,21 +41,18 @@ class Heatmap extends React.Component {
           return d.bins.map((e, j) => {
             let width = (j + 1 < d.bins.length) ? props.xScale(d.bins[j + 1][props.xAccessor.key]) : props.chartWidth
             width -= props.xScale(e[props.xAccessor.key])
-            let rectProps = {
-              'data-i': i,
-              'data-j': j,
-              'key': i + '-' + j,
-              'x': props.xScale(e[props.xAccessor.key]),
-              'y': props.yScale(d[props.yAccessor.key]),
-              'width': width,
-              'height': height,
-              'fill': props.colorScale(e[props.xAccessor.value]),
-              'onMouseEnter': this.onEnter,
-              'onMouseLeave': this.onLeave,
-              'onClick': this.onClick
-            }
             return (
-              <rect {...rectProps} />
+              <rect key={i + '-' + j}
+                data-i={i}
+                data-j={j}
+                x={props.xScale(e[props.xAccessor.key])}
+                y={props.yScale(d[props.yAccessor.key])}
+                width={width}
+                height={height}
+                fill={props.colorScale(e[props.xAccessor.value])}
+                onMouseEnter={this.onEnter}
+                onMouseLeave={this.onLeave}
+                onClick={this.onClick} />
             )
           })
         })}
