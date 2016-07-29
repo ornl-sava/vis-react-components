@@ -10,6 +10,19 @@ class BrushX extends React.Component {
       selection: this.selection
     }
   }
+  componentDidMount () {
+    this.initBrush()
+  }
+  initBrush () {
+    let thisNode = findDOMNode(this)
+    let selection = select(thisNode)
+    this.brush = brushX()
+      .extent([[0, 0], [this.props.width, this.props.height]])
+      .on('start', this._start.bind(this))
+      .on('brush', this._brush.bind(this))
+      .on('end', this._end.bind(this))
+    selection.call(this.brush)
+  }
   _start () {
     this.applySelection()
   }
@@ -37,23 +50,18 @@ class BrushX extends React.Component {
   }
   componentDidUpdate (prevProps, prevState) {
     // if (this.props.width !== prevProps.width || this.props.height !== prevProps.height) {
-    let thisNode = findDOMNode(this)
-    let selection = select(thisNode)
     if (this.props.width !== prevProps.width || this.props.height !== prevProps.height) {
-      this.brush = brushX()
-        .extent([[0, 0], [this.props.width, this.props.height]])
-        .on('start', this._start.bind(this))
-        .on('brush', this._brush.bind(this))
-        .on('end', this._end.bind(this))
-      selection.call(this.brush)
+      this.initBrush()
     }
     if (this.state.selection) {
+      let thisNode = findDOMNode(this)
+      let selection = select(thisNode)
       selection.call(this.brush.move, this.state.selection.map(this.props.scale))
     }
     this.setBrushDimensions()
   }
   applySelection () {
-    if (d3Event.sourceEvent.type === 'brush') return
+    if (!d3Event.sourceEvent || d3Event.sourceEvent.type === 'brush') return
     let domain = this.calculateSelection(d3Event.selection.map(this.props.scale.invert))
     let thisNode = findDOMNode(this)
     select(thisNode)

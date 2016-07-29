@@ -12,8 +12,8 @@ class Bar extends React.Component {
     this._onMouseLeave()
   }
   _onClick (event) {
-    console.log('click')
     if (this.props.tooltipData) {
+      console.log('click')
       this.props.onClick(event, this.props.tooltipData)
     }
   }
