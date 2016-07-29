@@ -1,38 +1,7 @@
 import React, { PropTypes } from 'react'
 import { select } from 'd3'
 
-import { setEase } from './util/d3'
-import { spreadExclude, toReactAttribute, toSVGAttribute } from './util/react'
-import { functor } from './util/common'
-
-// Exclude own props and bind data, index, and selection to function prop
-const d3AttrsHelper = (props, data, index, d3Selection) => {
-  let attributes = {}
-  for (let p in props) {
-    if (!(p in SVGComponentPropTypes)) {
-      attributes[toSVGAttribute(p)] = functor(props[p], data, index, d3Selection)
-    }
-  }
-  return attributes
-}
-
-const renameSVGAttrsToReactAttrs = (props) => {
-  let attributes = {}
-  for (let p in props) {
-    attributes[toReactAttribute(p)] = props[p]
-    delete props[p]
-  }
-  return attributes
-}
-
-// NOTE: In use until .attrs makes sense to setup
-// Using this apply object with attributes until
-const setAttrs = (transition, attrs) => {
-  for (let key in attrs) {
-    transition.attr(key, attrs[key])
-  }
-  return transition
-}
+import { spreadExclude } from './util/react'
 
 // Set prop types here so internal class methods can access prop types
 const SVGComponentPropTypes = {
@@ -69,7 +38,6 @@ class SVGComponent extends React.Component {
 
     // Need state that doesn't rely on setState triggers
     this.simpleState = Object.assign(spreadExclude(props, SVGComponentPropTypes))
-
     this.animate = this.animate.bind(this)
 
     this.onClick = this.onClick.bind(this)
@@ -99,18 +67,12 @@ class SVGComponent extends React.Component {
   animate (callback, props, type) {
     let node = select(this.refs.node)
     let propsCopy = JSON.parse(JSON.stringify(props))
-    let attrs = d3AttrsHelper(
-      spreadExclude(Object.assign(propsCopy, props[type]), SVGComponentPropTypes),
-      props.data,
-      props.index,
-      node)
     node.transition()
-      .delay(props[type].delay)
-      .duration(props[type].duration)
-      .ease(setEase(props[type].ease))
-      .call(setAttrs, attrs)
+      .call((transition) => {
+        props[type].func(transition, propsCopy)
+      })
       .on('end', () => {
-        this.simpleState = renameSVGAttrsToReactAttrs(attrs)
+        this.simpleState = Object.assign(spreadExclude(props, SVGComponentPropTypes))
         callback()
       })
   }
@@ -186,17 +148,20 @@ SVGComponent.defaultProps = {
   onEnter: {
     duration: 1000,
     delay: 0,
-    ease: 'linear'
+    ease: 'linear',
+    func: () => {}
   },
   onUpdate: {
     duration: 1000,
     delay: 0,
-    ease: 'linear'
+    ease: 'linear',
+    func: () => {}
   },
   onExit: {
     duration: 1000,
     delay: 0,
-    ease: 'linear'
+    ease: 'linear',
+    func: () => {}
   },
   onClick: () => {},
   onMouseEnter: () => {},

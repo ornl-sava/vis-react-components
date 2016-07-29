@@ -1,9 +1,9 @@
 import React, { PropTypes } from 'react'
 import ReactTransitionGroup from 'react-addons-transition-group'
-import { extent, max, min, range, ascending, set } from 'd3'
+import { interpolate, extent, max, min, range, ascending, set } from 'd3'
 
 import SVGComponent from './SVGComponent'
-import { setScale } from './util/d3'
+import { setScale, setEase } from './util/d3'
 
 class Circumshaker extends React.Component {
   constructor (props) {
@@ -323,18 +323,47 @@ class Circumshaker extends React.Component {
                 onClick={this.onClick}
                 onMouseEnter={this.onEnter}
                 onMouseLeave={this.onLeave}
+                onEnter={{
+                  func: (transition, props) => {
+                    transition
+                      .delay(0)
+                      .duration(1000)
+                      .ease(setEase('linear'))
+                      .attrTween('r', () => {
+                        return interpolate(0, props.r)
+                      })
+                      .attrTween('cx', () => {
+                        return interpolate(0, props.cx)
+                      })
+                      .attrTween('cy', () => {
+                        return interpolate(0, props.cy)
+                      })
+                    return transition
+                  }
+                }}
                 onUpdate={{
-                  duration: 500,
-                  delay: 0,
-                  ease: 'cubic'
+                  func: (transition, props) => {
+                    transition
+                      .delay(0)
+                      .duration(1000)
+                      .ease(setEase('linear'))
+                      .attr('r', props.r)
+                      .attr('cx', props.cx)
+                      .attr('cy', props.cy)
+                    return transition
+                  }
                 }}
                 onExit={{
-                  duration: 1000,
-                  delay: 0,
-                  ease: 'linear',
-                  cx: 0,
-                  cy: 0,
-                  r: 0
+                  func: (transition, props) => {
+                    transition
+                      .delay(0)
+                      .duration(1000)
+                      .ease(setEase('linear'))
+                      .attr('r', 0)
+                      .attr('cx', 0)
+                      .attr('cy', 0)
+                    return transition
+                  }
                 }}
                 r={this.nodeSizeScale(this.graph.links.filter((g) => {
                   return g.source === d || g.target === d
