@@ -14,7 +14,6 @@ class BrushX extends React.Component {
     this.initBrush()
   }
   initBrush () {
-    console.log('initBrush called')
     let thisNode = findDOMNode(this)
     let selection = select(thisNode)
     this.brush = brushX()
@@ -23,6 +22,7 @@ class BrushX extends React.Component {
       .on('brush', this._brush.bind(this))
       .on('end', this._end.bind(this))
     selection.call(this.brush)
+    this.setBrushDimensions()
   }
   _start () {
     this.applySelection()
@@ -36,6 +36,7 @@ class BrushX extends React.Component {
     this.selection[1].toString() !== this.state.selection[1].toString()) {
       this.setState({selection: this.selection})
     }
+    // this.setBrushDimensions()
   }
   // Normally we'd append a path to the handle <g>
   // but as of D3 v4 the handles is now a <rect>
@@ -48,6 +49,7 @@ class BrushX extends React.Component {
       .style('y', y)
       .style('rx', '6')
       .style('ry', '6')
+      .style('fill', '#666')
   }
   componentDidUpdate (prevProps, prevState) {
     if (this.props.width !== prevProps.width || this.props.height !== prevProps.height) {
@@ -58,7 +60,7 @@ class BrushX extends React.Component {
       let selection = select(thisNode)
       selection.call(this.brush.move, this.state.selection.map(this.props.scale))
     }
-    this.setBrushDimensions()
+    // this.setBrushDimensions()
   }
   applySelection () {
     if (!d3Event.sourceEvent || d3Event.sourceEvent.type === 'brush') return

@@ -13,7 +13,7 @@ class Bar extends React.Component {
   }
   _onClick (event) {
     if (this.props.tooltipData) {
-      console.log('click')
+      // console.log('click')
       this.props.onClick(event, this.props.tooltipData)
     }
   }

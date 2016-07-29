@@ -9,13 +9,6 @@ body {
   fill: #eee;
   stroke: #666;
 }
-.handle {
-	fill: #666;
-	/*height: 20;*/
-  /*stroke: #000;*/
-  /*stroke-opacity: 0.1;*/
-  /*stroke-width: 1.5px;*/
-}
 .chart {
 	fill: #fff;
 }
