@@ -1,11 +1,10 @@
 import React, { PropTypes } from 'react'
-import { ascending, set, min, max, extent, range } from 'd3'
+import ReactTransitionGroup from 'react-addons-transition-group'
+import { interpolate, extent, max, min, range, ascending, set } from 'd3'
 
-import { setScale } from './util/d3'
+import SVGComponent from './SVGComponent'
+import { setScale, setEase } from './util/d3'
 
-// NOTE: This component was built around data that was not concise.
-// Flip flopping key used was required. Once data is changed,
-// code will be fixed
 class Circumshaker extends React.Component {
   constructor (props) {
     super(props)
@@ -14,6 +13,7 @@ class Circumshaker extends React.Component {
 
     this.depth = 0
     this.radius = 0
+
     this.nodeSizeScale = setScale('linear')
 
     this.generateGraph = this.generateGraph.bind(this)
@@ -21,7 +21,6 @@ class Circumshaker extends React.Component {
     this.onClick = this.onClick.bind(this)
     this.onEnter = this.onEnter.bind(this)
     this.onLeave = this.onLeave.bind(this)
-    this.getDatum = this.getDatum.bind(this)
 
     this.generateGraph(props)
   }
@@ -210,7 +209,7 @@ class Circumshaker extends React.Component {
       // Find max node size if not predefined
       let maxSize = props.nodeMaxSize !== null
       ? props.nodeMaxSize
-      : graph.nodes.reduce((prev, curr) => {
+      : Math.min(graph.nodes.reduce((prev, curr) => {
         let r = this.radius * curr.depth
         let theta = curr.startAngle > curr.degree
           ? curr.startAngle - curr.degree
@@ -218,7 +217,7 @@ class Circumshaker extends React.Component {
         theta *= (Math.PI / 180)
         let arcLength = r * theta
         return prev < arcLength || arcLength === 0 ? prev : arcLength
-      }, Math.Infinity)
+      }, Math.Infinity), this.radius / 2)
 
       // Create scale that determines node size
       this.nodeSizeScale
@@ -231,18 +230,15 @@ class Circumshaker extends React.Component {
     }
   }
 
-  onClick (event) {
-    let target = event.target
-    this.props.onClick(event, this.getDatum(target))
+  onClick (event, data, index) {
+    this.props.onClick(event, data, index)
   }
 
-  onEnter (event) {
-    let target = event.target
-    this.props.onEnter(event, this.getDatum(target))
+  onEnter (event, data, index) {
+    this.props.onEnter(event, data, index)
 
     // Only display linking paths
-    let nodeIndex = target.getAttribute('data-nodeIndex')
-    let gNode = this.graph.nodes[nodeIndex]
+    let gNode = this.graph.nodes[index]
     this.graph.links.forEach((d, i) => {
       d.display = (d.source === gNode || d.target === gNode)
         ? 'block'
@@ -253,9 +249,8 @@ class Circumshaker extends React.Component {
     this.forceUpdate()
   }
 
-  onLeave (event) {
-    let target = event.target
-    this.props.onLeave(event, this.getDatum(target))
+  onLeave (event, data, index) {
+    this.props.onLeave(event, data, index)
 
     // Display all paths once again
     this.graph.links.forEach((d, i) => {
@@ -263,15 +258,6 @@ class Circumshaker extends React.Component {
     })
     // NOTE: This might not be the most efficient ... may need better way
     this.forceUpdate()
-  }
-
-  getDatum (target) {
-    let label = target.getAttribute('data-nodeKey')
-    let count = target.getAttribute('data-nodeValue')
-    return {
-      label,
-      count
-    }
   }
 
   render () {
@@ -301,51 +287,92 @@ class Circumshaker extends React.Component {
 
     return (
       <g className={this.props.className}>
-        {range(1, this.depth + 1, 1).map((d, i) => {
-          let cocentricCircleProps = {
-            className: 'cocentricCircle',
-            key: i,
-            r: this.radius * d,
-            cx: chartWidth / 2,
-            cy: chartHeight / 2
-          }
-          return (
-            <circle {...cocentricCircleProps} />
-          )
-        })}
+        <g>
+          {range(1, this.depth + 1, 1).map((d, i) => {
+            return (
+              <circle
+                className='cocentricCircle'
+                key={i}
+                r={this.radius * d}
+                cx={chartWidth / 2}
+                cy={chartHeight / 2} />
+            )
+          })}
+        </g>
         {this.graph.links.map((d, i) => {
-          let linkProps = {
-            className: 'link',
-            key: i,
-            display: (typeof d.display === 'undefined')
-              ? 'block'
-              : d.display,
-            d: path(d)
-          }
           return (
-            <path {...linkProps} />
+            <path
+              key={d.source.key.replace(/\W/g, '') + '-' + d.target.key.replace(/\W/g, '')}
+              className='link'
+              d={path(d)}
+              display={typeof d.display === 'undefined'
+                ? 'block'
+                : d.display
+              } />
           )
         })}
-        {this.graph.nodes.map((d, i) => {
-          let nodeProps = {
-            'data-nodeIndex': i,
-            'data-nodeKey': d.key,
-            'data-nodeValue': d.value,
-            onMouseEnter: this.onEnter,
-            onMouseLeave: this.onLeave,
-            onClick: this.onClick,
-            className: 'node',
-            key: i,
-            r: this.nodeSizeScale(this.graph.links.filter((g) => {
-              return g.source === d || g.target === d
-            }).length),
-            cx: d.x,
-            cy: d.y
-          }
-          return (
-            <circle {...nodeProps} />
-          )
-        })}
+        <ReactTransitionGroup component='g'>
+          {this.graph.nodes.map((d, i) => {
+            return (
+              <SVGComponent
+                key={d.key.replace(/\W/g, '')}
+                className='node'
+                Component='circle'
+                data={d}
+                index={i}
+                onClick={this.onClick}
+                onMouseEnter={this.onEnter}
+                onMouseLeave={this.onLeave}
+                onEnter={{
+                  func: (transition, props) => {
+                    transition
+                      .delay(0)
+                      .duration(1000)
+                      .ease(setEase('linear'))
+                      .attrTween('r', () => {
+                        return interpolate(0, props.r)
+                      })
+                      .attrTween('cx', () => {
+                        return interpolate(0, props.cx)
+                      })
+                      .attrTween('cy', () => {
+                        return interpolate(0, props.cy)
+                      })
+                    return transition
+                  }
+                }}
+                onUpdate={{
+                  func: (transition, props) => {
+                    transition
+                      .delay(0)
+                      .duration(1000)
+                      .ease(setEase('linear'))
+                      .attr('r', props.r)
+                      .attr('cx', props.cx)
+                      .attr('cy', props.cy)
+                    return transition
+                  }
+                }}
+                onExit={{
+                  func: (transition, props) => {
+                    transition
+                      .delay(0)
+                      .duration(1000)
+                      .ease(setEase('linear'))
+                      .attr('r', 0)
+                      .attr('cx', 0)
+                      .attr('cy', 0)
+                    return transition
+                  }
+                }}
+                r={this.nodeSizeScale(this.graph.links.filter((g) => {
+                  return g.source === d || g.target === d
+                }).length)}
+                cx={d.x}
+                cy={d.y} />
+            )
+          })}
+        </ReactTransitionGroup>
       </g>
     )
   }

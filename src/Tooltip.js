@@ -1,43 +1,4 @@
-const functor = (f) => {
-  return typeof f === 'function'
-    ? f()
-    : f
-}
-
-// Cross browser helpers
-const getWidth = () => {
-  if (self.innerHeight) {
-    return self.innerWidth
-  }
-
-  if (document.documentElement && document.documentElement.clientWidth) {
-    return document.documentElement.clientWidth
-  }
-
-  if (document.body) {
-    return document.body.clientWidth
-  }
-}
-
-const scrollTop = () => {
-  if (document.documentElement && document.documentElement.scrollTop) {
-    return document.documentElement.scrollTop
-  }
-
-  if (document.body) {
-    return document.body.scrollTop
-  }
-}
-
-const scrollLeft = () => {
-  if (document.documentElement && document.documentElement.scrollLeft) {
-    return document.documentElement.scrollLeft
-  }
-
-  if (document.body) {
-    return document.body.scrollLeft
-  }
-}
+import { functor, getWidth, scrollTop, scrollLeft } from './util/common'
 
 export default class Tooltip {
   constructor () {

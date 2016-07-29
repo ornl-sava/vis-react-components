@@ -65,6 +65,7 @@
     "lint": "eslint src --ext .js --ext .jsx --ignore-path .gitignore"
   },
   "dependencies": {
+    "d3-selection-multi": "^0.4.1",
     "react-addons-transition-group": "^15.2.1"
   }
 }
