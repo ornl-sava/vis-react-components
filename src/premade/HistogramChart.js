@@ -178,7 +178,9 @@ class HistogramChart extends React.Component {
     }
   }
   _onBrush (data) {
-    this.props.onBrush(data)
+    if (data && data.length === 2) {
+      this.props.onBrush(data)
+    }
   }
 
   onClick (event, data) {
