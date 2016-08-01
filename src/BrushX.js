@@ -13,9 +13,6 @@ class BrushX extends React.Component {
   componentDidMount () {
     this.initBrush()
   }
-  _onBrush (data) {
-
-  }
   initBrush () {
     let thisNode = findDOMNode(this)
     let selection = select(thisNode)
@@ -44,15 +41,17 @@ class BrushX extends React.Component {
   // Normally we'd append a path to the handle <g>
   // but as of D3 v4 the handles is now a <rect>
   setBrushDimensions () {
-    let h = this.props.height / 5
-    let y = this.props.height / 2 - (h / 2)
-    select(findDOMNode(this)).selectAll('.handle')
-      .style('width', 7)
-      .style('height', h)
-      .style('y', y)
-      .style('rx', '6')
-      .style('ry', '6')
-      .style('fill', '#666')
+    if (this.props.showHandles) {
+      let h = this.props.height / 5
+      let y = this.props.height / 2 - (h / 2)
+      select(findDOMNode(this)).selectAll('.handle')
+        .style('width', 7)
+        .style('height', h)
+        .style('y', y)
+        .style('rx', '6')
+        .style('ry', '6')
+        .style('fill', '#666')
+    }
   }
   componentDidUpdate (prevProps, prevState) {
     if (this.props.width !== prevProps.width || this.props.height !== prevProps.height) {
@@ -63,7 +62,7 @@ class BrushX extends React.Component {
       let selection = select(thisNode)
       selection.call(this.brush.move, this.state.selection.map(this.props.scale))
     }
-    if (this.props.onBrush) {
+    if (this.props.onBrush && this.state.selection) {
       this.props.onBrush(this.state.selection)
     }
     // this.setBrushDimensions()
@@ -108,6 +107,7 @@ class BrushX extends React.Component {
 }
 
 BrushX.defaultProps = {
+  showHandles: false
 }
 
 BrushX.propTypes = {
@@ -116,6 +116,7 @@ BrushX.propTypes = {
   height: PropTypes.number.isRequired,
   interval: PropTypes.number.isRequired,
   scale: PropTypes.func.isRequired,
+  showHandles: PropTypes.bool.isRequired,
   onBrush: PropTypes.func
 }
 
