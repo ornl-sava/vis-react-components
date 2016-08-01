@@ -9,12 +9,15 @@ class Bar extends React.Component {
     this.onMouseDown = this._onMouseDown.bind(this)
   }
   componentWillUnmount () {
-    this._onMouseLeave()
+    if (this._onMouseLeave) {
+      this._onMouseLeave()
+    }
   }
   _onClick (event) {
     if (this.props.tooltipData) {
-      // console.log('click')
-      this.props.onClick(event, this.props.tooltipData)
+      if (this.props.onClick) {
+        this.props.onClick(event, this.props.tooltipData)
+      }
     }
   }
   _onMouseEnter (event) {
@@ -24,6 +27,7 @@ class Bar extends React.Component {
   }
   _onMouseDown (event) {
     if (this.props.tooltipData) {
+      // console.log('Bar :: mousedown')
       let newEvent = new MouseEvent('mousedown', event)
       if (this.props.brushed) {
         let target = select('.selection')

@@ -13,6 +13,9 @@ class BrushX extends React.Component {
   componentDidMount () {
     this.initBrush()
   }
+  _onBrush (data) {
+
+  }
   initBrush () {
     let thisNode = findDOMNode(this)
     let selection = select(thisNode)
@@ -59,6 +62,9 @@ class BrushX extends React.Component {
       let thisNode = findDOMNode(this)
       let selection = select(thisNode)
       selection.call(this.brush.move, this.state.selection.map(this.props.scale))
+    }
+    if (this.props.onBrush) {
+      this.props.onBrush(this.state.selection)
     }
     // this.setBrushDimensions()
   }
@@ -109,7 +115,8 @@ BrushX.propTypes = {
   width: PropTypes.number.isRequired,
   height: PropTypes.number.isRequired,
   interval: PropTypes.number.isRequired,
-  scale: PropTypes.func.isRequired
+  scale: PropTypes.func.isRequired,
+  onBrush: PropTypes.func
 }
 
 export default BrushX

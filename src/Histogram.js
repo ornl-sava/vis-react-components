@@ -43,7 +43,7 @@ class Histogram extends React.Component {
       let xPos = props.xScale(barData[i][0].data[props.xAccessor])
       return (
         <g className='overlay-bin' key={'overlay-' + i.toString()} transform={'translate(' + xPos + ',' + yPos + ')'}>
-          <Bar {...overlayObj} onEnter={props.onEnter} onLeave={props.onLeave} />
+          <Bar {...overlayObj} onClick={this.props.brushed ? null : props.onClick} onEnter={props.onEnter} onLeave={props.onLeave} />
         </g>
       )
     })
@@ -93,7 +93,7 @@ class Histogram extends React.Component {
           data[props.yAccessor] = dataArr[barIndex - 1][props.yAccessor] - data.height
         }
         return (
-          <Bar {...data} onClick={props.onClick} onEnter={props.onEnter} onLeave={props.onLeave} />
+          <Bar {...data} onEnter={props.onEnter} onLeave={props.onLeave} />
         )
       })
     })
@@ -119,7 +119,7 @@ class Histogram extends React.Component {
     if (barData.length > 1 && props.brushed) {
       let interval = Math.abs(barData[1][0].data[props.xAccessor] - barData[0][0].data[props.xAccessor])
       el = <g onMouseLeave={this.onMouseLeave}>
-        <BrushX width={props.xScale.range()[1]} height={props.yScale.range()[0]} interval={interval} scale={props.xScale}>
+        <BrushX width={props.xScale.range()[1]} height={props.yScale.range()[0]} interval={interval} scale={props.xScale} onBrush={props.onBrush}>
           {svgBins}
         </BrushX>
         {overlayBins}
@@ -154,6 +154,7 @@ Histogram.propTypes = {
   chartWidth: PropTypes.number,
   className: PropTypes.string,
   data: PropTypes.array,
+  onBrush: PropTypes.func,
   onClick: PropTypes.func,
   onEnter: PropTypes.func,
   onLeave: PropTypes.func,

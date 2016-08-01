@@ -18,6 +18,7 @@ class HistogramChart extends React.Component {
     this.yDomain = this.props.yDomain
 
     this.onClick = this.onClick.bind(this)
+    this.onBrush = this._onBrush.bind(this)
     this.onEnter = this.onEnter.bind(this)
     this.onLeave = this.onLeave.bind(this)
     this.onResize = this.onResize.bind(this)
@@ -176,6 +177,9 @@ class HistogramChart extends React.Component {
       this.xScale.paddingOuter(props.xAxis.outerPadding)
     }
   }
+  _onBrush (data) {
+    this.props.onBrush(data)
+  }
 
   onClick (event, data) {
     this.props.onClick(event, data)
@@ -205,7 +209,7 @@ class HistogramChart extends React.Component {
       <Chart ref='chart' {...spreadRelated(Chart, props)} resizeHandler={this.onResize}>
         <Histogram className='histogram' {...spreadRelated(Histogram, props)}
           xScale={this.xScale} yScale={this.yScale}
-          onEnter={this.onEnter} onLeave={this.onLeave} onClick={this.onClick} />
+          onEnter={this.onEnter} onLeave={this.onLeave} onClick={this.onClick} onBrush={this.onBrush} />
         <Axis className='x axis' {...props.xAxis} scale={this.xScale} />
         <Axis className='y axis' {...props.yAxis} scale={this.yScale} />
       </Chart>
@@ -256,6 +260,7 @@ HistogramChart.propTypes = {
     PropTypes.array,
     PropTypes.bool
   ]),
+  onBrush: PropTypes.func,
   onClick: PropTypes.func,
   onEnter: PropTypes.func,
   onLeave: PropTypes.func,
