@@ -13,23 +13,23 @@ class ForceDirectedGraph extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
-      nodes: props.nodes,
-      links: props.links
+      nodes: [],
+      links: []
     }
 
-    this.nodes = props.nodes
-    this.links = props.links
+    this.nodes = []
+    this.links = []
+    this.data = props.data
+    this.rootNode = d3.hierarchy(this.data)
+      .sum((d) => { return d.value })
+      .sort((a, b) => { return b.height - a.height || b.value - a.value })
+    this.setTree(props)
 
     this.colScale = d3.scaleOrdinal(d3.schemeCategory10)
     this.xScale = setScale('ordinalBand')
 
-    this.aList = props.adjacencyList
-
     this.updateDR = this.updateDR.bind(this)
     this.updateDR(props)
-
-    this.falseStart(props)
-    // console.log('FDG-c-nodes', this.links[0].source.x)
 
     this.simulation = d3.forceSimulation()
     this.setSim(props)
@@ -80,19 +80,20 @@ class ForceDirectedGraph extends React.Component {
       this.isDrag = false
       this.setState({nodes: this.nodes, links: this.links})
       this.simulation.stop()
-      this.falseStart(this.props)
+      this.setTree(this.props)
     }
   }
 
   onEnter (event) {
     let target = this.getDatum(event.target)
+    // console.log('FDGT-onE', target)
     let type = 'Node '
     if (target.data.events.indexOf('parent-') >= 0) {
       type = 'Parent '
     } else if (target.data.events.indexOf('root-') >= 0) {
       type = 'Root '
     }
-    let tooltipD = {label: type + event.target.getAttribute('data-id') + ' at Hour ' + target.data.hour, counts: target.data.events.length}
+    let tooltipD = {label: type + event.target.getAttribute('data-key') + ' at Hour ' + target.data.hour, counts: target.data.events.length}
     if (target && this.props.tipFunction) {
       this.tip.show(event, tooltipD)
     }
@@ -110,24 +111,37 @@ class ForceDirectedGraph extends React.Component {
   onDragStart (event) {
     // console.log('FFG-oDStart-HERE')
     this.simulation.stop()
-    let i = this.getDatum(event.target).data.index
-    if (this.props.adjacencyList[i].length !== 0) {
-      // // console.log('parent')
-      // this.hidingNodes.push(this.nodes[i])
-      // // this.links.
-      // this.nodes.splice({id: i}, 1)
-      // this.setSim(this.props)
-      // this.simulation.alphaTarget(0.3).restart()
-    } else {
-      this.pos = [event.clientX, event.clientY]
-      this.isDrag = true
-      let pos = [this.nodes[i].x, this.nodes[i].y]
-      pos = pos.slice(0)
-      // console.log('FFG-oDStart-i', i)
-      this.nodes[i].fx = this.nodePos[0] = pos[0]
-      this.nodes[i].fy = this.nodePos[1] = pos[1]
+    let target = this.getDatum(event.target)
+    // let i = target.data.index
+    if (target.children !== null) {
+      target._children = target.children
+      target.children = null
+      // need to fix
+      if (this.simOn) {
+        this.setTree(this.props)
+        this.setState({nodes: this.nodes, links: this.links})
+      } else {
+        this.reSet(this.props)
+        this.setSim(this.props)
+        this.simulation.alphaTarget(0.3).restart()
+      }
+    } else if (target.children === null) {
+      target.children = target._children
+      target._children = null
+      this.reSet(this.props)
+      this.setSim(this.props)
       this.simulation.alphaTarget(0.3).restart()
     }
+    // else {
+    //   this.pos = [event.clientX, event.clientY]
+    //   this.isDrag = true
+    //   let pos = [this.nodes[i].x, this.nodes[i].y]
+    //   pos = pos.slice(0)
+    //   // console.log('FFG-oDStart-i', i)
+    //   this.nodes[i].fx = this.nodePos[0] = pos[0]
+    //   this.nodes[i].fy = this.nodePos[1] = pos[1]
+    //   this.simulation.alphaTarget(0.3).restart()
+    // }
   }
   onDrag (event) {
     if (this.isDrag) {
@@ -161,11 +175,11 @@ class ForceDirectedGraph extends React.Component {
   }
 
   getIndex (target) {
-    return target.getAttribute('data-id')
+    return target.getAttribute('data-index')
   }
 
   getDatum (target) {
-    let i = target.getAttribute('data-id')
+    let i = target.getAttribute('data-index')
     return this.nodes[i]
   }
 
@@ -191,14 +205,16 @@ class ForceDirectedGraph extends React.Component {
     this.setState({nodes: this.nodes, links: this.links})
   }
 
-  falseStart (props) {
-    this.nodes.map((d, i) => {
-      d.y = 50 * (d.depth + 1)
-      d.key = i
-    })
-    this.links.map((d, i) => {
-      d.key = i
-    })
+  setTree (props) {
+    let tree = d3.tree().size([props.chartWidth, props.chartHeight])
+    tree(this.rootNode)
+    this.nodes = this.rootNode.descendants()
+    this.links = this.rootNode.links()
+    // console.log('FDG-setTree')
+  }
+  reSet () {
+    this.nodes = this.rootNode.descendants()
+    this.links = this.rootNode.links()
   }
 
   drawSim (props) {
@@ -208,15 +224,16 @@ class ForceDirectedGraph extends React.Component {
     // console.log('FDG-draw-state', this.state)
     // console.log('FDG-draw-radius', props.radius)
     let events = {
-      'onMouseMove': this.onDrag,
+      // 'onMouseMove': this.onDrag,
       'onMouseDown': this.onDragStart,
-      'onMouseUp': this.onDragEnd,
+      // 'onMouseUp': this.onDragEnd,
       'onMouseEnter': this.onEnter,
       'onMouseLeave': this.onLeave
     }
     this.state.nodes.map((d, i) => {
       let circleProps = {
-        'data-id': d.key,
+        'data-key': d.data.index,
+        'data-index': i,
         'r': props.radius,
         'cx': d.x,
         'cy': d.y,
@@ -225,7 +242,7 @@ class ForceDirectedGraph extends React.Component {
         'hour': d.hour
       }
       nodeList.push(
-        <circle key={'cir-id' + i + '-hr-' + d.hour} {...events} {...circleProps} />
+        <circle key={'cir-id' + d.data.index + '-hr-' + d.hour} {...events} {...circleProps} />
       )
     })
     this.state.links.map((data, index) => {
@@ -285,13 +302,10 @@ ForceDirectedGraph.propTypes = {
   chartWidth: PropTypes.number,
   className: PropTypes.string,
   radius: PropTypes.number,
-  adjacencyList: PropTypes.any,
   tipFunction: PropTypes.func,
-  nodes: PropTypes.array.isRequired,
-  links: PropTypes.array.isRequired,
   xScale: PropTypes.any,
   yScale: PropTypes.any,
-  data: PropTypes.array,
+  data: PropTypes.object,
   onClick: PropTypes.func,
   onEnter: PropTypes.func,
   onLeave: PropTypes.func,

@@ -162,7 +162,7 @@ const aList = makeAdjacencyList()
 
 const nData = 3
 
-let makeTree = () => {
+let makeTreeData = () => {
   let ind = 0
   let treeList = {hour: -1, children: [], index: ind++, events: 'root-', id: ind}
   for (let i = 0; i < nData; i++) {
@@ -175,57 +175,19 @@ let makeTree = () => {
       }))
     }
   })
-  let rootNode = d3.hierarchy(treeList)
-  // d3.tree(treeList).size([1000, 1000])
-  return rootNode
+  return treeList
 }
-let rootNode = makeTree()
-  .sum((d) => { return d.value })
-  .sort((a, b) => { return b.height - a.height || b.value - a.value })
-
-let tree = d3.tree().size([800, 1000])
-tree(rootNode)
-const treeNodes = rootNode.descendants()
-// console.log('FDGE-rootNode', rootNode)
-// console.log('FDGE-treeNodes', treeNodes)
-let treeLinks = rootNode.links()
-// console.log('FDGE-treeLinks', treeLinks)
-
-const nodeLinkAList = () => {
-  let newAList = []
-  // console.log('FDGE-nAL', newAList)
-  let newLinks = []
-  rootNode.each((node) => {
-    if (node !== rootNode) { // Don’t include the root’s parent, if any.
-      newLinks.push({source: node.parent.data.index, target: node.data.index})
-    }
-  })
-  // console.log('newLinks', newLinks)
-  for (let j = 0; j < treeNodes.length; j++) {
-    newAList.push([])
-  }
-  // newAList.fill(new Array(0))
-  newLinks.map((d, i) => {
-    newAList[d.source].push(d.target)
-  })
-  return newAList
-}
-// console.log('FDGE-nodeLinkList', nodeLinkAList())
 
 const treeChartProps = {
   tipFunction: toolTipFunction,
-  numTData: nData, // not sure if needed
-  nodes: treeNodes,
-  links: treeLinks,
-  adjacencyList: nodeLinkAList()
+  data: makeTreeData()
 }
-console.log('numNodes-', treeNodes.length, '-numLinks-', treeLinks.length)
 
 class TopicsContainer extends React.Component {
   render () {
     return (
       <div>
-        {<Chart className='col-md-12' tipFunction={toolTipFunction} yAxis={false} xAxis={false} height={1000} width={1000} >
+        {<Chart className='col-md-12' tipFunction={toolTipFunction} yAxis={false} xAxis={false} height={1000} >
           <ForceDirectedGraphTree {...treeChartProps} />
         </Chart>}
       </div>
