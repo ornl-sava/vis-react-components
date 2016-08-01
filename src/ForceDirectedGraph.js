@@ -17,9 +17,6 @@ class ForceDirectedGraph extends React.Component {
       links: props.links
     }
 
-    this.nodes = props.nodes
-    this.links = props.links
-
     this.colScale = d3.scaleOrdinal(d3.schemeCategory10)
     this.xScale = setScale('ordinalBand')
 
@@ -28,6 +25,8 @@ class ForceDirectedGraph extends React.Component {
     this.updateDR = this.updateDR.bind(this)
     this.updateDR(props)
 
+    this.nodes = []
+    this.links = []
     this.falseStart(props)
     // console.log('FDG-c-nodes', this.links[0].source.x)
 
@@ -49,7 +48,7 @@ class ForceDirectedGraph extends React.Component {
     this.onDrag = this.onDrag.bind(this)
     this.onDragStart = this.onDragStart.bind(this)
     this.onDragEnd = this.onDragEnd.bind(this)
-    this.remNodes = this.remNodes.bind(this)
+    this.remNodes2 = this.remNodes2.bind(this)
   }
 
   componentWillMount () {
@@ -90,7 +89,7 @@ class ForceDirectedGraph extends React.Component {
     if (target.events.indexOf('parent-') >= 0) {
       type = 'Parent'
     }
-    let tooltipD = {label: type + event.target.getAttribute('data-id') + ' at Hour ' + target.hour, counts: target.events.length}
+    let tooltipD = {label: type + target.index + ' at Hour ' + target.hour, counts: target.events.length}
     if (target && this.props.tipFunction) {
       this.tip.show(event, tooltipD)
     }
@@ -111,19 +110,21 @@ class ForceDirectedGraph extends React.Component {
     this.simulation.stop()
 
     let target = this.getDatum(event.target)
-    if (target.events.indexOf('parent-') >= 0) {
-      this.remNodes(target.hour)
+    if (true) {
+    // if (target.events.indexOf('parent-') >= 0) {
+      this.remNodes(target, this.props)
+      this.reSet(this.props)
       this.setSim(this.props)
       this.isDrag = false
+    } else {
+      this.pos = [event.clientX, event.clientY]
+      let i = this.getIndex(event.target)
+      let pos = [this.nodes[i].x, this.nodes[i].y]
+      pos = pos.slice(0)
+      // console.log('FFG-oDStart-i', i)
+      this.nodes[i].fx = this.nodePos[0] = pos[0]
+      this.nodes[i].fy = this.nodePos[1] = pos[1]
     }
-
-    this.pos = [event.clientX, event.clientY]
-    let i = this.getIndex(event.target)
-    let pos = [this.nodes[i].x, this.nodes[i].y]
-    pos = pos.slice(0)
-    // console.log('FFG-oDStart-i', i)
-    this.nodes[i].fx = this.nodePos[0] = pos[0]
-    this.nodes[i].fy = this.nodePos[1] = pos[1]
     this.simulation.alphaTarget(0.3).restart()
   }
   onDrag (event) {
@@ -149,56 +150,18 @@ class ForceDirectedGraph extends React.Component {
     this.simulation.alphaTarget(0)
   }
 
-  remNodes (hour) {
-    let leafNodes = []
-    let delNodes = []
-    // let links = []
-    // GRABS ALL THE LEAVES
-    this.links.map((d) => {
-      if ((d.source.hour === hour) && (d.source.hour === d.target.hour)) {
-        leafNodes.push(d.target.ind)
-        delNodes.push(d.target.ind)
-      }
-    })
-    // console.log('FDG-remNodes-leaves', leafNodes)
-    // console.log('FDG-remNodes-links', this.links)
-    // DELETES LINKS AND NODES
-    this.links = this.links.filter((d, i) => {
-      let del = false
-      leafNodes.map((data, index) => {
-        if (data === (d.source.ind || d.target.ind)) {
-          // console.log('FDG-remNodes-data', data)
-          if (d.source.hour !== d.target.hour) {
-            let rInd = delNodes.indexOf(data)
-            if (rInd >= 0) {
-              delNodes.splice(rInd, 1)
-            }
-            // links.push(d)
-          } else { del = true }
-        } else {
-          // links.push(d)
+  remNodes (target, props) {
+    let links = props.adjacencyList[target.index]
+    if (links.length > 1) {
+      links.map((d, i) => {
+        if (props.adjacencyList[d].length <= 1) {
+          props.nodes[d].active = !props.nodes[d].active
         }
       })
-      if (!del) { return d }
-    })
-    // console.log('delNodes', this.links)
-    // delNodes.map((d, i) => {
-    //   this.links = this.links.filter((data, index) => {
-    //     if (d !== (data.source.ind || data.target.ind)) { return data }
-    //   })
-    // })
-    // this.links = this.links.filter((d, i) => {
-    //   let del = false
-    //   delNodes.map((data, index) => {
-    //     console.log(data, d.source.ind, d.target.ind)
-    //     if (data === (d.source.ind || d.target.ind)) {
-    //       del = true
-    //       console.log('shdfklsjhdlk')
-    //     }
-    //   })
-    //   if (!del) { return d }
-    // })
-    // this.links = links
+    }
+    // else {
+    //   target.active = false
+    // }
   }
 
   updateDR (props) {
@@ -241,14 +204,44 @@ class ForceDirectedGraph extends React.Component {
   }
 
   falseStart (props) {
-    this.nodes.map((d, i) => {
-      d.x = Math.random() * this.xScale.bandwidth() + this.xScale(d.hour)
-      d.y = Math.random() * props.chartHeight
+    let links = []
+    let nodes = []
+    props.nodes.map((d, i) => {
+      if (d.active || d.active == null) {
+        d.x = Math.random() * this.xScale.bandwidth() + this.xScale(d.hour)
+        d.y = Math.random() * props.chartHeight
+        d.active = true
+        if (props.adjacencyList[i].length !== null) {
+          props.adjacencyList[i].map((data, index) => {
+            if (data > i) {
+              links.push({source: props.nodes[i], target: props.nodes[data], value: 0})
+            }
+          })
+        }
+        nodes.push(d)
+      }
     })
-    this.links.map((d, i) => {
-      d.source = this.nodes[props.adjacencyList[i].source]
-      d.target = this.nodes[props.adjacencyList[i].target]
+    this.nodes = nodes
+    this.links = links
+  }
+  // might get rid of since it is so similar to falseStart
+  reSet (props) {
+    let links = []
+    let nodes = []
+    props.nodes.map((d, i) => {
+      if (d.active) {
+        if (props.adjacencyList[i].length !== null) {
+          props.adjacencyList[i].map((data) => {
+            if (data > i && props.nodes[data].active) {
+              links.push({source: props.nodes[i], target: props.nodes[data], value: 0})
+            }
+          })
+        }
+        nodes.push(d)
+      }
     })
+    this.nodes = nodes
+    this.links = links
   }
 
   drawSim (props) {
@@ -266,7 +259,7 @@ class ForceDirectedGraph extends React.Component {
     }
     this.state.nodes.map((d, i) => {
       let circleProps = {
-        'data-id': d.id,
+        'data-id': i,
         'r': props.radius,
         'cx': d.x,
         'cy': d.y,
@@ -275,7 +268,7 @@ class ForceDirectedGraph extends React.Component {
         'hour': d.hour
       }
       nodeList.push(
-        <circle key={'cir-id' + d.id + '-hr-' + d.hour} {...events} {...circleProps} />
+        <circle key={'cir-id' + d.index + '-hr-' + d.hour} {...events} {...circleProps} />
       )
     })
     this.state.links.map((data, index) => {

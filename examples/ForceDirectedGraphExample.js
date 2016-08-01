@@ -161,7 +161,7 @@ const makeAdjacencyList = () => {
 }
 const aList = makeAdjacencyList()
 
-const nData = 3
+const nData = 5
 
 const getNodes = () => {
   let nodes = []
@@ -219,17 +219,28 @@ const getLinks = () => {
 }
 const links = getLinks()
 
-const nodeLinkAList = () => {
-  let newAList = []
-  links.map((d, i) => {
-    newAList.push({source: d.source, target: d.target})
+const adjListNL = () => {
+  let list = []
+  for (let i = 0; i < nodes.length; i++) { list.push([]) }
+  links.map((data, index) => {
+    list[data.source].push(data.target)
+    list[data.target].push(data.source)
   })
-  return newAList
+  return list
 }
+console.log('FDGE-adjListNL', adjListNL())
+
+// const nodeLinkAList = () => {
+//   let newAList = []
+//   links.map((d, i) => {
+//     newAList.push({source: d.source, target: d.target})
+//   })
+//   return newAList
+// }
 
 const chartProps = {
   tipFunction: toolTipFunction,
-  adjacencyList: nodeLinkAList(),
+  adjacencyList: adjListNL(),
   numTData: nData,
   nodes: nodes,
   links: links
