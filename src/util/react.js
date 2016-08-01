@@ -18,7 +18,7 @@ const spreadExclude = (props, exclude) => {
   return newProps
 }
 
-// Maps svg attributes to react attributes
+// Convert DOM attribute to React attribute
 const toReactAttribute = (attribute) => {
   // Check for classname
   if (attribute === 'classname') {
@@ -37,7 +37,7 @@ const toReactAttribute = (attribute) => {
   }
 }
 
-const toSVGAttribute = (attribute) => {
+const toDOMAttribute = (attribute) => {
   // Check for classname
   if (attribute === 'className') {
     return 'classname'
@@ -47,4 +47,4 @@ const toSVGAttribute = (attribute) => {
   }
 }
 
-export { spreadRelated, spreadExclude, toReactAttribute, toSVGAttribute }
+export { spreadRelated, spreadExclude, toReactAttribute, toDOMAttribute }
