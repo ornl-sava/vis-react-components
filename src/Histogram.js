@@ -142,6 +142,7 @@ Histogram.defaultProps = {
   data: [],
   xAccessor: 'x',
   yAccessor: 'y',
+  onBrush: () => {},
   onClick: () => {},
   onEnter: () => {},
   onLeave: () => {}
