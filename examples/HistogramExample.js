@@ -2,7 +2,7 @@ import React from 'react'
 import { format } from 'd3-format'
 
 import { HistogramChart, Settings } from '../src'
-import { histogramData, temporalHistogramData, stackedHistogramData } from './data/exampleData'
+import { randomStackedHistogramData, histogramData, temporalHistogramData, stackedHistogramData } from './data/exampleData'
 
 // Tooltipdata is an object currently defined in the component
 // Properties for Histogram tooltipData are :
@@ -65,7 +65,8 @@ class HistogramExample extends React.Component {
       chart1xAxis: {
         type: 'x',
         orient: 'bottom'
-      }
+      },
+      randomData: randomStackedHistogramData()
     }
 
     this.settings = {
@@ -153,6 +154,12 @@ class HistogramExample extends React.Component {
         <span className='chart-title'>Temporal Histogram - Brush selection</span>
       ])
     }
+
+    this.header4 = () => {
+      return ([
+        <span className='chart-title'>Animated Stacked Histogram</span>
+      ])
+    }
   }
 
   onChart1Enter (event, data) {
@@ -172,6 +179,23 @@ class HistogramExample extends React.Component {
         orient: 'bottom'
       }
     })
+  }
+
+  componentDidMount () {
+    this.createRandomData = () => {
+      setTimeout(() => {
+        this.setState({
+          randomData: randomStackedHistogramData()
+        }, () => {
+          this.createRandomData()
+        })
+      }, 2000)
+    }
+    this.createRandomData()
+  }
+
+  componentWillUnmount () {
+    this.createRandomData = () => {}
   }
 
   render () {
@@ -201,6 +225,11 @@ class HistogramExample extends React.Component {
           <HistogramChart header={this.header3} xScaleType='time'
             width={800} height={200} data={temporalData} tipFunction={toolTipFunction}
             addOverlay onClick={onBarClick} brushed />
+        </div>
+        <div>
+          <HistogramChart
+            header={this.header4} width={800} height={200} type='stacked'
+            data={this.state.randomData} tipFunction={toolTipFunction} />
         </div>
       </div>
     )

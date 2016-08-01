@@ -92,6 +92,33 @@ body {
 	stroke-width: 1px;
 	opacity: 0.8;
 }
+
+.histogram-bar.Z {
+	fill: #f6eff7;
+	stroke: #f6eff7;
+	stroke-width: 1px;
+	opacity: 0.8;
+}
+
+.histogram-bar.Y {
+	fill: #bdc9e1;
+	stroke: #bdc9e1;
+	stroke-width: 1px;
+	opacity: 0.8;
+}
+.histogram-bar.X {
+	fill: #67a9cf;
+	stroke: #67a9cf;
+	stroke-width: 1px;
+	opacity: 0.8;
+}
+
+.histogram-bar.W {
+	fill: #02818a;
+	stroke: #02818a;
+	stroke-width: 1px;
+	opacity: 0.8;
+}
 /* d3-tip styles */
 
 .d3-tip {

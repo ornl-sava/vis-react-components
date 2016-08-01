@@ -146,21 +146,12 @@ SVGComponent.defaultProps = {
   data: null,
   index: null,
   onEnter: {
-    duration: 1000,
-    delay: 0,
-    ease: 'linear',
     func: () => {}
   },
   onUpdate: {
-    duration: 1000,
-    delay: 0,
-    ease: 'linear',
     func: () => {}
   },
   onExit: {
-    duration: 1000,
-    delay: 0,
-    ease: 'linear',
     func: () => {}
   },
   onClick: () => {},
