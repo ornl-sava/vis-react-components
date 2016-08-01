@@ -486,7 +486,10 @@ export class HybridScatterHeatmap extends React.Component {
     this.updateChart()
   }
 
-  componentWillUnmount () {}
+  componentWillUnmount () {
+    let root = this.refs.root
+    select(root).selectAll('*').remove()
+  }
 
   componentDidMount () {
     this.createChart()
