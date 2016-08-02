@@ -35,6 +35,9 @@ class BrushX extends React.Component {
     this.selection[0].toString() !== this.state.selection[0].toString() ||
     this.selection[1].toString() !== this.state.selection[1].toString()) {
       this.setState({selection: this.selection})
+      if (this.props.onBrush) {
+        this.props.onBrush(Object.assign([], this.selection))
+      }
     }
     // this.setBrushDimensions()
   }
@@ -62,10 +65,6 @@ class BrushX extends React.Component {
       let selection = select(thisNode)
       selection.call(this.brush.move, this.state.selection.map(this.props.scale))
     }
-    if (this.props.onBrush && this.state.selection) {
-      this.props.onBrush(this.state.selection)
-    }
-    // this.setBrushDimensions()
   }
   applySelection () {
     if (!d3Event.sourceEvent || d3Event.sourceEvent.type === 'brush') return
