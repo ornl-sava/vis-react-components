@@ -5,9 +5,11 @@ import { brushX, select, event as d3Event } from 'd3'
 class BrushX extends React.Component {
   constructor (props) {
     super(props)
-    this.selection = null
-    this.state = {
-      selection: this.selection
+    this.selection = props.brushSelection ? props.brushSelection : []
+    if (!props.brushSelection) {
+      this.state = {
+        selection: this.selection
+      }
     }
   }
   componentDidMount () {
@@ -31,12 +33,15 @@ class BrushX extends React.Component {
     this.applySelection()
   }
   _end () {
-    if (!this.state.selection ||
-    this.selection[0].toString() !== this.state.selection[0].toString() ||
-    this.selection[1].toString() !== this.state.selection[1].toString()) {
-      this.setState({selection: this.selection})
-      if (this.props.onBrush) {
-        this.props.onBrush(Object.assign([], this.selection))
+    let newSelection = this.selection.toString()
+    let oldSelection = this.props.brushSelection ? this.props.brushSelection.toString() : this.state.selection.toString()
+    console.log('brush end')
+    if (newSelection !== oldSelection) {
+      console.log('calling parent brush!')
+      console.log(this.selection)
+      this.props.onBrush(this.selection)
+      if (!this.props.brushSelection) {
+        this.setState({selection: this.selection})
       }
     }
     // this.setBrushDimensions()
@@ -60,10 +65,14 @@ class BrushX extends React.Component {
     if (this.props.width !== prevProps.width || this.props.height !== prevProps.height) {
       this.initBrush()
     }
-    if (this.state.selection) {
+    if (this.selection.length === 2) {
+      console.log(this.props.brushSelection)
+      if (this.props.brushSelection && this.props.brushSelection.toString() !== prevProps.brushSelection.toString()) {
+        this.selection = this.props.brushSelection
+      }
       let thisNode = findDOMNode(this)
       let selection = select(thisNode)
-      selection.call(this.brush.move, this.state.selection.map(this.props.scale))
+      selection.call(this.brush.move, this.selection.map(this.props.scale))
     }
   }
   applySelection () {
@@ -110,6 +119,7 @@ BrushX.defaultProps = {
 }
 
 BrushX.propTypes = {
+  brushSelection: PropTypes.array,
   children: PropTypes.node,
   width: PropTypes.number.isRequired,
   height: PropTypes.number.isRequired,
