@@ -1078,6 +1078,27 @@ export const choroplethData = [
   }
 ]
 
+export const randomHeatmapData = () => {
+  let data = []
+  for (let i = 1; i < 6; i++) {
+    let datum = {}
+    datum.key = i
+    datum.value = 0
+    datum.bins = []
+    for (let j = 1; j < 6; j++) {
+      let key = j
+      let value = Math.floor(Math.random() * 100)
+      datum.value += value
+      datum.bins.push({
+        key,
+        value
+      })
+    }
+    data.push(datum)
+  }
+  return data
+}
+
 export const ordinalLinearHeatmapData = [
   {
     bins: [
