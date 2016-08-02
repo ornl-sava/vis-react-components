@@ -1,3 +1,5 @@
+import map from './world-110.json'
+
 // Type is used for the class of the histogram Bar
 // Styles for the bars are defined in the vis.css file
 export const histogramData = [
@@ -278,6 +280,19 @@ export const randomStackedHistogramData = () => {
       ]
     }
   ]
+}
+
+export const randomChoroplethData = () => {
+  let data = []
+  map.objects.countries.geometries.forEach((d, i) => {
+    let datum = {
+      x: d.id,
+      y: Math.floor(Math.random() * 1000),
+      className: 'selected'
+    }
+    data.push(datum)
+  })
+  return data
 }
 
 export const choroplethData = [

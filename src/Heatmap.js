@@ -47,7 +47,7 @@ class Heatmap extends React.Component {
                   func: (transition, props) => {
                     transition
                       .delay(0)
-                      .duration(750)
+                      .duration(1000)
                       .ease(setEase('linear'))
                       .attr('fill', props.fill)
                     return transition
