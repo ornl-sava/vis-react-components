@@ -3,12 +3,15 @@ import React, { PropTypes } from 'react'
 class Header extends React.Component {
   render () {
     let { chart, ...props } = this.props
-    let containerStyle = {
-      marginLeft: chart.props.margin.left,
-      marginRight: chart.props.margin.right
+    let containerProps = {
+      style: {
+        width: chart.chartWidth,
+        marginLeft: chart.props.margin.left,
+        marginRight: chart.props.margin.right
+      }
     }
     return (
-      <div style={containerStyle}>
+      <div {...containerProps}>
         {props.components().map((e, i) => {
           let cloneProps = {}
           cloneProps.key = i
