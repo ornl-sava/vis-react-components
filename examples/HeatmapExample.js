@@ -4,7 +4,7 @@ import { format } from 'd3-format'
 
 import { HeatmapChart } from '../src'
 
-import { ordinalLinearHeatmapData, linearTemporalHeatmapData, ordinalOrdinalHeatmapData, linearOrdinalHeatmapData } from './data/exampleData'
+import { randomHeatmapData, ordinalLinearHeatmapData, linearTemporalHeatmapData, ordinalOrdinalHeatmapData, linearOrdinalHeatmapData } from './data/exampleData'
 
 const toolTipFunction1 = (d) => {
   let toolTip = '<span> No Data </span>'
@@ -86,7 +86,7 @@ const chartProps2 = {
 
 const heatmapProps2 = {
   labelField: 'key',
-  numColorCat: 17,
+  numColorCat: 22,
   minColor: '#F1F5E9',
   maxColor: '#7C9B27'
 }
@@ -140,7 +140,57 @@ const heatmapProps4 = {
   maxColor: '#756BB1'
 }
 
+const chartProps5 = {
+  header: () => {
+    return ([
+      <span className='chart-title'>Animated</span>
+    ])
+  },
+  xScaleType: 'linear',
+  yScaleType: 'linear'
+}
+
+const heatmapProps5 = {
+  labelField: 'key',
+  yAccessor: {
+    key: 'key',
+    value: 'value'
+  },
+  numColorCat: 17,
+  minColor: '#edf8b1',
+  maxColor: '#2c7fb8'
+}
+
 class HeatmapExample extends React.Component {
+  constructor (props) {
+    super(props)
+
+    this.state = {
+      randomData: randomHeatmapData()
+    }
+  }
+
+  componentDidMount () {
+    this.createRandomData = () => {
+      setTimeout(() => {
+        if (this.createRandomData !== null) {
+          this.setState({
+            randomData: randomHeatmapData()
+          }, () => {
+            if (this.createRandomData !== null) {
+              this.createRandomData()
+            }
+          })
+        }
+      }, 2500)
+    }
+    this.createRandomData()
+  }
+
+  componentWillUnmount () {
+    this.createRandomData = null
+  }
+
   render () {
     return (
       <div className='col-md-12'>
@@ -158,6 +208,11 @@ class HeatmapExample extends React.Component {
           </div>
           <div className='col-md-6'>
             <HeatmapChart {...chartCommon} {...chartProps4} {...heatmapProps4} tipFunction={toolTipFunction1} />
+          </div>
+        </div>
+        <div className='row'>
+          <div className='col-md-12'>
+            <HeatmapChart data={this.state.randomData} {...chartCommon} {...chartProps5} {...heatmapProps5} tipFunction={toolTipFunction1} />
           </div>
         </div>
       </div>

@@ -1,5 +1,5 @@
 import React from 'react'
-import { interval, format } from 'd3'
+import { format } from 'd3'
 
 import { CircumshakerChart } from '../src'
 
@@ -160,8 +160,6 @@ const data2 = {
   ]
 }
 
-let holder = data2
-
 const toolTipFunction = (d) => {
   var toolTip =
     '<span class="title">' + d.key + '</span>' +
@@ -175,25 +173,40 @@ const chartProps = {
 }
 
 class CircumshakerExample extends React.Component {
+  constructor (props) {
+    super(props)
+    this.state = {
+      swapData: data1
+    }
+  }
   componentDidMount () {
-    let flip = true
-    this.flipper = interval(() => {
-      if (flip) {
-        holder = data1
-        flip = !flip
-      } else {
-        holder = data2
-        flip = !flip
-      }
-      this.forceUpdate()
-    }, 3 * 1000)
+    this.swapData = () => {
+      setTimeout(() => {
+        if (this.swap !== null) {
+          this.setState({
+            swapData: (this.swap)
+              ? data2
+              : data1
+          }, () => {
+            if (this.swap !== null) {
+              this.swap = !this.swap
+              this.swapData()
+            }
+          })
+        }
+      }, 2500)
+    }
+    this.swap = true
+    this.swapData()
   }
+
   componentWillUnmount () {
-    clearInterval(this.flipper)
+    this.swap = null
   }
+
   render () {
     return (
-      <CircumshakerChart {...chartProps} data={holder} />
+      <CircumshakerChart {...chartProps} data={this.state.swapData} />
     )
   }
 }

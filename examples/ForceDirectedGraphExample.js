@@ -161,7 +161,7 @@ const makeAdjacencyList = () => {
 }
 const aList = makeAdjacencyList()
 
-const nData = 5
+const nData = 3
 
 const getNodes = () => {
   let nodes = []
@@ -228,15 +228,7 @@ const adjListNL = () => {
   })
   return list
 }
-console.log('FDGE-adjListNL', adjListNL())
-
-// const nodeLinkAList = () => {
-//   let newAList = []
-//   links.map((d, i) => {
-//     newAList.push({source: d.source, target: d.target})
-//   })
-//   return newAList
-// }
+// console.log('FDGE-adjListNL', adjListNL())
 
 const chartProps = {
   tipFunction: toolTipFunction,

@@ -52,6 +52,10 @@ class SVGComponent extends React.Component {
     this.onMouseOver = this.onMouseOver.bind(this)
   }
 
+  componentWillAppear (callback) {
+    this.animate(callback, this.props, 'onEnter')
+  }
+
   componentWillEnter (callback) {
     this.animate(callback, this.props, 'onEnter')
   }
