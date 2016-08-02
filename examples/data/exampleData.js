@@ -1654,6 +1654,18 @@ export const ordinalLinearScatterplotData = [
   }
 ]
 
+export const randomScatterData = () => {
+  let data = []
+  let count = Math.floor(Math.random() * 25)
+  for (let i = 0; i < count; i++) {
+    data.push({
+      x: Math.floor(Math.random() * 100),
+      y: Math.floor(Math.random() * 100)
+    })
+  }
+  return data
+}
+
 export const linearLinearScatterplotData = [
   {
     'x': 1,

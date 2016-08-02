@@ -160,7 +160,7 @@ const heatmapProps5 = {
   minColor: '#edf8b1',
   maxColor: '#2c7fb8'
 }
-console.log(heatmapProps5, chartProps5)
+
 class HeatmapExample extends React.Component {
   constructor (props) {
     super(props)
@@ -168,7 +168,6 @@ class HeatmapExample extends React.Component {
     this.state = {
       randomData: randomHeatmapData()
     }
-    console.log(this.state.randomData)
   }
 
   componentDidMount () {

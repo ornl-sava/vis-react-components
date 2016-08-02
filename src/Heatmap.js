@@ -1,4 +1,5 @@
 import React, { PropTypes } from 'react'
+import ReactTransitionGroup from 'react-addons-transition-group'
 
 import { setEase } from './util/d3'
 import SVGComponent from './SVGComponent'
@@ -26,7 +27,7 @@ class Heatmap extends React.Component {
   render () {
     let props = this.props
     return (
-      <g className={props.className}>
+      <ReactTransitionGroup component='g' className={props.className}>
         {props.data.map((d, i) => {
           let height = (i === 0) ? props.chartHeight : props.yScale(props.data[i - 1][props.yAccessor.key])
           height -= props.yScale(d[props.yAccessor.key])
@@ -58,7 +59,7 @@ class Heatmap extends React.Component {
             )
           })
         })}
-      </g>
+      </ReactTransitionGroup>
     )
   }
 }

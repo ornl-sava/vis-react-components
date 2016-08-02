@@ -94,28 +94,28 @@ body {
 }
 
 .histogram-bar.Z {
-	fill: #f6eff7;
-	stroke: #f6eff7;
+	fill: #ffffcc;
+	stroke: #ffffcc;
 	stroke-width: 1px;
 	opacity: 0.8;
 }
 
 .histogram-bar.Y {
-	fill: #bdc9e1;
-	stroke: #bdc9e1;
+	fill: #a1dab4;
+	stroke: #a1dab4;
 	stroke-width: 1px;
 	opacity: 0.8;
 }
 .histogram-bar.X {
-	fill: #67a9cf;
-	stroke: #67a9cf;
+	fill: #41b6c4;
+	stroke: #41b6c4;
 	stroke-width: 1px;
 	opacity: 0.8;
 }
 
 .histogram-bar.W {
-	fill: #02818a;
-	stroke: #02818a;
+	fill: #225ea8;
+	stroke: #225ea8;
 	stroke-width: 1px;
 	opacity: 0.8;
 }
@@ -512,19 +512,24 @@ nav ul li .active {
   fill: red;
 }
 
-.scatter1 {
+.scatter1 circle {
 	fill: #2171b5;
 	clip-path: url(#clip);
 }
-.scatter2 {
+.scatter2 circle {
 	fill: #7C9B27;
 	clip-path: url(#clip);
 }
-.scatter3 {
+.scatter3 circle {
 	fill: #E6550D;
 	clip-path: url(#clip);
 }
-.scatter4 {
+.scatter4 circle {
 	fill: #984EA3;
 	clip-path: url(#clip);
+}
+.scatter5 circle {
+	fill: #edf8b1;
+	stroke: #2c7fb8;
+	stroke-width: 2px;
 }

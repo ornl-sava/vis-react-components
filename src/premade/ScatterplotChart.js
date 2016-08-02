@@ -112,7 +112,7 @@ class ScatterplotChart extends React.Component {
     return (
       <Chart ref='chart' {...spreadRelated(Chart, props)} resizeHandler={this.onResize}>
         <Scatterplot className='scatterplot' {...spreadRelated(Scatterplot, props)}
-          xScale={this.xScale} yScale={this.yScale} colorScale={this.colorScale}
+          xScale={this.xScale} yScale={this.yScale}
           onEnter={this.onEnter} onLeave={this.onLeave} />
         <Axis className='x axis' {...props.xAxis} scale={this.xScale} />
         <Axis className='y axis' {...props.yAxis} scale={this.yScale} />
