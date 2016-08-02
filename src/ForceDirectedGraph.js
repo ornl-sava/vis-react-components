@@ -20,14 +20,15 @@ class ForceDirectedGraph extends React.Component {
     this.colScale = d3.scaleOrdinal(d3.schemeCategory10)
     this.xScale = setScale('ordinalBand')
 
-    this.aList = props.adjacencyList
-
     this.updateDR = this.updateDR.bind(this)
     this.updateDR(props)
 
     this.nodes = []
     this.links = []
     this.falseStart(props)
+    this.nodes.map((d, i) => {
+      d.key = i
+    })
     // console.log('FDG-c-nodes', this.links[0].source.x)
 
     this.simulation = d3.forceSimulation()
@@ -45,7 +46,6 @@ class ForceDirectedGraph extends React.Component {
 
     this.pos = new Array(2)
     this.nodePos = new Array(2)
-    this.node
     this.isDrag = false
     this.onDrag = this.onDrag.bind(this)
     this.onDragStart = this.onDragStart.bind(this)
@@ -67,8 +67,29 @@ class ForceDirectedGraph extends React.Component {
     //   })
   }
 
+  componentWillReceiveProps (nextProps) {
+    this.simulation.stop()
+    this.simOn = false
+    this.updateDR(nextProps)
+    console.log(nextProps.adjacencyList)
+    nextProps.nodes.map((d, i) => {
+      d.key = i
+    })
+    this.falseStart(nextProps)
+    this.setState({nodes: this.nodes, links: this.links})
+    this.setSim(nextProps)
+    this.simulation.alpha(1).restart()
+  }
+
   shouldComponentUpdate (nextProps, nextState) {
     // need to have a catch for if the props change rather than state...
+    if (nextProps !== this.props) {
+      // this.simulation.stop()
+      // this.falseStart(nextProps)
+      // this.setState({nodes: this.nodes, links: this.links})
+      // this.simulation.restart()
+      console.log('fsk')
+    }
     return true
   }
 
@@ -238,6 +259,7 @@ class ForceDirectedGraph extends React.Component {
   falseStart (props) {
     let links = []
     let nodes = []
+    console.log('FDG-fS-', props.adjacencyList)
     props.nodes.map((d, i) => {
       if (d.active || d.active == null) {
         d.x = Math.random() * this.xScale.bandwidth() + this.xScale(d.hour)
@@ -300,7 +322,7 @@ class ForceDirectedGraph extends React.Component {
         'hour': d.hour
       }
       nodeList.push(
-        <circle key={'cir-id' + d.index + '-hr-' + d.hour} {...events} {...circleProps} />
+        <circle key={'cir-id' + d.key + '-hr-' + d.hour} {...events} {...circleProps} />
       )
       // console.log(d3.select(nodeList[i]).call(this.drag))
     })

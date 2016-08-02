@@ -60,6 +60,9 @@ class ForceDirectedGraph extends React.Component {
 
   componentWillMount () {
     // using the nodes with the x and y values attached in falseStart
+    this.nodes.map((d, i) => {
+      d.key = i
+    })
     this.setState({nodes: this.nodes, links: this.links})
   }
 
@@ -181,11 +184,8 @@ class ForceDirectedGraph extends React.Component {
     let tree = d3.tree().size([props.chartWidth, props.chartHeight])
     tree(this.rootNode)
     this.nodes = this.rootNode.descendants()
-    this.nodes.map((d, i) => {
-      d.key = i
-    })
     this.links = this.rootNode.links()
-    // console.log('FDG-setTree')
+    console.log('FDGT-nodes-', this.nodes.length, '-links-', this.links.length)
   }
   reSet () {
     this.nodes = this.rootNode.descendants()

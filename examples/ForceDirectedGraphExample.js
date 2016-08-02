@@ -163,88 +163,142 @@ const aList = makeAdjacencyList()
 
 const nData = 3
 
-const getNodes = () => {
-  let nodes = []
-  aList.map((d, i) => {
-    if (d.hour < nData) {
-      nodes.push({
-        events: d.events,
-        hour: d.hour,
-        ind: i + nData,
-        id: i + nData
-      })
-    }
-  })
-  for (let i = nData - 1; i >= 0; i--) {
-    nodes.unshift({
-      events: 'parent- ' + i,
-      hour: i,
-      ind: i,
-      id: i
-    })
-  }
-  // console.log('FDGE-nodes', nodes)
-  return nodes
-}
-const nodes = getNodes()
+// const nodes = getNodes()
 
-const getLinks = () => {
-  let links = []
-  aList.map((data, index) => {
-    if (data.hour < nData) {
-      links.push({
-        source: data.hour,
-        target: index + nData,
-        value: 1000
-      })
-      return data.story.map((d) => {
-        // The node is at a hour greater than the current node
-        // The node is within the current batch of nodes being viewed
-        if ((d + nData) > (index + nData) && (d + nData) < nodes.length) {
-        // seperated topics
-        // if (false) {
-        // only direct connections
-        // if (aList[d + nData].hour === data.hour + 1 && (d + nData) < nodes.length) {
-          links.push({
-            source: index + nData,
-            target: d + nData,
-            value: d - index
-          })
-        }
-      })
-    }
-  })
-  // console.log('FDGE-links', links)
-  return links
-}
-const links = getLinks()
+// const links = getLinks()
 
-const adjListNL = () => {
-  let list = []
-  for (let i = 0; i < nodes.length; i++) { list.push([]) }
-  links.map((data, index) => {
-    list[data.source].push(data.target)
-    list[data.target].push(data.source)
-  })
-  return list
-}
 // console.log('FDGE-adjListNL', adjListNL())
-
-const chartProps = {
-  tipFunction: toolTipFunction,
-  adjacencyList: adjListNL(),
-  numTData: nData,
-  nodes: nodes,
-  links: links
-}
-console.log('numNodes-', nodes.length, '-numLinks-', links.length)
+// console.log('numNodes-', nodes.length, '-numLinks-', links.length)
 
 class TopicsContainer extends React.Component {
-  render () {
+  constructor (props) {
+    super(props)
+    this.state = {
+      nData: nData
+    }
+    this.buttons = [
+      '<',
+      '>'
+    ]
+    this.forwardClick = this.forwardClick.bind(this)
+    this.backClick = this.backClick.bind(this)
+
+    this.nodes = []
+    this.links = []
+  }
+
+  forwardClick () {
+    console.log('fo', this.state)
+    let num = this.state.nData + 1
+    if (num >= storyData.length + 1) {
+      num = 1
+    }
+    console.log('FDGE-fClick', num)
+    this.setState({ nData: num })
+  }
+  backClick () {
+    console.log('ba', this.state)
+    let num = this.state.nData - 1
+    if (num < 1) {
+      num = (storyData.length + 1) - 1
+    }
+    console.log('FDGE-bClick', num)
+    this.setState({ nData: num })
+  }
+
+  getData () {
+    let nodes = []
+    aList.map((d, i) => {
+      if (d.hour < this.state.nData) {
+        nodes.push({
+          events: d.events,
+          hour: d.hour,
+          ind: i + this.state.nData,
+          id: i + this.state.nData
+        })
+      }
+    })
+    for (let i = this.state.nData - 1; i >= 0; i--) {
+      nodes.unshift({
+        events: 'parent- ' + i,
+        hour: i,
+        ind: i,
+        id: i
+      })
+    }
+    this.nodes = nodes
+
+    let links = []
+    aList.map((data, index) => {
+      if (data.hour < this.state.nData) {
+        links.push({
+          source: data.hour,
+          target: index + this.state.nData,
+          value: 1000
+        })
+        return data.story.map((d) => {
+          // The node is at a hour greater than the current node
+          // The node is within the current batch of nodes being viewed
+          if ((d + this.state.nData) > (index + this.state.nData) && (d + this.state.nData) < nodes.length) {
+          // seperated topics
+          // if (false) {
+          // only direct connections
+          // if (aList[d + this.state.nData].hour === data.hour + 1 && (d + this.state.nData) < nodes.length) {
+            links.push({
+              source: index + this.state.nData,
+              target: d + this.state.nData,
+              value: d - index
+            })
+          }
+        })
+      }
+    })
+
+    let list = []
+    for (let i = 0; i < nodes.length; i++) { list.push([]) }
+    links.map((data, index) => {
+      list[data.source].push(data.target)
+      list[data.target].push(data.source)
+    })
+    this.links = links
+
+    let chartProps = {
+      tipFunction: toolTipFunction,
+      adjacencyList: list,
+      numTData: this.state.nData,
+      nodes: nodes,
+      links: links
+    }
+    console.log('FDGE-nodes', nodes)
+    return chartProps
+  }
+  getText () {
+    let nodeText = 'node count: '
+    let linkText = 'link count: '
+    let topicText = 'hour count: '
     return (
-      <div>
-        <Chart className='col-md-12' tipFunction={toolTipFunction} yAxis={false} xAxis={false} height={1000} margin={{top: 40, right: 10, bottom: 10, left: 80}}>
-          <ForceDirectedGraph {...chartProps} />
+      <g>
+        <span className={'info'} ><b>{nodeText}</b>{this.nodes.length}</span><br />
+        <span className={'info'} ><b>{linkText}</b>{this.links.length}</span><br />
+        <span className={'info'} ><b>{topicText}</b>{this.state.nData}</span>
+      </g>
+    )
+  }
+
+  render () {
+    let chartData = this.getData()
+    return (
+      <div className='row' >
+        <div className='col-md-1'>
+          <g>
+            <button onClick={this.backClick} >{this.buttons[0]}</button>
+            <button onClick={this.forwardClick} >{this.buttons[1]}</button>
+            <br /><br />
+          </g>
+          {this.getText()}
+        </div>
+        <Chart className='col-md-11' tipFunction={toolTipFunction} yAxis={false} xAxis={false} height={1000} margin={{top: 40, right: 10, bottom: 10, left: 80}}>
+          <ForceDirectedGraph {...chartData} />
         </Chart>
         <li><Link to='/forceDirectedTree' activeClassName='active'>SingleTopic</Link></li>
       </div>
