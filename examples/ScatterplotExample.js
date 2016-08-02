@@ -1,7 +1,7 @@
 import React from 'react'
 
 import { ScatterplotChart } from '../src'
-import { linearOrdinalScatterplotData, linearLinearScatterplotData, ordinalLinearScatterplotData, ordinalOrdinalScatterplotData } from './data/exampleData'
+import { randomScatterData, linearOrdinalScatterplotData, linearLinearScatterplotData, ordinalLinearScatterplotData, ordinalOrdinalScatterplotData } from './data/exampleData'
 
 const toolTipFunction = (d) => {
   let toolTip = '<span> No Data </span>'
@@ -12,7 +12,7 @@ const toolTipFunction = (d) => {
 }
 
 const commonProps = {
-  margin: {top: 15, right: 5, bottom: 50, left: 15},
+  margin: {top: 15, right: 5, bottom: 50, left: 50},
   height: 300
 }
 
@@ -64,7 +64,46 @@ const chartProps4 = {
   data: ordinalLinearScatterplotData
 }
 
+const chartProps5 = {
+  header: () => {
+    return ([
+      <span className='chart-title'>Animated</span>
+    ])
+  },
+  className: 'scatter5',
+  xScaleType: 'linear',
+  yScaleType: 'linear',
+  xDomain: [0, 100],
+  yDomain: [0, 100]
+}
+
 class ScatterplotExample extends React.Component {
+  constructor (props) {
+    super(props)
+    this.state = {
+      randomData: randomScatterData()
+    }
+  }
+  componentDidMount () {
+    this.createRandomData = () => {
+      setTimeout(() => {
+        if (this.createRandomData !== null) {
+          this.setState({
+            randomData: randomScatterData()
+          }, () => {
+            if (this.createRandomData !== null) {
+              this.createRandomData()
+            }
+          })
+        }
+      }, 2500)
+    }
+    this.createRandomData()
+  }
+
+  componentWillUnmount () {
+    this.createRandomData = null
+  }
   render () {
     return (
       <div className='col-md-12'>
@@ -82,6 +121,11 @@ class ScatterplotExample extends React.Component {
           </div>
           <div className='col-md-6'>
             <ScatterplotChart {...commonProps} {...chartProps4} radius={10} tipFunction={toolTipFunction} />
+          </div>
+        </div>
+        <div className='row'>
+          <div className='col-md-12'>
+            <ScatterplotChart data={this.state.randomData} {...commonProps} {...chartProps5} radius={15} tipFunction={toolTipFunction} />
           </div>
         </div>
       </div>

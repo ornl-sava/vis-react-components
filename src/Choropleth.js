@@ -1,6 +1,10 @@
 import React, { PropTypes } from 'react'
-import { geoPath, geoEquirectangular } from 'd3'
+import ReactTransitionGroup from 'react-addons-transition-group'
+import { interpolate, geoPath, geoEquirectangular } from 'd3'
 import topojson from 'topojson'
+
+import { setEase } from './util/d3'
+import SVGComponent from './SVGComponent'
 
 class Choropleth extends React.Component {
   constructor (props) {
@@ -93,25 +97,59 @@ class Choropleth extends React.Component {
 
     return (
       <g>
-        <g>
+        <ReactTransitionGroup component='g'>
           {topojson.feature(this.props.map, this.props.map.objects.countries).features.map((d, i) => {
             return (
-              <path
-                key={i}
+              <SVGComponent Component='path' key={i}
                 data-id={d.id}
                 d={this.path(d, i)}
                 fill={getColor(d.id)}
+                onEnter={{
+                  func: (transition, props) => {
+                    transition
+                      .delay(0)
+                      .duration(1000)
+                      .ease(setEase('linear'))
+                      .attrTween('fill', () => {
+                        return interpolate(this.props.selectedMinColor, props.fill)
+                      })
+                    return transition
+                  }
+                }}
+                onUpdate={{
+                  func: (transition, props) => {
+                    transition
+                      .delay(0)
+                      .duration(1000)
+                      .ease(setEase('linear'))
+                      .attr('fill', props.fill)
+                      .attr('d', props.d)
+                    return transition
+                  }
+                }}
                 onClick={this.onClick}
                 onMouseEnter={this.onEnter}
                 onMouseLeave={this.onLeave}
                 onMouseMove={this.onMove} />
             )
           })}
-        </g>
+        </ReactTransitionGroup>
         <g>
-          <path d={this.path(topojson.mesh(this.props.map, this.props.map.objects.countries, (a, b) => {
-            return a !== b
-          }))} className='boundary' />
+          <SVGComponent Component='path'
+            className='boundary'
+            onUpdate={{
+              func: (transition, props) => {
+                transition
+                  .delay(0)
+                  .duration(1000)
+                  .ease(setEase('linear'))
+                  .attr('d', props.d)
+                return transition
+              }
+            }}
+            d={this.path(topojson.mesh(this.props.map, this.props.map.objects.countries, (a, b) => {
+              return a !== b
+            }))} />
         </g>
       </g>
     )

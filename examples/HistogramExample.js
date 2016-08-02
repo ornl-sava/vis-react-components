@@ -184,18 +184,22 @@ class HistogramExample extends React.Component {
   componentDidMount () {
     this.createRandomData = () => {
       setTimeout(() => {
-        this.setState({
-          randomData: randomStackedHistogramData()
-        }, () => {
-          this.createRandomData()
-        })
-      }, 2000)
+        if (this.createRandomData !== null) {
+          this.setState({
+            randomData: randomStackedHistogramData()
+          }, () => {
+            if (this.createRandomData !== null) {
+              this.createRandomData()
+            }
+          })
+        }
+      }, 2500)
     }
     this.createRandomData()
   }
 
   componentWillUnmount () {
-    this.createRandomData = () => {}
+    this.createRandomData = null
   }
 
   render () {

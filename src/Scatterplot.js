@@ -1,42 +1,73 @@
 import React, { PropTypes } from 'react'
+import ReactTransitionGroup from 'react-addons-transition-group'
+import { interpolate } from 'd3'
+
+import { setEase } from './util/d3'
+import SVGComponent from './SVGComponent'
 
 class Scatterplot extends React.Component {
   constructor (props) {
     super(props)
-
     this.onClick = this.onClick.bind(this)
     this.onEnter = this.onEnter.bind(this)
     this.onLeave = this.onLeave.bind(this)
   }
 
-  onClick (event) {
-    let target = event.target
-    this.props.onClick(event, this.getDatum(target))
+  onClick (event, data, index) {
+    this.props.onClick(event, data, index)
   }
 
-  onEnter (event) {
-    let target = event.target
-    this.props.onEnter(event, this.getDatum(target))
+  onEnter (event, data, index) {
+    this.props.onEnter(event, data, index)
   }
 
-  onLeave (event) {
-    let target = event.target
-    this.props.onLeave(event, this.getDatum(target))
-  }
-
-  getDatum (target) {
-    let i = target.getAttribute('data-i')
-    return this.props.data[i]
+  onLeave (event, data, index) {
+    this.props.onLeave(event, data, index)
   }
 
   render () {
-    let props = this.props
+    let { keyFunction, ...props } = this.props
     return (
-      <g className={props.className}>
+      <ReactTransitionGroup component='g' className={props.className}>
         {this.props.data.map((d, i) => {
           return (
-            <circle key={i}
-              data-i={i}
+            <SVGComponent Component='circle' key={keyFunction(d, i)}
+              data={d}
+              index={i}
+              onEnter={{
+                func: (transition, props) => {
+                  transition
+                    .delay(0)
+                    .duration(750)
+                    .ease(setEase('linear'))
+                    .attrTween('r', () => {
+                      return interpolate(0, props.r)
+                    })
+                  return transition
+                }
+              }}
+              onUpdate={{
+                func: (transition, props) => {
+                  transition
+                    .delay(0)
+                    .duration(750)
+                    .ease(setEase('linear'))
+                    .attr('r', props.r)
+                    .attr('cx', props.cx)
+                    .attr('cy', props.cy)
+                  return transition
+                }
+              }}
+              onExit={{
+                func: (transition, props) => {
+                  transition
+                    .delay(0)
+                    .duration(750)
+                    .ease(setEase('linear'))
+                    .attr('r', 0)
+                  return transition
+                }
+              }}
               r={props.radius}
               cx={props.xScale(d[props.xAccessor])}
               cy={props.yScale(d[props.yAccessor])}
@@ -45,7 +76,7 @@ class Scatterplot extends React.Component {
               onClick={this.onClick} />
           )
         })}
-      </g>
+      </ReactTransitionGroup>
     )
   }
 }
@@ -53,6 +84,7 @@ class Scatterplot extends React.Component {
 Scatterplot.defaultProps = {
   xAccessor: 'x',
   yAccessor: 'y',
+  keyFunction: (d, i) => i,
   radius: 5,
   onClick: () => {},
   onEnter: () => {},
@@ -66,6 +98,7 @@ Scatterplot.propTypes = {
   radius: PropTypes.number,
   xAccessor: PropTypes.string,
   yAccessor: PropTypes.string,
+  keyFunction: PropTypes.func,
   xScale: PropTypes.any,
   yScale: PropTypes.any,
   data: PropTypes.array,

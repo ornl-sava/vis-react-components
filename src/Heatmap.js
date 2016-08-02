@@ -1,4 +1,9 @@
 import React, { PropTypes } from 'react'
+import ReactTransitionGroup from 'react-addons-transition-group'
+import { interpolate } from 'd3'
+
+import { setEase } from './util/d3'
+import SVGComponent from './SVGComponent'
 
 class Heatmap extends React.Component {
   constructor (props) {
@@ -6,35 +11,24 @@ class Heatmap extends React.Component {
     this.onClick = this.onClick.bind(this)
     this.onEnter = this.onEnter.bind(this)
     this.onLeave = this.onLeave.bind(this)
-
-    this.getDatum = this.getDatum.bind(this)
   }
 
-  onClick (event) {
-    let target = event.target
-    this.props.onClick(event, this.getDatum(target))
+  onClick (event, data, index) {
+    this.props.onClick(event, data, index)
   }
 
-  onEnter (event) {
-    let target = event.target
-    this.props.onEnter(event, this.getDatum(target))
+  onEnter (event, data, index) {
+    this.props.onEnter(event, data, index)
   }
 
-  onLeave (event) {
-    let target = event.target
-    this.props.onLeave(event, this.getDatum(target))
-  }
-
-  getDatum (target) {
-    let i = target.getAttribute('data-i')
-    let j = target.getAttribute('data-j')
-    return this.props.data[i].bins[j]
+  onLeave (event, data, index) {
+    this.props.onLeave(event, data, index)
   }
 
   render () {
     let props = this.props
     return (
-      <g className={props.className}>
+      <ReactTransitionGroup component='g' className={props.className}>
         {props.data.map((d, i) => {
           let height = (i === 0) ? props.chartHeight : props.yScale(props.data[i - 1][props.yAccessor.key])
           height -= props.yScale(d[props.yAccessor.key])
@@ -42,21 +36,47 @@ class Heatmap extends React.Component {
             let width = (j + 1 < d.bins.length) ? props.xScale(d.bins[j + 1][props.xAccessor.key]) : props.chartWidth
             width -= props.xScale(e[props.xAccessor.key])
             return (
-              <rect key={i + '-' + j}
-                data-i={i}
-                data-j={j}
+              <SVGComponent Component='rect' key={i + '-' + j}
+                data={d}
+                index={i * d.bins.length + j}
                 x={props.xScale(e[props.xAccessor.key])}
                 y={props.yScale(d[props.yAccessor.key])}
                 width={width}
                 height={height}
                 fill={props.colorScale(e[props.xAccessor.value])}
+                onEnter={{
+                  func: (transition, props) => {
+                    transition
+                      .delay(0)
+                      .duration(1000)
+                      .ease(setEase('linear'))
+                      .attrTween('fill', () => {
+                        return interpolate(this.props.minColor, props.fill)
+                      })
+                    return transition
+                  }
+                }}
+                onUpdate={{
+                  func: (transition, props) => {
+                    transition
+                      .delay(0)
+                      .duration(1000)
+                      .ease(setEase('linear'))
+                      .attr('x', props.x)
+                      .attr('y', props.y)
+                      .attr('width', props.width)
+                      .attr('height', props.height)
+                      .attr('fill', props.fill)
+                    return transition
+                  }
+                }}
                 onMouseEnter={this.onEnter}
                 onMouseLeave={this.onLeave}
                 onClick={this.onClick} />
             )
           })
         })}
-      </g>
+      </ReactTransitionGroup>
     )
   }
 }
