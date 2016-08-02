@@ -18,7 +18,7 @@ class ScatterHeatmapExample extends React.Component {
   constructor (props) {
     super(props)
 
-    this.handleResize = this.handleResize.bind(this)
+    this.handleResize = debounce(this.handleResize.bind(this), 500)
   }
 
   handleResize () {
@@ -27,11 +27,11 @@ class ScatterHeatmapExample extends React.Component {
   }
 
   componentWillUnmount () {
-    window.removeEventListener('resize', null)
+    window.removeEventListener('resize', this.handleResize, false)
   }
 
   componentDidMount () {
-    window.addEventListener('resize', debounce(this.handleResize, 500))
+    window.addEventListener('resize', this.handleResize, false)
   }
 
   render () {
