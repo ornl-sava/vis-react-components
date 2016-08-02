@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react'
 import ReactTransitionGroup from 'react-addons-transition-group'
+import { interpolate } from 'd3'
 
 import { setEase } from './util/d3'
 import SVGComponent from './SVGComponent'
@@ -43,6 +44,18 @@ class Heatmap extends React.Component {
                 width={width}
                 height={height}
                 fill={props.colorScale(e[props.xAccessor.value])}
+                onEnter={{
+                  func: (transition, props) => {
+                    transition
+                      .delay(0)
+                      .duration(1000)
+                      .ease(setEase('linear'))
+                      .attrTween('fill', () => {
+                        return interpolate(this.props.minColor, props.fill)
+                      })
+                    return transition
+                  }
+                }}
                 onUpdate={{
                   func: (transition, props) => {
                     transition

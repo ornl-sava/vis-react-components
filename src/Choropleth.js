@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react'
 import ReactTransitionGroup from 'react-addons-transition-group'
-import { geoPath, geoEquirectangular } from 'd3'
+import { interpolate, geoPath, geoEquirectangular } from 'd3'
 import topojson from 'topojson'
 
 import { setEase } from './util/d3'
@@ -104,6 +104,18 @@ class Choropleth extends React.Component {
                 data-id={d.id}
                 d={this.path(d, i)}
                 fill={getColor(d.id)}
+                onEnter={{
+                  func: (transition, props) => {
+                    transition
+                      .delay(0)
+                      .duration(1000)
+                      .ease(setEase('linear'))
+                      .attrTween('fill', () => {
+                        return interpolate(this.props.selectedMinColor, props.fill)
+                      })
+                    return transition
+                  }
+                }}
                 onUpdate={{
                   func: (transition, props) => {
                     transition

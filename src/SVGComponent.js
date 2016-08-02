@@ -52,15 +52,23 @@ class SVGComponent extends React.Component {
     this.onMouseOver = this.onMouseOver.bind(this)
   }
 
+  componentWillAppear (callback) {
+    this.animating = true
+    this.animate(callback, this.props, 'onEnter')
+  }
+
   componentWillEnter (callback) {
+    this.animating = true
     this.animate(callback, this.props, 'onEnter')
   }
 
   componentWillUpdate (nextProps) {
+    this.animating = true
     this.animate(() => {}, nextProps, 'onUpdate')
   }
 
   componentWillLeave (callback) {
+    this.animating = true
     this.animate(callback, this.props, 'onExit')
   }
 
@@ -72,6 +80,7 @@ class SVGComponent extends React.Component {
         props[type].func(transition, propsCopy)
       })
       .on('end', () => {
+        this.animating = false
         this.simpleState = Object.assign(spreadExclude(props, SVGComponentPropTypes))
         callback()
       })

@@ -240,13 +240,12 @@ class Circumshaker extends React.Component {
     // Only display linking paths
     let gNode = this.graph.nodes[index]
     this.graph.links.forEach((d, i) => {
-      d.display = (d.source === gNode || d.target === gNode)
+      let key = d.source.key.replace(/\W/g, '') + '-' + d.target.key.replace(/\W/g, '')
+      let link = this.refs[key]
+      link.style.display = (d.source === gNode || d.target === gNode)
         ? 'block'
         : 'none'
     })
-    // NOTE: This might not be the most efficient
-    // look into betters way sometime
-    this.forceUpdate()
   }
 
   onLeave (event, data, index) {
@@ -254,10 +253,10 @@ class Circumshaker extends React.Component {
 
     // Display all paths once again
     this.graph.links.forEach((d, i) => {
-      d.display = 'block'
+      let key = d.source.key.replace(/\W/g, '') + '-' + d.target.key.replace(/\W/g, '')
+      let link = this.refs[key]
+      link.style.display = 'block'
     })
-    // NOTE: This might not be the most efficient ... may need better way
-    this.forceUpdate()
   }
 
   render () {
@@ -301,7 +300,7 @@ class Circumshaker extends React.Component {
         </g>
         {this.graph.links.map((d, i) => {
           return (
-            <path
+            <path ref={d.source.key.replace(/\W/g, '') + '-' + d.target.key.replace(/\W/g, '')}
               key={d.source.key.replace(/\W/g, '') + '-' + d.target.key.replace(/\W/g, '')}
               className='link'
               d={path(d)}
@@ -314,7 +313,7 @@ class Circumshaker extends React.Component {
         <ReactTransitionGroup component='g'>
           {this.graph.nodes.map((d, i) => {
             return (
-              <SVGComponent
+              <SVGComponent ref={'node-' + i}
                 key={d.key.replace(/\W/g, '')}
                 className='node'
                 Component='circle'
@@ -325,6 +324,12 @@ class Circumshaker extends React.Component {
                 onMouseLeave={this.onLeave}
                 onEnter={{
                   func: (transition, props) => {
+                    let radius = this.radius * (this.depth + 1)
+                    let degree = props.data.degree
+                    let x = this.props.chartWidth / 2
+                    let y = this.props.chartHeight / 2
+                    x += radius * Math.cos(degree * (Math.PI / 180))
+                    y += radius * Math.sin(degree * (Math.PI / 180))
                     transition
                       .delay(0)
                       .duration(1000)
@@ -333,10 +338,10 @@ class Circumshaker extends React.Component {
                         return interpolate(0, props.r)
                       })
                       .attrTween('cx', () => {
-                        return interpolate(0, props.cx)
+                        return interpolate(x, props.cx)
                       })
                       .attrTween('cy', () => {
-                        return interpolate(0, props.cy)
+                        return interpolate(y, props.cy)
                       })
                     return transition
                   }
@@ -355,13 +360,19 @@ class Circumshaker extends React.Component {
                 }}
                 onExit={{
                   func: (transition, props) => {
+                    let radius = this.radius * (this.depth + 1)
+                    let degree = props.data.degree
+                    let x = this.props.chartWidth / 2
+                    let y = this.props.chartHeight / 2
+                    x += radius * Math.cos(degree * (Math.PI / 180))
+                    y += radius * Math.sin(degree * (Math.PI / 180))
                     transition
                       .delay(0)
                       .duration(1000)
                       .ease(setEase('linear'))
                       .attr('r', 0)
-                      .attr('cx', 0)
-                      .attr('cy', 0)
+                      .attr('cx', x)
+                      .attr('cy', y)
                     return transition
                   }
                 }}
