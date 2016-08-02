@@ -123,6 +123,7 @@ class Choropleth extends React.Component {
                       .duration(1000)
                       .ease(setEase('linear'))
                       .attr('fill', props.fill)
+                      .attr('d', props.d)
                     return transition
                   }
                 }}
@@ -134,9 +135,21 @@ class Choropleth extends React.Component {
           })}
         </ReactTransitionGroup>
         <g>
-          <path d={this.path(topojson.mesh(this.props.map, this.props.map.objects.countries, (a, b) => {
-            return a !== b
-          }))} className='boundary' />
+          <SVGComponent Component='path'
+            className='boundary'
+            onUpdate={{
+              func: (transition, props) => {
+                transition
+                  .delay(0)
+                  .duration(1000)
+                  .ease(setEase('linear'))
+                  .attr('d', props.d)
+                return transition
+              }
+            }}
+            d={this.path(topojson.mesh(this.props.map, this.props.map.objects.countries, (a, b) => {
+              return a !== b
+            }))} />
         </g>
       </g>
     )
