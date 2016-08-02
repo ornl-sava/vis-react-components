@@ -1671,7 +1671,7 @@ export const ordinalLinearScatterplotData = [
 
 export const randomScatterData = () => {
   let data = []
-  let count = Math.floor(Math.random() * 25)
+  let count = Math.floor(Math.random() * 25) + 1
   for (let i = 0; i < count; i++) {
     data.push({
       x: Math.floor(Math.random() * 100),
