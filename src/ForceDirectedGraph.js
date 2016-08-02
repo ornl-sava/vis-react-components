@@ -31,6 +31,7 @@ class ForceDirectedGraph extends React.Component {
     // console.log('FDG-c-nodes', this.links[0].source.x)
 
     this.simulation = d3.forceSimulation()
+    this.drag = d3.drag()
     this.setSim(props)
 
     this.onDClick = this.onDClick.bind(this)
@@ -44,16 +45,26 @@ class ForceDirectedGraph extends React.Component {
 
     this.pos = new Array(2)
     this.nodePos = new Array(2)
+    this.node
     this.isDrag = false
     this.onDrag = this.onDrag.bind(this)
     this.onDragStart = this.onDragStart.bind(this)
     this.onDragEnd = this.onDragEnd.bind(this)
-    this.remNodes2 = this.remNodes2.bind(this)
+    this.remNodes = this.remNodes.bind(this)
   }
 
   componentWillMount () {
     // using the nodes with the x and y values attached in falseStart
     this.setState({nodes: this.nodes, links: this.links})
+  }
+
+  componentDidMount () {
+    // console.log('fsdmfh', d3.select(this.refs.circ).selectAll('circle'))
+    // d3.select(this.refs.circ).selectAll('circle').call(this.drag)
+    //   .filter(function (d, i) {
+    //     console.log(d3.select(this).select('circle'))
+    //     d3.select(this).select('circle').call(this.drag)
+    //   })
   }
 
   shouldComponentUpdate (nextProps, nextState) {
@@ -105,11 +116,12 @@ class ForceDirectedGraph extends React.Component {
   }
 
   onDragStart (event) {
-    // console.log('FFG-oDStart-HERE')
+    console.log('FFG-oDStart-HERE')
     this.isDrag = true
     this.simulation.stop()
 
     let target = this.getDatum(event.target)
+    this.node = target
     if (true) {
     // if (target.events.indexOf('parent-') >= 0) {
       this.remNodes(target, this.props)
@@ -125,7 +137,7 @@ class ForceDirectedGraph extends React.Component {
       this.nodes[i].fx = this.nodePos[0] = pos[0]
       this.nodes[i].fy = this.nodePos[1] = pos[1]
     }
-    this.simulation.alphaTarget(0.3).restart()
+    this.simulation.alpha(0.1).alphaTarget(0.01).restart()
   }
   onDrag (event) {
     if (this.isDrag) {
@@ -193,11 +205,31 @@ class ForceDirectedGraph extends React.Component {
     this.simulation
         .nodes(this.nodes)
         .on('tick', (d, i) => {
+          // FOR STATIC RENDERING
+          // if (this.simulation.alpha() <= this.simulation.alphaMin()) {
+          //   this.simUpdate(d, i)
+          //   this.simulation.stop()
+          // }
+          // FOR ANIMATION RENDERING
           this.simUpdate(d, i)
         })
 
     this.simulation.force('link')
         .links(this.links)
+
+    // let root = this.refs.root
+    // let svg = d3.select(root).append('svg')
+    // this.drag
+    //   .subject(this.nodes)
+    //   .on('start', (d) => { console.log('dragStart', d) })
+    //   .on('drag', () => {
+    //     console.log('dragging')
+    //     this.drag.subject(this.node)
+    //     this.node.fx = d3.event.x
+    //     this.node.fy = d3.event.y
+    //     console.log(this.node)
+    //   })
+    //   .on('end', () => { console.log('dragEnd') })
   }
   simUpdate (d, i) {
     this.setState({nodes: this.nodes, links: this.links})
@@ -270,6 +302,7 @@ class ForceDirectedGraph extends React.Component {
       nodeList.push(
         <circle key={'cir-id' + d.index + '-hr-' + d.hour} {...events} {...circleProps} />
       )
+      // console.log(d3.select(nodeList[i]).call(this.drag))
     })
     this.state.links.map((data, index) => {
       if (props.isCurved) {
@@ -293,7 +326,9 @@ class ForceDirectedGraph extends React.Component {
     return (
       <g onDoubleClick={this.onDClick}>
         {linkList}
-        {nodeList}
+        <g ref='circ'>
+          {nodeList}
+        </g>
       </g>
     )
   }
