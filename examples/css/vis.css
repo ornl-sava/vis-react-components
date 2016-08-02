@@ -431,18 +431,19 @@ nav ul li .active {
   user-select: none;
 }
 
+.settings-container {
+	float: right
+}
 .settings-menu {
 	background-color: #f2f2f2;
 	border-radius: 4px;
 	margin-top: -4px;
-	margin-left: 5px;
+	margin-left: -15px;
 	padding: 6px 15px;
 	border: 1px solid #d4d4d4;
-	left: -30px;
 }
 .settings-icon {
 	cursor: pointer;
-	left: -12px;
 }
 .settings-title {
 	height: 30px;

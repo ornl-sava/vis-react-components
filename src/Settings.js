@@ -43,8 +43,7 @@ class Settings extends React.Component {
     super(props)
 
     this.state = {
-      menuDisplay: 'none',
-      menuZIndex: -9998
+      menuDisplay: 'none'
     }
 
     this.openMenu = this.openMenu.bind(this)
@@ -55,8 +54,7 @@ class Settings extends React.Component {
       ? 'block'
       : 'none'
     this.setState({
-      menuDisplay: display,
-      menuZIndex: 9998
+      menuDisplay: display
     })
   }
 
@@ -64,8 +62,6 @@ class Settings extends React.Component {
     let props = this.props
     let settings = props.settings
     let chart = props.chart
-    let margin = chart.props.margin
-    let width = chart.chartWidth
 
     let longestLen = 0
     longestLen = settings.options.reduce((a, b) => {
@@ -91,19 +87,18 @@ class Settings extends React.Component {
     let containerProps = {
       className: 'settings-container',
       style: {
-        position: 'absolute',
+        position: 'relative',
         top: 0,
-        left: 0
+        left: 0,
+        zIndex: 100
       }
     }
 
     let iconProps = {
       className: props.icon + ' settings-icon',
       style: {
-        zIndex: 9999,
-        position: 'absolute',
-        top: 0,
-        transform: 'translate(' + (width + margin.left) + 'px,0px)'
+        zIndex: 103,
+        top: 0
       },
       onClick: this.openMenu
     }
@@ -113,10 +108,10 @@ class Settings extends React.Component {
       style: {
         position: 'absolute',
         display: this.state.menuDisplay,
-        zIndex: this.state.menuZIndex,
+        zIndex: -100,
         width: minWidth,
         top: 0,
-        transform: 'translate(' + (width + margin.left - minWidth) + 'px,0px)'
+        transform: 'translate(' + -minWidth + 'px,0px)'
       }
     }
 
