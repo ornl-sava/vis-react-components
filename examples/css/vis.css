@@ -30,17 +30,17 @@ body {
 	stroke-width: 0px;
 	opacity: 0;
 }
-.histogram-bar._overlay.brushed {
+/*.histogram-bar._overlay.brushed {
 	cursor: crosshair;
-}
-.histogram-bar._overlay.brushed.selection {
+}*/
+/*.histogram-bar._overlay.brushed.selection {
 	cursor: move;
-}
-.histogram-bar._overlay.brushed:hover {
+}*/
+/*.histogram-bar._overlay.brushed:hover {
 	opacity: 0;
 	stroke-width: 0px;
 	pointer-events: none;
-}
+}*/
 .histogram-bar._overlay:hover {
 	opacity: 0.2;
 }
