@@ -62,6 +62,10 @@ class Heatmap extends React.Component {
                       .delay(0)
                       .duration(1000)
                       .ease(setEase('linear'))
+                      .attr('x', props.x)
+                      .attr('y', props.y)
+                      .attr('width', props.width)
+                      .attr('height', props.height)
                       .attr('fill', props.fill)
                     return transition
                   }

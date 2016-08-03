@@ -25,11 +25,11 @@ import storyData from '../examples/data/for-hci/stories.json'
 //   return toolTip
 // }
 const toolTipFunctionIP = (data) => {
-  let name = 'Node '
+  let name = 'Source '
   if (data.parent == null) {
-    name = 'Root '
+    name = 'Source '
   } else if (data.children != null) {
-    name = 'Parent '
+    name = 'Destination '
   }
   name = name + data.key
   let key = data.data.key_as_string
@@ -182,7 +182,7 @@ const makeAdjacencyList = () => {
 }
 const aList = makeAdjacencyList()
 
-const nData = 3
+const nData = 10
 
 let makeTreeData = () => {
   let ind = 0
@@ -325,23 +325,24 @@ let hier = d3.hierarchy(data1, (d) => {
     return d.children
   }
 })
-console.log('FDGTE-hier', hier)
+// console.log('FDGTE-hier', hier)
 console.log('FDGTE-hierDescendents', hier.descendants())
-// let apple = {tomate: 0}
-// let acc = 'tomate'
-// console.log('FDGTE-apple', apple[acc])
 
 const treeChartProps = {
   tipFunction: toolTipFunctionIP,
   data: data1,
   childAccessors: ['source_ip', 'dest_ip']
 }
+// const treeChartProps = {
+//   tipFunction: toolTipFunction,
+//   data: makeTreeData()
+// }
 
 class TopicsContainer extends React.Component {
   render () {
     return (
       <div>
-        {<Chart className='col-md-12' tipFunction={toolTipFunctionIP} yAxis={false} xAxis={false} height={1000} >
+        {<Chart className='col-md-12' tipFunction={treeChartProps.tipFunction} yAxis={false} xAxis={false} height={1000} >
           <ForceDirectedGraphTree {...treeChartProps} />
         </Chart>}
       </div>
