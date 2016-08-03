@@ -24,7 +24,6 @@ class BrushX extends React.Component {
       .on('brush', this._brush.bind(this))
       .on('end', this._end.bind(this))
     selection.call(this.brush)
-    this.setBrushDimensions()
   }
   _start () {
     this.applySelection()
@@ -43,32 +42,6 @@ class BrushX extends React.Component {
         this.setState({brushSelection: this.brushSelection})
       }
     }
-  }
-  // shouldComponentUpdate (nextProps, nextState) {
-  //   let props = this.props
-  //   let thisSelection = props.brushSelection ? props.brushSelection : this.state.brushSelection
-  //   let nextSelection = props.brushSelection ? nextProps.brushSelection : nextState.brushSelection
-  //   if (thisSelection.toString() === nextSelection.toString() &&
-  //       props.height === nextProps.height &&
-  //       props.width === nextProps.width) {
-  //     return false
-  //   }
-  //   return true
-  // }
-  // Normally we'd append a path to the handle <g>
-  // but as of D3 v4 the handles is now a <rect>
-  setBrushDimensions () {
-    // if (this.props.showHandles) {
-    //   let h = this.props.height / 5
-    //   let y = this.props.height / 2 - (h / 2)
-    //   select(findDOMNode(this)).selectAll('.handle')
-    //     .style('width', 7)
-    //     .style('height', h)
-    //     .style('y', y)
-    //     .style('rx', '6')
-    //     .style('ry', '6')
-    //     .style('fill', '#666')
-    // }
   }
   clearBrush () {
     // console.log('clearing brush')

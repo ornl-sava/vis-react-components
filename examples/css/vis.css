@@ -44,8 +44,14 @@ body {
 .histogram-bar._overlay:hover {
 	opacity: 0.2;
 }
-
 .histogram-bar.temporal {
+	fill: #666;
+	stroke: #444;
+	stroke-width: 1px;
+	opacity: 0.8;
+}
+
+.histogram-bar.temporal.selected {
 	fill: #6baed6;
 	stroke: #5b9eb6;
 	stroke-width: 1px;
