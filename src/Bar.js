@@ -14,10 +14,9 @@ class Bar extends React.Component {
     }
   }
   _onClick (event) {
+    if (this.props.brushed) return
     if (this.props.tooltipData) {
-      if (this.props.onClick) {
-        this.props.onClick(event, this.props.tooltipData)
-      }
+      this.props.onClick(event, this.props.tooltipData)
     }
   }
   _onMouseEnter (event) {
@@ -35,7 +34,6 @@ class Bar extends React.Component {
         let selectionWidth = parseFloat(target.attr('width'))
         let min = parseFloat(target.attr('x')) + leftMargin
         let max = parseFloat(target.attr('x')) + selectionWidth + leftMargin
-        // console.log('min: ' + min + ', max: ' + max)
         if (target.style('display') === 'none' ||
         event.pageX < min || event.pageX > max) {
           target = select('.overlay').node()

@@ -77,7 +77,7 @@ class Histogram extends React.Component {
       let xPos = props.xScale(barData[i][0].data[props.xAccessor])
       return (
         <g className='overlay-bin' key={'overlay-' + i.toString()} transform={'translate(' + xPos + ',' + yPos + ')'}>
-          <Bar {...overlayObj} onClick={this.props.brushed ? null : props.onClick} onEnter={props.onEnter} onLeave={props.onLeave} />
+          <Bar {...overlayObj} onClick={props.onClick} onEnter={props.onEnter} onLeave={props.onLeave} />
         </g>
       )
     })

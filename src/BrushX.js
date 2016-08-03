@@ -8,7 +8,7 @@ class BrushX extends React.Component {
     this.selection = props.brushSelection ? props.brushSelection : []
     if (!props.brushSelection) {
       this.state = {
-        selection: this.selection
+        brushSelection: this.selection
       }
     }
   }
@@ -34,49 +34,60 @@ class BrushX extends React.Component {
   }
   _end () {
     let newSelection = this.selection.toString()
-    let oldSelection = this.props.brushSelection ? this.props.brushSelection.toString() : this.state.selection.toString()
-    console.log('brush end')
+    let oldSelection = this.props.brushSelection ? this.props.brushSelection.toString() : this.state.brushSelection.toString()
     if (newSelection !== oldSelection) {
-      console.log('calling parent brush!')
-      console.log(this.selection)
+      // console.log('Selected : ' + this.selection.toString())
       this.props.onBrush(this.selection)
       if (!this.props.brushSelection) {
-        this.setState({selection: this.selection})
+        // console.log('Brush Selection not defined using state')
+        this.setState({brushSelection: this.selection})
       }
     }
-    // this.setBrushDimensions()
   }
+  // shouldComponentUpdate (nextProps, nextState) {
+  //   let props = this.props
+  //   let thisSelection = props.brushSelection ? props.brushSelection : this.state.brushSelection
+  //   let nextSelection = props.brushSelection ? nextProps.brushSelection : nextState.brushSelection
+  //   if (thisSelection.toString() === nextSelection.toString() &&
+  //       props.height === nextProps.height &&
+  //       props.width === nextProps.width) {
+  //     return false
+  //   }
+  //   return true
+  // }
   // Normally we'd append a path to the handle <g>
   // but as of D3 v4 the handles is now a <rect>
   setBrushDimensions () {
-    if (this.props.showHandles) {
-      let h = this.props.height / 5
-      let y = this.props.height / 2 - (h / 2)
-      select(findDOMNode(this)).selectAll('.handle')
-        .style('width', 7)
-        .style('height', h)
-        .style('y', y)
-        .style('rx', '6')
-        .style('ry', '6')
-        .style('fill', '#666')
-    }
+    // if (this.props.showHandles) {
+    //   let h = this.props.height / 5
+    //   let y = this.props.height / 2 - (h / 2)
+    //   select(findDOMNode(this)).selectAll('.handle')
+    //     .style('width', 7)
+    //     .style('height', h)
+    //     .style('y', y)
+    //     .style('rx', '6')
+    //     .style('ry', '6')
+    //     .style('fill', '#666')
+    // }
   }
+  clearBrush () {
+    // console.log('clearing brush')
+    let thisNode = findDOMNode(this)
+    let selection = select(thisNode)
+    selection.call(this.brush.move, null)
+  }
+
   componentDidUpdate (prevProps, prevState) {
     if (this.props.width !== prevProps.width || this.props.height !== prevProps.height) {
       this.initBrush()
     }
-    if (this.selection.length === 2) {
-      console.log(this.props.brushSelection)
-      if (this.props.brushSelection && this.props.brushSelection.toString() !== prevProps.brushSelection.toString()) {
-        this.selection = this.props.brushSelection
-      }
-      let thisNode = findDOMNode(this)
-      let selection = select(thisNode)
-      selection.call(this.brush.move, this.selection.map(this.props.scale))
+    if (this.props.brushSelection && this.props.brushSelection.toString() !== prevProps.brushSelection.toString()) {
+      this.selection = this.props.brushSelection
     }
+    this.clearBrush()
   }
   applySelection () {
-    if (!d3Event.sourceEvent || d3Event.sourceEvent.type === 'brush') return
+    if (!d3Event.sourceEvent || d3Event.sourceEvent.type === 'brush' || !d3Event.selection) return
     let domain = this.calculateSelection(d3Event.selection.map(this.props.scale.invert))
     let thisNode = findDOMNode(this)
     select(thisNode)

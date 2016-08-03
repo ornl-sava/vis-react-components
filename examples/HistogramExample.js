@@ -228,7 +228,7 @@ class HistogramExample extends React.Component {
         <div>
           <HistogramChart header={this.header3} xScaleType='time'
             width={800} height={200} data={temporalData} tipFunction={toolTipFunction}
-            addOverlay onClick={onBarClick} brushed />
+            addOverlay brushed />
         </div>
         <div>
           <HistogramChart
