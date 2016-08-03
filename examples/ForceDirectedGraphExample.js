@@ -163,18 +163,12 @@ const aList = makeAdjacencyList()
 
 const nData = 3
 
-// const nodes = getNodes()
-
-// const links = getLinks()
-
-// console.log('FDGE-adjListNL', adjListNL())
-// console.log('numNodes-', nodes.length, '-numLinks-', links.length)
-
 class TopicsContainer extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
-      nData: nData
+      chartData: {},
+      simInfo: null
     }
     this.buttons = [
       '<',
@@ -182,43 +176,61 @@ class TopicsContainer extends React.Component {
     ]
     this.forwardClick = this.forwardClick.bind(this)
     this.backClick = this.backClick.bind(this)
+    this.nData = nData
 
     this.nodes = []
     this.links = []
+
+    this.alphaMin = 0.01
+    this.getSimInfo = this.getSimInfo.bind(this)
+
+    // this.chartData = this.getData()
+  }
+
+  componentWillMount () {
+    this.setState({chartData: this.getData(this.nData)})
+  }
+
+  componentWillUpdate (nextState) {
+    // if (this.state.nData !== nextState.nData) {
+    //   this.chartData = this.getData()
+    // }
   }
 
   forwardClick () {
     console.log('fo', this.state)
-    let num = this.state.nData + 1
+    let num = this.nData + 1
     if (num >= storyData.length + 1) {
       num = 1
     }
     console.log('FDGE-fClick', num)
-    this.setState({ nData: num })
+    this.nData = num
+    this.setState({ chartData: this.getData(num) })
   }
   backClick () {
     console.log('ba', this.state)
-    let num = this.state.nData - 1
+    let num = this.nData - 1
     if (num < 1) {
       num = (storyData.length + 1) - 1
     }
     console.log('FDGE-bClick', num)
-    this.setState({ nData: num })
+    this.nData = num
+    this.setState({ chartData: this.getData(num) })
   }
 
-  getData () {
+  getData (numData) {
     let nodes = []
     aList.map((d, i) => {
-      if (d.hour < this.state.nData) {
+      if (d.hour < numData) {
         nodes.push({
           events: d.events,
           hour: d.hour,
-          ind: i + this.state.nData,
-          id: i + this.state.nData
+          ind: i + numData,
+          id: i + numData
         })
       }
     })
-    for (let i = this.state.nData - 1; i >= 0; i--) {
+    for (let i = numData - 1; i >= 0; i--) {
       nodes.unshift({
         events: 'parent- ' + i,
         hour: i,
@@ -230,23 +242,23 @@ class TopicsContainer extends React.Component {
 
     let links = []
     aList.map((data, index) => {
-      if (data.hour < this.state.nData) {
+      if (data.hour < numData) {
         links.push({
           source: data.hour,
-          target: index + this.state.nData,
+          target: index + numData,
           value: 1000
         })
         return data.story.map((d) => {
           // The node is at a hour greater than the current node
           // The node is within the current batch of nodes being viewed
-          if ((d + this.state.nData) > (index + this.state.nData) && (d + this.state.nData) < nodes.length) {
+          if ((d + numData) > (index + numData) && (d + numData) < nodes.length) {
           // seperated topics
           // if (false) {
           // only direct connections
           // if (aList[d + this.state.nData].hour === data.hour + 1 && (d + this.state.nData) < nodes.length) {
             links.push({
-              source: index + this.state.nData,
-              target: d + this.state.nData,
+              source: index + numData,
+              target: d + numData,
               value: d - index
             })
           }
@@ -265,28 +277,40 @@ class TopicsContainer extends React.Component {
     let chartProps = {
       tipFunction: toolTipFunction,
       adjacencyList: list,
-      numTData: this.state.nData,
+      numTData: numData,
       nodes: nodes,
-      links: links
+      links: links,
+      alphaMin: this.alphaMin,
+      getSimInfo: this.getSimInfo,
+      isStatic: true,
+      timeMax: 15 * 1000
+      // tickMax: 150
     }
     console.log('FDGE-nodes', nodes)
     return chartProps
   }
   getText () {
-    let nodeText = 'node count: '
-    let linkText = 'link count: '
-    let topicText = 'hour count: '
     return (
-      <g>
-        <span className={'info'} ><b>{nodeText}</b>{this.nodes.length}</span><br />
-        <span className={'info'} ><b>{linkText}</b>{this.links.length}</span><br />
-        <span className={'info'} ><b>{topicText}</b>{this.state.nData}</span>
+      <g className={'dataInfo'} >
+        <span className={'info'} ><b>node count: </b>{this.nodes.length}</span><br />
+        <span className={'info'} ><b>link count: </b>{this.links.length}</span><br />
+        <span className={'info'} ><b>hour count: </b>{this.nData}</span><br /><br />
       </g>
     )
   }
+  getSimInfo (timeCount, tickCount) {
+    let simInfo = (
+      <g className={'simInfo'} >
+        <span className={'info'} ><b>min alpha: </b>{this.alphaMin}</span><br />
+        <span className={'info'} ><b>{'time(ms): '}</b>{timeCount}</span><br />
+        <span className={'info'} ><b>tick count: </b>{tickCount}</span><br />
+      </g>
+    )
+    this.setState({simInfo: simInfo})
+  }
 
   render () {
-    let chartData = this.getData()
+    // let chartData = this.getData()
     return (
       <div className='row' >
         <div className='col-md-1'>
@@ -296,9 +320,10 @@ class TopicsContainer extends React.Component {
             <br /><br />
           </g>
           {this.getText()}
+          {this.state.simInfo}
         </div>
         <Chart className='col-md-11' tipFunction={toolTipFunction} yAxis={false} xAxis={false} height={1000} margin={{top: 40, right: 10, bottom: 10, left: 80}}>
-          <ForceDirectedGraph {...chartData} />
+          <ForceDirectedGraph {...this.state.chartData} />
         </Chart>
         <li><Link to='/forceDirectedTree' activeClassName='active'>SingleTopic</Link></li>
       </div>
