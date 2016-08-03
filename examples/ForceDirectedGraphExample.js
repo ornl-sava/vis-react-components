@@ -281,7 +281,10 @@ class TopicsContainer extends React.Component {
       nodes: nodes,
       links: links,
       alphaMin: this.alphaMin,
-      getSimInfo: this.getSimInfo
+      getSimInfo: this.getSimInfo,
+      isStatic: true,
+      timeMax: 15 * 1000
+      // tickMax: 150
     }
     console.log('FDGE-nodes', nodes)
     return chartProps
@@ -296,7 +299,6 @@ class TopicsContainer extends React.Component {
     )
   }
   getSimInfo (timeCount, tickCount) {
-    console.log('FDGE-gSI')
     let simInfo = (
       <g className={'simInfo'} >
         <span className={'info'} ><b>min alpha: </b>{this.alphaMin}</span><br />

@@ -26,6 +26,7 @@ class ForceDirectedGraph extends React.Component {
     this.nodes = []
     this.links = []
     this.falseStart(props)
+    // this.reSet(props)
     this.nodes.map((d, i) => {
       d.key = i
     })
@@ -224,17 +225,32 @@ class ForceDirectedGraph extends React.Component {
     this.simulation
         .nodes(this.nodes)
         .on('tick', (d, i) => {
-          // FOR STATIC RENDERING
-          if (this.simulation.alpha() <= this.simulation.alphaMin()) {
-            // this.setState({nodes: this.nodes, links: this.links})
-            // this.simulation.stop()
-            console.log('FDG-sS-tick')
-            props.getSimInfo(Date.now() - initTime, tickCount)
+          if (props.timeMax != null) {
+            console.log('FDG-sS-timeStop')
+            if ((props.timeMax + initTime) < Date.now()) {
+              this.simulation.stop()
+              if (props.isStatic) { this.setState({nodes: this.nodes, links: this.links}) }
+            }
+          } else if (props.tickMax != null) {
+            console.log('FDG-sS-tickStop')
+            if (tickCount > props.tickMax) {
+              this.simulation.stop()
+              if (props.isStatic) { this.setState({nodes: this.nodes, links: this.links}) }
+            }
+          } else {
+            if (this.simulation.alpha() <= this.simulation.alphaMin()) {
+              console.log('FDG-sS-alphaStop')
+              this.simulation.stop()
+              if (props.isStatic) {
+                // props.getSimInfo(Date.now() - initTime, tickCount)
+                this.setState({nodes: this.nodes, links: this.links})
+              }
+              // props.getSimInfo(Date.now() - initTime, tickCount)
+            }
           }
-          // FOR ANIMATION RENDERING
+          if (!props.isStatic) { this.setState({nodes: this.nodes, links: this.links}) }
+          props.getSimInfo(Date.now() - initTime, tickCount)
           tickCount++
-          this.setState({nodes: this.nodes, links: this.links})
-          // console.log('FDG-sim-d', this.nodes[20].vx, this.nodes[20].vy, i)
         })
 
     this.simulation.force('link')
@@ -283,7 +299,7 @@ class ForceDirectedGraph extends React.Component {
     let links = []
     let nodes = []
     props.nodes.map((d, i) => {
-      if (d.active) {
+      if (d.active || d.active == null) {
         if (props.adjacencyList[i].length !== null) {
           props.adjacencyList[i].map((data) => {
             if (data > i && props.nodes[data].active) {
@@ -379,7 +395,8 @@ ForceDirectedGraph.defaultProps = {
   tipFunction: () => {},
   isCurved: true,
   alphaMin: 0.01,
-  getSimInfo: () => {}
+  getSimInfo: () => {},
+  isStatic: false
 }
 
 ForceDirectedGraph.propTypes = {
@@ -397,7 +414,10 @@ ForceDirectedGraph.propTypes = {
   onLeave: PropTypes.func,
   isCurved: PropTypes.bool,
   alphaMin: PropTypes.number,
-  getSimInfo: PropTypes.func
+  timeMax: PropTypes.number,
+  tickMax: PropTypes.number,
+  getSimInfo: PropTypes.func,
+  isStatic: PropTypes.bool
 }
 
 export default ForceDirectedGraph
