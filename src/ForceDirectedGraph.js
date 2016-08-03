@@ -226,27 +226,26 @@ class ForceDirectedGraph extends React.Component {
         .nodes(this.nodes)
         .on('tick', (d, i) => {
           if (props.timeMax != null) {
-            console.log('FDG-sS-timeStop')
+            // console.log('FDG-sS-timeStop')
             if ((props.timeMax + initTime) < Date.now()) {
               this.simulation.stop()
               if (props.isStatic) { this.setState({nodes: this.nodes, links: this.links}) }
             }
           } else if (props.tickMax != null) {
-            console.log('FDG-sS-tickStop')
+            // console.log('FDG-sS-tickStop')
             if (tickCount > props.tickMax) {
               this.simulation.stop()
               if (props.isStatic) { this.setState({nodes: this.nodes, links: this.links}) }
             }
-          } else {
-            if (this.simulation.alpha() <= this.simulation.alphaMin()) {
-              console.log('FDG-sS-alphaStop')
-              this.simulation.stop()
-              if (props.isStatic) {
-                // props.getSimInfo(Date.now() - initTime, tickCount)
-                this.setState({nodes: this.nodes, links: this.links})
-              }
+          }
+          if (this.simulation.alpha() <= this.simulation.alphaMin()) {
+            // console.log('FDG-sS-alphaStop')
+            this.simulation.stop()
+            if (props.isStatic) {
               // props.getSimInfo(Date.now() - initTime, tickCount)
+              this.setState({nodes: this.nodes, links: this.links})
             }
+            // props.getSimInfo(Date.now() - initTime, tickCount)
           }
           if (!props.isStatic) { this.setState({nodes: this.nodes, links: this.links}) }
           props.getSimInfo(Date.now() - initTime, tickCount)
