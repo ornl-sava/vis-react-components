@@ -5,10 +5,10 @@ import { brushX, select, event as d3Event } from 'd3'
 class BrushX extends React.Component {
   constructor (props) {
     super(props)
-    this.selection = props.brushSelection ? props.brushSelection : []
+    this.brushSelection = props.brushSelection ? props.brushSelection : []
     if (!props.brushSelection) {
       this.state = {
-        brushSelection: this.selection
+        brushSelection: this.brushSelection
       }
     }
   }
@@ -33,14 +33,14 @@ class BrushX extends React.Component {
     this.applySelection()
   }
   _end () {
-    let newSelection = this.selection.toString()
+    let newSelection = this.brushSelection.toString()
     let oldSelection = this.props.brushSelection ? this.props.brushSelection.toString() : this.state.brushSelection.toString()
     if (newSelection !== oldSelection) {
-      // console.log('Selected : ' + this.selection.toString())
-      this.props.onBrush(this.selection)
+      // console.log('Selected : ' + this.brushSelection.toString())
+      this.props.onBrush(this.brushSelection)
       if (!this.props.brushSelection) {
         // console.log('Brush Selection not defined using state')
-        this.setState({brushSelection: this.selection})
+        this.setState({brushSelection: this.brushSelection})
       }
     }
   }
@@ -72,9 +72,12 @@ class BrushX extends React.Component {
   }
   clearBrush () {
     // console.log('clearing brush')
-    let thisNode = findDOMNode(this)
-    let selection = select(thisNode)
-    selection.call(this.brush.move, null)
+    if (this.brushSelection.length === 2) {
+      let thisNode = findDOMNode(this)
+      let selection = select(thisNode)
+      this.brushSelection = []
+      selection.call(this.brush.move, null)
+    }
   }
 
   componentDidUpdate (prevProps, prevState) {
@@ -82,7 +85,7 @@ class BrushX extends React.Component {
       this.initBrush()
     }
     if (this.props.brushSelection && this.props.brushSelection.toString() !== prevProps.brushSelection.toString()) {
-      this.selection = this.props.brushSelection
+      this.brushSelection = this.props.brushSelection
     }
     this.clearBrush()
   }
@@ -92,7 +95,7 @@ class BrushX extends React.Component {
     let thisNode = findDOMNode(this)
     select(thisNode)
         .call(this.brush.move, domain.map(this.props.scale))
-    this.selection = domain
+    this.brushSelection = domain
   }
   calculateSelection (domain) {
     let { interval, scale } = this.props
