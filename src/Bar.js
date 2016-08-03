@@ -7,6 +7,7 @@ class Bar extends React.Component {
     this.onClick = this._onClick.bind(this)
     this.onMouseEnter = this._onMouseEnter.bind(this)
     this.onMouseDown = this._onMouseDown.bind(this)
+    this.onMouseLeave = this._onMouseLeave.bind(this)
   }
   componentWillUnmount () {
     if (this._onMouseLeave) {
@@ -22,6 +23,11 @@ class Bar extends React.Component {
   _onMouseEnter (event) {
     if (this.props.tooltipData) {
       this.props.onEnter(event, this.props.tooltipData)
+    }
+  }
+  _onMouseLeave (event) {
+    if (this.props.tooltipData) {
+      this.props.onLeave(event, this.props.tooltipData)
     }
   }
   _onMouseDown (event) {
@@ -63,6 +69,7 @@ class Bar extends React.Component {
         onClick={this.onClick}
         onMouseDown={this.onMouseDown}
         onMouseEnter={this.onMouseEnter}
+        onMouseLeave={this.onMouseLeave}
         style={style}
      />)
   }
