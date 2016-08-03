@@ -68,29 +68,25 @@ class ForceDirectedGraph extends React.Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    this.simulation.stop()
-    this.simOn = false
-    this.updateDR(nextProps)
-    console.log(nextProps.adjacencyList)
-    nextProps.nodes.map((d, i) => {
-      d.key = i
-    })
-    this.falseStart(nextProps)
-    this.setState({nodes: this.nodes, links: this.links})
-    this.setSim(nextProps)
-    this.simulation.alpha(1).restart()
+    // console.log('thi', this.props, nextProps)
+    if (nextProps.nodes.length !== this.props.nodes.length) {
+      this.simulation.stop()
+      this.simOn = false
+      this.updateDR(nextProps)
+      nextProps.nodes.map((d, i) => {
+        d.key = i
+      })
+      this.falseStart(nextProps)
+      this.setState({nodes: this.nodes, links: this.links})
+      this.setSim(nextProps)
+      this.simulation.alpha(1).restart()
+    }
   }
 
   shouldComponentUpdate (nextProps, nextState) {
-    // need to have a catch for if the props change rather than state...
-    if (nextProps !== this.props) {
-      // this.simulation.stop()
-      // this.falseStart(nextProps)
-      // this.setState({nodes: this.nodes, links: this.links})
-      // this.simulation.restart()
-      console.log('fsk')
-    }
-    return true
+    if (nextState !== this.state || nextProps.nodes.length !== this.props.nodes.length) {
+      return true
+    } else { return false }
   }
 
   componentWillUnmount () {
@@ -215,24 +211,30 @@ class ForceDirectedGraph extends React.Component {
   }
 
   setSim (props) {
+    let initTime = Date.now()
+    let tickCount = 1
     this.simulation
       // .alphaTarget(0.4) // animation will not stop if the target is not 0
       // .alphaDecay(0.1) // slower start
-      .alphaMin(0.01)
+      .alphaMin(props.alphaMin)
       .force('link', d3.forceLink().id(function (d, i) { return i }))
-      .force('charge', d3.forceManyBody().strength(-30).distanceMax(500))
+      .force('charge', d3.forceManyBody().strength(-100).distanceMax(500).distanceMin(5))
       .force('center', d3.forceCenter(props.chartWidth / 2, props.chartHeight / 2))
 
     this.simulation
         .nodes(this.nodes)
         .on('tick', (d, i) => {
           // FOR STATIC RENDERING
-          // if (this.simulation.alpha() <= this.simulation.alphaMin()) {
-          //   this.simUpdate(d, i)
-          //   this.simulation.stop()
-          // }
+          if (this.simulation.alpha() <= this.simulation.alphaMin()) {
+            // this.setState({nodes: this.nodes, links: this.links})
+            // this.simulation.stop()
+            console.log('FDG-sS-tick')
+            props.getSimInfo(Date.now() - initTime, tickCount)
+          }
           // FOR ANIMATION RENDERING
-          this.simUpdate(d, i)
+          tickCount++
+          this.setState({nodes: this.nodes, links: this.links})
+          // console.log('FDG-sim-d', this.nodes[20].vx, this.nodes[20].vy, i)
         })
 
     this.simulation.force('link')
@@ -251,9 +253,6 @@ class ForceDirectedGraph extends React.Component {
     //     console.log(this.node)
     //   })
     //   .on('end', () => { console.log('dragEnd') })
-  }
-  simUpdate (d, i) {
-    this.setState({nodes: this.nodes, links: this.links})
   }
 
   falseStart (props) {
@@ -275,6 +274,7 @@ class ForceDirectedGraph extends React.Component {
         nodes.push(d)
       }
     })
+    // console.log('FDG-fS-nodes' n)
     this.nodes = nodes
     this.links = links
   }
@@ -377,7 +377,9 @@ ForceDirectedGraph.defaultProps = {
   onLeave: () => {},
   className: '',
   tipFunction: () => {},
-  isCurved: true
+  isCurved: true,
+  alphaMin: 0.01,
+  getSimInfo: () => {}
 }
 
 ForceDirectedGraph.propTypes = {
@@ -389,13 +391,13 @@ ForceDirectedGraph.propTypes = {
   tipFunction: PropTypes.func,
   nodes: PropTypes.array.isRequired,
   links: PropTypes.array.isRequired,
-  xScale: PropTypes.any,
-  yScale: PropTypes.any,
   data: PropTypes.array,
   onClick: PropTypes.func,
   onEnter: PropTypes.func,
   onLeave: PropTypes.func,
-  isCurved: PropTypes.bool
+  isCurved: PropTypes.bool,
+  alphaMin: PropTypes.number,
+  getSimInfo: PropTypes.func
 }
 
 export default ForceDirectedGraph
