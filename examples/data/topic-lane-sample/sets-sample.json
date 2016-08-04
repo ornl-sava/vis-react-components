@@ -1,0 +1,602 @@
+[
+  {
+    "_index": "ornl_label",
+    "_type": "set",
+    "_id": "959928ba-412c-32b5-b4aa-a5f04871d9bd",
+    "_score": 1,
+    "_source": {
+      "comment": "Created by process_bin",
+      "end": "2015-05-01T01:00:00+00:00",
+      "features": [
+        {
+          "key": "event_name|UDP: Port Scan",
+          "value": 1
+        },
+        {
+          "key": "size|source_country___dest_country",
+          "value": 2
+        },
+        {
+          "key": "size|severity",
+          "value": 1
+        },
+        {
+          "key": "cat|private_private",
+          "value": 1
+        },
+        {
+          "key": "severity|3",
+          "value": 1
+        },
+        {
+          "key": "source_country___dest_country|ZZZ",
+          "value": 2
+        },
+        {
+          "key": "size|event_name",
+          "value": 1
+        },
+        {
+          "key": "topic-event_name|16",
+          "value": 0.5047169811320751
+        }
+      ],
+      "has_label": false,
+      "topics": [
+        16
+      ],
+      "want_label": false,
+      "anomaly_score": 0.18279266572637518,
+      "interest_score": 0.7402443968175622,
+      "start": "2015-05-01T00:00:00+00:00",
+      "composite_score": 0.2942830119446126,
+      "key": {
+        "ip2": "10.11.173.217",
+        "ip1": "10.32.123.41",
+        "sensor": "NAWEPRLHSN83"
+      },
+      "label": false,
+      "created_at": "2016-08-01T19:26:14.504035"
+    }
+  },
+  {
+    "_index": "ornl_label",
+    "_type": "set",
+    "_id": "5fd19ce1-899b-3e69-8b86-d90b088b8643",
+    "_score": 1,
+    "_source": {
+      "comment": "Created by process_bin",
+      "end": "2015-05-01T01:00:00+00:00",
+      "features": [
+        {
+          "key": "event_name|UDP: Port Scan",
+          "value": 1
+        },
+        {
+          "key": "size|source_country___dest_country",
+          "value": 2
+        },
+        {
+          "key": "size|severity",
+          "value": 1
+        },
+        {
+          "key": "cat|private_private",
+          "value": 1
+        },
+        {
+          "key": "severity|3",
+          "value": 1
+        },
+        {
+          "key": "source_country___dest_country|ZZZ",
+          "value": 2
+        },
+        {
+          "key": "size|event_name",
+          "value": 1
+        },
+        {
+          "key": "topic-event_name|16",
+          "value": 0.5047169811320751
+        }
+      ],
+      "has_label": false,
+      "topics": [
+        16
+      ],
+      "want_label": false,
+      "anomaly_score": 0.18265162200282087,
+      "interest_score": 0.7402443968175622,
+      "start": "2015-05-01T00:00:00+00:00",
+      "composite_score": 0.29417017696576914,
+      "key": {
+        "ip2": "10.11.173.32",
+        "ip1": "10.32.123.41",
+        "sensor": "NAWEPRLHSN83"
+      },
+      "label": false,
+      "created_at": "2016-08-01T19:26:14.597432"
+    }
+  },
+  {
+    "_index": "ornl_label",
+    "_type": "set",
+    "_id": "73e78a4a-1a3d-3b8a-82ab-000ae411b7bd",
+    "_score": 1,
+    "_source": {
+      "comment": "Created by process_bin",
+      "end": "2015-05-01T01:00:00+00:00",
+      "features": [
+        {
+          "key": "event_name|UDP: Port Scan",
+          "value": 1
+        },
+        {
+          "key": "size|source_country___dest_country",
+          "value": 2
+        },
+        {
+          "key": "size|severity",
+          "value": 1
+        },
+        {
+          "key": "cat|private_private",
+          "value": 1
+        },
+        {
+          "key": "severity|3",
+          "value": 1
+        },
+        {
+          "key": "source_country___dest_country|ZZZ",
+          "value": 2
+        },
+        {
+          "key": "size|event_name",
+          "value": 1
+        },
+        {
+          "key": "topic-event_name|16",
+          "value": 0.5047169811320751
+        }
+      ],
+      "has_label": false,
+      "topics": [
+        16
+      ],
+      "want_label": false,
+      "anomaly_score": 0.18913963328631875,
+      "interest_score": 0.7402443968175622,
+      "start": "2015-05-01T00:00:00+00:00",
+      "composite_score": 0.29936058599256743,
+      "key": {
+        "ip2": "10.11.176.111",
+        "ip1": "10.32.123.41",
+        "sensor": "NAWEPRLHSN83"
+      },
+      "label": false,
+      "created_at": "2016-08-01T19:26:15.595380"
+    }
+  },
+  {
+    "_index": "ornl_label",
+    "_type": "set",
+    "_id": "bc23cab8-83f5-348d-b5f2-4c835560fce0",
+    "_score": 1,
+    "_source": {
+      "comment": "Created by process_bin",
+      "end": "2015-05-01T01:00:00+00:00",
+      "features": [
+        {
+          "key": "event_name|UDP: Port Scan",
+          "value": 1
+        },
+        {
+          "key": "size|source_country___dest_country",
+          "value": 2
+        },
+        {
+          "key": "size|severity",
+          "value": 1
+        },
+        {
+          "key": "cat|private_private",
+          "value": 1
+        },
+        {
+          "key": "severity|3",
+          "value": 1
+        },
+        {
+          "key": "source_country___dest_country|ZZZ",
+          "value": 2
+        },
+        {
+          "key": "size|event_name",
+          "value": 1
+        },
+        {
+          "key": "topic-event_name|16",
+          "value": 0.5047169811320751
+        }
+      ],
+      "has_label": false,
+      "topics": [
+        16
+      ],
+      "want_label": false,
+      "anomaly_score": 0.18843441466854724,
+      "interest_score": 0.7402443968175622,
+      "start": "2015-05-01T00:00:00+00:00",
+      "composite_score": 0.2987964110983502,
+      "key": {
+        "ip2": "10.11.176.178",
+        "ip1": "10.32.123.41",
+        "sensor": "NAWEPRLHSN83"
+      },
+      "label": false,
+      "created_at": "2016-08-01T19:26:16.182842"
+    }
+  },
+  {
+    "_index": "ornl_label",
+    "_type": "set",
+    "_id": "8c948427-0695-33ca-a30e-f4a0996ebc41",
+    "_score": 1,
+    "_source": {
+      "comment": "Created by process_bin",
+      "end": "2015-05-01T01:00:00+00:00",
+      "features": [
+        {
+          "key": "event_name|UDP: Port Scan",
+          "value": 1
+        },
+        {
+          "key": "size|source_country___dest_country",
+          "value": 2
+        },
+        {
+          "key": "size|severity",
+          "value": 1
+        },
+        {
+          "key": "cat|private_private",
+          "value": 1
+        },
+        {
+          "key": "severity|3",
+          "value": 1
+        },
+        {
+          "key": "source_country___dest_country|ZZZ",
+          "value": 2
+        },
+        {
+          "key": "size|event_name",
+          "value": 1
+        },
+        {
+          "key": "topic-event_name|16",
+          "value": 0.5047169811320751
+        }
+      ],
+      "has_label": false,
+      "topics": [
+        16
+      ],
+      "want_label": false,
+      "anomaly_score": 0.18829337094499296,
+      "interest_score": 0.7402443968175622,
+      "start": "2015-05-01T00:00:00+00:00",
+      "composite_score": 0.2986835761195068,
+      "key": {
+        "ip2": "10.11.176.197",
+        "ip1": "10.32.123.41",
+        "sensor": "NAWEPRLHSN83"
+      },
+      "label": false,
+      "created_at": "2016-08-01T19:26:16.263632"
+    }
+  },
+  {
+    "_index": "ornl_label",
+    "_type": "set",
+    "_id": "9446228b-0e64-3be6-9aa6-a1560d12bda0",
+    "_score": 1,
+    "_source": {
+      "comment": "Created by process_bin",
+      "end": "2015-05-01T01:00:00+00:00",
+      "features": [
+        {
+          "key": "event_name|UDP: Port Scan",
+          "value": 1
+        },
+        {
+          "key": "size|source_country___dest_country",
+          "value": 2
+        },
+        {
+          "key": "size|severity",
+          "value": 1
+        },
+        {
+          "key": "cat|private_private",
+          "value": 1
+        },
+        {
+          "key": "severity|3",
+          "value": 1
+        },
+        {
+          "key": "source_country___dest_country|ZZZ",
+          "value": 2
+        },
+        {
+          "key": "size|event_name",
+          "value": 1
+        },
+        {
+          "key": "topic-event_name|16",
+          "value": 0.5047169811320751
+        }
+      ],
+      "has_label": false,
+      "topics": [
+        16
+      ],
+      "want_label": false,
+      "anomaly_score": 0.18801128349788435,
+      "interest_score": 0.7402443968175622,
+      "start": "2015-05-01T00:00:00+00:00",
+      "composite_score": 0.2984579061618199,
+      "key": {
+        "ip2": "10.11.176.202",
+        "ip1": "10.32.123.41",
+        "sensor": "NAWEPRLHSN83"
+      },
+      "label": false,
+      "created_at": "2016-08-01T19:26:16.425057"
+    }
+  },
+  {
+    "_index": "ornl_label",
+    "_type": "set",
+    "_id": "22631d48-fa6e-3af5-b1c8-b0915a013f5c",
+    "_score": 1,
+    "_source": {
+      "comment": "Created by process_bin",
+      "end": "2015-05-01T01:00:00+00:00",
+      "features": [
+        {
+          "key": "event_name|UDP: Port Scan",
+          "value": 1
+        },
+        {
+          "key": "size|source_country___dest_country",
+          "value": 2
+        },
+        {
+          "key": "size|severity",
+          "value": 1
+        },
+        {
+          "key": "cat|private_private",
+          "value": 1
+        },
+        {
+          "key": "severity|3",
+          "value": 1
+        },
+        {
+          "key": "source_country___dest_country|ZZZ",
+          "value": 2
+        },
+        {
+          "key": "size|event_name",
+          "value": 1
+        },
+        {
+          "key": "topic-event_name|16",
+          "value": 0.5047169811320751
+        }
+      ],
+      "has_label": false,
+      "topics": [
+        16
+      ],
+      "want_label": false,
+      "anomaly_score": 0.18645980253878702,
+      "interest_score": 0.7402443968175622,
+      "start": "2015-05-01T00:00:00+00:00",
+      "composite_score": 0.297216721394542,
+      "key": {
+        "ip2": "10.11.176.23",
+        "ip1": "10.32.123.41",
+        "sensor": "NAWEPRLHSN83"
+      },
+      "label": false,
+      "created_at": "2016-08-01T19:26:16.981520"
+    }
+  },
+  {
+    "_index": "ornl_label",
+    "_type": "set",
+    "_id": "92fcb7e8-c68a-332c-adcd-dfab47fd8aba",
+    "_score": 1,
+    "_source": {
+      "comment": "Created by process_bin",
+      "end": "2015-05-01T01:00:00+00:00",
+      "features": [
+        {
+          "key": "event_name|UDP: Port Scan",
+          "value": 1
+        },
+        {
+          "key": "size|source_country___dest_country",
+          "value": 2
+        },
+        {
+          "key": "size|severity",
+          "value": 1
+        },
+        {
+          "key": "cat|private_private",
+          "value": 1
+        },
+        {
+          "key": "severity|3",
+          "value": 1
+        },
+        {
+          "key": "source_country___dest_country|ZZZ",
+          "value": 2
+        },
+        {
+          "key": "size|event_name",
+          "value": 1
+        },
+        {
+          "key": "topic-event_name|16",
+          "value": 0.5047169811320751
+        }
+      ],
+      "has_label": false,
+      "topics": [
+        16
+      ],
+      "want_label": false,
+      "anomaly_score": 0.1861777150916784,
+      "interest_score": 0.7402443968175622,
+      "start": "2015-05-01T00:00:00+00:00",
+      "composite_score": 0.29699105143685517,
+      "key": {
+        "ip2": "10.11.176.34",
+        "ip1": "10.32.123.41",
+        "sensor": "NAWEPRLHSN83"
+      },
+      "label": false,
+      "created_at": "2016-08-01T19:26:17.144851"
+    }
+  },
+  {
+    "_index": "ornl_label",
+    "_type": "set",
+    "_id": "4b285efc-e62e-3b36-89cc-427517eb6701",
+    "_score": 1,
+    "_source": {
+      "comment": "Created by process_bin",
+      "end": "2015-05-01T01:00:00+00:00",
+      "features": [
+        {
+          "key": "event_name|UDP: Port Scan",
+          "value": 3
+        },
+        {
+          "key": "size|source_country___dest_country",
+          "value": 6
+        },
+        {
+          "key": "size|severity",
+          "value": 3
+        },
+        {
+          "key": "cat|private_private",
+          "value": 1
+        },
+        {
+          "key": "severity|3",
+          "value": 3
+        },
+        {
+          "key": "source_country___dest_country|ZZZ",
+          "value": 6
+        },
+        {
+          "key": "size|event_name",
+          "value": 3
+        },
+        {
+          "key": "topic-event_name|16",
+          "value": 0.7523584905660374
+        }
+      ],
+      "has_label": false,
+      "topics": [
+        16
+      ],
+      "want_label": false,
+      "anomaly_score": 0.93737658674189,
+      "interest_score": 0.9585811284861155,
+      "start": "2015-05-01T00:00:00+00:00",
+      "composite_score": 0.9416174950907351,
+      "key": {
+        "ip2": "10.11.176.8",
+        "ip1": "10.32.123.41",
+        "sensor": "NAWEPRLHSN83"
+      },
+      "label": false,
+      "created_at": "2016-08-01T19:26:17.398189"
+    }
+  },
+  {
+    "_index": "ornl_label",
+    "_type": "set",
+    "_id": "dffaf2a0-b15f-38ec-af81-46369201fb73",
+    "_score": 1,
+    "_source": {
+      "comment": "Created by process_bin",
+      "end": "2015-05-01T01:00:00+00:00",
+      "features": [
+        {
+          "key": "event_name|UDP: Port Scan",
+          "value": 1
+        },
+        {
+          "key": "size|source_country___dest_country",
+          "value": 2
+        },
+        {
+          "key": "size|severity",
+          "value": 1
+        },
+        {
+          "key": "cat|private_private",
+          "value": 1
+        },
+        {
+          "key": "severity|3",
+          "value": 1
+        },
+        {
+          "key": "source_country___dest_country|ZZZ",
+          "value": 2
+        },
+        {
+          "key": "size|event_name",
+          "value": 1
+        },
+        {
+          "key": "topic-event_name|16",
+          "value": 0.5047169811320751
+        }
+      ],
+      "has_label": false,
+      "topics": [
+        16
+      ],
+      "want_label": false,
+      "anomaly_score": 0.18533145275035262,
+      "interest_score": 0.7402443968175622,
+      "start": "2015-05-01T00:00:00+00:00",
+      "composite_score": 0.29631404156379454,
+      "key": {
+        "ip2": "10.11.177.93",
+        "ip1": "10.32.123.41",
+        "sensor": "NAWEPRLHSN83"
+      },
+      "label": false,
+      "created_at": "2016-08-01T19:26:17.984424"
+    }
+  }
+]

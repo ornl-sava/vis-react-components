@@ -1,0 +1,145 @@
+{
+   "0": [
+      "ICMP: Timestamp Probe", 
+      "NMAP: XMAS Probe", 
+      "TCP: SYN Port Scan", 
+      "NMAP: XMAS with SYN Probe", 
+      "SCAN: SYN FIN Based Probes"
+   ], 
+   "1": [
+      "Kerberos: Kerberos Login Bruteforce Detected"
+   ], 
+   "2": [
+      "SSL: Server-Initiated Key Renegotiation Detected", 
+      "UDS-NCDOC-Domain Block Pre-Infection 'tongji.linezing.com'", 
+      "SSL: Client-Initiated Key Renegotiation Detected"
+   ], 
+   "3": [
+      "DNS: Too Many Type NS Query Attack Detected"
+   ], 
+   "4": [
+      "TCP: Full-Connect Host Sweep", 
+      "TCP: ACK Host Sweep"
+   ], 
+   "5": [
+      "TCP: SYN Host Sweep", 
+      "TCP: ACK Host Sweep"
+   ], 
+   "6": [
+      "ICMP: Host Sweep", 
+      "UDP: Host Sweep"
+   ], 
+   "7": [
+      "HTTP: Microsoft Internet Explorer CCS Information Disclosure Vulnerability II"
+   ], 
+   "8": [
+      "SSL: SSLv3 Session Detected (CVE-2014-3566)"
+   ], 
+   "9": [
+      "SMB: Generic Buffer Overflow Attempt Detected", 
+      "NETBIOS-SS: Windows 2000 ADMIN$ Access"
+   ], 
+   "10": [], 
+   "11": [
+      "UDS-NCDOC-Malicious Spam Source Domain"
+   ], 
+   "12": [
+      "ARP: MAC Address Flip-Flop"
+   ], 
+   "13": [
+      "NETBIOS-SS: Samba SMB1 Packets Chaining Memory Corruption Vulnerability"
+   ], 
+   "14": [
+      "TCP: ACK Port Scan", 
+      "HTTP: IE Object Tag Cross Domain Violation Vulnerability", 
+      "HTTP: IE Modal Dialog Script Execution"
+   ], 
+   "15": [
+      "HTTP: Possible full-width and half-width unicode encoding evasion", 
+      "HTTP: Overly Long POST URI in HTTP Request"
+   ], 
+   "16": [
+      "IP: IP Fragments Overlap", 
+      "HTTP: MS Office Malformed Image Parsing Vulnerability"
+   ], 
+   "17": [
+      "UDS-NCDOC-Domain Block Pre-Infection 'mapsofworld.com'"
+   ], 
+   "18": [
+      "UDS-NCDOC-Domain Block Pre-Infection 'limelight.com'", 
+      "NETBIOS-SS: Samba SMB1 Packets Chaining Memory Corruption Vulnerability"
+   ], 
+   "19": [
+      "SNORT: RDP TRAFFIC(sid:130)"
+   ], 
+   "20": [
+      "IM: Yahoo Messenger Server Lookup"
+   ], 
+   "21": [
+      "DNS: Too Many Type A Query Response Errors Found", 
+      "UDS-SSLv2 Connection Detected - NOTIFY NETOPS"
+   ], 
+   "22": [
+      "UDS-NCDOC-Domain Block Pre-Infection 'clients.your-server.de'", 
+      "UDS-NCDOC, Malvertising Domain Block Pre-Infection 'adcash.com', RFI 16524", 
+      "UDS-NCDOC, Domain Block Pre-Infection Various Domains, RFI 17400"
+   ], 
+   "23": [
+      "UDS-NCDOC-Domain Block Pre-Infection 'tongji.linezing.com'"
+   ], 
+   "24": [
+      "IM: AOL Instant Messenger (or ICQ) Alive", 
+      "DHCP: Option Suspiciously Long", 
+      "HTTP: Microsoft IE MHTML Protocol Cross Domain Policy", 
+      "HTTP: IE Modal Dialog Script Execution"
+   ], 
+   "25": [
+      "P2P: BitTorrent Meta-Info Retrieving", 
+      "WORM: Conficker Activity Detected"
+   ], 
+   "26": [
+      "KERBEROS: Non-Kerberos Traffic Detected", 
+      "SSL: Client-Initiated Key Renegotiation Detected"
+   ], 
+   "27": [
+      "P2P: BitTorrent File Transfer HandShaking"
+   ], 
+   "28": [
+      "HTTP: Internet Media Tunneling through HTTP", 
+      "P2P: Groove Virtual Office Groove.Net Agent Detected"
+   ], 
+   "29": [
+      "P2P: Torrent uTP BEP-29 Traffic Detected"
+   ], 
+   "30": [
+      "WORM: Conficker Activity Detected"
+   ], 
+   "31": [
+      "UDS-090917 Suspicious User-Agent Windows+NT+5.1", 
+      "TCP: Fin with Zero Window and Payload"
+   ], 
+   "32": [
+      "P2P: Peer-to-peer Distributed File Download Obfuscated-Traffic Detected"
+   ], 
+   "33": [
+      "HTTP: HTTP Login Bruteforce Detected", 
+      "UDP: Port Scan"
+   ], 
+   "34": [
+      "ARP: ARP Spoofing Detected", 
+      "P2P: Torrent uTP BEP-29 Traffic Detected"
+   ], 
+   "35": [
+      "HTTP: Response UTF16/32 Encoding"
+   ], 
+   "36": [
+      "ICMP: Destination Unreachable DOS", 
+      "HTTP: Possible full-width and half-width unicode encoding evasion", 
+      "UDP: Port Scan"
+   ], 
+   "37": [
+      "UDS-SSLv2 Connection Detected - NOTIFY NETOPS", 
+      "SSL: Server-Initiated Key Renegotiation Detected"
+   ], 
+   "38": []
+}
