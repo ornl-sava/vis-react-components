@@ -48,7 +48,6 @@ const toolTipFunction = (tooltipData) => {
 
 class StoryViewerExample extends React.Component {
   render () {
-    console.log('SVE', sVProps)
     return (
       <Chart className='col-md-12' tipFunction={toolTipFunction} yAxis={false} xAxis={false} height={1000} margin={{top: 40, right: 10, bottom: 10, left: 80}} width={5000}>
         <StoryViewer {...sVProps} />
