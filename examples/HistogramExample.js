@@ -11,16 +11,24 @@ import { randomStackedHistogramData, histogramData, temporalHistogramData, stack
 //    stackNames : string[]
 //    xPos: int
 //    yPos: int
-const temporalData = temporalHistogramData.map((histogram) => {
-  let transformedObj = {name: histogram.name, type: histogram.type}
-  transformedObj.bins = histogram.bins.map((bin) => {
-    return {
-      x: new Date(bin.x),
-      y: bin.y
-    }
+const getTemporalSelection = (selection) => {
+  return temporalHistogramData.map((histogram) => {
+    let transformedObj = {name: histogram.name, type: histogram.type}
+    transformedObj.bins = histogram.bins.map((bin) => {
+      let selected = true
+      let dateX = new Date(bin.x)
+      if (selection.length === 2 && (dateX < selection[0] || dateX >= selection[1])) {
+        selected = false
+      }
+      return {
+        x: dateX,
+        y: bin.y,
+        className: selected ? 'selected' : null
+      }
+    })
+    return transformedObj
   })
-  return transformedObj
-})
+}
 
 const toolTipFunction = (tooltipData) => {
   let d = tooltipData
@@ -51,6 +59,9 @@ class HistogramExample extends React.Component {
 
     this.onChart1Enter = this.onChart1Enter.bind(this)
     this.onChart1Leave = this.onChart1Leave.bind(this)
+    this.onBrush = this._onBrush.bind(this)
+    this.brushSelection = []
+    this.temporalData = getTemporalSelection(this.brushSelection)
 
     let id = 'histogram_endpoint'
     let sortBy = JSON.parse(localStorage.getItem(id + '_sortBy'))
@@ -161,7 +172,12 @@ class HistogramExample extends React.Component {
       ])
     }
   }
-
+  _onBrush (brushSelection) {
+    // console.log('On brush called')
+    this.brushSelection = brushSelection
+    this.temporalData = getTemporalSelection(this.brushSelection)
+    this.forceUpdate()
+  }
   onChart1Enter (event, data) {
     this.setState({
       xAxis: {
@@ -227,8 +243,8 @@ class HistogramExample extends React.Component {
         </div>
         <div>
           <HistogramChart header={this.header3} xScaleType='time'
-            width={800} height={200} data={temporalData} tipFunction={toolTipFunction}
-            addOverlay brushed />
+            width={800} height={200} data={this.temporalData} tipFunction={toolTipFunction}
+            addOverlay brushed brushSelection={this.brushSelection} onBrush={this.onBrush} />
         </div>
         <div>
           <HistogramChart

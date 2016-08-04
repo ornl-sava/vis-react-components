@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react'
-import { select } from 'd3'
-
+import { select, transition } from 'd3'
+console.log(transition)
 import { spreadExclude } from './util/react'
 
 // Set prop types here so internal class methods can access prop types
@@ -25,11 +25,7 @@ const SVGComponentPropTypes = {
   onMouseUp: PropTypes.func,
   onMouseMove: PropTypes.func,
   onMouseOut: PropTypes.func,
-  onMouseOver: PropTypes.func,
-  // Props to exclude during spread
-  duration: PropTypes.any,
-  delay: PropTypes.any,
-  ease: PropTypes.any
+  onMouseOver: PropTypes.func
 }
 
 class SVGComponent extends React.Component {
@@ -52,6 +48,15 @@ class SVGComponent extends React.Component {
     this.onMouseOver = this.onMouseOver.bind(this)
   }
 
+  shouldComponentUpdate () {
+    // End transition early
+    select(this.refs.node)
+      .transition()
+      .duration(0)
+
+    return true
+  }
+
   componentWillAppear (callback) {
     this.animate(callback, this.props, 'onEnter')
   }
@@ -71,7 +76,7 @@ class SVGComponent extends React.Component {
   animate (callback, props, type) {
     let node = select(this.refs.node)
     let propsCopy = JSON.parse(JSON.stringify(props))
-    node.transition()
+    node.transition(this.transition)
       .call((transition) => {
         props[type].func(transition, propsCopy)
       })
