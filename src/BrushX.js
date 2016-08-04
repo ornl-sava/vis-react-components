@@ -5,14 +5,8 @@ import { brushX, select, event as d3Event } from 'd3'
 class BrushX extends React.Component {
   constructor (props) {
     super(props)
-    this.brushSelection = props.brushSelection ? props.brushSelection : []
+    this.brushSelection = []
     this.brushPhase = ''
-    if (!props.brushSelection) {
-      this.state = {
-        brushSelection: this.brushSelection
-
-      }
-    }
   }
   componentDidMount () {
     this.initBrush()
@@ -26,9 +20,6 @@ class BrushX extends React.Component {
   componentDidUpdate (prevProps, prevState) {
     if (this.props.width !== prevProps.width || this.props.height !== prevProps.height) {
       this.initBrush()
-    }
-    if (this.props.brushSelection && this.props.brushSelection.toString() !== prevProps.brushSelection.toString()) {
-      this.brushSelection = this.props.brushSelection
     }
     this.clearBrush()
   }
@@ -53,15 +44,8 @@ class BrushX extends React.Component {
   }
   _end () {
     this.brushPhase = 'brushed'
-    let newSelection = this.brushSelection.toString()
-    let oldSelection = this.props.brushSelection ? this.props.brushSelection.toString() : this.state.brushSelection.toString()
-    if (newSelection !== oldSelection) {
-      // console.log('Selected : ' + this.brushSelection.toString())
+    if (d3Event.selection) {
       this.props.onBrush(this.brushSelection)
-      if (!this.props.brushSelection) {
-        // console.log('Brush Selection not defined using state')
-        this.setState({brushSelection: this.brushSelection})
-      }
     }
   }
   clearBrush () {
@@ -115,7 +99,6 @@ BrushX.defaultProps = {
 }
 
 BrushX.propTypes = {
-  brushSelection: PropTypes.array,
   children: PropTypes.node,
   width: PropTypes.number.isRequired,
   height: PropTypes.number.isRequired,

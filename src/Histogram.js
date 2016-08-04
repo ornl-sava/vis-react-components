@@ -187,7 +187,7 @@ class Histogram extends React.Component {
       el =
         <g onMouseLeave={this.onMouseLeave}>
           <BrushX width={props.xScale.range()[1]} height={props.yScale.range()[0]} interval={interval} scale={props.xScale}
-            brushSelection={props.brushed ? props.brushSelection : null} onBrush={props.onBrush}>
+            onBrush={props.onBrush}>
             <ReactTransitionGroup component='g'>
               {svgBins}
             </ReactTransitionGroup>
@@ -221,7 +221,6 @@ Histogram.defaultProps = {
 Histogram.propTypes = {
   addOverlay: PropTypes.bool,
   brushed: PropTypes.bool,
-  brushSelection: PropTypes.array,
   chartHeight: PropTypes.number,
   chartWidth: PropTypes.number,
   className: PropTypes.string,
