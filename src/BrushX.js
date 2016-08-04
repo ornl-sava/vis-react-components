@@ -6,15 +6,33 @@ class BrushX extends React.Component {
   constructor (props) {
     super(props)
     this.brushSelection = props.brushSelection ? props.brushSelection : []
+    this.brushPhase = ''
     if (!props.brushSelection) {
       this.state = {
         brushSelection: this.brushSelection
+
       }
     }
   }
   componentDidMount () {
     this.initBrush()
   }
+  shouldComponentUpdate () {
+    if (this.brushPhase === 'brushed' || this.brushPhase === '') {
+      return true
+    }
+    return false
+  }
+  componentDidUpdate (prevProps, prevState) {
+    if (this.props.width !== prevProps.width || this.props.height !== prevProps.height) {
+      this.initBrush()
+    }
+    if (this.props.brushSelection && this.props.brushSelection.toString() !== prevProps.brushSelection.toString()) {
+      this.brushSelection = this.props.brushSelection
+    }
+    this.clearBrush()
+  }
+
   initBrush () {
     let thisNode = findDOMNode(this)
     let selection = select(thisNode)
@@ -26,12 +44,15 @@ class BrushX extends React.Component {
     selection.call(this.brush)
   }
   _start () {
+    this.brushPhase = 'start'
     this.applySelection()
   }
   _brush () {
+    this.brushPhase = 'brushing'
     this.applySelection()
   }
   _end () {
+    this.brushPhase = 'brushed'
     let newSelection = this.brushSelection.toString()
     let oldSelection = this.props.brushSelection ? this.props.brushSelection.toString() : this.state.brushSelection.toString()
     if (newSelection !== oldSelection) {
@@ -44,23 +65,11 @@ class BrushX extends React.Component {
     }
   }
   clearBrush () {
-    // console.log('clearing brush')
-    if (this.brushSelection.length === 2) {
-      let thisNode = findDOMNode(this)
-      let selection = select(thisNode)
-      this.brushSelection = []
-      selection.call(this.brush.move, null)
-    }
-  }
-
-  componentDidUpdate (prevProps, prevState) {
-    if (this.props.width !== prevProps.width || this.props.height !== prevProps.height) {
-      this.initBrush()
-    }
-    if (this.props.brushSelection && this.props.brushSelection.toString() !== prevProps.brushSelection.toString()) {
-      this.brushSelection = this.props.brushSelection
-    }
-    this.clearBrush()
+    let thisNode = findDOMNode(this)
+    let selection = select(thisNode)
+    selection.call(this.brush.move, null)
+    this.brushSelection = []
+    this.brushPhase = ''
   }
   applySelection () {
     if (!d3Event.sourceEvent || d3Event.sourceEvent.type === 'brush' || !d3Event.selection) return
