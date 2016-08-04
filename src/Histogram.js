@@ -88,6 +88,7 @@ class Histogram extends React.Component {
   buildABar (bin, name, type, height, width, y) {
     let props = this.props
     let keyVal = type.toString() + '-' + bin[props.xAccessor].toString()
+    keyVal = keyVal.replace(/ /g, '-')
     return {
       name,
       className: 'histogram-bar ' + (bin.className ? type + ' ' + bin.className : type),
