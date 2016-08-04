@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react'
 import ReactTransitionGroup from 'react-addons-transition-group'
-import { select, interpolate } from 'd3'
+import { select } from 'd3'
 
 import Bar from './Bar'
 import { setEase } from './util/d3'
@@ -131,27 +131,6 @@ class Histogram extends React.Component {
             onMouseEnter={this.onMouseEnter}
             onMouseLeave={this.onMouseLeave}
             onMouseDown={this.onMouseDown}
-            onEnter={{
-              func: (transition, props) => {
-                transition
-                  .delay(0)
-                  .duration(750)
-                  .ease(setEase('linear'))
-                  .attrTween('height', () => {
-                    return interpolate(0, props.height)
-                  })
-                  .attrTween('width', () => {
-                    return interpolate(props.width, props.width)
-                  })
-                  .attr('x', () => {
-                    return interpolate(0, props.x)
-                  })
-                  .attrTween('y', () => {
-                    return interpolate(0, props.y)
-                  })
-                return transition
-              }
-            }}
             onUpdate={{
               func: (transition, props) => {
                 transition
@@ -159,24 +138,9 @@ class Histogram extends React.Component {
                   .duration(750)
                   .ease(setEase('linear'))
                   .attr('height', props.height)
-                  .attrTween('width', () => {
-                    return interpolate(props.width, props.width)
-                  })
-                  .attr('x', props.x)
+                  .attr('width', props.width)
                   .attr('y', props.y)
                 return transition
-              }
-            }}
-            onExit={{
-              func: (transition, props) => {
-                transition
-                  .delay(0)
-                  .duration(750)
-                  .ease(setEase('linear'))
-                  .attr('width', props.width)
-                  .attr('height', 0)
-                  .attr('x', props.x)
-                  .attr('y', props.y)
               }
             }} />
         )
@@ -186,13 +150,27 @@ class Histogram extends React.Component {
     let svgBins = svgBars.map((bars, i) => {
       let yPos = 0
       let xPos = props.xScale(barData[i][0].data[props.xAccessor])
+      let key = props.className + '-' + barData[i][0].data[props.xAccessor]
       if (xPos == null) { // also catches undefined
         xPos = 0
       }
       return (
-        <g className='bin' key={props.className + '-' + i.toString()} transform={'translate(' + xPos + ',' + yPos + ')'}>
+        <SVGComponent
+          className='bin'
+          key={key}
+          transform={'translate(' + xPos + ',' + yPos + ')'}
+          onUpdate={{
+            func: (transition, props) => {
+              transition
+                .delay(0)
+                .duration(750)
+                .ease(setEase('linear'))
+                .attr('transform', 'translate(' + xPos + ',' + yPos + ')')
+              return transition
+            }
+          }}>
           {bars}
-        </g>
+        </SVGComponent>
       )
     })
 

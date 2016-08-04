@@ -209,7 +209,7 @@ class HistogramExample extends React.Component {
             }
           })
         }
-      }, 2500)
+      }, 5000)
     }
     this.createRandomData()
   }
