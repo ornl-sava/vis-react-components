@@ -1,27 +1,27 @@
 import React from 'react'
 
-import { Chart, Scatterplot } from '../src'
-import { linearOrdinalScatterplotData, linearLinearScatterplotData, ordinalLinearScatterplotData, ordinalOrdinalScatterplotData } from './data/exampleData'
+import { ScatterplotChart } from '../src'
+import { randomScatterData, linearOrdinalScatterplotData, linearLinearScatterplotData, ordinalLinearScatterplotData, ordinalOrdinalScatterplotData } from './data/exampleData'
 
 const toolTipFunction = (d) => {
   let toolTip = '<span> No Data </span>'
 
   toolTip =
-    '<span class="title">' + d.key + '</span>' + (d.value)
-
+    '<span class="title">' + d.x + '</span>' + (d.y)
   return toolTip
 }
 
 const commonProps = {
-  tipFunction: toolTipFunction,
-  margin: {top: 15, right: 5, bottom: 50, left: 15},
-  clipPath: true,
-  width: 800,
+  margin: {top: 15, right: 5, bottom: 50, left: 50},
   height: 300
 }
 
 const chartProps1 = {
-  title: 'Linear over Linear',
+  header: () => {
+    return ([
+      <span className='chart-title'>Linear over Linear</span>
+    ])
+  },
   className: 'scatter2',
   xScaleType: 'linear',
   yScaleType: 'linear',
@@ -29,7 +29,11 @@ const chartProps1 = {
 }
 
 const chartProps2 = {
-  title: 'Linear over Ordinal',
+  header: () => {
+    return ([
+      <span className='chart-title'>Linear over Ordinal</span>
+    ])
+  },
   className: 'scatter1',
   xScaleType: 'linear',
   yScaleType: 'ordinalPoint',
@@ -37,7 +41,11 @@ const chartProps2 = {
 }
 
 const chartProps3 = {
-  title: 'Ordinal over Ordinal',
+  header: () => {
+    return ([
+      <span className='chart-title'>Ordinal over Ordinal</span>
+    ])
+  },
   className: 'scatter4',
   xScaleType: 'ordinalPoint',
   yScaleType: 'ordinalPoint',
@@ -45,39 +53,79 @@ const chartProps3 = {
 }
 
 const chartProps4 = {
-  title: 'Ordinal over Linear',
+  header: () => {
+    return ([
+      <span className='chart-title'>Ordinal over Linear</span>
+    ])
+  },
   className: 'scatter3',
   xScaleType: 'ordinalPoint',
   yScaleType: 'linear',
   data: ordinalLinearScatterplotData
 }
 
+const chartProps5 = {
+  header: () => {
+    return ([
+      <span className='chart-title'>Animated</span>
+    ])
+  },
+  className: 'scatter5',
+  xScaleType: 'linear',
+  yScaleType: 'linear',
+  xDomain: [0, 100],
+  yDomain: [0, 100]
+}
+
 class ScatterplotExample extends React.Component {
+  constructor (props) {
+    super(props)
+    this.state = {
+      randomData: randomScatterData()
+    }
+  }
+  componentDidMount () {
+    this.createRandomData = () => {
+      setTimeout(() => {
+        if (this.createRandomData !== null) {
+          this.setState({
+            randomData: randomScatterData()
+          }, () => {
+            if (this.createRandomData !== null) {
+              this.createRandomData()
+            }
+          })
+        }
+      }, 2500)
+    }
+    this.createRandomData()
+  }
+
+  componentWillUnmount () {
+    this.createRandomData = null
+  }
   render () {
     return (
       <div className='col-md-12'>
         <div className='row'>
           <div className='col-md-6'>
-            <Chart {...commonProps} {...chartProps1}>
-              <Scatterplot radius={10} />
-            </Chart>
+            <ScatterplotChart {...commonProps} {...chartProps1} radius={10} tipFunction={toolTipFunction} />
           </div>
           <div className='col-md-6'>
-            <Chart {...commonProps} {...chartProps2}>
-              <Scatterplot radius={10} />
-            </Chart>
+            <ScatterplotChart {...commonProps} {...chartProps2} radius={10} tipFunction={toolTipFunction} />
           </div>
         </div>
         <div className='row'>
           <div className='col-md-6'>
-            <Chart {...commonProps} {...chartProps3}>
-              <Scatterplot radius={10} />
-            </Chart>
+            <ScatterplotChart {...commonProps} {...chartProps3} radius={10} tipFunction={toolTipFunction} />
           </div>
           <div className='col-md-6'>
-            <Chart {...commonProps} {...chartProps4}>
-              <Scatterplot radius={10} />
-            </Chart>
+            <ScatterplotChart {...commonProps} {...chartProps4} radius={10} tipFunction={toolTipFunction} />
+          </div>
+        </div>
+        <div className='row'>
+          <div className='col-md-12'>
+            <ScatterplotChart data={this.state.randomData} {...commonProps} {...chartProps5} radius={15} tipFunction={toolTipFunction} />
           </div>
         </div>
       </div>

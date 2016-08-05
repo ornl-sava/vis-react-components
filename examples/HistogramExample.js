@@ -1,8 +1,8 @@
 import React from 'react'
-import * as d3 from 'd3'
+import { format } from 'd3-format'
 
-import { Chart, Histogram } from '../src'
-import { histogramData, temporalHistogramData, stackedHistogramData } from './data/exampleData'
+import { HistogramChart, Settings } from '../src'
+import { randomStackedHistogramData, histogramData, temporalHistogramData, stackedHistogramData } from './data/exampleData'
 
 // Tooltipdata is an object currently defined in the component
 // Properties for Histogram tooltipData are :
@@ -11,43 +11,56 @@ import { histogramData, temporalHistogramData, stackedHistogramData } from './da
 //    stackNames : string[]
 //    xPos: int
 //    yPos: int
-const temporalData = temporalHistogramData.map((histogram) => {
-  let transformedObj = {name: histogram.name, type: histogram.type}
-  transformedObj.bins = histogram.bins.map((bin) => {
-    return {
-      x: new Date(bin.x),
-      y: bin.y
-    }
+const getTemporalSelection = (selection) => {
+  return temporalHistogramData.map((histogram) => {
+    let transformedObj = {name: histogram.name, type: histogram.type}
+    transformedObj.bins = histogram.bins.map((bin) => {
+      let selected = true
+      let dateX = new Date(bin.x)
+      if (selection.length === 2 && (dateX < selection[0] || dateX >= selection[1])) {
+        selected = false
+      }
+      return {
+        x: dateX,
+        y: bin.y,
+        className: selected ? 'selected' : null
+      }
+    })
+    return transformedObj
   })
-  return transformedObj
-})
+}
 
-const toolTipFunction = (tooltipData) => {
-  let d = tooltipData
-  let total = tooltipData.stackCounts.reduce((prev, count) => {
+const toolTipFunction = (d) => {
+  let total = d.stackCounts.reduce((prev, count) => {
     return prev + count
   }, 0)
   let toolTip =
     '<span class="title">' + d.label + '</span>' +
-    '</span>Total: ' + d3.format(',')(total) +
+    '</span>Total: ' + format(',')(total) +
     '<br /><small>'
   toolTip += d.stackCounts.reduceRight((prev, count, index) => {
-    return prev + d.stackNames[index] + ' : ' + d3.format(',')(count) + '<br />'
+    return prev + d.stackNames[index] + ' : ' + format(',')(count) + '<br />'
   }, '')
   toolTip += '</small>'
   return toolTip
 }
 
-const onBarClick = function (clickEvent) {
-  console.groupCollapsed('Bar ' + this.props.data.x)
-  console.log(clickEvent.target)
-  console.log(this.props)
+const onBarClick = (event, data) => {
+  console.groupCollapsed('Bar ' + data.label)
+  console.log(event.target)
+  console.log(data)
   console.groupEnd()
 }
 
 class HistogramExample extends React.Component {
   constructor (props) {
     super(props)
+
+    this.onChart1Enter = this.onChart1Enter.bind(this)
+    this.onChart1Leave = this.onChart1Leave.bind(this)
+    this.onBrush = this._onBrush.bind(this)
+    this.brushedVals = []
+    this.temporalData = getTemporalSelection(this.brushedVals)
 
     let id = 'histogram_endpoint'
     let sortBy = JSON.parse(localStorage.getItem(id + '_sortBy'))
@@ -58,7 +71,12 @@ class HistogramExample extends React.Component {
       sortBy: (sortBy === 'Default') ? null : sortBy,
       sortOrder: (sortOrder === 'Default') ? null : sortOrder,
       sortTypes: ['two'],
-      yScaleType: (yScaleType === 'Default') ? null : yScaleType
+      yScaleType: (yScaleType === 'Default') ? null : yScaleType,
+      chart1xAxis: {
+        type: 'x',
+        orient: 'bottom'
+      },
+      randomData: randomStackedHistogramData()
     }
 
     this.settings = {
@@ -127,18 +145,89 @@ class HistogramExample extends React.Component {
         }
       ]
     }
+
+    this.header1 = () => {
+      return ([
+        <span className='chart-title'>Histogram - Layered bars based on data order</span>,
+        <Settings settings={this.settings} />
+      ])
+    }
+
+    this.header2 = () => {
+      return ([
+        <span className='chart-title'>Stacked Histogram - Stacked bars based on data order</span>
+      ])
+    }
+
+    this.header3 = () => {
+      return ([
+        <span className='chart-title'>Temporal Histogram - Brush selection</span>
+      ])
+    }
+
+    this.header4 = () => {
+      return ([
+        <span className='chart-title'>Animated Stacked Histogram</span>
+      ])
+    }
+  }
+  _onBrush (brushedVals) {
+    // console.log('On brush called')
+    this.brushedVals = brushedVals
+    this.temporalData = getTemporalSelection(this.brushedVals)
+    this.forceUpdate()
+  }
+  onChart1Enter (event, data) {
+    this.setState({
+      xAxis: {
+        type: 'x',
+        orient: 'bottom',
+        tickValues: [data.label]
+      }
+    })
+  }
+
+  onChart1Leave (event, data) {
+    this.setState({
+      xAxis: {
+        type: 'x',
+        orient: 'bottom'
+      }
+    })
+  }
+
+  componentDidMount () {
+    this.createRandomData = () => {
+      setTimeout(() => {
+        if (this.createRandomData !== null) {
+          this.setState({
+            randomData: randomStackedHistogramData()
+          }, () => {
+            if (this.createRandomData !== null) {
+              this.createRandomData()
+            }
+          })
+        }
+      }, 5000)
+    }
+    this.createRandomData()
+  }
+
+  componentWillUnmount () {
+    this.createRandomData = null
   }
 
   render () {
     return (
       <div>
         <div>
-          <Chart title='Histogram - Layered bars based on data order' width={800} height={200} data={histogramData} {...this.state} settings={this.settings} tipFunction={toolTipFunction}>
-            <Histogram addOverlay xAccessor='key'yAccessor='count' onBarClick={onBarClick} />
-          </Chart>
+          <HistogramChart header={this.header1} width={800} height={200}
+            data={histogramData} {...this.state} tipFunction={toolTipFunction}
+            onEnter={this.onChart1Enter} onLeave={this.onChart1Leave}
+            addOverlay xAccessor='key' yAccessor='count' onClick={onBarClick} />
         </div>
         <div>
-          <Chart title='Stacked Histogram - Stacked bars based on data order'
+          <HistogramChart
             width={800} height={200}
             sortBy={'y'} sortOrder={'Ascending'}
             xAxis={{
@@ -147,14 +236,19 @@ class HistogramExample extends React.Component {
               innerPadding: 0.2,
               outerPadding: 0.4
             }}
-            data={stackedHistogramData} tipFunction={toolTipFunction}>
-            <Histogram type='stacked' addOverlay />
-          </Chart>
+            data={stackedHistogramData} tipFunction={toolTipFunction}
+            type='stacked' addOverlay
+            />
         </div>
         <div>
-          <Chart title='Temporal Histogram' xScaleType='temporal' width={800} height={200} data={temporalData} tipFunction={toolTipFunction}>
-            <Histogram addOverlay onBarClick={onBarClick} />
-          </Chart>
+          <HistogramChart header={this.header3} xScaleType='time'
+            width={800} height={200} data={this.temporalData} tipFunction={toolTipFunction}
+            addOverlay brushed onBrush={this.onBrush} />
+        </div>
+        <div>
+          <HistogramChart
+            header={this.header4} width={800} height={200} type='stacked'
+            data={this.state.randomData} tipFunction={toolTipFunction} />
         </div>
       </div>
     )

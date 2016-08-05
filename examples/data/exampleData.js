@@ -1,3 +1,5 @@
+import map from './world-110.json'
+
 // Type is used for the class of the histogram Bar
 // Styles for the bars are defined in the vis.css file
 export const histogramData = [
@@ -210,6 +212,38 @@ export const stackedHistogramData = [
     ]
   }
 ]
+
+export const randomStackedHistogramData = () => {
+  let data = []
+  let binOffset = Math.round(Math.random())
+  for (let i = 0; i < 4; i++) {
+    let datum = {}
+    datum.name = String.fromCharCode(90 - i)
+    datum.type = String.fromCharCode(90 - i)
+    datum.bins = []
+    for (let j = 0; j < 10; j++) {
+      datum.bins.push({
+        x: 'Bin ' + (j + binOffset),
+        y: Math.floor(Math.random() * 100)
+      })
+    }
+    data.push(datum)
+  }
+  return data
+}
+
+export const randomChoroplethData = () => {
+  let data = []
+  map.objects.countries.geometries.forEach((d, i) => {
+    let datum = {
+      x: d.id,
+      y: Math.floor(Math.random() * 1000),
+      className: 'selected'
+    }
+    data.push(datum)
+  })
+  return data
+}
 
 export const choroplethData = [
   {
@@ -1009,6 +1043,27 @@ export const choroplethData = [
   }
 ]
 
+export const randomHeatmapData = () => {
+  let data = []
+  for (let i = 1; i < 6; i++) {
+    let datum = {}
+    datum.key = i
+    datum.value = 0
+    datum.bins = []
+    for (let j = 1; j < 6; j++) {
+      let key = j
+      let value = Math.floor(Math.random() * 100)
+      datum.value += value
+      datum.bins.push({
+        key,
+        value
+      })
+    }
+    data.push(datum)
+  }
+  return data
+}
+
 export const ordinalLinearHeatmapData = [
   {
     bins: [
@@ -1563,6 +1618,18 @@ export const ordinalLinearScatterplotData = [
     'y': 1
   }
 ]
+
+export const randomScatterData = () => {
+  let data = []
+  let count = Math.floor(Math.random() * 25) + 1
+  for (let i = 0; i < count; i++) {
+    data.push({
+      x: Math.floor(Math.random() * 100),
+      y: Math.floor(Math.random() * 100)
+    })
+  }
+  return data
+}
 
 export const linearLinearScatterplotData = [
   {

@@ -1,40 +1,20 @@
 import React, { PropTypes } from 'react'
-import * as d3 from 'd3'
-
-// Copy pasted from:
-// http://stackoverflow.com/questions/6491463/accessing-nested-javascript-objects-with-string-key
-// Using to easily access nested object of passed in component
-Object.byString = (o, s) => {
-  s = s.replace(/\[(\w+)\]/g, '.$1') // convert indexes to properties
-  s = s.replace(/^\./, '')           // strip a leading dot
-  var a = s.split('.')
-  for (var i = 0, n = a.length; i < n; ++i) {
-    var k = a[i]
-    if (k in o) {
-      o = o[k]
-    } else {
-      return
-    }
-  }
-  return o
-}
+import { format } from 'd3'
 
 class Legend extends React.Component {
   render () {
-    if (this.props.component === null || this.props.width === 0) {
+    let { colorScale, chartWidth, chartHeight, margin } = this.props
+    if (colorScale === null || colorScale.range().length === 0) {
       return <g />
     }
 
-    let { component, scaleAccessor, height, width, margin } = this.props
-    let colorScale = Object.byString(component, scaleAccessor)
-
-    let xPos = 0
-    let yPos = height + margin.bottom / 2
-    let legendBlockWidth = (width) / colorScale.range().length
+    let x = 0
+    let y = (chartHeight + margin.top) + margin.bottom / 2
+    let legendBlockWidth = (chartWidth) / colorScale.range().length
     let legendHeight = 4
 
     return (
-      <g className='legend' transform={'translate(' + xPos + ',' + yPos + ')'}>
+      <g className='legend' transform={'translate(' + x + ',' + y + ')'}>
         {colorScale.range().map((d, i) => {
           let rectProps = {
             'x': i * legendBlockWidth,
@@ -48,10 +28,10 @@ class Legend extends React.Component {
           )
         })}
         <text x={0} y={14}>
-          {d3.format(',')(Math.round(colorScale.domain()[0]))}
+          {format(',')(Math.round(colorScale.domain()[0]))}
         </text>
         <text x={(colorScale.range().length) * legendBlockWidth} y={15} textAnchor='end'>
-          {d3.format(',')(Math.round(colorScale.domain()[colorScale.domain().length - 1]))}
+          {format(',')(Math.round(colorScale.domain()[colorScale.domain().length - 1]))}
         </text>
       </g>
     )
@@ -59,19 +39,17 @@ class Legend extends React.Component {
 }
 
 Legend.defaultProps = {
-  component: null,
-  scaleAccessor: 'colorScale',
+  colorScale: null,
   margin: {top: 0, right: 0, bottom: 0, left: 0},
-  height: 0,
-  width: 0
+  chartHeight: 0,
+  chartWidth: 0
 }
 
 Legend.propTypes = {
-  component: PropTypes.any,
-  scaleAccessor: PropTypes.string,
+  colorScale: PropTypes.any,
   margin: PropTypes.object,
-  height: PropTypes.number,
-  width: PropTypes.number
+  chartHeight: PropTypes.number,
+  chartWidth: PropTypes.number
 }
 
 export default Legend

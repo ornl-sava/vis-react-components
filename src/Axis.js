@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react'
 import ReactDom from 'react-dom'
-import * as d3 from 'd3'
+import { axisLeft, axisRight, axisTop, axisBottom, select } from 'd3'
 
 // Truncate labels based on maximum allowable characters, where
   // characters should be estimated at 8-10 pixels per character.
@@ -22,27 +22,31 @@ class Axis extends React.Component {
     this.axis = null
     this.setAxis(this.props)
   }
+
   componentDidMount () {
     this.resizeAxis()
   }
+
   componentDidUpdate () {
     // console.log(this.props.type + ' did update')
     this.resizeAxis()
   }
+
   componentWillReceiveProps (nextProps) {
     // console.log(this.props.type + ' will receive props')
     let range = nextProps.scale.range()[1] - nextProps.scale.range()[0]
     this.setState({range})
   }
+
   setAxis (props) {
     if (props.orient === 'left') {
-      this.axis = d3.axisLeft()
+      this.axis = axisLeft()
     } else if (props.orient === 'bottom') {
-      this.axis = d3.axisBottom()
+      this.axis = axisBottom()
     } else if (props.orient === 'top') {
-      this.axis = d3.axisTop()
+      this.axis = axisTop()
     } else if (props.orient === 'right') {
-      this.axis = d3.axisRight()
+      this.axis = axisRight()
     }
     this.axis.scale(props.scale)
   }
@@ -53,13 +57,13 @@ class Axis extends React.Component {
     let thisNode = ReactDom.findDOMNode(this)
     let parentNode = thisNode.parentNode
     let selector = '.' + props.className.replace(/ /g, '.')
-    let selection = d3.select(parentNode).select(selector)
+    let selection = select(parentNode).select(selector)
 
     let tickCount = 0
     let tickValues = props.tickValues
     let tickFormatter = null
 
-    if (props.data.length > 0 && props.scale.domain().length > 0 && props.scale.range().length > 0) {
+    if (props.scale.domain().length > 0 && props.scale.range().length > 0) {
       // Use custom tick count if it exist
       if (props.tickCount) {
         tickCount = props.tickCount
@@ -93,8 +97,9 @@ class Axis extends React.Component {
         }
       }
     }
-
-    this.setAxis(props)
+    // Commenting this out doesn't appear to cause any problems
+    // it also seems to improve the re-rendering performance a bit.
+    // this.setAxis(props)
 
     this.axis
       .tickFormat(tickFormatter)

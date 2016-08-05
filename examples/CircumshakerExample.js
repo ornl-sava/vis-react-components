@@ -1,9 +1,9 @@
 import React from 'react'
-import * as d3 from 'd3'
+import { format } from 'd3'
 
-import { Chart, Circumshaker } from '../src'
+import { CircumshakerChart } from '../src'
 
-const data = {
+const data1 = {
   'source_ip': '124.83.248.123',
   'dest_ip': [
     {
@@ -114,31 +114,99 @@ const data = {
       'doc_count': 1,
       'source_ip': []
     }
-  ],
-  'took': 78
+  ]
+}
+
+const data2 = {
+  'source_ip': '124.83.248.123',
+  'dest_ip': [
+    {
+      'key': 2751196930,
+      'key_as_string': '163.251.239.2',
+      'doc_count': 5,
+      'source_ip': [
+        {
+          'key': 1755075020,
+          'key_as_string': '104.156.81.204',
+          'doc_count': 2
+        },
+        {
+          'key': 1758454856,
+          'key_as_string': '104.207.228.72',
+          'doc_count': 2
+        },
+        {
+          'key': 1753404735,
+          'key_as_string': '104.130.213.63',
+          'doc_count': 1
+        },
+        {
+          'key': 1753429508,
+          'key_as_string': '104.131.54.4',
+          'doc_count': 1
+        },
+        {
+          'key': 1755076044,
+          'key_as_string': '104.156.85.204',
+          'doc_count': 1
+        },
+        {
+          'key': 3494830881,
+          'key_as_string': '208.78.227.33',
+          'doc_count': 1
+        }
+      ]
+    }
+  ]
 }
 
 const toolTipFunction = (d) => {
   var toolTip =
-    '<span class="title">' + d.label + '</span>' +
-    d3.format(',')(d.count)
+    '<span class="title">' + d.key + '</span>' +
+    format(',')(d.value)
   return toolTip
 }
 
 const chartProps = {
   tipFunction: toolTipFunction,
-  height: 800,
-  xAxis: false,
-  yAxis: false,
-  data: data
+  height: 800
 }
 
 class CircumshakerExample extends React.Component {
+  constructor (props) {
+    super(props)
+    this.state = {
+      swapData: data1
+    }
+  }
+  componentDidMount () {
+    this.swapData = () => {
+      setTimeout(() => {
+        if (this.swap !== null) {
+          this.setState({
+            swapData: (this.swap)
+              ? data2
+              : data1
+          }, () => {
+            if (this.swap !== null) {
+              this.swap = !this.swap
+              this.swapData()
+            }
+          })
+        }
+      }, 2500)
+    }
+    this.swap = true
+    this.swapData()
+  }
+
+  componentWillUnmount () {
+    this.swap = null
+  }
+
   render () {
     return (
-      <Chart {...chartProps}>
-        <Circumshaker />
-      </Chart>
+      <CircumshakerChart {...chartProps} data={this.state.swapData} />
     )
   }
 }

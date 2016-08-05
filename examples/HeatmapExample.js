@@ -1,9 +1,10 @@
 import React from 'react'
-import * as d3 from 'd3'
+import { timeFormat } from 'd3-time-format'
+import { format } from 'd3-format'
 
-import { Chart, Heatmap } from '../src'
+import { HeatmapChart } from '../src'
 
-import { ordinalLinearHeatmapData, linearTemporalHeatmapData, ordinalOrdinalHeatmapData, linearOrdinalHeatmapData } from './data/exampleData'
+import { randomHeatmapData, ordinalLinearHeatmapData, linearTemporalHeatmapData, ordinalOrdinalHeatmapData, linearOrdinalHeatmapData } from './data/exampleData'
 
 const toolTipFunction1 = (d) => {
   let toolTip = '<span> No Data </span>'
@@ -11,7 +12,7 @@ const toolTipFunction1 = (d) => {
   if (d.value > 0) {
     toolTip =
       '<span class="title">' + d.key + '</span>' +
-      d3.format(',')(d.value)
+      format(',')(d.value)
   }
 
   return toolTip
@@ -19,24 +20,26 @@ const toolTipFunction1 = (d) => {
 
 const toolTipFunction2 = (d) => {
   let toolTip = '<span> No Data </span>'
-  let timeFormat = d3.timeFormat('%c')
   if (d.value > 0) {
     toolTip =
-      '<span class="title">' + timeFormat(d.key) + '</span>' +
-      d3.format(',')(d.value)
+      '<span class="title">' + timeFormat('%c')(d.key) + '</span>' +
+      format(',')(d.value)
   }
 
   return toolTip
 }
 
 const chartCommon = {
-  margin: {top: 15, right: 5, bottom: 50, left: 15},
-  height: 300,
-  legend: true
+  margin: {top: 5, right: 5, bottom: 50, left: 50},
+  height: 300
 }
 
 const chartProps1 = {
-  title: 'Linear over Ordinal',
+  header: () => {
+    return ([
+      <span className='chart-title'>Linear over Ordinal</span>
+    ])
+  },
   data: ordinalLinearHeatmapData,
   xScaleType: 'linear',
   yScaleType: 'ordinalBand',
@@ -50,16 +53,20 @@ const chartProps1 = {
     orient: 'bottom'
   }
 }
-
+//
 const heatmapProps1 = {
   labelField: 'key',
   numColorCat: 17
 }
 
 const chartProps2 = {
-  title: 'Temporal over Linear',
+  header: () => {
+    return ([
+      <span className='chart-title'>Temporal over Linear</span>
+    ])
+  },
   data: linearTemporalHeatmapData,
-  xScaleType: 'temporal',
+  xScaleType: 'time',
   yScaleType: 'linear',
   yAxis: {
     type: 'y',
@@ -71,8 +78,7 @@ const chartProps2 = {
     tickCount: linearTemporalHeatmapData[0].bins.length + 1,
     tickValues: linearTemporalHeatmapData[0].bins.map((d) => new Date(d.key)),
     tickFormat: (d, i) => {
-      let timeFormat = d3.timeFormat('%X')
-      return timeFormat(d)
+      return timeFormat('%X')(d)
     },
     orient: 'bottom'
   }
@@ -80,13 +86,17 @@ const chartProps2 = {
 
 const heatmapProps2 = {
   labelField: 'key',
-  numColorCat: 17,
+  numColorCat: 22,
   minColor: '#F1F5E9',
   maxColor: '#7C9B27'
 }
 
 const chartProps3 = {
-  title: 'Ordinal over Ordinal',
+  header: () => {
+    return ([
+      <span className='chart-title'>Ordinal over Ordinal</span>
+    ])
+  },
   data: ordinalOrdinalHeatmapData,
   xScaleType: 'ordinalBand',
   yScaleType: 'ordinalBand'
@@ -104,7 +114,11 @@ const heatmapProps3 = {
 }
 
 const chartProps4 = {
-  title: 'Ordinal over Linear',
+  header: () => {
+    return ([
+      <span className='chart-title'>Ordinal over Linear</span>
+    ])
+  },
   data: linearOrdinalHeatmapData,
   xScaleType: 'ordinalBand',
   yScaleType: 'linear',
@@ -126,32 +140,79 @@ const heatmapProps4 = {
   maxColor: '#756BB1'
 }
 
+const chartProps5 = {
+  header: () => {
+    return ([
+      <span className='chart-title'>Animated</span>
+    ])
+  },
+  xScaleType: 'linear',
+  yScaleType: 'linear'
+}
+
+const heatmapProps5 = {
+  labelField: 'key',
+  yAccessor: {
+    key: 'key',
+    value: 'value'
+  },
+  numColorCat: 17,
+  minColor: '#edf8b1',
+  maxColor: '#2c7fb8'
+}
+
 class HeatmapExample extends React.Component {
+  constructor (props) {
+    super(props)
+
+    this.state = {
+      randomData: randomHeatmapData()
+    }
+  }
+
+  componentDidMount () {
+    this.createRandomData = () => {
+      setTimeout(() => {
+        if (this.createRandomData !== null) {
+          this.setState({
+            randomData: randomHeatmapData()
+          }, () => {
+            if (this.createRandomData !== null) {
+              this.createRandomData()
+            }
+          })
+        }
+      }, 2500)
+    }
+    this.createRandomData()
+  }
+
+  componentWillUnmount () {
+    this.createRandomData = null
+  }
+
   render () {
     return (
       <div className='col-md-12'>
         <div className='row'>
           <div className='col-md-6'>
-            <Chart {...chartCommon} {...chartProps1} tipFunction={toolTipFunction1}>
-              <Heatmap {...heatmapProps1} />
-            </Chart>
+            <HeatmapChart {...chartCommon} {...chartProps1} {...heatmapProps1} tipFunction={toolTipFunction1} />
           </div>
           <div className='col-md-6'>
-            <Chart {...chartCommon} {...chartProps2} tipFunction={toolTipFunction2}>
-              <Heatmap {...heatmapProps2} />
-            </Chart>
+            <HeatmapChart {...chartCommon} {...chartProps2} {...heatmapProps2} tipFunction={toolTipFunction2} />
           </div>
         </div>
         <div className='row'>
           <div className='col-md-6'>
-            <Chart {...chartCommon} {...chartProps3} tipFunction={toolTipFunction1}>
-              <Heatmap {...heatmapProps3} />
-            </Chart>
+            <HeatmapChart {...chartCommon} {...chartProps3} {...heatmapProps3} tipFunction={toolTipFunction1} />
           </div>
           <div className='col-md-6'>
-            <Chart {...chartCommon} {...chartProps4} tipFunction={toolTipFunction1}>
-              <Heatmap {...heatmapProps4} />
-            </Chart>
+            <HeatmapChart {...chartCommon} {...chartProps4} {...heatmapProps4} tipFunction={toolTipFunction1} />
+          </div>
+        </div>
+        <div className='row'>
+          <div className='col-md-12'>
+            <HeatmapChart data={this.state.randomData} {...chartCommon} {...chartProps5} {...heatmapProps5} tipFunction={toolTipFunction1} />
           </div>
         </div>
       </div>

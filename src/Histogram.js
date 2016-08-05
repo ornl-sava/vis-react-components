@@ -1,7 +1,11 @@
 import React, { PropTypes } from 'react'
-import * as d3 from 'd3'
+import ReactTransitionGroup from 'react-addons-transition-group'
+import { select } from 'd3'
 
 import Bar from './Bar'
+import { setEase } from './util/d3'
+import SVGComponent from './SVGComponent'
+import BrushX from './BrushX'
 
 // Copied from http://stackoverflow.com/questions/4492678/swap-rows-with-columns-transposition-of-a-matrix-in-javascript
 // Used that version to be concise
@@ -13,142 +17,93 @@ const transpose = (a) => {
 class Histogram extends React.Component {
   constructor (props) {
     super(props)
-    this.state = {interval: null}
-  }
-  // Update the domain for the shared scale
-  componentWillReceiveProps (nextProps) {
-    if (nextProps.data.length > 0) {
-      this.updateDomain(nextProps, this.state)
-    }
-  }
-  shouldComponentUpdate (nextProps, nextState) {
-    if (nextProps.data.length > 0 ||
-      nextProps.sortBy !== this.props.sortBy ||
-      nextProps.sortOrder !== this.props.sortOrder ||
-      nextProps.sortTypes !== this.props.sortTypes) {
-      this.updateDomain(nextProps, nextState)
-    }
-    return true
-  }
-  updateDomain (props, state) {
-    let domainData = props.data
-    if (props.sortBy !== null && props.sortOrder !== null) {
-      // Simple deep copy of data to prevent mutation of props
-      domainData = this.sortData(JSON.parse(JSON.stringify(props.data)), props, state)
-    }
+    this.onMouseLeave = this._onMouseLeave.bind(this)
+    this.onMouseEnter = this._onMouseEnter.bind(this)
+    this.onMouseDown = this._onMouseDown.bind(this)
 
-    let yDomain = [0.00001, this.getMaxCount(props.data) * 1.1]
-    let xDomain = domainData[0].bins.map((bin) => bin[props.xAccessor])
-
-    if (xDomain[0] instanceof Date) {
-      let interval = xDomain[1].getTime() - xDomain[0].getTime()
-      this.setState({interval})
-      // Add one more interval to the domain so all bins can be rendered property
-      xDomain.push(new Date(xDomain[xDomain.length - 1].getTime() + interval))
-      xDomain = [
-        xDomain[0],
-        xDomain[xDomain.length - 1]
-      ]
-    }
-
-    this.props.xScale.domain(xDomain)
-    this.props.yScale.domain(yDomain)
+    this.renderBars = this.renderBars.bind(this)
   }
-  sortData (data, props, state) {
-    // NOTE: This WILL mutate the prop
-    // Sort first bin and then sort rest of bins accordingly
-    let sortArr = []
-    data[0].bins.sort((a, b) => {
-      let i = 0
-      if (props.sortBy === 'x') {
-        i = props.sortOrder === 'ascending'
-          ? d3.ascending(a[props.xAccessor], b[props.xAccessor])
-          : d3.descending(a[props.xAccessor], b[props.xAccessor])
-      } else {
-        let useBin = (props.sortTypes.indexOf(data[0].type) > -1 || props.sortTypes.length === 0)
-        let ya = useBin ? a[props.yAccessor] : 0
-        let yb = useBin ? b[props.yAccessor] : 0
-        for (let j = 1; j < data.length; j++) {
-          let useBin = (props.sortTypes.indexOf(data[j].type) > -1 || props.sortTypes.length === 0)
-          if (useBin) {
-            data[j].bins.forEach((d, i) => {
-              if (d[props.xAccessor] === a[props.xAccessor]) {
-                ya += d[props.yAccessor]
-              }
-              if (d[props.xAccessor] === b[props.xAccessor]) {
-                yb += d[props.yAccessor]
-              }
-            })
-          }
+  _onMouseLeave (event, data, index) {
+    this.props.onLeave(event, {})
+  }
+  _onMouseEnter (event, data, index) {
+    if (data) {
+      this.props.onEnter(event, this.props.data)
+    }
+  }
+  _onMouseDown (event, data, index) {
+    if (data) {
+      // console.log('Bar :: mousedown')
+      let newEvent = new MouseEvent('mousedown', event)
+      if (this.props.brushed) {
+        let target = select('.selection')
+        let leftMargin = select('.overlay').node().getBoundingClientRect().left
+        let selectionWidth = parseFloat(target.attr('width'))
+        let min = parseFloat(target.attr('x')) + leftMargin
+        let max = parseFloat(target.attr('x')) + selectionWidth + leftMargin
+        // console.log('min: ' + min + ', max: ' + max)
+        if (target.style('display') === 'none' ||
+        event.pageX < min || event.pageX > max) {
+          target = select('.overlay').node()
+        } else {
+          target = target.node()
         }
-        i = props.sortOrder === 'ascending'
-          ? ya - yb
-          : yb - ya
+        target.dispatchEvent(newEvent)
       }
-      sortArr.push(i)
-      return i
-    })
-    // Sort rest of bins in same manner
-    for (let i = 1; i < data.length; i++) {
-      let j = 0
-      data[i].bins.sort((a, b) => {
-        return sortArr[j++]
-      })
     }
-    return data
   }
-  getMaxCount (dataArr) {
-    let max = 0
+  getOverlay (barData) {
     let props = this.props
-    if (props.type === 'stacked') {
-      let xArr = dataArr.reduce((prev, datum, histogramIndex) => {
-        if (histogramIndex > 0) {
-          datum.bins.map((bin, index) => {
-            prev[index] += bin[props.yAccessor]
-          })
-        }
-        return prev
-      }, dataArr[0].bins.map((bin) => bin[props.yAccessor]))
-      max = Math.max(...xArr)
-    } else {
-      max = dataArr.reduce((oldMax, datum) => {
-        let localMax = Math.max(...datum.bins.map((bin) => bin[props.yAccessor]))
-        return localMax > oldMax ? localMax : oldMax
-      }, 0)
-    }
-    return max
-  }
-  addOverlay (barData) {
-    let props = this.props
+    let overlayData = []
     for (let i = 0; i < barData.length; i++) {
       let overlayObj = Object.assign({}, barData[i][0])
       overlayObj.className = '_overlay'
+      overlayObj.brushed = props.brushed
       overlayObj.key = overlayObj.className + '-' + overlayObj.data[props.xAccessor]
       overlayObj[props.yAccessor] = 1
       overlayObj.tooltipData = {}
+      // NOTE: Okay to delete? Was causing bad data mutations
+      // overlayObj.data.y = barData[i].reduce((prev, curr) => { return prev + curr.data[props.yAccessor] }, 0)
       overlayObj.tooltipData.label = barData[i][0].data[props.xAccessor]
-      overlayObj.tooltipData.stackNames = barData[i].reduce((prev, bar) => { return bar ? [bar.name].concat(prev) : [''].concat(prev) }, [])
-      overlayObj.tooltipData.stackCounts = barData[i].reduce((prev, bar) => { return bar ? [bar.data[props.yAccessor]].concat(prev) : [0].concat(prev) }, [])
+      overlayObj.tooltipData.stackNames = barData[i].map((bar) => { return bar.name })
+      overlayObj.tooltipData.stackCounts = barData[i].map((bar) => { return bar.data[props.yAccessor] })
       overlayObj.tooltipData.yPos = barData[i][0][props.yAccessor]
       overlayObj.tooltipData.xPos = props.xScale(barData[i][0].data[props.xAccessor])
       overlayObj.height = props.yScale.range()[0]
-      barData[i].push(Object.assign(overlayObj, this.state))
+      overlayObj.x = props.xScale(barData[i][0].data[props.xAccessor])
+      overlayObj.y = 0
+      overlayData.push(overlayObj)
     }
+    let overlayBins = overlayData.map((overlayObj, i) => {
+      // let yPos = 0
+      // let xPos = props.xScale(barData[i][0].data[props.xAccessor])
+      return (
+        <g className='overlay-bin' key={'overlay-' + i}>
+          <Bar {...overlayObj} onClick={props.onClick} onEnter={props.onEnter} onLeave={props.onLeave} />
+        </g>
+      )
+    })
+
+    return overlayBins
   }
-  buildABar (bin, name, type, height, width, y) {
+
+  buildABar (bin, name, type, height, width, y, x) {
     let props = this.props
     let keyVal = type.toString() + '-' + bin[props.xAccessor].toString()
+    keyVal = keyVal.replace(/ /g, '-')
     return {
       name,
-      className: bin.className ? type + ' ' + bin.className : type,
+      className: 'histogram-bar ' + (bin.className ? type + ' ' + bin.className : type),
       key: keyVal,
       height: height,
       data: {x: bin[props.xAccessor], y: bin[props.yAccessor], ...bin},
       width: width,
-      y: y
+      y: y,
+      x: x
     }
   }
-  renderHistogram () {
+
+  renderBars () {
     let {chartWidth, chartHeight, ...props} = this.props
     let numBins = props.data[0].bins.length
     let barWidth = /ordinal/.test(props.xScale.type)
@@ -160,12 +115,16 @@ class Histogram extends React.Component {
         let scaledY = chartHeight - props.yScale(bin[props.yAccessor])
         let barHeight = bin[props.yAccessor] > 0 ? Math.max(Math.floor(scaledY), 5) : 0
         let yPos = chartHeight - barHeight
-        return this.buildABar(bin, props.data[index].name, props.data[index].type, barHeight, barWidth, yPos)
+        let xPos = props.xScale(bin[props.xAccessor])
+        if (xPos == null) { // also catches undefined
+          xPos = 0
+        }
+        return this.buildABar(bin, props.data[index].name, props.data[index].type, barHeight, barWidth, yPos, xPos)
       })
     }))
-
+    let overlayBins = []
     if (props.addOverlay === true) {
-      this.addOverlay(barData)
+      overlayBins = this.getOverlay(barData)
     }
     let svgBars = barData.map((dataArr, index) => {
       return dataArr.map((data, barIndex) => {
@@ -175,99 +134,92 @@ class Histogram extends React.Component {
         if (props.type === 'stacked' && barIndex > 0 && data.className !== '_overlay') {
           data[props.yAccessor] = dataArr[barIndex - 1][props.yAccessor] - data.height
         }
-        return (<Bar {...data} onClick={props.onBarClick} onEnter={props.onEnter} onLeave={props.onLeave} />)
+        return (
+          <SVGComponent Component='rect' {...data}
+            onMouseEnter={this.onMouseEnter}
+            onMouseLeave={this.onMouseLeave}
+            onMouseDown={this.onMouseDown}
+            onUpdate={{
+              func: (transition, props) => {
+                transition
+                  .delay(0)
+                  .duration(750)
+                  .ease(setEase('linear'))
+                  .attr('height', props.height)
+                  .attr('width', props.width)
+                  .attr('y', props.y)
+                  .attr('x', props.x)
+                return transition
+              }
+            }} />
+        )
       })
     })
 
     let svgBins = svgBars.map((bars, i) => {
-      let yPos = 0
-      let xPos = props.xScale(barData[i][0].data[props.xAccessor])
-      if (xPos == null) { // also catches undefined
-        xPos = 0
-      }
+      let key = props.className + '-' + barData[i][0].data[props.xAccessor]
       return (
-        <g className='bin' key={props.className + '-' + i.toString()} transform={'translate(' + xPos + ',' + yPos + ')'}>
+        <g className='bin' key={key}>
           {bars}
         </g>
       )
     })
-    return (
-      <g>
-        {svgBins}
-      </g>
-    )
-  }
 
-  renderLoadAnimation (props) {
-    let {chartWidth, chartHeight} = props
-    let xPos = Math.floor(chartWidth / 2)
-    let yPos = Math.floor(chartHeight / 2)
-    let messageText = 'Loading data...'
-    if (!props.loading) {
-      if (props.status === 'Failed to fetch') {
-        messageText = 'Can\'t connect to API URL'
-      } else if (props.status !== 'OK') {
-        messageText = 'Error retrieving data: ' + props.status
-      } else {
-        messageText = 'No data returned!'
-      }
-    }
-    return (
-      <g className='loading-message'>
-        <text x={xPos} y={yPos}>{messageText}</text>
+    let el =
+      <g onMouseLeave={this.onMouseLeave}>
+        <ReactTransitionGroup component='g'>
+          {svgBins}
+        </ReactTransitionGroup>
+        {overlayBins}
       </g>
-    )
+    // let el = <g>{svgBins}</g>
+    if (barData.length > 1 && props.brushed) {
+      let interval = Math.abs(barData[1][0].data[props.xAccessor] - barData[0][0].data[props.xAccessor])
+      el =
+        <g onMouseLeave={this.onMouseLeave}>
+          <BrushX width={props.xScale.range()[1]} height={props.yScale.range()[0]} interval={interval} scale={props.xScale}
+            onBrush={props.onBrush}>
+            <ReactTransitionGroup component='g'>
+              {svgBins}
+            </ReactTransitionGroup>
+          </BrushX>
+          {overlayBins}
+        </g>
+    }
+    return el
   }
 
   render () {
-    let renderEl = null
-    renderEl = this.renderLoadAnimation(this.props)
-    if (this.props.data.length > 0 && this.props.chartWidth !== 0) {
-      renderEl = this.renderHistogram(this.props)
+    if (this.props.data.length > 0) {
+      return this.renderBars()
+    } else {
+      return (<g />)
     }
-    return renderEl
   }
 }
 
 Histogram.defaultProps = {
   addOverlay: true,
-  chartHeight: 0,
-  chartWidth: 0,
-  className: 'histogram',
   data: [],
-  loading: false,
-  status: '',
-  type: '',
   xAccessor: 'x',
   yAccessor: 'y',
-  onBarClick: () => {},
+  onBrush: () => {},
+  onClick: () => {},
   onEnter: () => {},
   onLeave: () => {}
 }
 
 Histogram.propTypes = {
-  sortBy: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.bool
-  ]),
-  sortOrder: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.bool
-  ]),
-  sortTypes: PropTypes.oneOfType([
-    PropTypes.array,
-    PropTypes.bool
-  ]),
   addOverlay: PropTypes.bool,
-  chartHeight: PropTypes.number.isRequired,
-  chartWidth: PropTypes.number.isRequired,
-  className: PropTypes.string.isRequired,
+  brushed: PropTypes.bool,
+  chartHeight: PropTypes.number,
+  chartWidth: PropTypes.number,
+  className: PropTypes.string,
   data: PropTypes.array,
-  loading: PropTypes.bool,
-  onBarClick: PropTypes.func,
+  onBrush: PropTypes.func,
+  onClick: PropTypes.func,
   onEnter: PropTypes.func,
   onLeave: PropTypes.func,
-  status: PropTypes.string,
   type: PropTypes.string,
   xAccessor: PropTypes.string.isRequired,
   xScale: PropTypes.any,

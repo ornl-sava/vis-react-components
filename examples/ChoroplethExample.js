@@ -1,31 +1,56 @@
 import React from 'react'
-import * as d3 from 'd3'
+import { format } from 'd3'
 
-import { Chart, Choropleth } from '../src'
-import { choroplethData } from './data/exampleData'
+import { ChoroplethChart } from '../src'
+import { randomChoroplethData } from './data/exampleData'
 import map from './data/world-110.json'
 
 const toolTipFunction = (d) => {
   var toolTip =
-    '<span class="title">' + d.key + '</span>' +
-    d3.format(',')(d.value)
+    '<span class="title">' + d.x + '</span>' +
+    format(',')(d.y)
   return toolTip
 }
 
 class ChoroplethExample extends React.Component {
-  render () {
+  constructor (props) {
+    super(props)
+    this.state = {
+      randomData: randomChoroplethData()
+    }
+
     map.objects.countries.geometries.forEach((d, i) => {
       if (d.id === 'ATA') {
         map.objects.countries.geometries.splice(i, 1)
       }
     })
+  }
+  componentDidMount () {
+    this.createRandomData = () => {
+      setTimeout(() => {
+        if (this.createRandomData !== null) {
+          this.setState({
+            randomData: randomChoroplethData()
+          }, () => {
+            if (this.createRandomData !== null) {
+              this.createRandomData()
+            }
+          })
+        }
+      }, 2500)
+    }
+    this.createRandomData()
+  }
+
+  componentWillUnmount () {
+    this.createRandomData = null
+  }
+  render () {
     return (
-      <Chart height={600} className='ChoroplethExample'
-        margin={{top: 15, right: 10, bottom: 40, left: 80}}
-        tipFunction={toolTipFunction} data={choroplethData}
-        xAxis={false} yAxis={false} legend scaleAccessor='selectedColorScale'>
-        <Choropleth valueField='y' keyField='x' selectedField='className' selectedValue='selected' map={map} />
-      </Chart>
+      <ChoroplethChart height={600} className='ChoroplethExample'
+        margin={{top: 5, right: 5, bottom: 50, left: 50}}
+        tipFunction={toolTipFunction} data={this.state.randomData} map={map}
+        valueField='y' keyField='x' selectedField='className' selectedValue='selected' />
     )
   }
 }
