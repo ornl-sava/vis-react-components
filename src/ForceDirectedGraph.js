@@ -333,8 +333,8 @@ class ForceDirectedGraph extends React.Component {
         'cx': d.x,
         'cy': d.y,
         'fill': this.colScale(d.hour),
-        'events': d.events,
-        'hour': d.hour
+        'data-events': d.events,
+        'data-hour': d.hour
       }
       nodeList.push(
         <circle key={'cir-id' + d.key + '-hr-' + d.hour} {...events} {...circleProps} />
