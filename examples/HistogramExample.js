@@ -59,8 +59,8 @@ class HistogramExample extends React.Component {
     this.onChart1Enter = this.onChart1Enter.bind(this)
     this.onChart1Leave = this.onChart1Leave.bind(this)
     this.onBrush = this._onBrush.bind(this)
-    this.brushSelection = []
-    this.temporalData = getTemporalSelection(this.brushSelection)
+    this.brushedVals = []
+    this.temporalData = getTemporalSelection(this.brushedVals)
 
     let id = 'histogram_endpoint'
     let sortBy = JSON.parse(localStorage.getItem(id + '_sortBy'))
@@ -171,10 +171,10 @@ class HistogramExample extends React.Component {
       ])
     }
   }
-  _onBrush (brushSelection) {
+  _onBrush (brushedVals) {
     // console.log('On brush called')
-    this.brushSelection = brushSelection
-    this.temporalData = getTemporalSelection(this.brushSelection)
+    this.brushedVals = brushedVals
+    this.temporalData = getTemporalSelection(this.brushedVals)
     this.forceUpdate()
   }
   onChart1Enter (event, data) {
@@ -243,7 +243,7 @@ class HistogramExample extends React.Component {
         <div>
           <HistogramChart header={this.header3} xScaleType='time'
             width={800} height={200} data={this.temporalData} tipFunction={toolTipFunction}
-            addOverlay brushed brushSelection={this.brushSelection} onBrush={this.onBrush} />
+            addOverlay brushed onBrush={this.onBrush} />
         </div>
         <div>
           <HistogramChart

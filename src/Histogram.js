@@ -90,6 +90,7 @@ class Histogram extends React.Component {
   buildABar (bin, name, type, height, width, y, x) {
     let props = this.props
     let keyVal = type.toString() + '-' + bin[props.xAccessor].toString()
+    keyVal = keyVal.replace(/ /g, '-')
     return {
       name,
       className: 'histogram-bar ' + (bin.className ? type + ' ' + bin.className : type),
@@ -177,7 +178,7 @@ class Histogram extends React.Component {
       el =
         <g onMouseLeave={this.onMouseLeave}>
           <BrushX width={props.xScale.range()[1]} height={props.yScale.range()[0]} interval={interval} scale={props.xScale}
-            brushSelection={props.brushed ? props.brushSelection : null} onBrush={props.onBrush}>
+            onBrush={props.onBrush}>
             <ReactTransitionGroup component='g'>
               {svgBins}
             </ReactTransitionGroup>
@@ -211,7 +212,6 @@ Histogram.defaultProps = {
 Histogram.propTypes = {
   addOverlay: PropTypes.bool,
   brushed: PropTypes.bool,
-  brushSelection: PropTypes.array,
   chartHeight: PropTypes.number,
   chartWidth: PropTypes.number,
   className: PropTypes.string,
