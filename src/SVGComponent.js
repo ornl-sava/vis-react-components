@@ -58,6 +58,10 @@ class SVGComponent extends React.Component {
     return true
   }
 
+  componentWillUnmount () {
+    this.unmounting = true
+  }
+
   componentWillAppear (callback) {
     this.animate(callback, this.props, 'onEnter')
   }
@@ -83,7 +87,7 @@ class SVGComponent extends React.Component {
       })
       .on('end', () => {
         this.simpleState = Object.assign(spreadExclude(props, SVGComponentPropTypes))
-        callback()
+        if (!this.unmounting) callback()
       })
   }
 
