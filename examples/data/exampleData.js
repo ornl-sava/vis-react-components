@@ -214,72 +214,22 @@ export const stackedHistogramData = [
 ]
 
 export const randomStackedHistogramData = () => {
-  return [
-    {
-      name: 'Z',
-      type: 'Z',
-      bins: [
-        {x: 'Bin 1', y: Math.floor(Math.random() * 100)},
-        {x: 'Bin 2', y: Math.floor(Math.random() * 100)},
-        {x: 'Bin 3', y: Math.floor(Math.random() * 100)},
-        {x: 'Bin 4', y: Math.floor(Math.random() * 100)},
-        {x: 'Bin 5', y: Math.floor(Math.random() * 100)},
-        {x: 'Bin 6', y: Math.floor(Math.random() * 100)},
-        {x: 'Bin 7', y: Math.floor(Math.random() * 100)},
-        {x: 'Bin 8', y: Math.floor(Math.random() * 100)},
-        {x: 'Bin 9', y: Math.floor(Math.random() * 100)},
-        {x: 'Bin 10', y: Math.floor(Math.random() * 100)}
-      ]
-    },
-    {
-      name: 'Y',
-      type: 'Y',
-      bins: [
-        {x: 'Bin 1', y: Math.floor(Math.random() * 100)},
-        {x: 'Bin 2', y: Math.floor(Math.random() * 100)},
-        {x: 'Bin 3', y: Math.floor(Math.random() * 100)},
-        {x: 'Bin 4', y: Math.floor(Math.random() * 100)},
-        {x: 'Bin 5', y: Math.floor(Math.random() * 100)},
-        {x: 'Bin 6', y: Math.floor(Math.random() * 100)},
-        {x: 'Bin 7', y: Math.floor(Math.random() * 100)},
-        {x: 'Bin 8', y: Math.floor(Math.random() * 100)},
-        {x: 'Bin 9', y: Math.floor(Math.random() * 100)},
-        {x: 'Bin 10', y: Math.floor(Math.random() * 100)}
-      ]
-    },
-    {
-      name: 'X',
-      type: 'X',
-      bins: [
-        {x: 'Bin 1', y: Math.floor(Math.random() * 100)},
-        {x: 'Bin 2', y: Math.floor(Math.random() * 100)},
-        {x: 'Bin 3', y: Math.floor(Math.random() * 100)},
-        {x: 'Bin 4', y: Math.floor(Math.random() * 100)},
-        {x: 'Bin 5', y: Math.floor(Math.random() * 100)},
-        {x: 'Bin 6', y: Math.floor(Math.random() * 100)},
-        {x: 'Bin 7', y: Math.floor(Math.random() * 100)},
-        {x: 'Bin 8', y: Math.floor(Math.random() * 100)},
-        {x: 'Bin 9', y: Math.floor(Math.random() * 100)},
-        {x: 'Bin 10', y: Math.floor(Math.random() * 100)}
-      ]
-    },
-    {
-      name: 'W',
-      type: 'W',
-      bins: [
-        {x: 'Bin 1', y: Math.floor(Math.random() * 100)},
-        {x: 'Bin 2', y: Math.floor(Math.random() * 100)},
-        {x: 'Bin 3', y: Math.floor(Math.random() * 100)},
-        {x: 'Bin 4', y: Math.floor(Math.random() * 100)},
-        {x: 'Bin 5', y: Math.floor(Math.random() * 100)},
-        {x: 'Bin 6', y: Math.floor(Math.random() * 100)},
-        {x: 'Bin 7', y: Math.floor(Math.random() * 100)},
-        {x: 'Bin 8', y: Math.floor(Math.random() * 100)},
-        {x: 'Bin 9', y: Math.floor(Math.random() * 100)},
-        {x: 'Bin 10', y: Math.floor(Math.random() * 100)}
-      ]
+  let data = []
+  let binOffset = Math.round(Math.random())
+  for (let i = 0; i < 4; i++) {
+    let datum = {}
+    datum.name = String.fromCharCode(90 - i)
+    datum.type = String.fromCharCode(90 - i)
+    datum.bins = []
+    for (let j = 0; j < 10; j++) {
+      datum.bins.push({
+        x: 'Bin ' + (j + binOffset),
+        y: Math.floor(Math.random() * 100)
+      })
     }
-  ]
+    data.push(datum)
+  }
+  return data
 }
 
 export const randomChoroplethData = () => {
