@@ -43,8 +43,8 @@ class BrushX extends React.Component {
     this.applySelection()
   }
   _end () {
-    this.brushPhase = 'brushed'
-    if (d3Event.selection) {
+    if (d3Event.selection || d3Event.sourceEvent instanceof MouseEvent) {
+      this.brushPhase = 'brushed'
       this.props.onBrush(this.brushSelection)
     }
   }
