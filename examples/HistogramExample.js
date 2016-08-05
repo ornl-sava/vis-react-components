@@ -30,9 +30,8 @@ const getTemporalSelection = (selection) => {
   })
 }
 
-const toolTipFunction = (tooltipData) => {
-  let d = tooltipData
-  let total = tooltipData.stackCounts.reduce((prev, count) => {
+const toolTipFunction = (d) => {
+  let total = d.stackCounts.reduce((prev, count) => {
     return prev + count
   }, 0)
   let toolTip =

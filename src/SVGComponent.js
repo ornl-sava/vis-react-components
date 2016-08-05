@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react'
-import { select, transition } from 'd3'
-console.log(transition)
+import { select } from 'd3'
+
 import { spreadExclude } from './util/react'
 
 // Set prop types here so internal class methods can access prop types

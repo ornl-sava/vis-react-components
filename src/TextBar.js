@@ -65,7 +65,7 @@ class TextBar extends React.Component {
     let {className, text, width, height, x, y, barStyle, rx, ry} = this.props
     let rectData = {
       className: className + ' barTopic',
-      dataName: text,
+      'data-name': text,
       width: width,
       height: height,
       x: x,

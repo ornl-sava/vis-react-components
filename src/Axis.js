@@ -97,8 +97,9 @@ class Axis extends React.Component {
         }
       }
     }
-
-    this.setAxis(props)
+    // Commenting this out doesn't appear to cause any problems
+    // it also seems to improve the re-rendering performance a bit.
+    // this.setAxis(props)
 
     this.axis
       .tickFormat(tickFormatter)

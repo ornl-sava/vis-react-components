@@ -70,13 +70,15 @@ class Histogram extends React.Component {
       overlayObj.tooltipData.yPos = barData[i][0][props.yAccessor]
       overlayObj.tooltipData.xPos = props.xScale(barData[i][0].data[props.xAccessor])
       overlayObj.height = props.yScale.range()[0]
+      overlayObj.x = props.xScale(barData[i][0].data[props.xAccessor])
+      overlayObj.y = 0
       overlayData.push(overlayObj)
     }
     let overlayBins = overlayData.map((overlayObj, i) => {
-      let yPos = 0
-      let xPos = props.xScale(barData[i][0].data[props.xAccessor])
+      // let yPos = 0
+      // let xPos = props.xScale(barData[i][0].data[props.xAccessor])
       return (
-        <g className='overlay-bin' key={'overlay-' + i.toString()} transform={'translate(' + xPos + ',' + yPos + ')'}>
+        <g className='overlay-bin' key={'overlay-' + i}>
           <Bar {...overlayObj} onClick={props.onClick} onEnter={props.onEnter} onLeave={props.onLeave} />
         </g>
       )
@@ -85,7 +87,7 @@ class Histogram extends React.Component {
     return overlayBins
   }
 
-  buildABar (bin, name, type, height, width, y) {
+  buildABar (bin, name, type, height, width, y, x) {
     let props = this.props
     let keyVal = type.toString() + '-' + bin[props.xAccessor].toString()
     keyVal = keyVal.replace(/ /g, '-')
@@ -96,7 +98,8 @@ class Histogram extends React.Component {
       height: height,
       data: {x: bin[props.xAccessor], y: bin[props.yAccessor], ...bin},
       width: width,
-      y: y
+      y: y,
+      x: x
     }
   }
 
@@ -112,7 +115,11 @@ class Histogram extends React.Component {
         let scaledY = chartHeight - props.yScale(bin[props.yAccessor])
         let barHeight = bin[props.yAccessor] > 0 ? Math.max(Math.floor(scaledY), 5) : 0
         let yPos = chartHeight - barHeight
-        return this.buildABar(bin, props.data[index].name, props.data[index].type, barHeight, barWidth, yPos)
+        let xPos = props.xScale(bin[props.xAccessor])
+        if (xPos == null) { // also catches undefined
+          xPos = 0
+        }
+        return this.buildABar(bin, props.data[index].name, props.data[index].type, barHeight, barWidth, yPos, xPos)
       })
     }))
     let overlayBins = []
@@ -141,6 +148,7 @@ class Histogram extends React.Component {
                   .attr('height', props.height)
                   .attr('width', props.width)
                   .attr('y', props.y)
+                  .attr('x', props.x)
                 return transition
               }
             }} />
@@ -149,29 +157,11 @@ class Histogram extends React.Component {
     })
 
     let svgBins = svgBars.map((bars, i) => {
-      let yPos = 0
-      let xPos = props.xScale(barData[i][0].data[props.xAccessor])
       let key = props.className + '-' + barData[i][0].data[props.xAccessor]
-      if (xPos == null) { // also catches undefined
-        xPos = 0
-      }
       return (
-        <SVGComponent
-          className='bin'
-          key={key}
-          transform={'translate(' + xPos + ',' + yPos + ')'}
-          onUpdate={{
-            func: (transition, props) => {
-              transition
-                .delay(0)
-                .duration(750)
-                .ease(setEase('linear'))
-                .attr('transform', 'translate(' + xPos + ',' + yPos + ')')
-              return transition
-            }
-          }}>
+        <g className='bin' key={key}>
           {bars}
-        </SVGComponent>
+        </g>
       )
     })
 
