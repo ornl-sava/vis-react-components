@@ -11,6 +11,7 @@ import topics from './data/topic-lane-sample/topics-sample.json'
 
 // GETTING TOPIC MEMBER DATA OVER TIME
 const topicN = Math.floor(Math.random() * topics.length)
+// VARIABLE FOR DESIRED DATA AVERAGE
 let avgMem = new Array(4).fill(0)
 let temporalData = []
 let bins = []
@@ -25,14 +26,19 @@ topics[topicN]._source.bins.map((d, i) => {
   avgMem[2] += Math.random() * 200
   bins[3].push({ x: d.end, y: d.members.length })
   avgMem[3] += d.members.length
+  // console.log('STE-date-', new Date(d.end).getHours(), '-', d.end)
 })
+// let sub = (new Date(topics[topicN]._source.bins[2].end) - new Date(topics[topicN]._source.bins[1].end)) / 1000 / 60 / 60
+// console.log('STE-dateMinus', sub)
 // ////////////////////////////
 
 // HISTOGRAM DATA
 console.log('STE-tHD', temporalHistogramData)
 for (let i = 0; i < 4; i++) {
   avgMem[i] /= topics[topicN]._source.bins.length
-  let hData = [{name: 'Topic ' + topicN, type: 'two', bins: bins[i]}]
+  let type = 'two'
+  if (i === 2) type = 'one'
+  let hData = [{name: 'Topic ' + topicN, type: type, bins: bins[i]}]
   hData.map((histogram) => {
     let transformedObj = {name: histogram.name, type: histogram.type}
     transformedObj.bins = histogram.bins.map((bin) => {

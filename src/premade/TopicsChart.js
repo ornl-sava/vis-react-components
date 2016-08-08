@@ -48,10 +48,14 @@ class TopicsChart extends React.Component {
     return (
       <div className='row' >
         <text className='top'></text>
-        <Chart className='col-md-2' ref='updateChart2'{...spreadRelated(Chart, props)} tipFunction={this.toolTipFunction} yAxis={false} xAxis={false} xScaleType='linear' height={600}>
+        <Chart className='col-md-2' ref='updateChart2'
+          {...spreadRelated(Chart, props)} tipFunction={this.toolTipFunction}
+          yAxis={false} xAxis={false} xScaleType='linear' height={600}>
           <ColorView {...props} clickArray={this.state.clickArray} ref='colorView' onBarClick={this.onGroupClick} />
         </Chart>
-        <Chart className='col-md-10' ref='updateChart'{...spreadRelated(Chart, props)} tipFunction={this.toolTipFunction} yAxis={false} xAxis={false} xScaleType='linear' height={hTop}>
+        <Chart className='col-md-10' ref='updateChart'
+          {...spreadRelated(Chart, props)} tipFunction={this.toolTipFunction}
+          yAxis={false} xAxis={false} xScaleType='linear' height={hTop}>
           <TopicFlow {...props} clickArray={this.state.clickArray} />
         </Chart>
         <text className='bottom'></text>

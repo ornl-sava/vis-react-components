@@ -39,8 +39,29 @@ const tData = (n, start, data) => {
 
 const allData = tData(nData, 0, topData)
 
-console.log('TE-topics', topics[0])
+console.log('TE-topics', topics.length)
 console.log('TE-lanes', lanes.length)
+
+const data = () => {
+  let tempData = []
+  topics.map((data, index) => {
+    let bins = data._source.bins
+    bins.map((d, i) => {
+      let link = null
+      // CHECKS NEXT TIME STEP FOR CONNECTION
+      if (i < (bins.length - 1)) {
+        let timeDiff = new Date(bins[i + 1].end) - new Date(d.end)
+        if (timeDiff / 1000 / 60 / 60 === 1) {
+          console.log('TE-connection')
+          link = {source: tempData.length, target: tempData.length + 1}
+        }
+      }
+      tempData.push(Object.assign({}, d, {topicID: data._id, link: link}))
+    })
+  })
+  return tempData
+}
+console.log('TE-data', data())
 
 const chartProps = {
   tipFunction: toolTipFunction,

@@ -131,6 +131,7 @@ class TopicFlow extends React.Component {
   }
 
   initTopics (props) {
+    console.log('initTopics')
     // XSCALE IS ORDINAL
     this.xScale.range([0, props.chartWidth])
     this.xScale.paddingInner(props.outerPadding)
@@ -213,7 +214,7 @@ class TopicFlow extends React.Component {
         }
         return (
           <g className='bin' key={key}>
-            <TextBar {...data} onEnter={this.onEnter} onLeave={this.onLeave} onClick={this.onBarClick} />
+            <TextBar {...data} onEnter={this.onEnter} onLeave={this.onLeave} onClick={this.onClick} />
             {lineInfo}
           </g>
         )
