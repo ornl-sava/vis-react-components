@@ -38,7 +38,7 @@ class Heatmap extends React.Component {
             return (
               <SVGComponent Component='rect' key={i + '-' + j}
                 data={e}
-                index={j}
+                index={i + '-' + j}
                 x={props.xScale(e[props.xAccessor.key])}
                 y={props.yScale(d[props.yAccessor.key])}
                 width={width}
@@ -82,7 +82,6 @@ class Heatmap extends React.Component {
 }
 
 Heatmap.defaultProps = {
-  labelField: 'label',
   xAccessor: {
     key: 'key',
     value: 'value'
@@ -98,7 +97,6 @@ Heatmap.defaultProps = {
 
 Heatmap.propTypes = {
   colorScale: PropTypes.any,
-  labelField: PropTypes.string,
   xAccessor: PropTypes.object,
   yAccessor: PropTypes.object,
   chartHeight: PropTypes.number,

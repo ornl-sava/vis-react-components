@@ -17,17 +17,27 @@ for (let i = 0; i < 1000; i++) {
 var exampleData2 = []
 var now2 = +new Date()
 var endTime2 = now2 - 20 * 1000
-var slice = (now2 - endTime2) / 5
+var slice = (now2 - endTime2) / 11
 for (let i = 1; i < 6; i++) {
   let datum = {}
   datum.key = i
   datum.value = 0
   datum.bins = []
-  for (let j = 1; j < 6; j++) {
+  for (let j = 1; j < 12; j++) {
     let key = endTime2 + (j - 1) * slice
-    let value = Math.floor(Math.random() * 6)
+    let value = Math.floor(Math.random() * 10)
+    let data = []
+    for (let k = 0; k < value; k++) {
+      let point = {
+        x: (endTime2 + (j - 1) * slice) + Math.floor(Math.random() * slice),
+        y: (i - 1) + Math.random() * 1
+      }
+      data.push(point)
+    }
+
     datum.value += value
     datum.bins.push({
+      data,
       key,
       value
     })

@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react'
-import { range, interpolateHcl } from 'd3'
+import { map, min, max, interpolateHcl } from 'd3'
 
 import { setScale } from '../util/d3'
 import { spreadRelated } from '../util/react'
@@ -14,8 +14,17 @@ class HybridScatterHeatmapChart extends React.Component {
   constructor (props) {
     super(props)
 
+    this.scatterDataMap = map()
+    this.scatterDataArray = []
+    this.scatterKey = (d, i) => {
+      let key = d[props.scatterXAccessor] + '-' + d[props.scatterYAccessor]
+      return key
+    }
+
     this.xScale = setScale(props.xScaleType)
     this.yScale = setScale(props.yScaleType)
+    this.scatterColorScale = setScale('linear')
+    this.heatmapColorScale = setScale('qunatile')
 
     this.state = {
       expandedSectionNumbers: [], // Section #s to divide at
@@ -24,26 +33,6 @@ class HybridScatterHeatmapChart extends React.Component {
     }
 
     this.endTime = this.props.startTime - this.props.timeWindow
-
-    this.scatterColorScale = setScale(props.scatterColorScaleType)
-    this.heatmapColorScale = setScale(props.heatmapColorScaleType)
-
-    // Create color scale for scatter
-    this.scatterColorScale
-      .range(['#FFF', '#000'])
-      .interpolate(interpolateHcl)
-
-    // Create color scale for heatmap
-    let colors = []
-    let tempColorScale = setScale('linear')
-      .range(['#FFF', '#000'])
-
-    range(8).map((d) => {
-      colors.push(tempColorScale(d))
-    })
-
-    this.heatmapColorScale
-      .range(colors)
 
     this.onColumnMarkerClick = this.onColumnMarkerClick.bind(this)
 
@@ -65,11 +54,13 @@ class HybridScatterHeatmapChart extends React.Component {
       : props.tipFunction
 
     this.updateDomain(props, this.state)
+    this.generateColorScale(props, this.state)
   }
 
   shouldComponentUpdate (nextProps, nextState) {
     this.updateDomain(nextProps, nextState)
     this.updateRange(nextProps, nextState)
+    this.generateColorScale(nextProps, nextState)
     return true
   }
 
@@ -77,6 +68,42 @@ class HybridScatterHeatmapChart extends React.Component {
     if (this.props.tipFunction) {
       this.tip.destroy()
     }
+  }
+
+  generateColorScale (props, state) {
+    let yMax = max(props.data, (d, i) => {
+      return max(d.bins, (e, j) => e[props.heatmapXAccessor.value])
+    })
+
+    let yMin = min(props.data, (d, i) => {
+      return min(d.bins, (e, j) => e[props.heatmapXAccessor.value])
+    })
+
+    // Set scatter color scale
+    this.scatterColorScale
+      .domain([yMin, yMax])
+      .range([props.scatterMinColor, props.scatterMaxColor])
+      .interpolate(interpolateHcl)
+
+    // Set heatmap color scale
+    let tempColorScale = setScale('linear')
+      .domain([0, yMax])
+      .range([props.heatmapMinColor, props.heatmapMaxColor])
+      .interpolate(interpolateHcl)
+
+    let colorDomain = [0, 1]
+    let colorRange = [props.heatmapMinColor]
+    let colorDomainBand = yMax / (props.heatmapNumColorCat - 1)
+    for (var i = 2; i < props.heatmapNumColorCat + 1; i++) {
+      let value = colorDomain[i - 1] + colorDomainBand
+      if (i === 2) value--
+      colorDomain.push(value)
+      colorRange.push(tempColorScale(value))
+    }
+
+    this.heatmapColorScale
+      .domain(colorDomain)
+      .range(colorRange)
   }
 
   updateDomain (props, state) {
@@ -116,23 +143,6 @@ class HybridScatterHeatmapChart extends React.Component {
       // Update y scale domain
       this.yScale
         .domain([0, 5])
-
-      // Update scatter color scale
-      this.scatterColorScale
-        .domain([0, 6])
-
-      // Update heatmap color scale
-      let colorDomain = [0, 8]
-      if (typeof this.heatmap !== 'undefined') {
-        colorDomain.concat(this.heatmap.reduce((a, b) => {
-          return a.concat(b)
-        }, []).map((d) => {
-          return d.length
-        }))
-      }
-
-      this.heatmapColorScale
-        .domain(colorDomain)
     }
   }
 
@@ -191,6 +201,26 @@ class HybridScatterHeatmapChart extends React.Component {
   }
 
   onHeatmapClick (event, data, index) {
+    // Flip fill opacity
+    let fillOpacity = event.target.getAttribute('fill-opacity') !== null
+      ? 1 - event.target.getAttribute('fill-opacity')
+      : 0
+    event.target.setAttribute('fill-opacity', fillOpacity)
+
+    if (this.scatterDataMap.has(index)) {
+      this.scatterDataMap.remove(index)
+    } else {
+      this.scatterDataMap.set(index, data.data)
+    }
+
+    this.scatterDataArray = []
+    this.scatterDataMap.each((v, k) => {
+      for (let i = 0; i < v.length; i++) {
+        this.scatterDataArray.push(v[i])
+      }
+    })
+
+    this.forceUpdate()
     this.props.onHeatmapClick(event, data, index)
   }
 
@@ -232,15 +262,23 @@ class HybridScatterHeatmapChart extends React.Component {
 
   render () {
     let { data, ...props } = this.props
+    // Get scatter data
+    // TODO: Key FUnction for scatterplot
     return (
       <Chart ref='chart' {...spreadRelated(Chart, props)} resizeHandler={this.onResize}>
-        <ColumnMarkers data={data} xScale={this.xScale} onClick={this.onColumnMarkerClick} />
-        <Heatmap className='heatmap' {...spreadRelated(Heatmap, {})} data={data}
+        <ColumnMarkers data={data} xAccessor={props.heatmapXAccessor}
+          colorScale={this.heatmapColorScale} xScale={this.xScale} onClick={this.onColumnMarkerClick} />
+
+        <Heatmap className='heatmap' data={data}
           xScale={this.xScale} yScale={this.yScale} colorScale={this.heatmapColorScale}
+          xAccessor={props.heatmapXAccessor} yAccessor={props.heatmapYAccessor}
           onEnter={this.onHeatmapEnter} onLeave={this.onHeatmapLeave} onClick={this.onHeatmapClick} />
-        <Scatterplot className='scatter' {...spreadRelated(Scatterplot, {})} data={[]}
-          xScale={this.xScale} yScale={this.yScale}
+
+        <Scatterplot className='scatter' data={this.scatterDataArray}
+          xScale={this.xScale} yScale={this.yScale} keyFunction={this.scatterKey}
+          xAccessor={props.scatterXAccessor} yAccessor={props.scatterYAccessor}
           onEnter={this.onScatterplotEnter} onLeave={this.onScatterplotLeave} onClick={this.onScatterplotClick} />
+
         <Axis className='x axis' {...props.xAxis} scale={this.xScale} />
         <Axis className='y axis' {...props.yAxis} scale={this.yScale} />
       </Chart>
@@ -256,6 +294,15 @@ HybridScatterHeatmapChart.defaultProps = {
   yDomain: [],
   yScaleType: 'linear',
   xScaleType: 'time',
+  scatterMinColor: '#F1F5E9',
+  scatterMaxColor: '#7C9B27',
+  heatmapMinColor: '#eff3ff',
+  heatmapMaxColor: '#2171b5',
+  heatmapNumColorCat: 11,
+  heatmapXAccessor: Heatmap.defaultProps.xAccessor,
+  heatmapYAccessor: Heatmap.defaultProps.yAccessor,
+  scatterXAccessor: Scatterplot.defaultProps.xAccessor,
+  scatterYAccessor: Scatterplot.defaultProps.yAccessor,
   onHeatmapClick: () => {},
   onHeatmapEnter: () => {},
   onHeatmapLeave: () => {},
@@ -266,8 +313,8 @@ HybridScatterHeatmapChart.defaultProps = {
   ...Chart.defaultProps,
   margin: {top: 20, right: 10, bottom: 20, left: 80},
   // Spread scatter & heatmap default
-  ...Heatmap.defaultProps,
-  ...Scatterplot.defaultProps,
+  // ...Heatmap.defaultProps,
+  // ...Scatterplot.defaultProps,
   xAxis: {
     type: 'x',
     orient: 'bottom',
@@ -285,6 +332,11 @@ HybridScatterHeatmapChart.defaultProps = {
 HybridScatterHeatmapChart.propTypes = {
   startTime: PropTypes.number.isRequired,
   timeWindow: PropTypes.number.isRequired,
+  scatterMinColor: PropTypes.string,
+  scatterMaxColor: PropTypes.string,
+  heatmapMinColor: PropTypes.string,
+  heatmapMaxColor: PropTypes.string,
+  heatmapNumColorCat: PropTypes.number,
   ...Heatmap.propTypes,
   ...Scatterplot.propTypes,
   ...Chart.propTypes,

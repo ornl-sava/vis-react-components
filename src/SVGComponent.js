@@ -10,7 +10,7 @@ const SVGComponentPropTypes = {
   className: PropTypes.string,
   id: PropTypes.string,
   data: PropTypes.any,
-  index: PropTypes.number,
+  index: PropTypes.any,
   children: PropTypes.any,
   // Container enter/exit/update for animations
   onEnter: PropTypes.any,
@@ -81,7 +81,7 @@ class SVGComponent extends React.Component {
   animate (callback, props, type) {
     let node = select(this.refs.node)
     let propsCopy = JSON.parse(JSON.stringify(spreadExclude(props, { children: '' })))
-    node.transition(this.transition)
+    node.transition()
       .call((transition) => {
         props[type].func(transition, propsCopy)
       })

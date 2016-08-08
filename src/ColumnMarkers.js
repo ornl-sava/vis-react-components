@@ -8,7 +8,7 @@ import SVGComponent from './SVGComponent'
 // Expects 2D data like heatmap
 class ColumnMarkers extends React.Component {
   render () {
-    let { className, data, onClick, xScale, xAccessor, chartWidth, margin } = this.props
+    let { className, data, onClick, xScale, xAccessor, colorScale, chartWidth, margin } = this.props
 
     let y = -margin.top
     let height = (margin.top - 2 > 5)
@@ -18,17 +18,25 @@ class ColumnMarkers extends React.Component {
     return (
       <g className={className}>
         {data[0].bins.map((d, i) => {
+          // Get width of column
           let width = (i + 1 < data[0].bins.length)
             ? xScale(data[0].bins[i + 1][xAccessor.key])
             : chartWidth
           width -= xScale(d[xAccessor.key])
+
+          // Get total value for column
+          let total = 0
+          for (let j = 0; j < data.length; j++) {
+            total += data[j].bins[i][xAccessor.key]
+          }
+
           return (
             <SVGComponent Component='rect' key={i}
               data={d}
               index={i}
               x={xScale(d[xAccessor.key])}
               y={y}
-              fill='#666'
+              fill={colorScale(total)}
               width={width}
               height={height}
               onClick={onClick}
@@ -68,6 +76,7 @@ ColumnMarkers.defaultProps = {
 
 ColumnMarkers.propTypes = {
   data: PropTypes.array,
+  colorScale: PropTypes.any,
   xScale: PropTypes.any,
   xAccessor: PropTypes.any,
   onClick: PropTypes.func,
