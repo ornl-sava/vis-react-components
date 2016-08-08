@@ -1,7 +1,7 @@
 import React from 'react'
 import debounce from 'lodash.debounce'
 
-import { ScatterHeatmapHybrid } from '../src'
+import { HybridScatterHeatmapChart, ScatterHeatmapHybrid } from '../src'
 
 var exampleData = []
 var now = +new Date()
@@ -13,6 +13,29 @@ for (let i = 0; i < 1000; i++) {
     id: i
   })
 }
+
+var exampleData2 = []
+var now2 = +new Date()
+var endTime2 = now2 - 20 * 1000
+var slice = (now2 - endTime2) / 5
+for (let i = 1; i < 6; i++) {
+  let datum = {}
+  datum.key = i
+  datum.value = 0
+  datum.bins = []
+  for (let j = 1; j < 6; j++) {
+    let key = endTime2 + (j - 1) * slice
+    let value = Math.floor(Math.random() * 6)
+    datum.value += value
+    datum.bins.push({
+      key,
+      value
+    })
+  }
+  exampleData2.push(datum)
+}
+
+console.log(exampleData2)
 
 class ScatterHeatmapExample extends React.Component {
   constructor (props) {
@@ -36,21 +59,28 @@ class ScatterHeatmapExample extends React.Component {
 
   render () {
     return (
-      <ScatterHeatmapHybrid
-        ref='chart'
-        startTime={now}
-        clsName={'ScatterHeatmapHybrid'}
-        height={600}
-        idAccessor={'id'}
-        xAccessor={'time'}
-        yAccessor={'score'}
-        xLabel={'Event Time'}
-        yLabel={'Score'}
-        yDomain={[0, 6]}
-        timeWindow={30 * 1000}
-        heatmapVertDivisions={12}
-        heatmapHorzDivisions={10}
-        data={exampleData} />
+      <div>
+        <ScatterHeatmapHybrid
+          ref='chart'
+          startTime={now}
+          clsName={'ScatterHeatmapHybrid'}
+          height={600}
+          idAccessor={'id'}
+          xAccessor={'time'}
+          yAccessor={'score'}
+          xLabel={'Event Time'}
+          yLabel={'Score'}
+          yDomain={[0, 6]}
+          timeWindow={30 * 1000}
+          heatmapVertDivisions={12}
+          heatmapHorzDivisions={5}
+          data={exampleData} />
+        <HybridScatterHeatmapChart
+          startTime={now2}
+          timeWindow={20 * 1000}
+          data={exampleData2} />
+      </div>
+
     )
   }
 }

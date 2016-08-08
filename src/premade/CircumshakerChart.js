@@ -19,7 +19,9 @@ class CircumshakerChart extends React.Component {
   }
 
   componentWillUnmount () {
-    this.tip.destroy()
+    if (this.props.tipFunction) {
+      this.tip.destroy()
+    }
   }
 
   onClick (event, data) {
@@ -59,7 +61,7 @@ CircumshakerChart.defaultProps = {
   data: [],
   // Spread chart default
   ...Chart.defaultProps,
-  // Spread heatmap default
+  // Spread circumshaker default
   ...Circumshaker.defaultProps
 }
 

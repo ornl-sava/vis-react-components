@@ -143,7 +143,7 @@ class Histogram extends React.Component {
               func: (transition, props) => {
                 transition
                   .delay(0)
-                  .duration(750)
+                  .duration(500)
                   .ease(setEase('linear'))
                   .attr('height', props.height)
                   .attr('width', props.width)

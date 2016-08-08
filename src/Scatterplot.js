@@ -38,7 +38,7 @@ class Scatterplot extends React.Component {
                 func: (transition, props) => {
                   transition
                     .delay(0)
-                    .duration(750)
+                    .duration(500)
                     .ease(setEase('linear'))
                     .attrTween('r', () => {
                       return interpolate(0, props.r)
@@ -50,7 +50,7 @@ class Scatterplot extends React.Component {
                 func: (transition, props) => {
                   transition
                     .delay(0)
-                    .duration(750)
+                    .duration(500)
                     .ease(setEase('linear'))
                     .attr('r', props.r)
                     .attr('cx', props.cx)
@@ -62,7 +62,7 @@ class Scatterplot extends React.Component {
                 func: (transition, props) => {
                   transition
                     .delay(0)
-                    .duration(750)
+                    .duration(500)
                     .ease(setEase('linear'))
                     .attr('r', 0)
                   return transition

@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react'
-import { extent, max, interpolateHcl } from 'd3'
+import { range, interpolateHcl } from 'd3'
 
 import { setScale } from '../util/d3'
 import { spreadRelated } from '../util/react'
@@ -8,16 +8,44 @@ import Axis from '../Axis'
 import Tooltip from '../Tooltip'
 import Heatmap from '../Heatmap'
 import Scatterplot from '../Scatterplot'
+import ColumnMarkers from '../ColumnMarkers'
 
 class HybridScatterHeatmapChart extends React.Component {
   constructor (props) {
     super(props)
+
     this.xScale = setScale(props.xScaleType)
     this.yScale = setScale(props.yScaleType)
-    this.colorScale = setScale('qunatile')
 
-    this.xDomain = this.props.xDomain
-    this.yDomain = this.props.yDomain
+    this.state = {
+      expandedSectionNumbers: [], // Section #s to divide at
+      domainExpansionFactor: 1, // Factor of domain to be used
+      rangeExpansionFactor: 2 // Factor to expand range by
+    }
+
+    this.endTime = this.props.startTime - this.props.timeWindow
+
+    this.scatterColorScale = setScale(props.scatterColorScaleType)
+    this.heatmapColorScale = setScale(props.heatmapColorScaleType)
+
+    // Create color scale for scatter
+    this.scatterColorScale
+      .range(['#FFF', '#000'])
+      .interpolate(interpolateHcl)
+
+    // Create color scale for heatmap
+    let colors = []
+    let tempColorScale = setScale('linear')
+      .range(['#FFF', '#000'])
+
+    range(8).map((d) => {
+      colors.push(tempColorScale(d))
+    })
+
+    this.heatmapColorScale
+      .range(colors)
+
+    this.onColumnMarkerClick = this.onColumnMarkerClick.bind(this)
 
     this.onHeatmapClick = this.onHeatmapClick.bind(this)
     this.onHeatmapEnter = this.onHeatmapEnter.bind(this)
@@ -39,145 +67,163 @@ class HybridScatterHeatmapChart extends React.Component {
     this.updateDomain(props, this.state)
   }
 
-  componentWillReceiveProps (nextProps) {
-    this.updateDomain(nextProps, this.state)
+  shouldComponentUpdate (nextProps, nextState) {
+    this.updateDomain(nextProps, nextState)
+    this.updateRange(nextProps, nextState)
+    return true
   }
 
   componentWillUnmount () {
-    this.tip.destroy()
+    if (this.props.tipFunction) {
+      this.tip.destroy()
+    }
   }
 
   updateDomain (props, state) {
     if (props.data.length > 0 && props.data[0].bins.length > 0) {
-      // If xDomain is not predefined
-      // NOTE: When determining domain for x the first bin is Used
-      // Each bin should have matching x domain keys
-      let xDomain = props.xDomain
-      if (xDomain.length === 0) {
-        // NOTE: Computing offset so proper xDomain is given for time scales
-        // Nth bin has a start time of it's key; so it's 'end time'
-        // must be taken into consideration
-        let offset = props.data[0].bins[1][props.xAccessor.key] -
-          props.data[0].bins[0][props.xAccessor.key]
-        if (this.xScale.type === 'ordinalBand') {
-          xDomain = props.data[0].bins.map((d) => d[props.xAccessor.key])
+      let horzLength = props.data[0].bins.length
+      let originalTimeSlice = props.timeWindow / horzLength
+      let expandedTimeSlice = originalTimeSlice * state.domainExpansionFactor
+
+      // Compute new end time
+      let timeWindow = 0
+      for (let i = 0; i < horzLength; i++) {
+        if (state.expandedSectionNumbers.indexOf(i) > -1) {
+          timeWindow += expandedTimeSlice
         } else {
-          xDomain = extent(props.data[0].bins, (d) => d[props.xAccessor.key])
-          xDomain[1] = xDomain[1] + offset
+          timeWindow += originalTimeSlice
         }
       }
 
-      // If yDomain is not predefined
-      let yDomain = props.yDomain
-      if (yDomain.length === 0) {
-        // NOTE: Computing offset so proper xDomain is given for time scales
-        // Nth bin has a start time of it's key; so it's 'end time'
-        // must be taken into consideration
-        // let offset = props.data[1][props.yAccessor.key] -
-          // props.data[0][props.yAccessor.key]
-        if (this.yScale.type === 'ordinalBand') {
-          yDomain = props.data.map((d) => d[props.yAccessor.key])
+      // console.log(timeWindow / 1000, originalTimeSlice, expandedTimeSlice)
+      this.endTime = props.startTime - timeWindow
+
+      let xDomain = [this.endTime]
+      for (let i = 0; i < horzLength - 1; i++) {
+        let previous = xDomain[xDomain.length - 1]
+        if (state.expandedSectionNumbers.indexOf(i) > -1) {
+          xDomain.push(previous + expandedTimeSlice)
         } else {
-          yDomain = [0.000001, max(props.data, (d) => d[props.yAccessor.key])]
-          // yDomain[1] = yDomain[1] + offset
+          xDomain.push(previous + originalTimeSlice)
         }
       }
+      xDomain.push(props.startTime)
 
-      // Update scale if domains are new
-      if (xDomain !== this.xDomain) {
-        this.xScale.domain(xDomain)
-        this.xDomain = xDomain
+      // Update window of time x scale
+      this.xScale
+        .domain(xDomain)
+
+      // Update y scale domain
+      this.yScale
+        .domain([0, 5])
+
+      // Update scatter color scale
+      this.scatterColorScale
+        .domain([0, 6])
+
+      // Update heatmap color scale
+      let colorDomain = [0, 8]
+      if (typeof this.heatmap !== 'undefined') {
+        colorDomain.concat(this.heatmap.reduce((a, b) => {
+          return a.concat(b)
+        }, []).map((d) => {
+          return d.length
+        }))
       }
 
-      if (yDomain !== this.yDomain) {
-        this.yScale.domain(yDomain)
-        this.yDomain = yDomain
-      }
-
-      // Generate color scale
-      let yMax = max(props.data, (d, i) => {
-        return max(d.bins, (e, j) => e[props.xAccessor.value])
-      })
-
-      let tempColorScale = setScale('linear')
-        .domain([0, yMax])
-        .range([props.minColor, props.maxColor])
-        .interpolate(interpolateHcl)
-
-      let colorDomain = [0, 1]
-      let colorRange = [props.minColor]
-      let colorDomainBand = yMax / (props.numColorCat - 1)
-      for (var i = 2; i < props.numColorCat + 1; i++) {
-        let value = colorDomain[i - 1] + colorDomainBand
-        if (i === 2) value--
-        colorDomain.push(value)
-        colorRange.push(tempColorScale(value))
-      }
-
-      this.colorScale
+      this.heatmapColorScale
         .domain(colorDomain)
-        .range(colorRange)
     }
   }
 
   updateRange (props, state) {
-    this.yScale.range([this.refs.chart.chartHeight, 0])
-    if (props.yAxis.innerPadding && /ordinal/.test(this.yScale.type)) {
-      this.yScale.paddingInner(props.yAxis.innerPadding)
-    }
+    let chartWidth = this.refs.chart.chartWidth
+    let chartHeight = this.refs.chart.chartHeight
+    let horzLength = props.data[0].bins.length
 
-    if (props.yAxis.outerPadding && /ordinal/.test(this.yScale.type)) {
-      this.yScale.paddingOuter(props.yAxis.outerPadding)
-    }
+    let originalBlockSize = chartWidth * (1 / horzLength)
+    let expandedBlockSize = originalBlockSize * state.rangeExpansionFactor
+    let newBlockSize = (chartWidth - (state.expandedSectionNumbers.length * expandedBlockSize)) /
+      (horzLength - state.expandedSectionNumbers.length)
+    let xRange = [0]
 
-    this.xScale.range([0, this.refs.chart.chartWidth])
-    if (props.xAxis.innerPadding && /ordinal/.test(this.xScale.type)) {
-      this.xScale.paddingInner(props.xAxis.innerPadding)
+    for (let i = 0; i < horzLength - 1; i++) {
+      let previous = xRange[xRange.length - 1]
+      if (state.expandedSectionNumbers.indexOf(i) > -1) {
+        xRange.push(previous + expandedBlockSize)
+      } else {
+        xRange.push(previous + newBlockSize)
+      }
     }
+    xRange.push(chartWidth)
 
-    if (props.xAxis.outerPadding && /ordinal/.test(this.xScale.type)) {
-      this.xScale.paddingOuter(props.xAxis.outerPadding)
-    }
+    this.xScale.range(xRange)
+    this.yScale.range([chartHeight, 0])
   }
 
-  shouldComponentUpdate (nextProps, nextState) {
-    return true
+  // This onClick is private to premade
+  onColumnMarkerClick (event, data, index) {
+    let i = this.state.expandedSectionNumbers.indexOf(index)
+    let toExpand = null
+    if (i > -1) {
+      toExpand = this.state.expandedSectionNumbers
+      toExpand.splice(i, 1)
+    } else {
+      let chartWidth = this.refs.chart.chartWidth
+      let horzLength = this.props.data[0].bins.length
+
+      let originalBlockSize = chartWidth * (1 / horzLength)
+      let expandedBlockSize = originalBlockSize * this.state.rangeExpansionFactor
+      let pending = (this.state.expandedSectionNumbers.length + 1) * expandedBlockSize
+      if (pending >= chartWidth || this.state.expandedSectionNumbers.length + 1 === horzLength) {
+        toExpand = this.state.expandedSectionNumbers
+      } else {
+        toExpand = this.state.expandedSectionNumbers
+          .concat(index)
+          .sort((a, b) => {
+            return a - b
+          })
+      }
+    }
+    this.setState({
+      expandedSectionNumbers: toExpand
+    })
   }
 
-  onHeatmapClick (event, data) {
-    this.props.onHeatmapClick(event, data)
+  onHeatmapClick (event, data, index) {
+    this.props.onHeatmapClick(event, data, index)
   }
 
-  onHeatmapEnter (event, data) {
+  onHeatmapEnter (event, data, index) {
     if (data && this.tip) {
-      this.tip.show(event, data)
+      this.tip.show(event, data, index)
     }
-    this.props.onHeatmapEnter(event, data)
+    this.props.onHeatmapEnter(event, data, index)
   }
 
-  onHeatmapLeave (event, data) {
+  onHeatmapLeave (event, data, index) {
     if (data && this.tip) {
-      this.tip.hide(event, data)
+      this.tip.hide(event, data, index)
     }
-    this.props.onHeatmapLeave(event, data)
+    this.props.onHeatmapLeave(event, data, index)
   }
 
-  onScatterplotClick (event, data) {
-    this.props.onScatterplotClick(event, data)
+  onScatterplotClick (event, data, index) {
+    this.props.onScatterplotClick(event, data, index)
   }
 
-  onScatterplotEnter (event, data) {
+  onScatterplotEnter (event, data, index) {
     if (data && this.tip) {
-      this.tip.show(event, data)
+      this.tip.show(event, data, index)
     }
-    this.props.onScatterplotEnter(event, data)
+    this.props.onScatterplotEnter(event, data, index)
   }
 
-  onScatterplotLeave (event, data) {
+  onScatterplotLeave (event, data, index) {
     if (data && this.tip) {
-      this.tip.hide(event, data)
+      this.tip.hide(event, data, index)
     }
-    this.props.onScatterplotLeave(event, data)
+    this.props.onScatterplotLeave(event, data, index)
   }
 
   onResize () {
@@ -185,13 +231,14 @@ class HybridScatterHeatmapChart extends React.Component {
   }
 
   render () {
-    let props = this.props
+    let { data, ...props } = this.props
     return (
       <Chart ref='chart' {...spreadRelated(Chart, props)} resizeHandler={this.onResize}>
-        <Heatmap className='heatmap' {...spreadRelated(Heatmap, props)}
-          xScale={this.xScale} yScale={this.yScale} colorScale={this.colorScale}
+        <ColumnMarkers data={data} xScale={this.xScale} onClick={this.onColumnMarkerClick} />
+        <Heatmap className='heatmap' {...spreadRelated(Heatmap, {})} data={data}
+          xScale={this.xScale} yScale={this.yScale} colorScale={this.heatmapColorScale}
           onEnter={this.onHeatmapEnter} onLeave={this.onHeatmapLeave} onClick={this.onHeatmapClick} />
-        <Scatterplot className='scatter' {...spreadRelated(Scatterplot, props)}
+        <Scatterplot className='scatter' {...spreadRelated(Scatterplot, {})} data={[]}
           xScale={this.xScale} yScale={this.yScale}
           onEnter={this.onScatterplotEnter} onLeave={this.onScatterplotLeave} onClick={this.onScatterplotClick} />
         <Axis className='x axis' {...props.xAxis} scale={this.xScale} />
@@ -201,13 +248,23 @@ class HybridScatterHeatmapChart extends React.Component {
   }
 }
 
+// Manually define and ovveride scatterplot/heatmap accessors
 HybridScatterHeatmapChart.defaultProps = {
   // Premade default
   data: [],
   xDomain: [],
   yDomain: [],
+  yScaleType: 'linear',
+  xScaleType: 'time',
+  onHeatmapClick: () => {},
+  onHeatmapEnter: () => {},
+  onHeatmapLeave: () => {},
+  onScatterplotClick: () => {},
+  onScatterplotEnter: () => {},
+  onScatterplotLeave: () => {},
   // Spread chart default
   ...Chart.defaultProps,
+  margin: {top: 20, right: 10, bottom: 20, left: 80},
   // Spread scatter & heatmap default
   ...Heatmap.defaultProps,
   ...Scatterplot.defaultProps,
@@ -226,6 +283,8 @@ HybridScatterHeatmapChart.defaultProps = {
 }
 
 HybridScatterHeatmapChart.propTypes = {
+  startTime: PropTypes.number.isRequired,
+  timeWindow: PropTypes.number.isRequired,
   ...Heatmap.propTypes,
   ...Scatterplot.propTypes,
   ...Chart.propTypes,

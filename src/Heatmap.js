@@ -37,8 +37,8 @@ class Heatmap extends React.Component {
             width -= props.xScale(e[props.xAccessor.key])
             return (
               <SVGComponent Component='rect' key={i + '-' + j}
-                data={d}
-                index={i * d.bins.length + j}
+                data={e}
+                index={j}
                 x={props.xScale(e[props.xAccessor.key])}
                 y={props.yScale(d[props.yAccessor.key])}
                 width={width}
@@ -48,10 +48,10 @@ class Heatmap extends React.Component {
                   func: (transition, props) => {
                     transition
                       .delay(0)
-                      .duration(1000)
+                      .duration(500)
                       .ease(setEase('linear'))
                       .attrTween('fill', () => {
-                        return interpolate(this.props.minColor, props.fill)
+                        return interpolate(this.props.colorScale.range()[0], props.fill)
                       })
                     return transition
                   }
@@ -60,7 +60,7 @@ class Heatmap extends React.Component {
                   func: (transition, props) => {
                     transition
                       .delay(0)
-                      .duration(1000)
+                      .duration(500)
                       .ease(setEase('linear'))
                       .attr('x', props.x)
                       .attr('y', props.y)
@@ -82,10 +82,6 @@ class Heatmap extends React.Component {
 }
 
 Heatmap.defaultProps = {
-  minColor: '#eff3ff',
-  maxColor: '#2171b5',
-  numColorCat: 11,
-  colorPerRow: true,
   labelField: 'label',
   xAccessor: {
     key: 'key',
@@ -101,10 +97,7 @@ Heatmap.defaultProps = {
 }
 
 Heatmap.propTypes = {
-  minColor: PropTypes.string,
-  maxColor: PropTypes.string,
-  numColorCat: PropTypes.number,
-  colorPerRow: PropTypes.bool,
+  colorScale: PropTypes.any,
   labelField: PropTypes.string,
   xAccessor: PropTypes.object,
   yAccessor: PropTypes.object,

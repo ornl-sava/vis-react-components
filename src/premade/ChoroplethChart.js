@@ -30,7 +30,9 @@ class ChoroplethChart extends React.Component {
   }
 
   componentWillUnmount () {
-    this.tip.destroy()
+    if (this.props.tipFunction) {
+      this.tip.destroy()
+    }
   }
 
   componentWillReceiveProps (nextProps) {
@@ -115,13 +117,23 @@ class ChoroplethChart extends React.Component {
 ChoroplethChart.defaultProps = {
   // Premade default
   data: [],
+  selectedMinColor: '#eff3ff',
+  selectedMaxColor: '#2171b5',
+  unselectedMinColor: '#f7f7f7',
+  unselectedMaxColor: '#636363',
+  numColorCat: 20,
   // Spread chart default
   ...Chart.defaultProps,
-  // Spread heatmap default
+  // Spread choropleth default
   ...Choropleth.defaultProps
 }
 
 ChoroplethChart.propTypes = {
+  selectedMinColor: PropTypes.string,
+  selectedMaxColor: PropTypes.string,
+  unselectedMinColor: PropTypes.string,
+  unselectedMaxColor: PropTypes.string,
+  numColorCat: PropTypes.number,
   ...Choropleth.propTypes,
   ...Chart.propTypes,
   onClick: PropTypes.func,

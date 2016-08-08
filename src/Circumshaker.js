@@ -332,7 +332,7 @@ class Circumshaker extends React.Component {
                     y += radius * Math.sin(degree * (Math.PI / 180))
                     transition
                       .delay(0)
-                      .duration(1000)
+                      .duration(500)
                       .ease(setEase('linear'))
                       .attrTween('r', () => {
                         return interpolate(0, props.r)
@@ -350,7 +350,7 @@ class Circumshaker extends React.Component {
                   func: (transition, props) => {
                     transition
                       .delay(0)
-                      .duration(1000)
+                      .duration(500)
                       .ease(setEase('linear'))
                       .attr('r', props.r)
                       .attr('cx', props.cx)
@@ -368,7 +368,7 @@ class Circumshaker extends React.Component {
                     y += radius * Math.sin(degree * (Math.PI / 180))
                     transition
                       .delay(0)
-                      .duration(1000)
+                      .duration(500)
                       .ease(setEase('linear'))
                       .attr('r', 0)
                       .attr('cx', x)
