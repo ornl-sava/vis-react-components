@@ -100,12 +100,22 @@ class Axis extends React.Component {
     // Commenting this out doesn't appear to cause any problems
     // it also seems to improve the re-rendering performance a bit.
     // this.setAxis(props)
-
     this.axis
       .tickFormat(tickFormatter)
       .tickValues(tickValues)
       .ticks(tickCount)
     selection.call(this.axis)
+
+    // NOTE: Use of a custom tick style requires custom tickValues
+    // This is so meaningful data gets passed instead of truncated garbage
+    if (props.tickStyle && tickValues) {
+      selection.selectAll('.tick text')
+        .each(function (d, i) {
+          let tick = select(this)
+          // console.log(this.axis.tickValues(), i)
+          props.tickStyle(tick, tickValues[i], i)
+        })
+    }
   }
 
   render () {
@@ -133,14 +143,19 @@ Axis.defaultProps = {
   type: 'x',
   orient: 'left',
   tickValues: null,
-  tickCount: false,
-  tickFormat: false,
+  tickCount: null,
+  tickFormat: null,
+  tickStyle: null,
   label: ''
 }
 
 Axis.propTypes = {
   orient: PropTypes.string.isRequired,
   type: PropTypes.string.isRequired,
+  tickStyle: React.PropTypes.oneOfType([
+    React.PropTypes.func,
+    React.PropTypes.bool
+  ]),
   tickValues: React.PropTypes.oneOfType([
     React.PropTypes.array,
     React.PropTypes.bool
