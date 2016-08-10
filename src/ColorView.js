@@ -245,34 +245,10 @@ class ColorView extends React.Component {
       </g>
     )
   }
-
-  // gives text if loading data
-  renderLoadAnimation (props) {
-    let {chartWidth, chartHeight} = props
-    let xPos = Math.floor(chartWidth / 2)
-    let yPos = Math.floor(chartHeight / 2)
-    let messageText = 'Loading data...'
-    if (!props.loading) {
-      if (props.status === 'Failed to fetch') {
-        messageText = 'Can\'t connect to API URL'
-      } else if (props.status !== 'OK') {
-        messageText = 'Error retrieving data: ' + props.status
-      } else {
-        messageText = 'No data returned!'
-      }
-    }
-    return (
-      <g className='loading-message'>
-        <text x={xPos} y={yPos}>{messageText}</text>
-      </g>
-    )
-  }
-
   render () {
     let renderEl = null
     if (this.props.colorDomain.length <= 0) {
       console.log('no data')
-      renderEl = this.renderLoadAnimation(this.props)
     } else {
       renderEl = this.renderTopics(this.props)
     }
@@ -301,8 +277,7 @@ ColorView.propTypes = {
   chartHeight: PropTypes.number.isRequired,
   chartWidth: PropTypes.number.isRequired,
   xScale: PropTypes.any,
-  yScale: PropTypes.any,
-  status: PropTypes.string
+  yScale: PropTypes.any
 }
 
 export default ColorView

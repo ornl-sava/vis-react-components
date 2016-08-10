@@ -69,7 +69,7 @@ TopicsChart.defaultProps = {
   numTData: 7,
   maxTopics: maxNumTopics,
   colorDomain: [],
-  adjacencyList: {},
+  adjacencyList: [],
   tipFunction: () => null,
   data: [],
   ...Chart.defaultProps

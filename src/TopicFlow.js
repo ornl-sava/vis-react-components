@@ -66,29 +66,31 @@ class TopicFlow extends React.Component {
     this.barData = []
     this.topics = []
     this.barWidth = 0
-    this.bins = this.initTopics(props)
-  }
-  shouldComponentUpdate (nextProps, nextState) {
-    if (this.props.data.length <= 0) {
-      console.log('probNoDataWillRProps')
-      this.setState({dataUp: 1})
-    }
-    return true
-    // return nextProps.data.length !== this.props.data.length || nextProps.loading !== this.props.loading
+
+    this.initTopics(props)
   }
   componentWillReceiveProps (nextProps) {
-    this.bins = this.initTopics(nextProps)
+    console.log('TF-nextProps', nextProps)
+    this.initTopics(nextProps)
   }
   updateDomain (props) {
-    let xDomain = Object.keys(props.data)
+    let yDomain = []
+    props.timeBins.map((data, index) => {
+      if (data.topics.length > yDomain.length) {
+        yDomain = d3.range(0, data.topics.length, 1)
+      }
+    })
+    let xDomain = Object.keys(props.timeBins)
     this.xScale
       .domain(xDomain)
     this.yScale
-      .domain(d3.range(-1, props.maxTopics + 2, 1))
+      .domain(yDomain)
   }
   updateRange (props) {
     this.xScale
-      .range([0, props.chartHeight])
+      .range([0, props.chartWidth])
+      .paddingInner(props.outerPadding)
+      .paddingOuter(props.padding)
     this.yScale
       .range([0, props.chartHeight])
     this.prefScale.domain(props.colorDomain)
@@ -132,112 +134,116 @@ class TopicFlow extends React.Component {
 
   initTopics (props) {
     console.log('initTopics')
-    // XSCALE IS ORDINAL
-    this.xScale.range([0, props.chartWidth])
-    this.xScale.paddingInner(props.outerPadding)
-    this.xScale.paddingOuter(props.padding)
     let barWidth = this.xScale.bandwidth()
     this.barWidth = barWidth
     let barHeight = 20
+    let barBuff = barHeight / 2
     let barData = []
     let lineData = []
     // GETTING TOPIC BAR INFORMATION
-    let svgTopicBars = props.adjacencyList.map((dataArr, i) => {
-      if (dataArr.hour < props.numTData) {
-        let data = dataArr.events
-        if (data[0] == null) {
-          data[0] = 'EMPTY'
+    let svgTopicBars = props.timeBins.map((dataArr, i) => {
+      let y = 0
+      dataArr.topics.map((data, index) => {
+        let events = data.events
+        if (events[0] == null) {
+          events[0] = 'EMPTY'
         }
-        let posY = this.yScale(dataArr.topicID)
-        let posX = this.xScale(dataArr.hour)
+        y = (barHeight + barBuff) * index
+        let posX = this.xScale(i)
         let fontSize = 12
         // CLASSNAME NEEDS SIMPLE NAMES
-        let cName = data[0].toString().split(/:|-/, 1) + '-' + i.toString()
-        let topicColor = {stroke: this.prefScale(data[0].split(/:|-/, 1)[0])}
-        if (this.state.currentID === data[0]) {
-          cName += ' Selected'
-          topicColor = {stroke: '#e67300'}
-        }
+        let cName = events[0].toString().split(/:|-/, 1) + '-' + i.toString()
+        let topicColor = {stroke: this.prefScale(events[0].split(/:|-/, 1)[0])}
         // TRIMMING TEXT IF BEYOND BARS
-        let text = this.trimText(data[0], barWidth, fontSize)
+        let text = this.trimText(events[0], barWidth, fontSize)
         // SETTING TEXT STYLE
         let barTxtStyle = this.buildAText(fontSize.toString() + 'px', 'black')
-        let bar = this.buildABar(data, cName, text, barHeight, barWidth, posX, posY, topicColor, barTxtStyle)
-        bar.tooltipData = {label: bar.data[0], counts: bar.data.length, story: dataArr.story, topicID: dataArr.topicID, hour: dataArr.hour, prevStory: dataArr.prevStory, adjI: i}
+        let bar = this.buildABar(events, cName, text, barHeight, barWidth, posX, y, topicColor, barTxtStyle)
+        bar.tooltipData = {label: events[0], counts: events.length, story: dataArr.story, topicID: dataArr.topicID, hour: dataArr.hour, prevStory: dataArr.prevStory, adjI: i}
         barData.push(bar)
-      }
+        data.bar = bar
+      })
     })
     // console.log('TF-BarData', barData)
+    // console.log('TF-.bar', props.timeBins)
     // GETTING CONNECTING LINE INFORMATION (EDGES)
-    barData.map((data, index) => {
-      let story = data.tooltipData.prevStory
-      // let hour = data.tooltipData.hour
-      let dataMatch = []
-      // console.log('hour', hour, 'story', story, 'id', data.tooltipData.topicID)
-      if (story[0] != null) {
-        let arrIndex = []
-        story.map((s, i) => {
-          dataMatch = [{x: data.x, y: data.y + barHeight / 2}, {x: barData[s].x + barWidth, y: barData[s].y + barHeight / 2}]
-          if (this.props.lineType === 'curved') {
-            arrIndex = lineData.push(diagMaker(dataMatch))
-          } else { arrIndex = lineData.push(lineMaker(dataMatch)) }
-          data.tooltipData.lineIndex = arrIndex - 1
-        })
+    props.links.map((data, index) => {
+      let coor = [{x: data.source.bar.x + barWidth, y: data.source.bar.y + barHeight / 2}, {x: data.target.bar.x, y: data.target.bar.y + barHeight / 2}]
+      if (this.props.lineType === 'curved') {
+        lineData.push(diagMaker(coor))
+        data.lineData = diagMaker(coor)
+        data.source.line = diagMaker(coor)
+      } else {
+        lineData.push(lineMaker(coor))
+        data.lineData = lineMaker(coor)
+        data.source.line = diagMaker(coor)
       }
+      // data.source.bar.tooltipData.lineIndex = 0
     })
     // console.log('TF-lineData', lineData)
     this.barData = barData
     this.lineData = lineData
     return svgTopicBars
   }
-  renderTopics () {
+  renderTopics (props) {
+    // console.log('TF-rT', props.timeBins)
     let svgBins = []
-    for (let i = 0; i < this.barData.length; i++) {
-      let key = 'bar-' + i
-      let nData = []
-      if (this.state.selectedTopics[0] != null) {
-        // if (this.state.selectedTopics.toString() === this.barData[i].data[0].toString())
-        // console.log(this.state.selectedT)
-        if (this.state.selectedT.indexOf(i) >= 0) {
-          nData = JSON.parse(JSON.stringify(this.barData[i]))
-          nData.sel = true
-          nData.barStyle.stroke = '#00ccff'
-          nData.barStyle.strokeWidth = 8
-        }
-      }
-      let cData = (data) => {
-        let lineInfo = []
-        if (data.tooltipData.lineIndex != null) {
-          lineInfo = (
-            <path className={data.data[0] + ' lineMatch -' + i} d={this.lineData[data.tooltipData.lineIndex]} style={data.barStyle} ></path>
-          )
-        }
-        return (
-          <g className='bin' key={key}>
-            <TextBar {...data} onEnter={this.onEnter} onLeave={this.onLeave} onClick={this.onClick} />
-            {lineInfo}
-          </g>
+
+    let cData = (data, key) => {
+      let lineInfo = []
+      if (data.line != null) {
+        lineInfo = (
+          <path className={data.events[0] + ' lineMatch -' + key} d={data.line} style={data.bar.barStyle} ></path>
         )
       }
-      // IF TOPICS SELECTED BY LEGEND KEY
-      if (this.props.clickArray[this.barData[i].data[0].toString().split(/:|-/, 1)]) {
-        if (nData.sel) {
-          // PUSHES MOUSED OVER TOPICS TO THE FRONT
-          svgBins.push(cData(nData))
-        } else {
-          svgBins.unshift(cData(this.barData[i]))
-        }
-      } else {
-        // GREYS OUT TOPIC BARS NOT SELECTED BY LEGEND KEY
-        nData = JSON.parse(JSON.stringify(this.barData[i]))
-        nData.barStyle.stroke = '#e2e2eb'
-        nData.barStyle.strokeOpacity = 0.6
-        nData.textStyle.fill = '#e2e2eb'
-        nData.textStyle.fillOpacity = 0.6
-        // console.log('nData', nData)
-        svgBins.unshift(cData(nData))
-      }
+      return (
+        <g className='bin' key={key}>
+          <TextBar {...data.bar} onEnter={this.onEnter} onLeave={this.onLeave} onClick={this.onClick} />
+          {lineInfo}
+        </g>
+      )
     }
+
+    props.timeBins.map((data, index) => {
+      data.topics.map((d, i) => {
+        let nData = []
+        let key = 'bar-' + index + '-' + i
+        if (this.props.clickArray[d.events[0].toString().split(/:|-/, 1)]) {
+          if (nData.sel) {
+            // PUSHES MOUSED OVER TOPICS TO THE FRONT
+            // FIX!!!
+            svgBins.push(cData(nData, key))
+          } else {
+            svgBins.unshift(cData(d, key))
+          }
+        } else {
+          // GREYS OUT TOPIC BARS NOT SELECTED BY LEGEND KEY
+          nData = JSON.parse(JSON.stringify(d.bar[i]))
+          nData.barStyle.stroke = '#e2e2eb'
+          nData.barStyle.strokeOpacity = 0.6
+          nData.textStyle.fill = '#e2e2eb'
+          nData.textStyle.fillOpacity = 0.6
+          // console.log('nData', nData)
+          svgBins.unshift(cData(nData, key))
+        }
+      })
+    })
+      // for (let j = 0; j< this.barData.leng)
+      //
+      // let nData = []
+      // // LOOKING TO SEE IF NEED TO HIGHLIGHT
+      // if (this.state.selectedTopics[0] != null) {
+      //   // if (this.state.selectedTopics.toString() === this.barData[i].data[0].toString())
+      //   // console.log(this.state.selectedT)
+      //   if (this.state.selectedT.indexOf(i) >= 0) {
+      //     nData = JSON.parse(JSON.stringify(this.barData[i]))
+      //     nData.sel = true
+      //     nData.barStyle.stroke = '#00ccff'
+      //     nData.barStyle.strokeWidth = 8
+      //   }
+      // }
+
+      // IF TOPICS SELECTED BY LEGEND KEY
     return (
       <g>
         {svgBins}
@@ -256,11 +262,11 @@ class TopicFlow extends React.Component {
     if (this.state.move) {
       renderEl = this.moveTopics()
     } else {
-      if (this.props.data.length <= 0) {
+      if (this.props.timeBins.length <= 0) {
         console.log('probably no data')
         renderEl = <g></g>
       } else {
-        this.topics = this.renderTopics()
+        this.topics = this.renderTopics(this.props)
         renderEl = this.moveTopics()
       }
     }
@@ -297,9 +303,11 @@ TopicFlow.propTypes = {
   colorDomain: PropTypes.array,
   lineType: PropTypes.string.isRequired,
   clickArray: PropTypes.any.isRequired,
-  adjacencyList: PropTypes.array.isRequired,
+  adjacencyList: PropTypes.array,
   onEnter: PropTypes.func,
-  onLeave: PropTypes.func
+  onLeave: PropTypes.func,
+  timeBins: PropTypes.array,
+  links: PropTypes.array
 }
 
 export default TopicFlow
