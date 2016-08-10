@@ -63,6 +63,7 @@ class Axis extends React.Component {
     let tickValues = props.tickValues
     let tickPreformatValues = []
     let tickFormatter = null
+    let ordinalTickFormat = false
 
     if (props.scale.domain().length > 0 && props.scale.range().length > 0) {
       // Use custom tick count if it exist
@@ -86,6 +87,7 @@ class Axis extends React.Component {
             maxWidth = props.margin.right
           }
         }
+        ordinalTickFormat = true
         tickFormatter = (d) => {
           tickPreformatValues.push(d)
           return truncateLabel(d, maxWidth)
@@ -98,7 +100,7 @@ class Axis extends React.Component {
           tickPreformatValues.push(d)
           return props.tickFormat(d, i)
         }
-      } else {
+      } else if (!ordinalTickFormat) {
         tickFormatter = (d, i) => {
           // Default d3 method of formatting
           // Allows obtaining the real value for styling before it's formatted
