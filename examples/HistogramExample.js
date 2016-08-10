@@ -235,9 +235,6 @@ class HistogramExample extends React.Component {
               orient: 'bottom',
               innerPadding: 0.2,
               outerPadding: 0.4,
-              tickValues: stackedHistogramData[0].bins.map((d) => {
-                return d.x
-              }),
               tickStyle: (tick, d, i) => {
                 if (d === 'Bin 5') {
                   tick.style('fill', 'orange')

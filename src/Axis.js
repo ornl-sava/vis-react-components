@@ -61,6 +61,7 @@ class Axis extends React.Component {
 
     let tickCount = 0
     let tickValues = props.tickValues
+    let tickPreformatValues = []
     let tickFormatter = null
 
     if (props.scale.domain().length > 0 && props.scale.range().length > 0) {
@@ -86,6 +87,7 @@ class Axis extends React.Component {
           }
         }
         tickFormatter = (d) => {
+          tickPreformatValues.push(d)
           return truncateLabel(d, maxWidth)
         }
       }
@@ -93,7 +95,18 @@ class Axis extends React.Component {
       // Use custom tickFormatter if it exist
       if (props.tickFormat) {
         tickFormatter = (d, i) => {
+          tickPreformatValues.push(d)
           return props.tickFormat(d, i)
+        }
+      } else {
+        tickFormatter = (d, i) => {
+          // Default d3 method of formatting
+          // Allows obtaining the real value for styling before it's formatted
+          tickPreformatValues.push(d)
+          let tick = (typeof props.scale.tickFormat === 'function')
+            ? props.scale.tickFormat()(d)
+            : d
+          return tick
         }
       }
     }
@@ -106,14 +119,11 @@ class Axis extends React.Component {
       .ticks(tickCount)
     selection.call(this.axis)
 
-    // NOTE: Use of a custom tick style requires custom tickValues
-    // This is so meaningful data gets passed instead of truncated garbage
-    if (props.tickStyle && tickValues) {
+    if (props.tickStyle) {
       selection.selectAll('.tick text')
         .each(function (d, i) {
           let tick = select(this)
-          // console.log(this.axis.tickValues(), i)
-          props.tickStyle(tick, tickValues[i], i)
+          props.tickStyle(tick, tickPreformatValues[i], i)
         })
     }
   }
