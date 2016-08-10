@@ -172,31 +172,39 @@ class HybridScatterHeatmapChart extends React.Component {
 
   // This onClick is private to premade
   onColumnMarkerClick (event, data, index) {
-    let i = this.state.expandedSectionNumbers.indexOf(index)
-    let toExpand = null
-    if (i > -1) {
-      toExpand = this.state.expandedSectionNumbers
-      toExpand.splice(i, 1)
-    } else {
-      let chartWidth = this.refs.chart.chartWidth
-      let horzLength = this.props.data[0].bins.length
-
-      let originalBlockSize = chartWidth * (1 / horzLength)
-      let expandedBlockSize = originalBlockSize * this.state.rangeExpansionFactor
-      let pending = (this.state.expandedSectionNumbers.length + 1) * expandedBlockSize
-      if (pending >= chartWidth || this.state.expandedSectionNumbers.length + 1 === horzLength) {
-        toExpand = this.state.expandedSectionNumbers
-      } else {
-        toExpand = this.state.expandedSectionNumbers
-          .concat(index)
-          .sort((a, b) => {
-            return a - b
-          })
+    if (event.shiftKey) {
+      let heatmap = this.refs.heatmap
+      for (let i = 0; i < this.props.data.length; i++) {
+        let bin = heatmap.refs[i + '-' + index]
+        console.log(index, bin)
       }
+    } else {
+      let i = this.state.expandedSectionNumbers.indexOf(index)
+      let toExpand = null
+      if (i > -1) {
+        toExpand = this.state.expandedSectionNumbers
+        toExpand.splice(i, 1)
+      } else {
+        let chartWidth = this.refs.chart.chartWidth
+        let horzLength = this.props.data[0].bins.length
+
+        let originalBlockSize = chartWidth * (1 / horzLength)
+        let expandedBlockSize = originalBlockSize * this.state.rangeExpansionFactor
+        let pending = (this.state.expandedSectionNumbers.length + 1) * expandedBlockSize
+        if (pending >= chartWidth || this.state.expandedSectionNumbers.length + 1 === horzLength) {
+          toExpand = this.state.expandedSectionNumbers
+        } else {
+          toExpand = this.state.expandedSectionNumbers
+            .concat(index)
+            .sort((a, b) => {
+              return a - b
+            })
+        }
+      }
+      this.setState({
+        expandedSectionNumbers: toExpand
+      })
     }
-    this.setState({
-      expandedSectionNumbers: toExpand
-    })
   }
 
   onHeatmapClick (event, data, index) {
@@ -206,12 +214,14 @@ class HybridScatterHeatmapChart extends React.Component {
       : 0
     event.target.setAttribute('fill-opacity', fillOpacity)
 
+    // Add scatter data to map
     if (this.scatterMap.has(index)) {
       this.scatterMap.remove(index)
     } else {
       this.scatterMap.set(index, data.data)
     }
 
+    // Turn scatter map into array
     let scatterData = []
     this.scatterMap.each((v, k) => {
       for (let i = 0; i < v.length; i++) {
@@ -270,13 +280,13 @@ class HybridScatterHeatmapChart extends React.Component {
         <ColumnMarkers data={data} xAccessor={props.heatmapXAccessor}
           colorScale={this.heatmapColorScale} xScale={this.xScale} onClick={this.onColumnMarkerClick} />
 
-        <Heatmap className='heatmap' data={data}
+        <Heatmap ref='heatmap' className='heatmap' data={data}
           xScale={this.xScale} yScale={this.yScale} colorScale={this.heatmapColorScale}
           xAccessor={props.heatmapXAccessor} yAccessor={props.heatmapYAccessor}
           onEnter={this.onHeatmapEnter} onLeave={this.onHeatmapLeave} onClick={this.onHeatmapClick} />
 
-        <Scatterplot className='scatter' data={this.state.scatterData}
-          xScale={this.xScale} yScale={this.yScale} keyFunction={this.scatterKey}
+        <Scatterplot ref='scatter' className='scatter' data={this.state.scatterData} keyFunction={this.scatterKey}
+          xScale={this.xScale} yScale={this.yScale} colorScale={this.scatterColorScale}
           xAccessor={props.scatterXAccessor} yAccessor={props.scatterYAccessor}
           onEnter={this.onScatterplotEnter} onLeave={this.onScatterplotLeave} onClick={this.onScatterplotClick} />
 

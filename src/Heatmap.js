@@ -36,7 +36,8 @@ class Heatmap extends React.Component {
             let width = (j + 1 < d.bins.length) ? props.xScale(d.bins[j + 1][props.xAccessor.key]) : props.chartWidth
             width -= props.xScale(e[props.xAccessor.key])
             return (
-              <SVGComponent Component='rect' key={i + '-' + j}
+              <SVGComponent Component='rect'
+                key={i + '-' + j}
                 data={e}
                 index={i + '-' + j}
                 x={props.xScale(e[props.xAccessor.key])}

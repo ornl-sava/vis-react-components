@@ -45,13 +45,16 @@ for (let i = 1; i < 6; i++) {
   exampleData2.push(datum)
 }
 
-console.log(exampleData2)
-
 class ScatterHeatmapExample extends React.Component {
   constructor (props) {
     super(props)
+    this.state = {
+      now: now2,
+      data: exampleData2
+    }
 
     this.handleResize = debounce(this.handleResize.bind(this), 500)
+    this.shiftDataPoints = this.shiftDataPoints.bind(this)
   }
 
   handleResize () {
@@ -61,10 +64,41 @@ class ScatterHeatmapExample extends React.Component {
 
   componentWillUnmount () {
     window.removeEventListener('resize', this.handleResize, false)
+    this.update = null
+  }
+
+  shiftDataPoints () {
+    this.now = +new Date()
+    var endTime = this.now - 20 * 1000
+    var slice = (this.now - endTime) / 11
+    for (let i = 0; i < this.state.data.length; i++) {
+      for (let j = 0; j < this.state.data[i].bins.length; j++) {
+        this.state.data[i].bins[j].key = endTime + j * slice
+        for (let k = 0; k < this.state.data[i].bins[j].data.length; k++) {
+          this.state.data[i].bins[j].data[k].x += 10
+        }
+      }
+    }
+    return this.state.data
   }
 
   componentDidMount () {
     window.addEventListener('resize', this.handleResize, false)
+    this.update = () => {
+      setTimeout(() => {
+        if (this.update !== null) {
+          this.setState({
+            data: this.shiftDataPoints(),
+            now: this.now
+          }, () => {
+            if (this.update !== null) {
+              this.update()
+            }
+          })
+        }
+      }, 10)
+    }
+    // this.update()
   }
 
   render () {
@@ -86,9 +120,11 @@ class ScatterHeatmapExample extends React.Component {
           heatmapHorzDivisions={5}
           data={exampleData} />
         <HybridScatterHeatmapChart
-          startTime={now2}
+          className='Hybrid'
+          height={600}
+          startTime={this.state.now}
           timeWindow={20 * 1000}
-          data={exampleData2} />
+          data={this.state.data} />
       </div>
 
     )
