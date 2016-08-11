@@ -99,12 +99,10 @@ class ChoroplethChart extends React.Component {
     this.props.onEnter(event, data)
   }
 
-  onResize () {}
-
   render () {
     let props = this.props
     return (
-      <Chart ref='chart' {...spreadRelated(Chart, props)} resizeHandler={this.onResize}>
+      <Chart ref='chart' {...spreadRelated(Chart, props)}>
         <Choropleth className='circumshaker' {...spreadRelated(Choropleth, props)}
           onEnter={this.onEnter} onLeave={this.onLeave} onClick={this.onClick} onMove={this.onMove}
           unselectedColorScale={this.unselectedColorScale} selectedColorScale={this.selectedColorScale} />

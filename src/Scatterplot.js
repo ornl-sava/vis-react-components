@@ -81,6 +81,9 @@ Scatterplot.defaultProps = {
   onLeave: () => {}
 }
 
+// xScale tested to work with linear, log, pow, time, and ordinal point scales
+// yScale tested to work with linear, log, pow, time, and ordinal point scales
+// keyFunction returning unique data based ids is required for animations to work in an expected manner
 Scatterplot.propTypes = {
   chartHeight: PropTypes.number,
   chartWidth: PropTypes.number,

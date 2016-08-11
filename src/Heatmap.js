@@ -96,6 +96,8 @@ Heatmap.defaultProps = {
   onLeave: () => {}
 }
 
+// xScale tested to work with linear, log, pow, time, and ordinal band scales
+// yScale tested to work with linear, log, pow, time, and ordinal band scales
 Heatmap.propTypes = {
   colorScale: PropTypes.any,
   xAccessor: PropTypes.object,

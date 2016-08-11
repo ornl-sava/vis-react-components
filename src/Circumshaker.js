@@ -393,18 +393,17 @@ Circumshaker.defaultProps = {
   nodeMinSize: 8,
   nodeMaxSize: null,
   maxDepth: 3,
-  labelField: 'label',
   data: {},
   onClick: () => {},
   onEnter: () => {},
   onLeave: () => {}
 }
 
+// nodeMaxSize defaults to using largest fit possible space
 Circumshaker.propTypes = {
   nodeMinSize: PropTypes.number,
   nodeMaxSize: PropTypes.number,
   maxDepth: PropTypes.number,
-  labelField: PropTypes.string,
   chartHeight: PropTypes.number,
   chartWidth: PropTypes.number,
   className: PropTypes.string,
