@@ -97,23 +97,28 @@ class HeatmapChart extends React.Component {
 
   updateColorScales (props, state) {
     // Generate color scale
-    let yMax = max(props.data, (d, i) => {
-      return max(d.bins, (e, j) => e[props.xAccessor.value])
-    })
+    let colorDomain = []
+    let colorRange = []
 
-    let tempColorScale = setScale('linear')
-      .domain([0, yMax])
-      .range([props.minColor, props.maxColor])
-      .interpolate(interpolateHcl)
+    if (props.data.length > 0 && props.data[0].bins.length > 0) {
+      let yMax = max(props.data, (d, i) => {
+        return max(d.bins, (e, j) => e[props.xAccessor.value])
+      })
 
-    let colorDomain = [0, 1]
-    let colorRange = [props.minColor]
-    let colorDomainBand = yMax / (props.numColorCat - 1)
-    for (var i = 2; i < props.numColorCat + 1; i++) {
-      let value = colorDomain[i - 1] + colorDomainBand
-      if (i === 2) value--
-      colorDomain.push(value)
-      colorRange.push(tempColorScale(value))
+      let tempColorScale = setScale('linear')
+        .domain([0, yMax])
+        .range([props.minColor, props.maxColor])
+        .interpolate(interpolateHcl)
+
+      colorDomain = [0, 1]
+      colorRange = [props.minColor]
+      let colorDomainBand = yMax / (props.numColorCat - 1)
+      for (var i = 2; i < props.numColorCat + 1; i++) {
+        let value = colorDomain[i - 1] + colorDomainBand
+        if (i === 2) value--
+        colorDomain.push(value)
+        colorRange.push(tempColorScale(value))
+      }
     }
 
     this.colorScale
