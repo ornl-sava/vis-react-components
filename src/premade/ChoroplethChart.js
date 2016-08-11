@@ -18,7 +18,6 @@ class ChoroplethChart extends React.Component {
     this.onEnter = this.onEnter.bind(this)
     this.onLeave = this.onLeave.bind(this)
     this.onMove = this.onMove.bind(this)
-    this.onResize = this.onResize.bind(this)
 
     this.updateColorScales = this.updateColorScales.bind(this)
 
