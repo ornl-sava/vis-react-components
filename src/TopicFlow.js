@@ -98,6 +98,7 @@ class TopicFlow extends React.Component {
       }
     })
     let xDomain = Object.keys(props.timeBins)
+    console.log('TF-xDomain', xDomain)
     this.xScale
       .domain(xDomain)
     this.yScale
@@ -106,8 +107,8 @@ class TopicFlow extends React.Component {
   updateRange (props) {
     this.xScale
       .range([0, props.chartWidth])
-      .paddingInner(props.outerPadding)
-      .paddingOuter(props.padding)
+      .paddingInner(props.padding)
+      .paddingOuter(props.outerPadding)
     this.yScale
       .range([0, props.chartHeight])
     this.prefScale.domain(props.colorDomain)
@@ -246,26 +247,9 @@ class TopicFlow extends React.Component {
         }
       })
     })
-      // for (let j = 0; j< this.barData.leng)
-      //
-      // let nData = []
-      // // LOOKING TO SEE IF NEED TO HIGHLIGHT
-      // if (this.state.selectedTopics[0] != null) {
-      //   // if (this.state.selectedTopics.toString() === this.barData[i].data[0].toString())
-      //   // console.log(this.state.selectedT)
-      //   if (this.state.selectedT.indexOf(i) >= 0) {
-      //     nData = JSON.parse(JSON.stringify(this.barData[i]))
-      //     nData.sel = true
-      //     nData.barStyle.stroke = '#00ccff'
-      //     nData.barStyle.strokeWidth = 8
-      //   }
-      // }
-
-      // IF TOPICS SELECTED BY LEGEND KEY
     return (
       <g ref='svgBins' >
         {svgBins}
-        <button>Filter</button>
       </g>
     )
   }
@@ -285,14 +269,13 @@ class TopicFlow extends React.Component {
 TopicFlow.defaultProps = {
   data: [],
   padding: 0.4,
-  outerPadding: 0.4,
+  outerPadding: 0.1,
   chartHeight: 0,
   chartWidth: 0,
   barHeight: 20,
   maxTopics: 60,
   lineType: 'curved',
   clickArray: [],
-  adjacencyList: [],
   onEnter: () => {},
   onLeave: () => {}
 }
@@ -311,7 +294,6 @@ TopicFlow.propTypes = {
   colorDomain: PropTypes.array,
   lineType: PropTypes.string.isRequired,
   clickArray: PropTypes.any.isRequired,
-  adjacencyList: PropTypes.array,
   onEnter: PropTypes.func,
   onLeave: PropTypes.func,
   timeBins: PropTypes.array,

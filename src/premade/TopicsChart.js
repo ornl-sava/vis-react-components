@@ -71,14 +71,14 @@ class TopicsChart extends React.Component {
     return (
       <div className='row' >
         <text className='top'></text>
-        <Chart className='col-md-2' ref='updateChart2'
+        <Chart className='colorView col-md-2' ref='updateChart2'
           {...spreadRelated(Chart, props)}
           yAxis={false} xAxis={false} xScaleType='linear' height={600}>
           <ColorView {...props} clickArray={this.state.clickArray} ref='colorView' onBarClick={this.onGroupClick} />
         </Chart>
-        <Chart className='col-md-10' ref='updateChart'
+        <Chart className='topicFlow col-md-10' ref='updateChart'
           {...spreadRelated(Chart, props)}
-          yAxis={false} xAxis={false} xScaleType='linear' height={hTop}>
+          yAxis={false} xAxis={false} xScaleType='linear' height={hTop} margin={{top: 20, right: 20, bottom: 10, left: 20}} >
           <TopicFlow {...props} clickArray={this.state.clickArray} onEnter={this.onBarEnter} onLeave={this.onBarLeave} />
         </Chart>
         <text className='bottom'></text>
@@ -92,7 +92,6 @@ TopicsChart.defaultProps = {
   numTData: 7,
   maxTopics: maxNumTopics,
   colorDomain: [],
-  adjacencyList: [],
   tipFunction: () => null,
   data: [],
   ...Chart.defaultProps
@@ -102,7 +101,6 @@ TopicsChart.propTypes = {
   maxTopics: PropTypes.number,
   url: PropTypes.string,
   colorDomain: PropTypes.array,
-  adjacencyList: PropTypes.array,
   tipFunction: PropTypes.func,
   data: PropTypes.array,
   ...Chart.propTypes

@@ -42,6 +42,7 @@ class TextBar extends React.Component {
   shouldComponentUpdate (nextProps, nextState) {
     // if I put the styleChange check back in, things bog down....
     let styleChange = nextProps.barStyle !== this.props.barStyle
+    // console.log('TB', styleChange)
     let selected = nextProps.sel
     /* if (this.props.text.indexOf('IC') >= 0) {
       console.log('next', nextProps.barStyle)
