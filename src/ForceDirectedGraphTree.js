@@ -211,8 +211,8 @@ class ForceDirectedGraph extends React.Component {
         'cx': d.x,
         'cy': d.y,
         'fill': this.colScale(d.data.hour),
-        'events': d.events,
-        'hour': d.hour
+        'data-events': d.events,
+        'data-hour': d.hour
       }
       let key = d.key
       if (key == null) { key = 'root' }

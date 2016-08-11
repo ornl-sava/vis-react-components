@@ -66,8 +66,16 @@ class TopicsChart extends React.Component {
   componentWillReceiveProps (nextProps) {
     return true
   }
+  sort (props) {
+    props.timeBins.map((data, index) => {
+      data.topics.sort((a, b) => {
+        return b[props.sortAccessor] - a[props.sortAccessor]
+      })
+    })
+  }
   render () {
     let props = this.props
+    this.sort(props)
     return (
       <div className='row' >
         <text className='top'></text>
@@ -94,6 +102,9 @@ TopicsChart.defaultProps = {
   colorDomain: [],
   tipFunction: () => null,
   data: [],
+  topicBins: [],
+  sortAccessor: 'avg_composite_score',
+  sortType: 'ascending',
   ...Chart.defaultProps
 }
 TopicsChart.propTypes = {
@@ -103,6 +114,9 @@ TopicsChart.propTypes = {
   colorDomain: PropTypes.array,
   tipFunction: PropTypes.func,
   data: PropTypes.array,
+  topicBins: PropTypes.array,
+  sortAccessor: PropTypes.string,
+  sortType: PropTypes.string,
   ...Chart.propTypes
 }
 
