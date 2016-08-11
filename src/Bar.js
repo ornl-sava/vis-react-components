@@ -16,7 +16,7 @@ class Bar extends React.Component {
   }
   _onClick (event) {
     if (this.props.brushed) return
-    if (this.props.tooltipData) {
+    if (this.props.tooltipData && this.props.data.y !== 0) {
       this.props.onClick(event, this.props.tooltipData)
     }
   }

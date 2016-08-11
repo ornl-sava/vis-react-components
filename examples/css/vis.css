@@ -565,3 +565,25 @@ button.disabled {
 	stroke: #2c7fb8;
 	stroke-width: 2px;
 }
+
+.Hybrid .columnMarker {
+	stroke: #fff;
+	cursor: cell;
+}
+
+.Hybrid rect {
+	stroke: #fff;
+}
+
+.Hybrid circle {
+	shape-rendering: geometricPrecision;
+}
+
+.Hybrid circle:hover {
+	stroke: #676;
+	stroke-width: 2px;
+}
+
+rect {
+	shape-rendering: crispEdges;
+}

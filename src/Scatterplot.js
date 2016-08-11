@@ -1,6 +1,5 @@
 import React, { PropTypes } from 'react'
 import ReactTransitionGroup from 'react-addons-transition-group'
-import { interpolate } from 'd3'
 
 import { setEase } from './util/d3'
 import SVGComponent from './SVGComponent'
@@ -34,23 +33,11 @@ class Scatterplot extends React.Component {
             <SVGComponent Component='circle' key={keyFunction(d, i)}
               data={d}
               index={i}
-              onEnter={{
-                func: (transition, props) => {
-                  transition
-                    .delay(0)
-                    .duration(750)
-                    .ease(setEase('linear'))
-                    .attrTween('r', () => {
-                      return interpolate(0, props.r)
-                    })
-                  return transition
-                }
-              }}
               onUpdate={{
                 func: (transition, props) => {
                   transition
                     .delay(0)
-                    .duration(750)
+                    .duration(500)
                     .ease(setEase('linear'))
                     .attr('r', props.r)
                     .attr('cx', props.cx)
@@ -62,7 +49,7 @@ class Scatterplot extends React.Component {
                 func: (transition, props) => {
                   transition
                     .delay(0)
-                    .duration(750)
+                    .duration(500)
                     .ease(setEase('linear'))
                     .attr('r', 0)
                   return transition
@@ -71,6 +58,7 @@ class Scatterplot extends React.Component {
               r={props.radius}
               cx={props.xScale(d[props.xAccessor])}
               cy={props.yScale(d[props.yAccessor])}
+              fill={props.colorScale(d[props.colorAccessor])}
               onMouseEnter={this.onEnter}
               onMouseLeave={this.onLeave}
               onClick={this.onClick} />
@@ -84,6 +72,8 @@ class Scatterplot extends React.Component {
 Scatterplot.defaultProps = {
   xAccessor: 'x',
   yAccessor: 'y',
+  colorAccessor: 'y',
+  colorScale: () => '',
   keyFunction: (d, i) => i,
   radius: 5,
   onClick: () => {},
@@ -91,6 +81,9 @@ Scatterplot.defaultProps = {
   onLeave: () => {}
 }
 
+// xScale tested to work with linear, log, pow, time, and ordinal point scales
+// yScale tested to work with linear, log, pow, time, and ordinal point scales
+// keyFunction returning unique data based ids is required for animations to work in an expected manner
 Scatterplot.propTypes = {
   chartHeight: PropTypes.number,
   chartWidth: PropTypes.number,
@@ -98,6 +91,8 @@ Scatterplot.propTypes = {
   radius: PropTypes.number,
   xAccessor: PropTypes.string,
   yAccessor: PropTypes.string,
+  colorScale: PropTypes.any,
+  colorAccessor: PropTypes.string,
   keyFunction: PropTypes.func,
   xScale: PropTypes.any,
   yScale: PropTypes.any,

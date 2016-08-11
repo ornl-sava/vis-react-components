@@ -36,9 +36,10 @@ class Heatmap extends React.Component {
             let width = (j + 1 < d.bins.length) ? props.xScale(d.bins[j + 1][props.xAccessor.key]) : props.chartWidth
             width -= props.xScale(e[props.xAccessor.key])
             return (
-              <SVGComponent Component='rect' key={i + '-' + j}
-                data={d}
-                index={i * d.bins.length + j}
+              <SVGComponent Component='rect'
+                key={i + '-' + j}
+                data={e}
+                index={i + '-' + j}
                 x={props.xScale(e[props.xAccessor.key])}
                 y={props.yScale(d[props.yAccessor.key])}
                 width={width}
@@ -48,10 +49,10 @@ class Heatmap extends React.Component {
                   func: (transition, props) => {
                     transition
                       .delay(0)
-                      .duration(1000)
+                      .duration(500)
                       .ease(setEase('linear'))
                       .attrTween('fill', () => {
-                        return interpolate(this.props.minColor, props.fill)
+                        return interpolate(this.props.colorScale.range()[0], props.fill)
                       })
                     return transition
                   }
@@ -60,7 +61,7 @@ class Heatmap extends React.Component {
                   func: (transition, props) => {
                     transition
                       .delay(0)
-                      .duration(1000)
+                      .duration(500)
                       .ease(setEase('linear'))
                       .attr('x', props.x)
                       .attr('y', props.y)
@@ -82,11 +83,6 @@ class Heatmap extends React.Component {
 }
 
 Heatmap.defaultProps = {
-  minColor: '#eff3ff',
-  maxColor: '#2171b5',
-  numColorCat: 11,
-  colorPerRow: true,
-  labelField: 'label',
   xAccessor: {
     key: 'key',
     value: 'value'
@@ -100,12 +96,10 @@ Heatmap.defaultProps = {
   onLeave: () => {}
 }
 
+// xScale tested to work with linear, log, pow, time, and ordinal band scales
+// yScale tested to work with linear, log, pow, time, and ordinal band scales
 Heatmap.propTypes = {
-  minColor: PropTypes.string,
-  maxColor: PropTypes.string,
-  numColorCat: PropTypes.number,
-  colorPerRow: PropTypes.bool,
-  labelField: PropTypes.string,
+  colorScale: PropTypes.any,
   xAccessor: PropTypes.object,
   yAccessor: PropTypes.object,
   chartHeight: PropTypes.number,

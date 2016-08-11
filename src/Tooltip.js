@@ -22,9 +22,9 @@ export default class Tooltip {
     document.body.removeChild(this.tooltip)
   }
 
-  show (event, data) {
+  show (event, ...args) {
     this.tooltip.className = this._baseClass
-    this.tooltip.innerHTML = this._html(data)
+    this.tooltip.innerHTML = this._html(...args)
     this.tooltip.style.display = 'block'
     let bbox = this.getScreenBBox(event)
     let direction = this._direction
