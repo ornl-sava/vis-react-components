@@ -18,7 +18,7 @@ var exampleData2 = []
 var now2 = +new Date()
 var endTime2 = now2 - 20 * 1000
 var slice = (now2 - endTime2) / 11
-for (let i = 1; i < 6; i++) {
+for (let i = 1; i < 10; i++) {
   let datum = {}
   datum.key = i
   datum.value = 0
@@ -30,7 +30,8 @@ for (let i = 1; i < 6; i++) {
     for (let k = 0; k < value; k++) {
       let point = {
         x: (endTime2 + (j - 1) * slice) + Math.floor(Math.random() * slice),
-        y: (i - 1) + Math.random() * 1
+        y: (i - 1) + Math.random() * 1,
+        id: i + '-' + j + '-' + k
       }
       data.push(point)
     }
@@ -54,7 +55,10 @@ class ScatterHeatmapExample extends React.Component {
     }
 
     this.handleResize = debounce(this.handleResize.bind(this), 500)
-    this.shiftDataPoints = this.shiftDataPoints.bind(this)
+
+    this.scatterKeyFunction = (d, i) => {
+      return d.id
+    }
   }
 
   handleResize () {
@@ -64,41 +68,10 @@ class ScatterHeatmapExample extends React.Component {
 
   componentWillUnmount () {
     window.removeEventListener('resize', this.handleResize, false)
-    this.update = null
-  }
-
-  shiftDataPoints () {
-    this.now = +new Date()
-    var endTime = this.now - 20 * 1000
-    var slice = (this.now - endTime) / 11
-    for (let i = 0; i < this.state.data.length; i++) {
-      for (let j = 0; j < this.state.data[i].bins.length; j++) {
-        this.state.data[i].bins[j].key = endTime + j * slice
-        for (let k = 0; k < this.state.data[i].bins[j].data.length; k++) {
-          this.state.data[i].bins[j].data[k].x += 10
-        }
-      }
-    }
-    return this.state.data
   }
 
   componentDidMount () {
     window.addEventListener('resize', this.handleResize, false)
-    this.update = () => {
-      setTimeout(() => {
-        if (this.update !== null) {
-          this.setState({
-            data: this.shiftDataPoints(),
-            now: this.now
-          }, () => {
-            if (this.update !== null) {
-              this.update()
-            }
-          })
-        }
-      }, 10)
-    }
-    // this.update()
   }
 
   render () {
@@ -124,6 +97,7 @@ class ScatterHeatmapExample extends React.Component {
           height={600}
           startTime={this.state.now}
           timeWindow={20 * 1000}
+          scatterKeyFunction={this.scatterKeyFunction}
           data={this.state.data} />
       </div>
 
