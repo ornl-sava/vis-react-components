@@ -23,18 +23,35 @@ const diagMaker = (d) => {
 
 class TopicFlow extends React.Component {
   // grabbing onEnter and Leave functions from chart and making new set of rules
-  _onEnter (toolTipData, svgElement) {
-    this.props.onEnter(toolTipData, svgElement)
-    this.setState({selectedTopics: toolTipData.label, move: false, selectedT: toolTipData.story.concat(toolTipData.adjI)})
+  _onEnter (event, data) {
+    this.props.onEnter(event, data)
+    data.bar._barStyle = data.bar.barStyle
+    data.bar.barStyle = {stroke: '#00ccff'}
+    data.bar.className = data.bar.className + ' selected '
+    data.story.map((d, i) => {
+      d.bar._barStyle = d.bar.barStyle
+      d.bar.barStyle = {stroke: '#00ccff'}
+      d.bar.className = d.bar.className + ' selected '
+    })
+    this.forceUpdate()
+    // this.setState({selectedTopics: toolTipData.label, selectedT: toolTipData.story.concat(toolTipData.adjI)})
   }
-  _onLeave (toolTipData, svgElement) {
-    this.props.onLeave(toolTipData, svgElement)
-    this.setState({selectedTopics: [], move: false, selectedT: []})
+  _onLeave (event, data) {
+    this.props.onLeave(event, data)
+    data.bar.barStyle = data.bar._barStyle
+    data.bar.className = data.bar.className.replace('selected ', '')
+    data.story.map((d, i) => {
+      d.bar.barStyle = d.bar._barStyle
+      d.bar.className = d.bar.className.replace('selected ', '')
+    })
+    this.forceUpdate()
+    // this.setState({selectedTopics: [], selectedT: []})
   }
   _onClick () {
     console.log('moving')
     // this.moveTopics()
-    this.setState({moveX: this.state.moveX - 50, move: true})
+    this.moveX += 50
+    this.refs.svgBins.style.transform = 'translate(' + this.moveX + ',' + 0 + ')'
   }
   _onBarClick (tooltipData) {
   }
@@ -44,9 +61,7 @@ class TopicFlow extends React.Component {
       dataUp: false,
       currentID: [],
       selectedTopics: [],
-      selectedT: [],
-      moveX: 0,
-      move: false
+      selectedT: []
     }
     this.xScale = setScale('ordinalBand')
     this.yScale = setScale('ordinalBand')
@@ -66,6 +81,8 @@ class TopicFlow extends React.Component {
     this.barData = []
     this.topics = []
     this.barWidth = 0
+
+    this.moveX = 0
 
     this.initTopics(props)
   }
@@ -95,9 +112,9 @@ class TopicFlow extends React.Component {
       .range([0, props.chartHeight])
     this.prefScale.domain(props.colorDomain)
   }
-  buildABar (bin, name, text, height, width, x, y, barStyle, txtStyle) {
+  buildABar (bin, cName, text, height, width, x, y, barStyle, txtStyle, id) {
     return {
-      className: name,
+      className: cName,
       text: text,
       height: height,
       data: bin,
@@ -107,7 +124,8 @@ class TopicFlow extends React.Component {
       x: x,
       y: y,
       barStyle: barStyle,
-      textStyle: txtStyle
+      textStyle: txtStyle,
+      'data-id': id
     }
   }
 
@@ -153,13 +171,13 @@ class TopicFlow extends React.Component {
         let fontSize = 12
         // CLASSNAME NEEDS SIMPLE NAMES
         let cName = events[0].toString().split(/:|-/, 1) + '-' + i.toString()
-        let topicColor = {stroke: this.prefScale(events[0].split(/:|-/, 1)[0])}
+        let barStyle = {stroke: this.prefScale(events[0].split(/:|-/, 1)[0])}
         // TRIMMING TEXT IF BEYOND BARS
         let text = this.trimText(events[0], barWidth, fontSize)
         // SETTING TEXT STYLE
         let barTxtStyle = this.buildAText(fontSize.toString() + 'px', 'black')
-        let bar = this.buildABar(events, cName, text, barHeight, barWidth, posX, y, topicColor, barTxtStyle)
-        bar.tooltipData = {label: events[0], counts: events.length, story: dataArr.story, topicID: dataArr.topicID, hour: dataArr.hour, prevStory: dataArr.prevStory, adjI: i}
+        let bar = this.buildABar(data, cName, text, barHeight, barWidth, posX, y, barStyle, barTxtStyle, [i, index])
+        // bar.tooltipData = {label: events[0], counts: events.length, story: dataArr.story, topicID: dataArr.topicID, hour: dataArr.hour, prevStory: dataArr.prevStory, adjI: i}
         barData.push(bar)
         data.bar = bar
       })
@@ -193,7 +211,7 @@ class TopicFlow extends React.Component {
       let lineInfo = []
       if (data.line != null) {
         lineInfo = (
-          <path className={data.events[0] + ' lineMatch -' + key} d={data.line} style={data.bar.barStyle} ></path>
+          <path className={'lineMatch ' + data.bar.className + ' barTopic'} d={data.line} style={data.bar.barStyle} ></path>
         )
       }
       return (
@@ -245,30 +263,20 @@ class TopicFlow extends React.Component {
 
       // IF TOPICS SELECTED BY LEGEND KEY
     return (
-      <g>
+      <g ref='svgBins' >
         {svgBins}
-      </g>
-    )
-  }
-  moveTopics () {
-    return (
-      <g className='topicFlow' transform={'translate(' + this.state.moveX + ',' + 0 + ')'} >
-        {this.topics}
+        <button>Filter</button>
       </g>
     )
   }
   render () {
     let renderEl = null
-    if (this.state.move) {
-      renderEl = this.moveTopics()
+    if (this.props.timeBins.length <= 0) {
+      console.log('probably no data')
+      renderEl = <g></g>
     } else {
-      if (this.props.timeBins.length <= 0) {
-        console.log('probably no data')
-        renderEl = <g></g>
-      } else {
-        this.topics = this.renderTopics(this.props)
-        renderEl = this.moveTopics()
-      }
+      renderEl = this.topics = this.renderTopics(this.props)
+      // renderEl = this.moveTopics()
     }
     return renderEl
   }

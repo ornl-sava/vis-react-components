@@ -1,5 +1,4 @@
 import React from 'react'
-import { format } from 'd3'
 import { Link } from 'react-router'
 
 import TopicsChart from '../src/premade/TopicsChart'
@@ -12,14 +11,14 @@ import topics from '../examples/data/topic-lane-sample/topics-sample.json'
 import lanes from '../examples/data/topic-lane-sample/sets-sample.json'
 
 // DISPLAYS INFO OF SVG OBJECT THAT MOUSE IS ON
-const toolTipFunction = (tooltipData) => {
-  let d = tooltipData
-  var toolTip =
-    '<span class="title">' + d.label + '</span>' +
-    '</span>Number of Topics: ' + format(',')(d.counts) +
-    '<br /><small>'
-  return toolTip
-}
+// const toolTipFunction = (data) => {
+//   console.log('toolTipFunction')
+//   var toolTip =
+//     '<span class="title">TopicID: ' + data.topicID + '</span>' +
+//     '</span>Number of Common Events: ' + format(',')(data.events.length) +
+//     '<br /><small>'
+//   return toolTip
+// }
 
 // const nData = 7
 // console.log('fake', fakePrefixes, fakeData(nData))
@@ -59,7 +58,7 @@ class TopicsContainer extends React.Component {
       data: topics
     }
     this.chartProps = {
-      tipFunction: toolTipFunction,
+      // tipFunction: toolTipFunction,
       links: [],
       timeBins: [],
       colorDomain: prefixes,
@@ -76,6 +75,7 @@ class TopicsContainer extends React.Component {
   }
 
   refineData (props) {
+    this.story = []
     let link = []
     let story = []
     let nodes = []
@@ -96,7 +96,7 @@ class TopicsContainer extends React.Component {
         }
         tConnect.push(nodes.length)
         story.push(tConnect)
-        nodes.push(Object.assign({}, d, {topicID: data._id, events: data._source.common_events}))
+        nodes.push(Object.assign({}, d, {topicID: data._id, events: data._source.common_events, story: [], fullStory: []}))
       })
     })
     this.links = link.map((data, index) => {
@@ -107,17 +107,38 @@ class TopicsContainer extends React.Component {
     // console.log('TE-nodes', nodes)
     nodes.map((data, index) => {
       let i = (new Date(data.start) - this.initStart) / this.timeUnit
+      // let nStory = []
+      for (let j = 0; j < story[index].length; j++) {
+        let d = story[index][j]
+        if (d !== index) {
+          data.story.push(nodes[d])
+          data.fullStory.push(nodes[d])
+        }
+      }
       timeBins[i].topics.push(data)
     })
     this.timeBins = timeBins
     console.log('timeBins', this.timeBins)
   }
   getData (chartProps) {
+    // CHECK TO SEE IF NUMBER OF TIMESTEPS EXCEEDS DATA
     if (chartProps.numTData > this.timeBins.length) { chartProps.numTData = this.timeBins.length }
+    // REMOVES OUT OF RANGE BINS
     let timeStop = this.initStart.getTime() + (chartProps.numTData - 1) * this.timeUnit
     chartProps.timeBins = this.timeBins.filter((d, i) => {
       return i < chartProps.numTData
     })
+    // REMOVING THE STORY OF NODES THAT DO NOT FIT TIME STEP RANGE
+    // MIGHT BE A BETTER WAY...
+    chartProps.timeBins.map((d, i) => {
+      d.topics.map((data, index) => {
+        // console.log('tD', d)
+        data.story = data.fullStory.filter((da) => {
+          return new Date(da.start).getTime() <= timeStop
+        })
+      })
+    })
+    console.log('chatime', chartProps.timeBins[0], '-', this.timeBins[0])
     chartProps.links = this.links.filter((d, i) => {
       return (new Date(d.source.start).getTime() && new Date(d.target.start).getTime()) <= timeStop
     })

@@ -1,19 +1,13 @@
 import React, { PropTypes } from 'react'
-import ReactDom from 'react-dom'
+// import ReactDom from 'react-dom'
 // import Bar from './Bar'
 
 class TextBar extends React.Component {
-  _onMouseEnter () {
-    if (this.props.tooltipData) {
-      let thisNode = ReactDom.findDOMNode(this)
-      this.props.onEnter(this.props.tooltipData, thisNode)
-    }
+  _onMouseEnter (event) {
+    this.props.onEnter(event, this.props.data)
   }
-  _onMouseLeave () {
-    if (this.props.tooltipData) {
-      let thisNode = ReactDom.findDOMNode(this)
-      this.props.onLeave(this.props.tooltipData, thisNode)
-    }
+  _onMouseLeave (event) {
+    this.props.onLeave(event, this.props.data)
   }
   _onClick () {
     // console.log('toolTip', this.props.tooltipData)
