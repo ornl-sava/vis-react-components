@@ -42,7 +42,9 @@ class HistogramChart extends React.Component {
   }
 
   componentWillUnmount () {
-    this.tip.destroy()
+    if (this.props.tipFunction) {
+      this.tip.destroy()
+    }
   }
 
   sortData (data, props, state) {

@@ -11,7 +11,6 @@ class CircumshakerChart extends React.Component {
     this.onClick = this.onClick.bind(this)
     this.onEnter = this.onEnter.bind(this)
     this.onLeave = this.onLeave.bind(this)
-    this.onResize = this.onResize.bind(this)
 
     this.tip = props.tipFunction
       ? new Tooltip().attr('className', 'd3-tip').html(props.tipFunction)
@@ -19,7 +18,9 @@ class CircumshakerChart extends React.Component {
   }
 
   componentWillUnmount () {
-    this.tip.destroy()
+    if (this.props.tipFunction) {
+      this.tip.destroy()
+    }
   }
 
   onClick (event, data) {
@@ -40,12 +41,10 @@ class CircumshakerChart extends React.Component {
     this.props.onLeave(event, data)
   }
 
-  onResize () {}
-
   render () {
     let props = this.props
     return (
-      <Chart ref='chart' {...spreadRelated(Chart, props)} resizeHandler={this.onResize}>
+      <Chart ref='chart' {...spreadRelated(Chart, props)}>
         <Circumshaker className='circumshaker' {...spreadRelated(Circumshaker, props)}
           onEnter={this.onEnter} onLeave={this.onLeave} onClick={this.onClick}
           unselectedColorScale={this.unselectedColorScale} selectedColorScale={this.selectedColorScale} />
@@ -59,7 +58,7 @@ CircumshakerChart.defaultProps = {
   data: [],
   // Spread chart default
   ...Chart.defaultProps,
-  // Spread heatmap default
+  // Spread circumshaker default
   ...Circumshaker.defaultProps
 }
 

@@ -61,7 +61,9 @@ class Axis extends React.Component {
 
     let tickCount = 0
     let tickValues = props.tickValues
+    let tickPreformatValues = []
     let tickFormatter = null
+    let ordinalTickFormat = false
 
     if (props.scale.domain().length > 0 && props.scale.range().length > 0) {
       // Use custom tick count if it exist
@@ -85,7 +87,9 @@ class Axis extends React.Component {
             maxWidth = props.margin.right
           }
         }
+        ordinalTickFormat = true
         tickFormatter = (d) => {
+          tickPreformatValues.push(d)
           return truncateLabel(d, maxWidth)
         }
       }
@@ -93,19 +97,37 @@ class Axis extends React.Component {
       // Use custom tickFormatter if it exist
       if (props.tickFormat) {
         tickFormatter = (d, i) => {
+          tickPreformatValues.push(d)
           return props.tickFormat(d, i)
+        }
+      } else if (!ordinalTickFormat) {
+        tickFormatter = (d, i) => {
+          // Default d3 method of formatting
+          // Allows obtaining the real value for styling before it's formatted
+          tickPreformatValues.push(d)
+          let tick = (typeof props.scale.tickFormat === 'function')
+            ? props.scale.tickFormat()(d)
+            : d
+          return tick
         }
       }
     }
     // Commenting this out doesn't appear to cause any problems
     // it also seems to improve the re-rendering performance a bit.
     // this.setAxis(props)
-
     this.axis
       .tickFormat(tickFormatter)
       .tickValues(tickValues)
       .ticks(tickCount)
     selection.call(this.axis)
+
+    if (props.tickStyle) {
+      selection.selectAll('.tick text')
+        .each(function (d, i) {
+          let tick = select(this)
+          props.tickStyle(tick, tickPreformatValues[i], i)
+        })
+    }
   }
 
   render () {
@@ -133,14 +155,19 @@ Axis.defaultProps = {
   type: 'x',
   orient: 'left',
   tickValues: null,
-  tickCount: false,
-  tickFormat: false,
+  tickCount: null,
+  tickFormat: null,
+  tickStyle: null,
   label: ''
 }
 
 Axis.propTypes = {
   orient: PropTypes.string.isRequired,
   type: PropTypes.string.isRequired,
+  tickStyle: React.PropTypes.oneOfType([
+    React.PropTypes.func,
+    React.PropTypes.bool
+  ]),
   tickValues: React.PropTypes.oneOfType([
     React.PropTypes.array,
     React.PropTypes.bool

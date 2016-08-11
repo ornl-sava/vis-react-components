@@ -234,7 +234,12 @@ class HistogramExample extends React.Component {
               type: 'x',
               orient: 'bottom',
               innerPadding: 0.2,
-              outerPadding: 0.4
+              outerPadding: 0.4,
+              tickStyle: (tick, d, i) => {
+                if (d === 'Bin 5') {
+                  tick.style('fill', 'orange')
+                }
+              }
             }}
             data={stackedHistogramData} tipFunction={toolTipFunction}
             type='stacked' addOverlay

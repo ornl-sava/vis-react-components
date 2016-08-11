@@ -6,9 +6,8 @@ import { HeatmapChart } from '../src'
 
 import { randomHeatmapData, ordinalLinearHeatmapData, linearTemporalHeatmapData, ordinalOrdinalHeatmapData, linearOrdinalHeatmapData } from './data/exampleData'
 
-const toolTipFunction1 = (d) => {
+const toolTipFunction1 = (d, index) => {
   let toolTip = '<span> No Data </span>'
-
   if (d.value > 0) {
     toolTip =
       '<span class="title">' + d.key + '</span>' +
@@ -18,7 +17,7 @@ const toolTipFunction1 = (d) => {
   return toolTip
 }
 
-const toolTipFunction2 = (d) => {
+const toolTipFunction2 = (d, index) => {
   let toolTip = '<span> No Data </span>'
   if (d.value > 0) {
     toolTip =

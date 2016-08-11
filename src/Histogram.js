@@ -143,7 +143,7 @@ class Histogram extends React.Component {
               func: (transition, props) => {
                 transition
                   .delay(0)
-                  .duration(750)
+                  .duration(500)
                   .ease(setEase('linear'))
                   .attr('height', props.height)
                   .attr('width', props.width)
@@ -209,6 +209,9 @@ Histogram.defaultProps = {
   onLeave: () => {}
 }
 
+// xScale tested to work with linear, time, and ordinal band scales
+// yScale tested to work with continous linear, log, and power scales
+// type 'stacked' does not work with tested log or power scales
 Histogram.propTypes = {
   addOverlay: PropTypes.bool,
   brushed: PropTypes.bool,

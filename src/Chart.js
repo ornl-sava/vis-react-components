@@ -39,7 +39,6 @@ class Chart extends React.Component {
   renderChildren () {
     return Children.map(this.props.children, (e, i) => {
       return cloneElement(e, {
-        ref: 'child-' + i,
         margin: this.props.margin,
         chartWidth: this.chartWidth,
         chartHeight: this.chartHeight

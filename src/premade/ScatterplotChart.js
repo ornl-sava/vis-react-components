@@ -37,7 +37,9 @@ class ScatterplotChart extends React.Component {
   }
 
   componentWillUnmount () {
-    this.tip.destroy()
+    if (this.props.tipFunction) {
+      this.tip.destroy()
+    }
   }
 
   updateDomain (props, state) {
@@ -128,7 +130,7 @@ ScatterplotChart.defaultProps = {
   yDomain: [],
   // Spread chart default
   ...Chart.defaultProps,
-  // Spread heatmap default
+  // Spread scatterplot default
   ...Scatterplot.defaultProps,
   xAxis: {
     type: 'x',
