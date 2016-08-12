@@ -1,57 +1,63 @@
 import React from 'react'
 import debounce from 'lodash.debounce'
 
-import { HybridScatterHeatmapChart, ScatterHeatmapHybrid } from '../src'
+// import { HybridScatterHeatmapChart } from '../src'
+import { ScatterHeatmapHybrid } from '../src'
 
-var exampleData = []
-var now = +new Date()
-var endTime = now - 30 * 1000
+let points = []
+let now = +new Date()
 for (let i = 0; i < 1000; i++) {
-  exampleData.push({
-    time: endTime + Math.sin(i) * 30 * 1000,
-    score: Math.random() * 6,
+  let x = now + Math.sin(i) * 30 * 1000
+  let y = Math.random() * 6
+  points.push({
+    x,
+    y,
+    time: x,
+    score: y,
     id: i
   })
 }
 
-var exampleData2 = []
-var now2 = +new Date()
-var endTime2 = now2 - 20 * 1000
-var slice = (now2 - endTime2) / 11
-for (let i = 1; i < 10; i++) {
-  let datum = {}
-  datum.key = i
-  datum.value = 0
-  datum.bins = []
-  for (let j = 1; j < 12; j++) {
-    let key = endTime2 + (j - 1) * slice
-    let value = Math.floor(Math.random() * 10)
-    let data = []
-    for (let k = 0; k < value; k++) {
-      let point = {
-        x: (endTime2 + (j - 1) * slice) + Math.floor(Math.random() * slice),
-        y: (i - 1) + Math.random() * 1,
-        id: i + '-' + j + '-' + k
+// Function to bin scatter points
+const bin = (points, now, width = 12, height = 6) => {
+  let data = []
+  let endTime = now - 20 * 1000
+  let slice = (now - endTime) / width
+  for (let i = 1; i < height + 1; i++) {
+    let datum = {}
+    datum.key = i
+    datum.value = 0
+    datum.bins = []
+    for (let j = 0; j < width; j++) {
+      let key = endTime + j * slice
+      let data = []
+      for (let k = 0; k < points.length; k++) {
+        if (points[k].x > key && points[k].x < key + slice) {
+          if (points[k].y >= i - 1 && points[k].y < i) {
+            data.push(points[k])
+          }
+        }
       }
-      data.push(point)
-    }
 
-    datum.value += value
-    datum.bins.push({
-      data,
-      key,
-      value
-    })
+      datum.value += data.length
+      datum.bins.push({
+        data: data,
+        key: key,
+        value: data.length
+      })
+    }
+    data.push(datum)
   }
-  exampleData2.push(datum)
+  return data
 }
 
 class ScatterHeatmapExample extends React.Component {
   constructor (props) {
     super(props)
+
     this.state = {
-      now: now2,
-      data: exampleData2
+      now: now,
+      data: bin(points, now)
     }
 
     this.handleResize = debounce(this.handleResize.bind(this), 500)
@@ -68,18 +74,36 @@ class ScatterHeatmapExample extends React.Component {
 
   componentWillUnmount () {
     window.removeEventListener('resize', this.handleResize, false)
+    this.reBinData = null
   }
 
   componentDidMount () {
     window.addEventListener('resize', this.handleResize, false)
+
+    this.reBinData = () => {
+      setTimeout(() => {
+        if (this.reBinData !== null) {
+          let now = +new Date()
+          this.setState({
+            now: now,
+            data: bin(points, now)
+          }, () => {
+            if (this.reBinData !== null) {
+              this.reBinData()
+            }
+          })
+        }
+      }, 1)
+    }
+    this.reBinData()
   }
 
   render () {
     return (
       <div>
-        <ScatterHeatmapHybrid
+        {<ScatterHeatmapHybrid
           ref='chart'
-          startTime={now}
+          startTime={this.state.now}
           clsName={'ScatterHeatmapHybrid'}
           height={600}
           idAccessor={'id'}
@@ -90,15 +114,15 @@ class ScatterHeatmapExample extends React.Component {
           yDomain={[0, 6]}
           timeWindow={30 * 1000}
           heatmapVertDivisions={12}
-          heatmapHorzDivisions={5}
-          data={exampleData} />
-        <HybridScatterHeatmapChart
+          heatmapHorzDivisions={12}
+          data={points} />}
+        {/* <HybridScatterHeatmapChart
           className='Hybrid'
           height={600}
           startTime={this.state.now}
           timeWindow={20 * 1000}
           scatterKeyFunction={this.scatterKeyFunction}
-          data={this.state.data} />
+          data={this.state.data} /> */}
       </div>
 
     )

@@ -74,11 +74,19 @@ class HybridScatterHeatmapChart extends React.Component {
 
   generateColorScale (props, state) {
     let yMax = max(props.data, (d, i) => {
-      return max(d.bins, (e, j) => e[props.heatmapXAccessor.value])
+      return max(d.bins, (e, j) => {
+        return max(e.data, (f, k) => {
+          return f[props.scatterYAccessor]
+        })
+      })
     })
 
     let yMin = min(props.data, (d, i) => {
-      return min(d.bins, (e, j) => e[props.heatmapXAccessor.value])
+      return min(d.bins, (e, j) => {
+        return min(e.data, (f, k) => {
+          return f[props.scatterYAccessor]
+        })
+      })
     })
 
     // Set scatter color scale
@@ -143,7 +151,11 @@ class HybridScatterHeatmapChart extends React.Component {
         .domain(xDomain)
 
       let yMax = max(props.data, (d, i) => {
-        return max(d.bins, (e, j) => e[props.heatmapXAccessor.value])
+        return max(d.bins, (e, j) => {
+          return max(e.data, (f, k) => {
+            return f[props.scatterYAccessor]
+          })
+        })
       })
 
       // Update y scale domain
