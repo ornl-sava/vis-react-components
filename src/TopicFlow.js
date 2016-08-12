@@ -26,11 +26,11 @@ class TopicFlow extends React.Component {
   _onEnter (event, data) {
     this.props.onEnter(event, data)
     data.bar._barStyle = data.bar.barStyle
-    data.bar.barStyle = {stroke: '#00ccff'}
+    data.bar.barStyle = {stroke: '#00ccff', strokeWidth: 7}
     data.bar.className = data.bar.className + ' selected '
     data.story.map((d, i) => {
       d.bar._barStyle = d.bar.barStyle
-      d.bar.barStyle = {stroke: '#00ccff'}
+      d.bar.barStyle = {stroke: '#00ccff', strokeWidth: 7}
       d.bar.className = d.bar.className + ' selected '
     })
     this.forceUpdate()
@@ -161,7 +161,7 @@ class TopicFlow extends React.Component {
     // console.log('initTopics')
     let barWidth = this.xScale.bandwidth()
     this.barWidth = barWidth
-    let barHeight = 20
+    let barHeight = props.barHeight
     let barBuff = barHeight / 2
     let barData = []
     let lineData = []
@@ -179,7 +179,7 @@ class TopicFlow extends React.Component {
         // CLASSNAME NEEDS SIMPLE NAMES
         let prefix = events[0].toString().split(/:|-/, 1)[0]
         let cName = prefix + '-' + i.toString()
-        let barStyle = {stroke: this.prefScale(prefix)}
+        let barStyle = {stroke: this.prefScale(prefix), strokeWidth: 3}
         // TRIMMING TEXT IF BEYOND BARS
         let text = this.trimText(events[0], barWidth, fontSize)
         // SETTING TEXT STYLE
@@ -226,7 +226,7 @@ class TopicFlow extends React.Component {
         let data = da.bar
         // console.log('ppr', data.prefix)
         if (!props.clickArray[data.prefix]) {
-          data.barStyle = {stroke: '#e2e2eb', strokeOpacity: 0.6}
+          data.barStyle = {stroke: '#e2e2eb', strokeOpacity: 0.6, strokeWidth: 3}
           data.textStyle = {fill: '#e2e2eb', fillOpacity: 0.6}
         } else {
           data.barStyle = data._barStyle
