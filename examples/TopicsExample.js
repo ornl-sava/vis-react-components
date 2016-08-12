@@ -36,7 +36,8 @@ class TopicsContainer extends React.Component {
       links: [],
       timeBins: [],
       colorDomain: prefixes,
-      numTData: 5
+      numTData: 5,
+      onBarClick: this._onBarClick.bind(this)
     }
 
     this.timeBins = []
@@ -47,6 +48,9 @@ class TopicsContainer extends React.Component {
     this.timeUnit = 1 * 1000 * 60 * 60
     // this.refineData(this.chartProps)
     this.refineData2(this.chartProps)
+  }
+  _onBarClick (event, data) {
+    console.log('GOTO', data)
   }
 
   refineData2 (props) {

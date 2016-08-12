@@ -108,6 +108,7 @@ TopicsChart.defaultProps = {
   topicBins: [],
   sortAccessor: 'avg_composite_score',
   sortType: 'ascending',
+  onBarClick: () => {},
   ...Chart.defaultProps
 }
 TopicsChart.propTypes = {
@@ -120,6 +121,7 @@ TopicsChart.propTypes = {
   topicBins: PropTypes.array,
   sortAccessor: PropTypes.string,
   sortType: PropTypes.string,
+  onBarClick: () => {},
   ...Chart.propTypes
 }
 

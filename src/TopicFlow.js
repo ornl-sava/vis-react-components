@@ -54,7 +54,7 @@ class TopicFlow extends React.Component {
   //   // this.refs.svgBins.style.transform = 'translate(' + this.moveX + ',' + 0 + ')'
   // }
   _onBarClick (event, data) {
-    console.log('click', data)
+    // console.log('click', data)
     this.props.onBarClick(event, data)
   }
   constructor (props) {
