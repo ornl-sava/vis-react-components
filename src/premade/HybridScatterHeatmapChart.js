@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react'
-import { map, min, max, interpolateHcl } from 'd3'
+import { set, min, max, interpolateHcl } from 'd3'
 
 import { setScale } from '../util/d3'
 import { spreadRelated } from '../util/react'
@@ -14,15 +14,12 @@ class HybridScatterHeatmapChart extends React.Component {
   constructor (props) {
     super(props)
 
-    this.scatterMap = map()
-    this.scatterKey = (d, i) => {
-      return d[props.scatterXAccessor] + '-' + d[props.scatterYAccessor]
-    }
-
     this.xScale = setScale(props.xScaleType)
     this.yScale = setScale(props.yScaleType)
     this.scatterColorScale = setScale('linear')
     this.heatmapColorScale = setScale('qunatile')
+
+    this.scatterSet = set()
 
     this.state = {
       scatterData: [],
@@ -47,6 +44,7 @@ class HybridScatterHeatmapChart extends React.Component {
 
     this.updateDomain = this.updateDomain.bind(this)
     this.updateRange = this.updateRange.bind(this)
+    this.updateScatterData = this.updateScatterData.bind(this)
 
     this.tip = props.tipFunction
       ? new Tooltip().attr('className', 'd3-tip').html(props.tipFunction)
@@ -60,7 +58,12 @@ class HybridScatterHeatmapChart extends React.Component {
     this.updateDomain(nextProps, nextState)
     this.updateRange(nextProps, nextState)
     this.generateColorScale(nextProps, nextState)
+
     return true
+  }
+
+  componentWillReceiveProps (nextProps) {
+    this.updateScatterData(nextProps)
   }
 
   componentWillUnmount () {
@@ -71,11 +74,19 @@ class HybridScatterHeatmapChart extends React.Component {
 
   generateColorScale (props, state) {
     let yMax = max(props.data, (d, i) => {
-      return max(d.bins, (e, j) => e[props.heatmapXAccessor.value])
+      return max(d.bins, (e, j) => {
+        return max(e.data, (f, k) => {
+          return f[props.scatterYAccessor]
+        })
+      })
     })
 
     let yMin = min(props.data, (d, i) => {
-      return min(d.bins, (e, j) => e[props.heatmapXAccessor.value])
+      return min(d.bins, (e, j) => {
+        return min(e.data, (f, k) => {
+          return f[props.scatterYAccessor]
+        })
+      })
     })
 
     // Set scatter color scale
@@ -139,9 +150,17 @@ class HybridScatterHeatmapChart extends React.Component {
       this.xScale
         .domain(xDomain)
 
+      let yMax = max(props.data, (d, i) => {
+        return max(d.bins, (e, j) => {
+          return max(e.data, (f, k) => {
+            return f[props.scatterYAccessor]
+          })
+        })
+      })
+
       // Update y scale domain
       this.yScale
-        .domain([0, 5])
+        .domain([0, yMax])
     }
   }
 
@@ -168,6 +187,23 @@ class HybridScatterHeatmapChart extends React.Component {
 
     this.xScale.range(xRange)
     this.yScale.range([chartHeight, 0])
+  }
+
+  updateScatterData (props, state) {
+    // Rebin
+    let scatterData = []
+    let heatmapKeys = this.scatterSet.values()
+    for (let i = 0; i < heatmapKeys.length; i++) {
+      let key = heatmapKeys[i].split('-')
+      let points = props.data[key[0]].bins[key[1]].data
+      for (let j = 0; j < points.length; j++) {
+        scatterData.push(points[j])
+      }
+    }
+
+    this.setState({
+      scatterData
+    })
   }
 
   // This onClick is private to premade
@@ -214,24 +250,13 @@ class HybridScatterHeatmapChart extends React.Component {
       : 0
     event.target.setAttribute('fill-opacity', fillOpacity)
 
-    // Add scatter data to map
-    if (this.scatterMap.has(index)) {
-      this.scatterMap.remove(index)
+    // Add heatmap index to scatter set
+    if (this.scatterSet.has(index)) {
+      this.scatterSet.remove(index)
     } else {
-      this.scatterMap.set(index, data.data)
+      this.scatterSet.add(index)
     }
-
-    // Turn scatter map into array
-    let scatterData = []
-    this.scatterMap.each((v, k) => {
-      for (let i = 0; i < v.length; i++) {
-        scatterData.push(v[i])
-      }
-    })
-
-    this.setState({
-      scatterData
-    })
+    this.updateScatterData(this.props)
 
     this.props.onHeatmapClick(event, data, index)
   }
@@ -285,7 +310,7 @@ class HybridScatterHeatmapChart extends React.Component {
           xAccessor={props.heatmapXAccessor} yAccessor={props.heatmapYAccessor}
           onEnter={this.onHeatmapEnter} onLeave={this.onHeatmapLeave} onClick={this.onHeatmapClick} />
 
-        <Scatterplot ref='scatter' className='scatter' data={this.state.scatterData} keyFunction={this.scatterKey}
+        <Scatterplot ref='scatter' className='scatter' data={this.state.scatterData} keyFunction={props.scatterKeyFunction}
           xScale={this.xScale} yScale={this.yScale} colorScale={this.scatterColorScale}
           xAccessor={props.scatterXAccessor} yAccessor={props.scatterYAccessor}
           onEnter={this.onScatterplotEnter} onLeave={this.onScatterplotLeave} onClick={this.onScatterplotClick} />
@@ -314,6 +339,7 @@ HybridScatterHeatmapChart.defaultProps = {
   heatmapYAccessor: Heatmap.defaultProps.yAccessor,
   scatterXAccessor: Scatterplot.defaultProps.xAccessor,
   scatterYAccessor: Scatterplot.defaultProps.yAccessor,
+  scatterKeyFunction: Scatterplot.defaultProps.keyFunction,
   onHeatmapClick: () => {},
   onHeatmapEnter: () => {},
   onHeatmapLeave: () => {},

@@ -387,7 +387,7 @@ nav ul li .active {
 }
 
 .ScatterHeatmapHybrid .markerCol {
-  stroke: #5B5B5B;
+  stroke: #fefefe;
   stroke-width: 1px;
   shape-rendering: crispEdges;
   cursor: cell;
@@ -398,19 +398,17 @@ nav ul li .active {
 }
 
 .ScatterHeatmapHybrid .bin {
-  stroke: #5B5B5B;
-  stroke-width : px;
+	stroke: #fefefe;
   shape-rendering: crispEdges;
 }
 
 .ScatterHeatmapHybrid .point {
-  stroke: #FFF;
-  stroke-width: 1px;
+	shape-rendering: geometricPrecision;
 }
 
 .ScatterHeatmapHybrid .point:hover {
-  stroke: #000;
-  stroke-width : px;
+	stroke: #676;
+	stroke-width: 2px;
 }
 
 .ScatterHeatmapHybrid .label {
