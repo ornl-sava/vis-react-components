@@ -5,20 +5,6 @@ import { ScatterHeatmapHybrid, HybridScatterHeatmapChart } from '../src'
 // import { HybridScatterHeatmapChart } from '../src'
 // import { ScatterHeatmapHybrid } from '../src'
 
-let points = []
-let now = +new Date()
-for (let i = 0; i < 1000; i++) {
-  let x = now + Math.sin(i) * 30 * 1000
-  let y = Math.random() * 6
-  points.push({
-    x,
-    y,
-    time: x,
-    score: y,
-    id: i
-  })
-}
-
 // Function to bin scatter points
 const bin = (points, now, width = 12, height = 6) => {
   let data = []
@@ -55,10 +41,23 @@ const bin = (points, now, width = 12, height = 6) => {
 class ScatterHeatmapExample extends React.Component {
   constructor (props) {
     super(props)
+    this.points = []
+    let now = +new Date()
+    for (let i = 0; i < 1000; i++) {
+      let x = now + Math.sin(i) * 30 * 1000
+      let y = Math.random() * 6
+      this.points.push({
+        x,
+        y,
+        time: x,
+        score: y,
+        id: i
+      })
+    }
 
     this.state = {
       now: now,
-      data: bin(points, now)
+      data: bin(this.points, now)
     }
 
     this.handleResize = debounce(this.handleResize.bind(this), 500)
@@ -87,7 +86,7 @@ class ScatterHeatmapExample extends React.Component {
           let now = +new Date()
           this.setState({
             now: now,
-            data: bin(points, now)
+            data: bin(this.points, now)
           }, () => {
             if (this.reBinData !== null) {
               this.reBinData()
@@ -116,7 +115,7 @@ class ScatterHeatmapExample extends React.Component {
           timeWindow={30 * 1000}
           heatmapVertDivisions={12}
           heatmapHorzDivisions={12}
-          data={points} />}
+          data={this.points} />}
         {<HybridScatterHeatmapChart
           className='Hybrid'
           height={600}
