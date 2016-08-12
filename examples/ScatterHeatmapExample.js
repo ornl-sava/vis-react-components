@@ -8,7 +8,7 @@ import { ScatterHeatmapHybrid, HybridScatterHeatmapChart } from '../src'
 // Function to bin scatter points
 const bin = (points, now, width = 12, height = 6) => {
   let data = []
-  let endTime = now - 20 * 1000
+  let endTime = now - 30 * 1000
   let slice = (now - endTime) / width
   for (let i = 1; i < height + 1; i++) {
     let datum = {}
@@ -120,7 +120,7 @@ class ScatterHeatmapExample extends React.Component {
           className='Hybrid'
           height={600}
           startTime={this.state.now}
-          timeWindow={20 * 1000}
+          timeWindow={30 * 1000}
           scatterKeyFunction={this.scatterKeyFunction}
           data={this.state.data} />}
       </div>
