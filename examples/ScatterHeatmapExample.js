@@ -1,8 +1,9 @@
 import React from 'react'
 import debounce from 'lodash.debounce'
 
+import { ScatterHeatmapHybrid, HybridScatterHeatmapChart } from '../src'
 // import { HybridScatterHeatmapChart } from '../src'
-import { ScatterHeatmapHybrid } from '../src'
+// import { ScatterHeatmapHybrid } from '../src'
 
 let points = []
 let now = +new Date()
@@ -116,13 +117,13 @@ class ScatterHeatmapExample extends React.Component {
           heatmapVertDivisions={12}
           heatmapHorzDivisions={12}
           data={points} />}
-        {/* <HybridScatterHeatmapChart
+        {<HybridScatterHeatmapChart
           className='Hybrid'
           height={600}
           startTime={this.state.now}
           timeWindow={20 * 1000}
           scatterKeyFunction={this.scatterKeyFunction}
-          data={this.state.data} /> */}
+          data={this.state.data} />}
       </div>
 
     )
