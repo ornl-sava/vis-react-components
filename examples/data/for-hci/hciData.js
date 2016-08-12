@@ -17,9 +17,9 @@ const getPrefixes = (data) => {
     return fData.indexOf(arr) === i
   })
   // IF NO EMPTY PREFIX, ADD
-  if (noRepeats.indexOf('EMPTY') < 0) {
-    noRepeats.push('EMPTY')
-  }
+  // if (noRepeats.indexOf('EMPTY') < 0) {
+  //   noRepeats.push('EMPTY')
+  // }
   return noRepeats
 }
 export const prefixes = getPrefixes(eventNames.column)

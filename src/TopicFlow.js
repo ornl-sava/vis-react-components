@@ -47,13 +47,15 @@ class TopicFlow extends React.Component {
     this.forceUpdate()
     // this.setState({selectedTopics: [], selectedT: []})
   }
-  _onClick () {
-    console.log('moving')
-    // this.moveTopics()
-    this.moveX += 50
-    this.refs.svgBins.style.transform = 'translate(' + this.moveX + ',' + 0 + ')'
-  }
-  _onBarClick (tooltipData) {
+  // _onClick () {
+  //   // console.log('moving')
+  //   // this.moveTopics()
+  //   // this.moveX += 50
+  //   // this.refs.svgBins.style.transform = 'translate(' + this.moveX + ',' + 0 + ')'
+  // }
+  _onBarClick (event, data) {
+    console.log('click', data)
+    this.props.onBarClick(event, data)
   }
   constructor (props) {
     super(props)
@@ -75,7 +77,7 @@ class TopicFlow extends React.Component {
 
     this.onEnter = this._onEnter.bind(this)
     this.onLeave = this._onLeave.bind(this)
-    this.onClick = this._onClick.bind(this)
+    // this.onClick = this._onClick.bind(this)
     this.onBarClick = this._onBarClick.bind(this)
     this.lineData = []
     this.barData = []
@@ -87,8 +89,12 @@ class TopicFlow extends React.Component {
     this.initTopics(props)
   }
   componentWillReceiveProps (nextProps) {
-    console.log('TF-nextProps', nextProps)
-    this.initTopics(nextProps)
+    // console.log('TF-nextProps', nextProps)
+    if (nextProps.clickArray !== this.props.clickArray) {
+      this.deActivate(nextProps)
+    } else {
+      this.initTopics(nextProps)
+    }
   }
   updateDomain (props) {
     let yDomain = []
@@ -98,11 +104,12 @@ class TopicFlow extends React.Component {
       }
     })
     let xDomain = Object.keys(props.timeBins)
-    console.log('TF-xDomain', xDomain)
+    // console.log('TF-xDomain', xDomain)
     this.xScale
       .domain(xDomain)
     this.yScale
       .domain(yDomain)
+    this.prefScale.domain(props.colorDomain)
   }
   updateRange (props) {
     this.xScale
@@ -111,7 +118,6 @@ class TopicFlow extends React.Component {
       .paddingOuter(props.outerPadding)
     this.yScale
       .range([0, props.chartHeight])
-    this.prefScale.domain(props.colorDomain)
   }
   buildABar (bin, cName, text, height, width, x, y, barStyle, txtStyle, id) {
     return {
@@ -152,7 +158,7 @@ class TopicFlow extends React.Component {
   }
 
   initTopics (props) {
-    console.log('initTopics')
+    // console.log('initTopics')
     let barWidth = this.xScale.bandwidth()
     this.barWidth = barWidth
     let barHeight = 20
@@ -171,8 +177,9 @@ class TopicFlow extends React.Component {
         let posX = this.xScale(i)
         let fontSize = 12
         // CLASSNAME NEEDS SIMPLE NAMES
-        let cName = events[0].toString().split(/:|-/, 1) + '-' + i.toString()
-        let barStyle = {stroke: this.prefScale(events[0].split(/:|-/, 1)[0])}
+        let prefix = events[0].toString().split(/:|-/, 1)[0]
+        let cName = prefix + '-' + i.toString()
+        let barStyle = {stroke: this.prefScale(prefix)}
         // TRIMMING TEXT IF BEYOND BARS
         let text = this.trimText(events[0], barWidth, fontSize)
         // SETTING TEXT STYLE
@@ -181,6 +188,12 @@ class TopicFlow extends React.Component {
         // bar.tooltipData = {label: events[0], counts: events.length, story: dataArr.story, topicID: dataArr.topicID, hour: dataArr.hour, prevStory: dataArr.prevStory, adjI: i}
         barData.push(bar)
         data.bar = bar
+        data.bar._barStyle = barStyle
+        data.bar._textStyle = barTxtStyle
+        // console.log('indPref', props.colorDomain.indexOf(prefix[0]), '-', prefix)
+        if (props.colorDomain.indexOf(prefix) < 0 || prefix === 'EMPTY') {
+          data.bar.prefix = 'OTHER'
+        } else { data.bar.prefix = prefix }
       })
     })
     // console.log('TF-BarData', barData)
@@ -204,6 +217,24 @@ class TopicFlow extends React.Component {
     this.lineData = lineData
     return svgTopicBars
   }
+  deActivate (props) {
+    console.log('here', props)
+    props.timeBins.map((d, i) => {
+      console.log(d)
+      d.topics.map((da, ind) => {
+        // console.log('da')
+        let data = da.bar
+        // console.log('ppr', data.prefix)
+        if (!props.clickArray[data.prefix]) {
+          data.barStyle = {stroke: '#e2e2eb', strokeOpacity: 0.6}
+          data.textStyle = {fill: '#e2e2eb', fillOpacity: 0.6}
+        } else {
+          data.barStyle = data._barStyle
+          data.textStyle = data._textStyle
+        }
+      })
+    })
+  }
   renderTopics (props) {
     // console.log('TF-rT', props.timeBins)
     let svgBins = []
@@ -217,7 +248,7 @@ class TopicFlow extends React.Component {
       }
       return (
         <g className='bin' key={key}>
-          <TextBar {...data.bar} onEnter={this.onEnter} onLeave={this.onLeave} onClick={this.onClick} />
+          <TextBar {...data.bar} onEnter={this.onEnter} onLeave={this.onLeave} onClick={this.onBarClick} />
           {lineInfo}
         </g>
       )
@@ -227,23 +258,13 @@ class TopicFlow extends React.Component {
       data.topics.map((d, i) => {
         let nData = []
         let key = 'bar-' + index + '-' + i
-        if (this.props.clickArray[d.events[0].toString().split(/:|-/, 1)]) {
-          if (nData.sel) {
-            // PUSHES MOUSED OVER TOPICS TO THE FRONT
-            // FIX!!!
-            svgBins.push(cData(nData, key))
-          } else {
-            svgBins.unshift(cData(d, key))
-          }
+        // if (this.props.clickArray[d.events[0].toString().split(/:|-/, 1)]) {
+        if (nData.sel) {
+          // PUSHES MOUSED OVER TOPICS TO THE FRONT
+          // FIX!!!
+          svgBins.push(cData(nData, key))
         } else {
-          // GREYS OUT TOPIC BARS NOT SELECTED BY LEGEND KEY
-          nData = JSON.parse(JSON.stringify(d.bar[i]))
-          nData.barStyle.stroke = '#e2e2eb'
-          nData.barStyle.strokeOpacity = 0.6
-          nData.textStyle.fill = '#e2e2eb'
-          nData.textStyle.fillOpacity = 0.6
-          // console.log('nData', nData)
-          svgBins.unshift(cData(nData, key))
+          svgBins.unshift(cData(d, key))
         }
       })
     })
@@ -277,7 +298,8 @@ TopicFlow.defaultProps = {
   lineType: 'curved',
   clickArray: [],
   onEnter: () => {},
-  onLeave: () => {}
+  onLeave: () => {},
+  onBarClick: () => {}
 }
 
 TopicFlow.propTypes = {
@@ -296,6 +318,7 @@ TopicFlow.propTypes = {
   clickArray: PropTypes.any.isRequired,
   onEnter: PropTypes.func,
   onLeave: PropTypes.func,
+  onBarClick: PropTypes.func,
   timeBins: PropTypes.array,
   links: PropTypes.array
 }

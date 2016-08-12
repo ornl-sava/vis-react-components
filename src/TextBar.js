@@ -9,9 +9,9 @@ class TextBar extends React.Component {
   _onMouseLeave (event) {
     this.props.onLeave(event, this.props.data)
   }
-  _onClick () {
+  _onClick (event) {
     // console.log('toolTip', this.props.tooltipData)
-    this.props.onClick(this.props.tooltipData)
+    this.props.onClick(event, this.props.data)
   }
   _onDoubleClick () {
     // not used

@@ -3,9 +3,9 @@ import React, { PropTypes } from 'react'
 import { format, scaleLinear, scaleOrdinal, schemeCategory20, select } from 'd3'
 import cloud from '../examples/data/for-hci/cloud2'
 import { HeatmapChart, HistogramChart } from '../src'
-import {linearOrdinalHeatmapData, temporalHistogramData} from './data/exampleData'
+import {linearOrdinalHeatmapData} from './data/exampleData'
 
-import topics from './data/topic-lane-sample/topics-sample.json'
+import topics from './data/topic-lane-sample/topics-sample_v01.json'
 // import lanes from '../examples/data/topic-lane-sample/sets-sample.json'
 // import eTopics from './data/for-hci/enduring-topics-listed.json'
 
@@ -16,7 +16,7 @@ let avgMem = new Array(4).fill(0)
 let temporalData = []
 let bins = []
 for (let i = 0; i < 4; i++) { bins.push([]) }
-console.log('bins', bins)
+// console.log('bins', bins)
 topics[topicN]._source.bins.map((d, i) => {
   bins[0].push({ x: d.end, y: d.avg_composite_score })
   avgMem[0] += d.avg_composite_score
@@ -33,7 +33,7 @@ topics[topicN]._source.bins.map((d, i) => {
 // ////////////////////////////
 
 // HISTOGRAM DATA
-console.log('STE-tHD', temporalHistogramData)
+// console.log('STE-tHD', temporalHistogramData)
 for (let i = 0; i < 4; i++) {
   avgMem[i] /= topics[topicN]._source.bins.length
   let type = 'two'
@@ -50,7 +50,7 @@ for (let i = 0; i < 4; i++) {
     temporalData.push([transformedObj])
   })
 }
-console.log('temD', temporalData)
+// console.log('temD', temporalData)
 
 const toolTipFunction = (tooltipData) => {
   let d = tooltipData

@@ -11,7 +11,7 @@ const hTop = maxNumTopics * (20 + 15)
 
 const toolTipFunction = (data) => {
   var toolTip =
-    '<span class="title">TopicID: ' + data.topicID + '</span>' +
+    '<span class="title">TopicID: ' + data.topic + '</span>' +
     '</span>Number of Common Events: ' + format(',')(data.events.length) +
     '<br /><small>'
   return toolTip
@@ -38,10 +38,7 @@ class TopicsChart extends React.Component {
   _onGroupClick (toggleList) {
     // takes toggle list and updates clickArray state
     // console.log('toggleList', toggleList)
-    this.setState({clickArray: toggleList}, () => {
-      this.refs.updateChart.forceUpdate()
-      this.refs.updateChart2.forceUpdate()
-    })
+    this.setState({clickArray: toggleList})
   }
   _onBarEnter (event, data) {
     this.tip.show(event, data)

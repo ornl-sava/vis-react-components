@@ -7,41 +7,14 @@ import StoryViewerExample from './StoryViewerExample'
 // import {fakePrefixes, fakeData} from '../examples/data/for-hci/hciFakeData'
 // import {prefixes, topData, aList} from '../examples/data/for-hci/hciData'
 import {prefixes} from '../examples/data/for-hci/hciData'
-import topics from '../examples/data/topic-lane-sample/topics-sample.json'
-import lanes from '../examples/data/topic-lane-sample/sets-sample.json'
+import topics from '../examples/data/topic-lane-sample/topics-sample_v01.json'
+import topics2 from './data/topic-lane-sample/topics-sample_v02.json'
+// import lanes from '../examples/data/topic-lane-sample/sets-sample.json'
 
-// DISPLAYS INFO OF SVG OBJECT THAT MOUSE IS ON
-// const toolTipFunction = (data) => {
-//   console.log('toolTipFunction')
-//   var toolTip =
-//     '<span class="title">TopicID: ' + data.topicID + '</span>' +
-//     '</span>Number of Common Events: ' + format(',')(data.events.length) +
-//     '<br /><small>'
-//   return toolTip
-// }
+// console.log(topics)
 
-// const nData = 7
-// console.log('fake', fakePrefixes, fakeData(nData))
-
-// trims the data by hours
-// const tData = (n, start, data) => {
-//   let num = n
-//   let topics = data
-//   if (n + start > topics.length - 1) {
-//     num = topics.length - 1 - start
-//   }
-//   let comData = []
-//   for (let i = 0; i < num; i++) {
-//     comData[i] = topics[start + i]
-//   }
-//   return comData
-// }
-
-// const allData = tData(nData, 0, topData)
-console.log(topics)
-
-console.log('TE-topics', topics.length)
-console.log('TE-lanes', lanes.length)
+// console.log('TE-topics', topics.length)
+// console.log('TE-lanes', lanes.length)
 
 // const chartProps = {
 //   tipFunction: toolTipFunction,
@@ -55,7 +28,8 @@ class TopicsContainer extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
-      data: topics
+      data: topics,
+      initBins: topics2.data
     }
     this.chartProps = {
       // tipFunction: toolTipFunction,
@@ -71,7 +45,57 @@ class TopicsContainer extends React.Component {
     this.initStart = new Date(this.state.data[0]._source.bins[0].start)
 
     this.timeUnit = 1 * 1000 * 60 * 60
-    this.refineData(this.chartProps)
+    // this.refineData(this.chartProps)
+    this.refineData2(this.chartProps)
+  }
+
+  refineData2 (props) {
+    // console.log('rD-d', this.state.initBins)
+    let timeBins = []
+    let topicMap = {}
+    let links = []
+    // get time steps
+    for (let i = 0; i < this.state.initBins.length - 1; i++) {
+      if (this.state.initBins[i].start !== this.state.initBins[i + 1].start) {
+        timeBins.push({time: this.state.initBins[i].start, topics: []})
+      }
+    }
+    // add last time step
+    timeBins.push({time: this.state.initBins[this.state.initBins.length - 1].end, topics: []})
+    // sort in case out of order
+    timeBins.sort((a, b) => {
+      return a.time - b.time
+    })
+    // console.log('timeBins', timeBins)
+    this.state.initBins.map((data, index) => {
+      let i = (new Date(data.start).getTime() - new Date(timeBins[0].time).getTime()) / this.timeUnit
+      // console.log('i', i)
+      data.events = data.common_events
+      timeBins[i].topics.push(data)
+      if (topicMap[data.topic] == null) { topicMap[data.topic] = [] }
+      topicMap[data.topic].push(data)
+    })
+    timeBins.map((da, ind) => {
+      da.topics.map((data, index) => {
+        // console.log('dMap', topicMap[data.topic], data.topic)
+        let target = null
+        data.story = topicMap[data.topic].filter((d, i) => {
+          return d.start !== data.start
+        })
+        topicMap[data.topic].map((d, i) => {
+          if (data.end === d.start) {
+            target = d
+            // console.log('target', target)
+          }
+        })
+        if (target != null) {
+          links.push({source: data, target: target})
+        }
+      })
+    })
+    // console.log('timeBinsAfter', timeBins, topicMap, links)
+    props.timeBins = timeBins
+    props.links = links
   }
 
   refineData (props) {
@@ -102,7 +126,7 @@ class TopicsContainer extends React.Component {
     this.links = link.map((data, index) => {
       return { source: nodes[data.source], target: nodes[data.target] }
     })
-    console.log('TE-props.links', this.links)
+    // console.log('TE-props.links', this.links)
     // let topicSS = topics[0]._source
     // console.log('TE-nodes', nodes)
     nodes.map((data, index) => {
@@ -118,7 +142,7 @@ class TopicsContainer extends React.Component {
       timeBins[i].topics.push(data)
     })
     this.timeBins = timeBins
-    console.log('timeBins', this.timeBins)
+    // console.log('timeBins', this.timeBins)
   }
   getData (chartProps) {
     // CHECK TO SEE IF NUMBER OF TIMESTEPS EXCEEDS DATA
@@ -144,7 +168,7 @@ class TopicsContainer extends React.Component {
     })
   }
   render () {
-    this.getData(this.chartProps)
+    // this.getData(this.chartProps)
     return (
       <div className={'col-md-12'}>
         <TopicsChart {...this.chartProps} />
