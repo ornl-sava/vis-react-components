@@ -493,9 +493,9 @@ nav ul li .active {
 	fill-opacity: 0;
   stroke-width: 3;
 }
-.barTopic.Selected{
+.selected.barTopic{
   stroke-width: 6;
-  stroke: #00ccff;
+  /*stroke: #00ccff;*/
 }
 
 .lineMatch{
@@ -503,9 +503,10 @@ nav ul li .active {
   stroke-width: 4;
 	shape-rendering: geometricPrecision;
 }
-.lineMatch.Selected{
+.lineMatch.selected{
   fill: none;
-  stroke-width: 10;
+  stroke-width: 6;
+	/*stroke: #00ccff;*/
 }
 .text{
   alignment-baseline: middle;
