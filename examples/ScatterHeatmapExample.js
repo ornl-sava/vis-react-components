@@ -6,13 +6,13 @@ import { ScatterHeatmapHybrid, HybridScatterHeatmapChart } from '../src'
 // import { ScatterHeatmapHybrid } from '../src'
 
 // Function to bin scatter points
-const bin = (points, now, width = 12, height = 6) => {
+const bin = (points, now, width = 12, height = 12, step = 0.5) => {
   let data = []
   let endTime = now - 30 * 1000
   let slice = (now - endTime) / width
   for (let i = 1; i < height + 1; i++) {
     let datum = {}
-    datum.key = i
+    datum.key = i * step
     datum.value = 0
     datum.bins = []
     for (let j = 0; j < width; j++) {
@@ -20,7 +20,7 @@ const bin = (points, now, width = 12, height = 6) => {
       let data = []
       for (let k = 0; k < points.length; k++) {
         if (points[k].x > key && points[k].x < key + slice) {
-          if (points[k].y >= i - 1 && points[k].y < i) {
+          if (points[k].y >= i * step - 1 * step && points[k].y < i * step) {
             data.push(points[k])
           }
         }

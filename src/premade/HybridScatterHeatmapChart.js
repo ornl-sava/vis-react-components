@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react'
-import { set, min, max, interpolateHcl } from 'd3'
+import { set, interpolateHcl } from 'd3'
 
 import { setScale } from '../util/d3'
 import { spreadRelated } from '../util/react'
@@ -73,21 +73,21 @@ class HybridScatterHeatmapChart extends React.Component {
   }
 
   generateColorScale (props, state) {
-    let yMax = max(props.data, (d, i) => {
-      return max(d.bins, (e, j) => {
-        return max(e.data, (f, k) => {
-          return f[props.scatterYAccessor]
-        })
-      })
-    })
-
-    let yMin = min(props.data, (d, i) => {
-      return min(d.bins, (e, j) => {
-        return min(e.data, (f, k) => {
-          return f[props.scatterYAccessor]
-        })
-      })
-    })
+    // Get min/max
+    let yMax = -Infinity
+    let yMin = Infinity
+    for (let i = 0; i < props.data.length; i++) {
+      for (let j = 0; j < props.data[i].bins.length; j++) {
+        for (let k = 0; k < props.data[i].bins[j].data.length; k++) {
+          if (props.data[i].bins[j].data[k][props.scatterYAccessor] > yMax) {
+            yMax = props.data[i].bins[j].data[k][props.scatterYAccessor]
+          }
+          if (props.data[i].bins[j].data[k][props.scatterYAccessor] < yMin) {
+            yMin = props.data[i].bins[j].data[k][props.scatterYAccessor]
+          }
+        }
+      }
+    }
 
     // Set scatter color scale
     this.scatterColorScale
@@ -97,18 +97,20 @@ class HybridScatterHeatmapChart extends React.Component {
 
     // Set heatmap color scale
     let tempColorScale = setScale('linear')
-      .domain([0, yMax])
+      .domain([0, props.heatmapNumColorCat])
       .range([props.heatmapMinColor, props.heatmapMaxColor])
       .interpolate(interpolateHcl)
 
+    let colorRange = []
+    for (let i = 0; i < props.heatmapNumColorCat + 1; i++) {
+      colorRange.push(tempColorScale(i))
+    }
+
     let colorDomain = [0, 1]
-    let colorRange = [props.heatmapMinColor]
-    let colorDomainBand = yMax / (props.heatmapNumColorCat - 1)
-    for (var i = 2; i < props.heatmapNumColorCat + 1; i++) {
-      let value = colorDomain[i - 1] + colorDomainBand
-      if (i === 2) value--
-      colorDomain.push(value)
-      colorRange.push(tempColorScale(value))
+    for (let i = 0; i < props.data.length; i++) {
+      for (let j = 0; j < props.data[i].bins.length; j++) {
+        colorDomain.push(props.data[i].bins[j].value)
+      }
     }
 
     this.heatmapColorScale
@@ -150,13 +152,16 @@ class HybridScatterHeatmapChart extends React.Component {
       this.xScale
         .domain(xDomain)
 
-      let yMax = max(props.data, (d, i) => {
-        return max(d.bins, (e, j) => {
-          return max(e.data, (f, k) => {
-            return f[props.scatterYAccessor]
-          })
-        })
-      })
+      let yMax = -Infinity
+      for (let i = 0; i < props.data.length; i++) {
+        for (let j = 0; j < props.data[i].bins.length; j++) {
+          for (let k = 0; k < props.data[i].bins[j].data.length; k++) {
+            if (props.data[i].bins[j].data[k][props.scatterYAccessor] > yMax) {
+              yMax = props.data[i].bins[j].data[k][props.scatterYAccessor]
+            }
+          }
+        }
+      }
 
       // Update y scale domain
       this.yScale

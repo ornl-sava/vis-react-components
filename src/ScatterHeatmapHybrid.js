@@ -390,13 +390,13 @@ export class HybridScatterHeatmap extends React.Component {
       .domain(props.yDomain)
 
     // Update heatmap color scale
-    let colorDomain = [0, 8]
+    let colorDomain = [0, 1]
     if (typeof heatmap !== 'undefined') {
-      colorDomain.concat(heatmap.reduce((a, b) => {
-        return a.concat(b)
-      }, []).map((d) => {
-        return d.length
-      }))
+      for (let i = 0; i < heatmap.length; i++) {
+        for (let j = 0; j < heatmap.length; j++) {
+          colorDomain.push(heatmap[i][j].count)
+        }
+      }
     }
 
     this.state.heatmapColorScale
