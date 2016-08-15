@@ -43,7 +43,7 @@ class ColorView extends React.Component {
   _onClick (toolTipData) {
     // console.log('clicked', toolTipData)
     let index = toolTipData.label
-    let newClickArray = this.props.clickArray
+    let newClickArray = Object.assign({}, this.clickArray)
     if (index === 'CLEAR') {
       for (let i in newClickArray) {
         newClickArray[i] = false
@@ -75,16 +75,17 @@ class ColorView extends React.Component {
 
     this.updateDR = this.updateDR.bind(this)
 
-    this.data = props.colorDomain
-
     this.onEnter = this._onEnter.bind(this)
     this.onLeave = this._onLeave.bind(this)
     this.prefScale = scaleOrdinal(schemeCategory20)
     this.onClick = this._onClick.bind(this)
 
     this.rData = []
-    this.colorDomain = JSON.parse(JSON.stringify(this.props.colorDomain))
-    this.colorDomain.push('CLEAR')
+    // this.colorDomain = JSON.parse(JSON.stringify(this.props.colorDomain))
+    // this.colorDomain.push('CLEAR')
+
+    this.colorDomain = this.props.colorDomain.concat(['OTHER', 'CLEAR'])
+    this.clickArray = Object.assign(props.clickArray, {OTHER: true})
 
     this.updateDR(props)
   }
@@ -98,7 +99,12 @@ class ColorView extends React.Component {
   componentWillUpdate (nextProps) {
   }
   componentWillReceiveProps (nextProps) {
-    this.data = nextProps.colorDomain
+    if (nextProps.colorDomain !== this.props.colorDomain) {
+      this.colorDomain = nextProps.colorDomain.concat(['OTHER', 'CLEAR'])
+      this.clickArray = Object.assign(nextProps.clickArray, {OTHER: true})
+    } else {
+      this.clickArray = Object.assign(nextProps.clickArray)
+    }
     this.updateDR(nextProps)
   }
   componentWillMount () {

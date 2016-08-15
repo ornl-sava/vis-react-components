@@ -11,7 +11,7 @@ const hTop = maxNumTopics * (20 + 15)
 
 const toolTipFunction = (data) => {
   var toolTip =
-    '<span class="title">TopicID: ' + data.topicID + '</span>' +
+    '<span class="title">TopicID: ' + data.topic + '</span>' +
     '</span>Number of Common Events: ' + format(',')(data.events.length) +
     '<br /><small>'
   return toolTip
@@ -34,14 +34,12 @@ class TopicsChart extends React.Component {
 
     this.onBarEnter = this._onBarEnter.bind(this)
     this.onBarLeave = this._onBarLeave.bind(this)
+    this.height = hTop
   }
   _onGroupClick (toggleList) {
     // takes toggle list and updates clickArray state
     // console.log('toggleList', toggleList)
-    this.setState({clickArray: toggleList}, () => {
-      this.refs.updateChart.forceUpdate()
-      this.refs.updateChart2.forceUpdate()
-    })
+    this.setState({clickArray: toggleList})
   }
   _onBarEnter (event, data) {
     this.tip.show(event, data)
@@ -67,11 +65,16 @@ class TopicsChart extends React.Component {
     return true
   }
   sort (props) {
+    let barHeight = 20
+    let longest = 0
     props.timeBins.map((data, index) => {
+      if (data.topics.length > longest) { longest = data.topics.length }
       data.topics.sort((a, b) => {
         return b[props.sortAccessor] - a[props.sortAccessor]
       })
     })
+    // console.log('l', longest)
+    this.height = longest * (barHeight * 1.6)
   }
   render () {
     let props = this.props
@@ -86,7 +89,7 @@ class TopicsChart extends React.Component {
         </Chart>
         <Chart className='topicFlow col-md-10' ref='updateChart'
           {...spreadRelated(Chart, props)}
-          yAxis={false} xAxis={false} xScaleType='linear' height={hTop} margin={{top: 20, right: 20, bottom: 10, left: 20}} >
+          yAxis={false} xAxis={false} xScaleType='linear' height={this.height} margin={{top: 20, right: 20, bottom: 10, left: 20}} >
           <TopicFlow {...props} clickArray={this.state.clickArray} onEnter={this.onBarEnter} onLeave={this.onBarLeave} />
         </Chart>
         <text className='bottom'></text>
@@ -105,6 +108,7 @@ TopicsChart.defaultProps = {
   topicBins: [],
   sortAccessor: 'avg_composite_score',
   sortType: 'ascending',
+  onBarClick: () => {},
   ...Chart.defaultProps
 }
 TopicsChart.propTypes = {
@@ -117,6 +121,7 @@ TopicsChart.propTypes = {
   topicBins: PropTypes.array,
   sortAccessor: PropTypes.string,
   sortType: PropTypes.string,
+  onBarClick: () => {},
   ...Chart.propTypes
 }
 
