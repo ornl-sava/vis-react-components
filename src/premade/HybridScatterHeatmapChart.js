@@ -361,13 +361,15 @@ HybridScatterHeatmapChart.defaultProps = {
     type: 'x',
     orient: 'bottom',
     innerPadding: null,
-    outerPadding: null
+    outerPadding: null,
+    animationDuration: 500
   },
   yAxis: {
     type: 'y',
     orient: 'left',
     innerPadding: null,
-    outerPadding: null
+    outerPadding: null,
+    animationDuration: 500
   }
 }
 

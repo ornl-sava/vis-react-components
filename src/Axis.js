@@ -119,7 +119,9 @@ class Axis extends React.Component {
       .tickFormat(tickFormatter)
       .tickValues(tickValues)
       .ticks(tickCount)
-    selection.call(this.axis)
+    selection
+      .transition().duration(props.animationDuration)
+      .call(this.axis)
 
     if (props.tickStyle) {
       selection.selectAll('.tick text')
@@ -158,12 +160,14 @@ Axis.defaultProps = {
   tickCount: null,
   tickFormat: null,
   tickStyle: null,
+  animationDuration: 0,
   label: ''
 }
 
 Axis.propTypes = {
   orient: PropTypes.string.isRequired,
   type: PropTypes.string.isRequired,
+  animationDuration: PropTypes.number,
   tickStyle: React.PropTypes.oneOfType([
     React.PropTypes.func,
     React.PropTypes.bool
