@@ -72,9 +72,7 @@ const chartProps5 = {
   },
   className: 'scatter5',
   xScaleType: 'linear',
-  yScaleType: 'linear',
-  xDomain: [0, 100],
-  yDomain: [0, 100]
+  yScaleType: 'linear'
 }
 
 class ScatterplotExample extends React.Component {

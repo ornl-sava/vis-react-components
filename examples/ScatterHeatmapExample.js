@@ -1,60 +1,70 @@
 import React from 'react'
 import debounce from 'lodash.debounce'
 
-import { HybridScatterHeatmapChart, ScatterHeatmapHybrid } from '../src'
+import { ScatterHeatmapHybrid, HybridScatterHeatmapChart } from '../src'
+// import { HybridScatterHeatmapChart } from '../src'
+// import { ScatterHeatmapHybrid } from '../src'
 
-var exampleData = []
-var now = +new Date()
-var endTime = now - 30 * 1000
-for (let i = 0; i < 1000; i++) {
-  exampleData.push({
-    time: endTime + Math.sin(i) * 30 * 1000,
-    score: Math.random() * 6,
-    id: i
-  })
-}
-
-var exampleData2 = []
-var now2 = +new Date()
-var endTime2 = now2 - 20 * 1000
-var slice = (now2 - endTime2) / 11
-for (let i = 1; i < 6; i++) {
-  let datum = {}
-  datum.key = i
-  datum.value = 0
-  datum.bins = []
-  for (let j = 1; j < 12; j++) {
-    let key = endTime2 + (j - 1) * slice
-    let value = Math.floor(Math.random() * 10)
-    let data = []
-    for (let k = 0; k < value; k++) {
-      let point = {
-        x: (endTime2 + (j - 1) * slice) + Math.floor(Math.random() * slice),
-        y: (i - 1) + Math.random() * 1
+// Function to bin scatter points
+const bin = (points, now, width = 12, height = 12, step = 0.5) => {
+  let data = []
+  let endTime = now - 30 * 1000
+  let slice = (now - endTime) / width
+  for (let i = 1; i < height + 1; i++) {
+    let datum = {}
+    datum.key = i * step
+    datum.value = 0
+    datum.bins = []
+    for (let j = 0; j < width; j++) {
+      let key = endTime + j * slice
+      let data = []
+      for (let k = 0; k < points.length; k++) {
+        if (points[k].x > key && points[k].x < key + slice) {
+          if (points[k].y >= i * step - 1 * step && points[k].y < i * step) {
+            data.push(points[k])
+          }
+        }
       }
-      data.push(point)
-    }
 
-    datum.value += value
-    datum.bins.push({
-      data,
-      key,
-      value
-    })
+      datum.value += data.length
+      datum.bins.push({
+        data: data,
+        key: key,
+        value: data.length
+      })
+    }
+    data.push(datum)
   }
-  exampleData2.push(datum)
+  return data
 }
 
 class ScatterHeatmapExample extends React.Component {
   constructor (props) {
     super(props)
+    this.points = []
+    let now = +new Date()
+    for (let i = 0; i < 1000; i++) {
+      let x = now + Math.sin(i) * 30 * 1000
+      let y = Math.random() * 6
+      this.points.push({
+        x,
+        y,
+        time: x,
+        score: y,
+        id: i
+      })
+    }
+
     this.state = {
-      now: now2,
-      data: exampleData2
+      now: now,
+      data: bin(this.points, now)
     }
 
     this.handleResize = debounce(this.handleResize.bind(this), 500)
-    this.shiftDataPoints = this.shiftDataPoints.bind(this)
+
+    this.scatterKeyFunction = (d, i) => {
+      return d.id
+    }
   }
 
   handleResize () {
@@ -64,49 +74,36 @@ class ScatterHeatmapExample extends React.Component {
 
   componentWillUnmount () {
     window.removeEventListener('resize', this.handleResize, false)
-    this.update = null
-  }
-
-  shiftDataPoints () {
-    this.now = +new Date()
-    var endTime = this.now - 20 * 1000
-    var slice = (this.now - endTime) / 11
-    for (let i = 0; i < this.state.data.length; i++) {
-      for (let j = 0; j < this.state.data[i].bins.length; j++) {
-        this.state.data[i].bins[j].key = endTime + j * slice
-        for (let k = 0; k < this.state.data[i].bins[j].data.length; k++) {
-          this.state.data[i].bins[j].data[k].x += 10
-        }
-      }
-    }
-    return this.state.data
+    this.reBinData = null
   }
 
   componentDidMount () {
     window.addEventListener('resize', this.handleResize, false)
-    this.update = () => {
+
+    this.reBinData = () => {
       setTimeout(() => {
-        if (this.update !== null) {
+        if (this.reBinData !== null) {
+          let now = +new Date()
           this.setState({
-            data: this.shiftDataPoints(),
-            now: this.now
+            now: now,
+            data: bin(this.points, now)
           }, () => {
-            if (this.update !== null) {
-              this.update()
+            if (this.reBinData !== null) {
+              this.reBinData()
             }
           })
         }
-      }, 10)
+      }, 1)
     }
-    // this.update()
+    this.reBinData()
   }
 
   render () {
     return (
       <div>
-        <ScatterHeatmapHybrid
+        {<ScatterHeatmapHybrid
           ref='chart'
-          startTime={now}
+          startTime={this.state.now}
           clsName={'ScatterHeatmapHybrid'}
           height={600}
           idAccessor={'id'}
@@ -117,14 +114,15 @@ class ScatterHeatmapExample extends React.Component {
           yDomain={[0, 6]}
           timeWindow={30 * 1000}
           heatmapVertDivisions={12}
-          heatmapHorzDivisions={5}
-          data={exampleData} />
-        <HybridScatterHeatmapChart
+          heatmapHorzDivisions={12}
+          data={this.points} />}
+        {<HybridScatterHeatmapChart
           className='Hybrid'
           height={600}
           startTime={this.state.now}
-          timeWindow={20 * 1000}
-          data={this.state.data} />
+          timeWindow={30 * 1000}
+          scatterKeyFunction={this.scatterKeyFunction}
+          data={this.state.data} />}
       </div>
 
     )
