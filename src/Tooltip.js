@@ -114,17 +114,23 @@ export default class Tooltip {
   // NOTE: Currently assumes a default direction of 'N'
   // Mutates coords and return corrected direction
   getAutoDirection (bbox, coords) {
+    let dir = 'n'
     if (coords.left < 0) {
-      coords.left = bbox.ne.x - bbox.width
-      coords.top = bbox.ne.y
-      return 'ne'
+      dir += 'e'
+      coords.left = bbox[dir].x - bbox.width
+      coords.top = bbox[dir].y
     } else if (coords.left + this.tooltip.offsetWidth > getWidth()) {
-      coords.left = bbox.nw.x + bbox.width
-      coords.top = bbox.nw.y
-      return 'nw'
-    } else {
-      return 'n'
+      dir += 'w'
+      coords.left = bbox[dir].x + bbox.width
+      coords.top = bbox[dir].y
     }
+
+    if (coords.top < 0) {
+      dir = dir.replace('n', 's')
+      coords.top += this.tooltip.offsetHeight + bbox.height
+    }
+
+    return dir
   }
 
   getScreenBBox (event = null) {

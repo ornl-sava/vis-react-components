@@ -6,7 +6,7 @@ const functor = (f, ...args) => {
 
 // Cross browser helpers
 const getWidth = () => {
-  if (self.innerHeight) {
+  if (self.innerWidth) {
     return self.innerWidth
   }
 
@@ -16,6 +16,20 @@ const getWidth = () => {
 
   if (document.body) {
     return document.body.clientWidth
+  }
+}
+
+const getHeight = () => {
+  if (self.innerHeight) {
+    return self.innerHeight
+  }
+
+  if (document.documentElement && document.documentElement.clientHeight) {
+    return document.documentElement.clientHeight
+  }
+
+  if (document.body) {
+    return document.body.clientHeight
   }
 }
 
@@ -39,4 +53,4 @@ const scrollLeft = () => {
   }
 }
 
-export { functor, getWidth, scrollTop, scrollLeft }
+export { functor, getWidth, getHeight, scrollTop, scrollLeft }
