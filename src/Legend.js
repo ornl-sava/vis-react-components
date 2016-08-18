@@ -16,15 +16,13 @@ class Legend extends React.Component {
     return (
       <g className='legend' transform={'translate(' + x + ',' + y + ')'}>
         {colorScale.range().map((d, i) => {
-          let rectProps = {
-            'x': i * legendBlockWidth,
-            'y': 0,
-            'width': legendBlockWidth,
-            'height': legendHeight,
-            'fill': d
-          }
           return (
-            <rect key={i} {...rectProps} />
+            <rect key={i}
+              x={i * legendBlockWidth}
+              y={0}
+              width={legendBlockWidth}
+              height={legendHeight}
+              fill={d} />
           )
         })}
         <text x={0} y={14}>

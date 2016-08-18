@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react'
 
-// TODO: Create other various input fields to be used
+// TODO: Create other various input types to be used
 
 // Helper to create dropdown options menu
 class Dropdown extends React.Component {
@@ -63,8 +63,8 @@ class Settings extends React.Component {
     let settings = props.settings
     let chart = props.chart
 
-    let longestLen = 0
-    longestLen = settings.options.reduce((a, b) => {
+    // Find longest string in options
+    let longestLen = settings.options.reduce((a, b) => {
       let aStringLen = 0
       let bStringLen = 0
       if (typeof a.label !== 'undefined') {
@@ -80,8 +80,7 @@ class Settings extends React.Component {
       return aStringLen > bStringLen ? aStringLen : bStringLen
     }, 0)
 
-    // NOTE: Currently a bit arbitrary; just need something larger
-    // then font size that also accounts for the dropdown itself
+    // Requires approximate character length (assuming 11px here)
     let minWidth = longestLen * 11
 
     let containerProps = {

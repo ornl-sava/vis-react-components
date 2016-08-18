@@ -1,5 +1,7 @@
 import { functor, getWidth, scrollTop, scrollLeft } from './util/common'
 
+// Based on d3-tip(https://github.com/Caged/d3-tip)
+
 export default class Tooltip {
   constructor () {
     // Init tooltip
