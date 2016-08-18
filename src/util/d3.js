@@ -57,11 +57,16 @@ const setScale = (scaleType) => {
 
 import * as d3Ease from 'd3-ease'
 
-// Returns a d3 ease given the type
-// NOTE: Defaults to linear
 const setEase = (easeType) => {
   let easing = 'ease' + easeType.charAt(0).toUpperCase() + easeType.slice(1)
   return d3Ease[easing]
 }
 
-export { setScale, setEase }
+import * as d3Axis from 'd3-axis'
+
+const setAxis = (orientationType) => {
+  let orientation = 'axis' + orientationType.charAt(0).toUpperCase() + orientationType.slice(1)
+  return d3Axis[orientation]()
+}
+
+export { setScale, setEase, setAxis }

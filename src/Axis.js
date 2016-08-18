@@ -1,9 +1,10 @@
 import React, { PropTypes } from 'react'
 import ReactDom from 'react-dom'
-import { axisLeft, axisRight, axisTop, axisBottom, select } from 'd3'
+import { select } from 'd3'
 
+import { setAxis } from './util/d3'
 // Truncate labels based on maximum allowable characters, where
-  // characters should be estimated at 8-10 pixels per character.
+// characters should be estimated at 8-10 pixels per character.
 const truncateLabel = (d, maxChars) => {
   let replacementString = '...'
   if (d.length > maxChars + replacementString.length) {
@@ -11,16 +12,16 @@ const truncateLabel = (d, maxChars) => {
   }
   return d
 }
+
 class Axis extends React.Component {
   constructor (props) {
     super(props)
-    this.state = {range: 0, ticks: 0}
+    this.state = { range: 0, ticks: 0 }
 
-    this.setAxis = this.setAxis.bind(this)
     this.resizeAxis = this.resizeAxis.bind(this)
 
-    this.axis = null
-    this.setAxis(this.props)
+    this.axis = setAxis(props.orient)
+    this.axis.scale(props.scale)
   }
 
   componentDidMount () {
@@ -28,30 +29,10 @@ class Axis extends React.Component {
   }
 
   componentDidUpdate () {
-    // console.log(this.props.type + ' did update')
     this.resizeAxis()
   }
 
-  componentWillReceiveProps (nextProps) {
-    // console.log(this.props.type + ' will receive props')
-    let range = nextProps.scale.range()[1] - nextProps.scale.range()[0]
-    this.setState({range})
-  }
-
-  setAxis (props) {
-    if (props.orient === 'left') {
-      this.axis = axisLeft()
-    } else if (props.orient === 'bottom') {
-      this.axis = axisBottom()
-    } else if (props.orient === 'top') {
-      this.axis = axisTop()
-    } else if (props.orient === 'right') {
-      this.axis = axisRight()
-    }
-    this.axis.scale(props.scale)
-  }
   // Re-calculate postions of the chart based on the currently rendered position
-  // Also updates the axes based on the
   resizeAxis () {
     let props = this.props
     let thisNode = ReactDom.findDOMNode(this)
@@ -63,9 +44,8 @@ class Axis extends React.Component {
     let tickValues = props.tickValues
     let tickPreformatValues = []
     let tickFormatter = null
-    let ordinalTickFormat = false
 
-    if (props.scale.domain().length > 0 && props.scale.range().length > 0) {
+    if (props.scale.domain().length > 0) {
       // Use custom tick count if it exist
       if (props.tickCount) {
         tickCount = props.tickCount
@@ -73,10 +53,11 @@ class Axis extends React.Component {
         tickCount = props.type === 'y' ? 3 : props.scale.domain().length
       }
 
-      // If scale type is ordinal truncate labels
+      // Set tickFormatter to be used
       if (/ordinal/.test(props.scale.type)) {
         let maxWidth = 0
         let fontSize = 12
+
         if (props.orient === 'top' || props.orient === 'bottom') {
           let binWidth = Math.floor((props.scale.step()))
           maxWidth = Math.floor(binWidth / fontSize)
@@ -87,20 +68,17 @@ class Axis extends React.Component {
             maxWidth = props.margin.right
           }
         }
-        ordinalTickFormat = true
+
         tickFormatter = (d) => {
           tickPreformatValues.push(d)
           return truncateLabel(d, maxWidth)
         }
-      }
-
-      // Use custom tickFormatter if it exist
-      if (props.tickFormat) {
+      } else if (props.tickFormat) {
         tickFormatter = (d, i) => {
           tickPreformatValues.push(d)
           return props.tickFormat(d, i)
         }
-      } else if (!ordinalTickFormat) {
+      } else {
         tickFormatter = (d, i) => {
           // Default d3 method of formatting
           // Allows obtaining the real value for styling before it's formatted
@@ -112,17 +90,19 @@ class Axis extends React.Component {
         }
       }
     }
-    // Commenting this out doesn't appear to cause any problems
-    // it also seems to improve the re-rendering performance a bit.
-    // this.setAxis(props)
+
+    // Setup axis
     this.axis
       .tickFormat(tickFormatter)
       .tickValues(tickValues)
       .ticks(tickCount)
+
+    // Create and animate axis
     selection
       .transition().duration(props.animationDuration)
       .call(this.axis)
 
+    // Add styling to axis
     if (props.tickStyle) {
       selection.selectAll('.tick text')
         .each(function (d, i) {
@@ -134,22 +114,21 @@ class Axis extends React.Component {
 
   render () {
     let props = this.props
-    // Need to handle top and left orientations, but this works for now
     let transform = ''
     if (props.orient === 'bottom') {
       transform = 'translate(0,' + props.chartHeight + ')'
     } else if (props.orient === 'right') {
       transform = 'translate(' + props.chartWidth + ',0)'
     }
-    if (props.label) {
-      return (
-        <g className={props.className} transform={transform}>
-          <text className='label'>{props.label}</text>
-        </g>
-      )
-    } else {
-      return <g className={props.className} transform={transform}></g>
-    }
+
+    return (
+      <g className={props.className} transform={transform}>
+        {props.label != null
+          ? <text className='label'>{props.label}</text>
+          : undefined
+        }
+      </g>
+    )
   }
 }
 
@@ -161,7 +140,7 @@ Axis.defaultProps = {
   tickFormat: null,
   tickStyle: null,
   animationDuration: 0,
-  label: ''
+  label: null
 }
 
 Axis.propTypes = {
