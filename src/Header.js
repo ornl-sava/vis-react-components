@@ -3,18 +3,22 @@ import React, { PropTypes } from 'react'
 class Header extends React.Component {
   render () {
     let { chart, ...props } = this.props
-    let containerProps = {
+    let containerStyle = {
       style: {
         width: chart.chartWidth,
         marginLeft: chart.props.margin.left,
         marginRight: chart.props.margin.right
       }
     }
+
     return (
-      <div {...containerProps}>
+      <div {...containerStyle}>
         {props.components().map((e, i) => {
-          let cloneProps = {}
-          cloneProps.key = i
+          let cloneProps = {
+            key: i
+          }
+
+          // Only pass down chart if it exist as a prop for the component
           if ('chart' in e.props) {
             cloneProps.chart = chart
           }

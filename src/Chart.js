@@ -26,10 +26,16 @@ class Chart extends React.Component {
     let props = this.props
     let rootRect = this.refs.rootElement.getBoundingClientRect()
     let svg = select(this.refs.svgRoot)
-    // let container = select(this.refs.container)
-    this.chartWidth = props.width === 0 ? rootRect.width - props.margin.left - props.margin.right : Math.min((rootRect.width - props.margin.left - props.margin.right), (props.width - props.margin.left - props.margin.right))
+
+    this.chartWidth = props.width === 0
+      ? rootRect.width - props.margin.left - props.margin.right
+      : Math.min((rootRect.width - props.margin.left - props.margin.right),
+        (props.width - props.margin.left - props.margin.right))
+
     this.chartHeight = props.height - props.margin.top - props.margin.bottom
-    svg.attr('width', props.width === 0 ? rootRect.width : props.width)
+
+    svg
+      .attr('width', props.width === 0 ? rootRect.width : props.width)
       .attr('height', props.height)
 
     props.resizeHandler()
@@ -47,7 +53,7 @@ class Chart extends React.Component {
   }
 
   render () {
-    let {width, height, ...props} = this.props
+    let { width, height, ...props } = this.props
     let left = props.margin.left
     let top = props.margin.top
     return (

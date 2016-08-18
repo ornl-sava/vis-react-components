@@ -92,10 +92,9 @@ class SVGComponent extends React.Component {
     this.animating = true
 
     let node = select(this.refs.node)
-    let propsCopy = JSON.parse(JSON.stringify(spreadExclude(props, { children: '' })))
     node.transition()
       .call((transition) => {
-        props[type].func(transition, propsCopy)
+        props[type].func(transition, props)
       })
       .on('end', () => {
         if (!this.unmounting) {
