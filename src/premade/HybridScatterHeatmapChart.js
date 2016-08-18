@@ -14,8 +14,9 @@ class HybridScatterHeatmapChart extends React.Component {
   constructor (props) {
     super(props)
 
-    this.xScale = setScale(props.xScaleType)
-    this.yScale = setScale(props.yScaleType)
+    this.xScale = setScale(props.xScaleType) // Shared time scale
+    this.syScale = setScale(props.yScaleType) // Scatterplot scale
+    this.hyScale = setScale('linear') // Heatmap scale
     this.scatterColorScale = setScale('linear')
     this.heatmapColorScale = setScale('qunatile')
 
@@ -73,17 +74,22 @@ class HybridScatterHeatmapChart extends React.Component {
   }
 
   generateColorScale (props, state) {
-    // Get min/max
+    // Get min/max for scatterplot color scale range
     let yMax = -Infinity
     let yMin = Infinity
-    for (let i = 0; i < props.data.length; i++) {
-      for (let j = 0; j < props.data[i].bins.length; j++) {
-        for (let k = 0; k < props.data[i].bins[j].data.length; k++) {
-          if (props.data[i].bins[j].data[k][props.scatterYAccessor] > yMax) {
-            yMax = props.data[i].bins[j].data[k][props.scatterYAccessor]
-          }
-          if (props.data[i].bins[j].data[k][props.scatterYAccessor] < yMin) {
-            yMin = props.data[i].bins[j].data[k][props.scatterYAccessor]
+    if (props.yDomain !== null) {
+      yMin = props.yDomain[0]
+      yMax = props.yDomain[1]
+    } else {
+      for (let i = 0; i < props.data.length; i++) {
+        for (let j = 0; j < props.data[i].bins.length; j++) {
+          for (let k = 0; k < props.data[i].bins[j].data.length; k++) {
+            if (props.data[i].bins[j].data[k][props.scatterYAccessor] > yMax) {
+              yMax = props.data[i].bins[j].data[k][props.scatterYAccessor]
+            }
+            if (props.data[i].bins[j].data[k][props.scatterYAccessor] < yMin) {
+              yMin = props.data[i].bins[j].data[k][props.scatterYAccessor]
+            }
           }
         }
       }
@@ -95,24 +101,28 @@ class HybridScatterHeatmapChart extends React.Component {
       .range([props.scatterMinColor, props.scatterMaxColor])
       .interpolate(interpolateHcl)
 
-    // Set heatmap color scale
+    // Generate temp linear color scale for heatmap color scale
     let tempColorScale = setScale('linear')
       .domain([0, props.heatmapNumColorCat])
       .range([props.heatmapMinColor, props.heatmapMaxColor])
       .interpolate(interpolateHcl)
 
+    // Generate heatmap color scale range
     let colorRange = []
     for (let i = 0; i < props.heatmapNumColorCat + 1; i++) {
       colorRange.push(tempColorScale(i))
     }
 
+    // Generate heatmap color scale domain
     let colorDomain = [0, 1]
     for (let i = 0; i < props.data.length; i++) {
       for (let j = 0; j < props.data[i].bins.length; j++) {
-        colorDomain.push(props.data[i].bins[j].value)
+        let value = props.data[i].bins[j][props.heatmapXAccessor.value]
+        colorDomain.push(value === 0 ? 1 : value)
       }
     }
 
+    // Set heatmap color scale
     this.heatmapColorScale
       .domain(colorDomain)
       .range(colorRange)
@@ -124,7 +134,7 @@ class HybridScatterHeatmapChart extends React.Component {
       let originalTimeSlice = props.timeWindow / horzLength
       let expandedTimeSlice = originalTimeSlice * state.domainExpansionFactor
 
-      // Compute new end time
+      // Compute new end time for expanded slice
       let timeWindow = 0
       for (let i = 0; i < horzLength; i++) {
         if (state.expandedSectionNumbers.indexOf(i) > -1) {
@@ -134,9 +144,8 @@ class HybridScatterHeatmapChart extends React.Component {
         }
       }
 
-      // console.log(timeWindow / 1000, originalTimeSlice, expandedTimeSlice)
+      // Push on domain 'slices'
       this.endTime = props.startTime - timeWindow
-
       let xDomain = [this.endTime]
       for (let i = 0; i < horzLength - 1; i++) {
         let previous = xDomain[xDomain.length - 1]
@@ -148,24 +157,34 @@ class HybridScatterHeatmapChart extends React.Component {
       }
       xDomain.push(props.startTime)
 
-      // Update window of time x scale
+      // Update window of time for x scale
       this.xScale
         .domain(xDomain)
 
-      let yMax = -Infinity
-      for (let i = 0; i < props.data.length; i++) {
-        for (let j = 0; j < props.data[i].bins.length; j++) {
-          for (let k = 0; k < props.data[i].bins[j].data.length; k++) {
-            if (props.data[i].bins[j].data[k][props.scatterYAccessor] > yMax) {
-              yMax = props.data[i].bins[j].data[k][props.scatterYAccessor]
+      let yMax = 1
+      let yMin = 0
+      if (props.yDomain !== null) {
+        yMin = props.yDomain[0]
+        yMax = props.yDomain[1]
+      } else {
+        for (let i = 0; i < props.data.length; i++) {
+          for (let j = 0; j < props.data[i].bins.length; j++) {
+            for (let k = 0; k < props.data[i].bins[j].data.length; k++) {
+              if (props.data[i].bins[j].data[k][props.scatterYAccessor] > yMax) {
+                yMax = props.data[i].bins[j].data[k][props.scatterYAccessor]
+              }
             }
           }
         }
       }
 
-      // Update y scale domain
-      this.yScale
-        .domain([0, yMax])
+      // Update scatter y scale domain
+      this.syScale
+        .domain([yMin, yMax])
+
+      // Update heatmap y scale domain
+      this.hyScale
+        .domain([0, props.data.length])
     }
   }
 
@@ -191,11 +210,12 @@ class HybridScatterHeatmapChart extends React.Component {
     xRange.push(chartWidth)
 
     this.xScale.range(xRange)
-    this.yScale.range([chartHeight, 0])
+    this.syScale.range([chartHeight, 0])
+    this.hyScale.range([chartHeight, 0])
   }
 
   updateScatterData (props, state) {
-    // Rebin
+    // Flatten expanded bins
     let scatterData = []
     let heatmapKeys = this.scatterSet.values()
     for (let i = 0; i < heatmapKeys.length; i++) {
@@ -311,17 +331,17 @@ class HybridScatterHeatmapChart extends React.Component {
           colorScale={this.heatmapColorScale} xScale={this.xScale} onClick={this.onColumnMarkerClick} />
 
         <Heatmap ref='heatmap' className='heatmap' data={data}
-          xScale={this.xScale} yScale={this.yScale} colorScale={this.heatmapColorScale}
+          xScale={this.xScale} yScale={this.hyScale} colorScale={this.heatmapColorScale}
           xAccessor={props.heatmapXAccessor} yAccessor={props.heatmapYAccessor}
           onEnter={this.onHeatmapEnter} onLeave={this.onHeatmapLeave} onClick={this.onHeatmapClick} />
 
         <Scatterplot ref='scatter' className='scatter' data={this.state.scatterData} keyFunction={props.scatterKeyFunction}
-          xScale={this.xScale} yScale={this.yScale} colorScale={this.scatterColorScale}
+          xScale={this.xScale} yScale={this.syScale} colorScale={this.scatterColorScale}
           xAccessor={props.scatterXAccessor} yAccessor={props.scatterYAccessor}
           onEnter={this.onScatterplotEnter} onLeave={this.onScatterplotLeave} onClick={this.onScatterplotClick} />
 
         <Axis className='x axis' {...props.xAxis} scale={this.xScale} />
-        <Axis className='y axis' {...props.yAxis} scale={this.yScale} />
+        <Axis className='y axis' {...props.yAxis} scale={this.syScale} />
       </Chart>
     )
   }
@@ -331,8 +351,8 @@ class HybridScatterHeatmapChart extends React.Component {
 HybridScatterHeatmapChart.defaultProps = {
   // Premade default
   data: [],
-  xDomain: [],
-  yDomain: [],
+  xDomain: null,
+  yDomain: null,
   yScaleType: 'linear',
   xScaleType: 'time',
   scatterMinColor: '#F1F5E9',
@@ -373,6 +393,9 @@ HybridScatterHeatmapChart.defaultProps = {
   }
 }
 
+// xScaleType - tested to work with time and utc scales
+// yScaleType - tested to work with linear scales
+// yDomain - can gain a bit of a speedup by manually setting the yDomain
 HybridScatterHeatmapChart.propTypes = {
   startTime: PropTypes.number.isRequired,
   timeWindow: PropTypes.number.isRequired,

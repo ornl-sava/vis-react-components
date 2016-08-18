@@ -45,16 +45,6 @@ class Scatterplot extends React.Component {
                   return transition
                 }
               }}
-              onExit={{
-                func: (transition, props) => {
-                  transition
-                    .delay(0)
-                    .duration(500)
-                    .ease(setEase('linear'))
-                    .attr('r', 0)
-                  return transition
-                }
-              }}
               r={props.radius}
               cx={props.xScale(d[props.xAccessor])}
               cy={props.yScale(d[props.yAccessor])}
@@ -81,9 +71,9 @@ Scatterplot.defaultProps = {
   onLeave: () => {}
 }
 
-// xScale tested to work with linear, log, pow, time, and ordinal point scales
-// yScale tested to work with linear, log, pow, time, and ordinal point scales
-// keyFunction returning unique data based ids is required for animations to work in an expected manner
+// xScale - tested to work with linear, log, pow, time, and ordinal point scales
+// yScale - tested to work with linear, log, pow, time, and ordinal point scales
+// keyFunction - returning unique data based ids is required for animations to work in an expected manner
 Scatterplot.propTypes = {
   chartHeight: PropTypes.number,
   chartWidth: PropTypes.number,

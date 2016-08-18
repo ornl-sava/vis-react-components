@@ -1,18 +1,19 @@
 import React from 'react'
 import debounce from 'lodash.debounce'
 
-import { ScatterHeatmapHybrid, HybridScatterHeatmapChart } from '../src'
-// import { HybridScatterHeatmapChart } from '../src'
+// import { ScatterHeatmapHybrid, HybridScatterHeatmapChart } from '../src'
+import { HybridScatterHeatmapChart } from '../src'
 // import { ScatterHeatmapHybrid } from '../src'
 
 // Function to bin scatter points
-const bin = (points, now, width = 12, height = 12, step = 0.5) => {
+const bin = (points, now, width = 12, height = 12) => {
   let data = []
   let endTime = now - 30 * 1000
   let slice = (now - endTime) / width
+  let step = 6 / height
   for (let i = 1; i < height + 1; i++) {
     let datum = {}
-    datum.key = i * step
+    datum.key = i
     datum.value = 0
     datum.bins = []
     for (let j = 0; j < width; j++) {
@@ -101,7 +102,7 @@ class ScatterHeatmapExample extends React.Component {
   render () {
     return (
       <div>
-        {<ScatterHeatmapHybrid
+        {/* <ScatterHeatmapHybrid
           ref='chart'
           startTime={this.state.now}
           clsName={'ScatterHeatmapHybrid'}
@@ -115,13 +116,14 @@ class ScatterHeatmapExample extends React.Component {
           timeWindow={30 * 1000}
           heatmapVertDivisions={12}
           heatmapHorzDivisions={12}
-          data={this.points} />}
+          data={this.points} /> */}
         {<HybridScatterHeatmapChart
           className='Hybrid'
           height={600}
           startTime={this.state.now}
           timeWindow={30 * 1000}
           scatterKeyFunction={this.scatterKeyFunction}
+          yDomain={[0, 6]}
           data={this.state.data} />}
       </div>
 

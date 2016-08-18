@@ -185,12 +185,4 @@ Choropleth.propTypes = {
   onMove: PropTypes.func
 }
 
-// Only required for REST calls
-Choropleth.contextTypes = {
-  filterField: PropTypes.string,
-  filterString: PropTypes.string,
-  filterType: PropTypes.string,
-  updateFilter: PropTypes.func
-}
-
 export default Choropleth

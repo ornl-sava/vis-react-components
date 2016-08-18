@@ -5,6 +5,8 @@ import { interpolate, extent, max, min, range, ascending, set } from 'd3'
 import SVGComponent from './SVGComponent'
 import { setScale, setEase } from './util/d3'
 
+// NOTE: Observe TODO's that are listed inside 'generateGraph'
+//  These will need to be done once API is created
 class Circumshaker extends React.Component {
   constructor (props) {
     super(props)
@@ -30,6 +32,7 @@ class Circumshaker extends React.Component {
     this.generateGraph(nextProps)
   }
 
+  // NOTE: Changes will beed to be made here once API is created
   generateGraph (props) {
     if (Object.keys(props.data).length > 0) {
       let graph = this.graph
@@ -41,7 +44,8 @@ class Circumshaker extends React.Component {
       // Helper to generate graph's links and nodes
       const generateGraph = (data, depth = 0, parent = null) => {
         // Create node
-        // TODO: Used some passed down prop to determine key, value used
+        // NOTE: Only needed because of the test data
+        // TODO: Once api is created, shouldn't have to check if this was the root node!
         let node = (depth !== 0)
           ? {key: data.key_as_string, value: data.doc_count, depth: depth}
           : {key: data.source_ip, value: data.dest_ip.length, depth: 0}
@@ -70,8 +74,10 @@ class Circumshaker extends React.Component {
           graph.links.push(link)
         }
 
-        // To ensure next alternating path is taken during traversal
-        // TODO: used some passed down prop to determine alternation
+        // NOTE: To ensure next alternating path is taken during traversal
+        //  Only needed with test data
+        // TODO: This shouldn't happen once api is created
+        //  Will want some 'childAccessor'
         let prop = null
         if (data.hasOwnProperty('dest_ip')) {
           prop = 'dest_ip'
@@ -80,6 +86,7 @@ class Circumshaker extends React.Component {
         }
 
         // Continue traversing data
+        // TODO: Make into data[props.childAccessor]
         if (prop !== null) {
           data[prop].forEach((d) => {
             generateGraph(d, depth + 1, node)
