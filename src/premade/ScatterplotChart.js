@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react'
 import { extent } from 'd3'
 
-import { setScale } from '../util/d3'
+import { setScale, isOrdinalScale } from '../util/d3'
 import { spreadRelated } from '../util/react'
 import Chart from '../Chart'
 import Axis from '../Axis'
@@ -46,7 +46,7 @@ class ScatterplotChart extends React.Component {
     if (props.data.length > 0) {
       let xDomain = this.xDomain
       if (xDomain.length === 0) {
-        if (/ordinal/.test(this.xScale.type)) {
+        if (this.xScale.type === 'band') {
           xDomain = props.data.map((d) => d[props.xAccessor])
         } else {
           xDomain = extent(props.data, (d) => d[props.xAccessor])
@@ -55,7 +55,7 @@ class ScatterplotChart extends React.Component {
 
       let yDomain = this.yDomain
       if (yDomain.length === 0) {
-        if (/ordinal/.test(this.yScale.type)) {
+        if (this.yScale.type === 'band') {
           yDomain = props.data.map((d) => d[props.yAccessor])
         } else {
           yDomain = extent(props.data, (d) => d[props.yAccessor])
@@ -69,20 +69,20 @@ class ScatterplotChart extends React.Component {
 
   updateRange (props, state) {
     this.yScale.range([this.refs.chart.chartHeight, 0])
-    if (props.yAxis.innerPadding && /ordinal/.test(this.yScale.type)) {
+    if (props.yAxis.innerPadding && isOrdinalScale(this.yScale.type)) {
       this.yScale.paddingInner(props.yAxis.innerPadding)
     }
 
-    if (props.yAxis.outerPadding && /ordinal/.test(this.yScale.type)) {
+    if (props.yAxis.outerPadding && isOrdinalScale(this.yScale.type)) {
       this.yScale.paddingOuter(props.yAxis.outerPadding)
     }
 
     this.xScale.range([0, this.refs.chart.chartWidth])
-    if (props.xAxis.innerPadding && /ordinal/.test(this.xScale.type)) {
+    if (props.xAxis.innerPadding && isOrdinalScale(this.xScale.type)) {
       this.xScale.paddingInner(props.xAxis.innerPadding)
     }
 
-    if (props.xAxis.outerPadding && /ordinal/.test(this.xScale.type)) {
+    if (props.xAxis.outerPadding && isOrdinalScale(this.xScale.type)) {
       this.xScale.paddingOuter(props.xAxis.outerPadding)
     }
   }

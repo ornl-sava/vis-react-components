@@ -86,7 +86,7 @@ class HistogramExample extends React.Component {
           type: 'dropdown',
           label: 'Scale Type: ',
           options: [
-            'Default', 'Linear', 'Log', 'Power'
+            'Default', 'Linear', 'Log', 'Pow'
           ],
           defaultSelected: () => {
             let defaultValue = this.state.yScaleType

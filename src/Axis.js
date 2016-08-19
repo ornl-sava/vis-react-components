@@ -2,7 +2,7 @@ import React, { PropTypes } from 'react'
 import ReactDom from 'react-dom'
 import { select } from 'd3'
 
-import { setAxis } from './util/d3'
+import { setAxis, isOrdinalScale } from './util/d3'
 // Truncate labels based on maximum allowable characters, where
 // characters should be estimated at 8-10 pixels per character.
 const truncateLabel = (d, maxChars) => {
@@ -54,7 +54,7 @@ class Axis extends React.Component {
       }
 
       // Set tickFormatter to be used
-      if (/ordinal/.test(props.scale.type)) {
+      if (isOrdinalScale(props.scale.type)) {
         let maxWidth = 0
         let fontSize = 12
 

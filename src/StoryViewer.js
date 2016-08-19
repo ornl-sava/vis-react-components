@@ -65,8 +65,8 @@ class StoryViewer extends React.Component {
       currentID: new Array(3),
       selectedTopics: []
     }
-    this.xScale = setScale('ordinalBand')
-    this.yScale = setScale('ordinalBand')
+    this.xScale = setScale('band')
+    this.yScale = setScale('band')
     this.prefScale = d3.scaleOrdinal(d3.schemeCategory20)
 
     this.updateDR = this.updateDR.bind(this)

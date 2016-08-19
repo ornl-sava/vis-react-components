@@ -41,7 +41,7 @@ const chartProps1 = {
   },
   data: ordinalLinearHeatmapData,
   xScaleType: 'linear',
-  yScaleType: 'ordinalBand',
+  yScaleType: 'band',
   yAxis: {
     type: 'y',
     orient: 'left'
@@ -97,8 +97,8 @@ const chartProps3 = {
     ])
   },
   data: ordinalOrdinalHeatmapData,
-  xScaleType: 'ordinalBand',
-  yScaleType: 'ordinalBand'
+  xScaleType: 'band',
+  yScaleType: 'band'
 }
 
 const heatmapProps3 = {
@@ -119,7 +119,7 @@ const chartProps4 = {
     ])
   },
   data: linearOrdinalHeatmapData,
-  xScaleType: 'ordinalBand',
+  xScaleType: 'band',
   yScaleType: 'linear',
   yAxis: {
     type: 'y',

@@ -34,7 +34,7 @@ class ForceDirectedGraph extends React.Component {
     this.setTree(props)
 
     this.colScale = d3.scaleOrdinal(d3.schemeCategory10)
-    this.xScale = setScale('ordinalBand')
+    this.xScale = setScale('band')
 
     this.updateDR = this.updateDR.bind(this)
     this.updateDR(props)

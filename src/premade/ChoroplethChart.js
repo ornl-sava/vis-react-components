@@ -11,8 +11,8 @@ import Legend from '../Legend'
 class ChoroplethChart extends React.Component {
   constructor (props) {
     super(props)
-    this.selectedColorScale = setScale('qunatile')
-    this.unselectedColorScale = setScale('qunatile')
+    this.selectedColorScale = setScale('quantile')
+    this.unselectedColorScale = setScale('quantile')
 
     this.onClick = this.onClick.bind(this)
     this.onEnter = this.onEnter.bind(this)
