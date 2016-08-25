@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react'
 import { extent, max, interpolateHcl } from 'd3'
 
-import { setScale } from '../util/d3'
+import { setScale, isOrdinalScale } from '../util/d3'
 import { spreadRelated } from '../util/react'
 import Chart from '../Chart'
 import Axis from '../Axis'
@@ -14,7 +14,7 @@ class HeatmapChart extends React.Component {
     super(props)
     this.xScale = setScale(props.xScaleType)
     this.yScale = setScale(props.yScaleType)
-    this.colorScale = setScale('qunatile')
+    this.colorScale = setScale('quantile')
 
     this.xDomain = this.props.xDomain
     this.yDomain = this.props.yDomain
@@ -58,7 +58,7 @@ class HeatmapChart extends React.Component {
         // must be taken into consideration
         let offset = props.data[0].bins[1][props.xAccessor.key] -
           props.data[0].bins[0][props.xAccessor.key]
-        if (this.xScale.type === 'ordinalBand') {
+        if (this.xScale.type === 'band') {
           xDomain = props.data[0].bins.map((d) => d[props.xAccessor.key])
         } else {
           xDomain = extent(props.data[0].bins, (d) => d[props.xAccessor.key])
@@ -74,7 +74,7 @@ class HeatmapChart extends React.Component {
         // must be taken into consideration
         // let offset = props.data[1][props.yAccessor.key] -
           // props.data[0][props.yAccessor.key]
-        if (this.yScale.type === 'ordinalBand') {
+        if (this.yScale.type === 'band') {
           yDomain = props.data.map((d) => d[props.yAccessor.key])
         } else {
           yDomain = [0.000001, max(props.data, (d) => d[props.yAccessor.key])]
@@ -128,20 +128,20 @@ class HeatmapChart extends React.Component {
 
   updateRange (props, state) {
     this.yScale.range([this.refs.chart.chartHeight, 0])
-    if (props.yAxis.innerPadding && /ordinal/.test(this.yScale.type)) {
+    if (props.yAxis.innerPadding && isOrdinalScale(this.yScale.type)) {
       this.yScale.paddingInner(props.yAxis.innerPadding)
     }
 
-    if (props.yAxis.outerPadding && /ordinal/.test(this.yScale.type)) {
+    if (props.yAxis.outerPadding && isOrdinalScale(this.yScale.type)) {
       this.yScale.paddingOuter(props.yAxis.outerPadding)
     }
 
     this.xScale.range([0, this.refs.chart.chartWidth])
-    if (props.xAxis.innerPadding && /ordinal/.test(this.xScale.type)) {
+    if (props.xAxis.innerPadding && isOrdinalScale(this.xScale.type)) {
       this.xScale.paddingInner(props.xAxis.innerPadding)
     }
 
-    if (props.xAxis.outerPadding && /ordinal/.test(this.xScale.type)) {
+    if (props.xAxis.outerPadding && isOrdinalScale(this.xScale.type)) {
       this.xScale.paddingOuter(props.xAxis.outerPadding)
     }
   }

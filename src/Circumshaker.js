@@ -5,8 +5,6 @@ import { interpolate, extent, max, min, range, ascending, set } from 'd3'
 import SVGComponent from './SVGComponent'
 import { setScale, setEase } from './util/d3'
 
-// NOTE: Observe TODO's that are listed inside 'generateGraph'
-//  These will need to be done once API is created
 class Circumshaker extends React.Component {
   constructor (props) {
     super(props)
@@ -44,11 +42,13 @@ class Circumshaker extends React.Component {
       // Helper to generate graph's links and nodes
       const generateGraph = (data, depth = 0, parent = null) => {
         // Create node
-        // NOTE: Only needed because of the test data
-        // TODO: Once api is created, shouldn't have to check if this was the root node!
-        let node = (depth !== 0)
-          ? {key: data.key_as_string, value: data.doc_count, depth: depth}
-          : {key: data.source_ip, value: data.dest_ip.length, depth: 0}
+        let node = {
+          key: data[props.keyAccessor],
+          value: data[props.valueAccessor],
+          depth: depth
+        }
+
+        // Bind all of data to node
         node.data = data
 
         // Find possible duplicates
@@ -74,21 +74,9 @@ class Circumshaker extends React.Component {
           graph.links.push(link)
         }
 
-        // NOTE: To ensure next alternating path is taken during traversal
-        //  Only needed with test data
-        // TODO: This shouldn't happen once api is created
-        //  Will want some 'childAccessor'
-        let prop = null
-        if (data.hasOwnProperty('dest_ip')) {
-          prop = 'dest_ip'
-        } else if (data.hasOwnProperty('source_ip')) {
-          prop = 'source_ip'
-        }
-
         // Continue traversing data
-        // TODO: Make into data[props.childAccessor]
-        if (prop !== null) {
-          data[prop].forEach((d) => {
+        if (props.childAccessor in data) {
+          data[props.childAccessor].forEach((d) => {
             generateGraph(d, depth + 1, node)
           })
         }
@@ -397,6 +385,9 @@ class Circumshaker extends React.Component {
 }
 
 Circumshaker.defaultProps = {
+  keyAccessor: 'key',
+  valueAccessor: 'value',
+  childAccessor: 'children',
   nodeMinSize: 8,
   nodeMaxSize: null,
   maxDepth: 3,
@@ -408,6 +399,9 @@ Circumshaker.defaultProps = {
 
 // nodeMaxSize defaults to using largest fit possible space
 Circumshaker.propTypes = {
+  keyAccessor: PropTypes.string,
+  valueAccessor: PropTypes.string,
+  childAccessor: PropTypes.string,
   nodeMinSize: PropTypes.number,
   nodeMaxSize: PropTypes.number,
   maxDepth: PropTypes.number,

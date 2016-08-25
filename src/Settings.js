@@ -122,7 +122,7 @@ class Settings extends React.Component {
           {settings.options.map((d, i) => {
             if (d.type === 'dropdown') {
               return (<Dropdown key={i} chart={chart} {...d} />)
-            }
+            } // Check for render other types of input here
           })}
         </div>
       </div>

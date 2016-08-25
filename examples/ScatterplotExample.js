@@ -36,7 +36,7 @@ const chartProps2 = {
   },
   className: 'scatter1',
   xScaleType: 'linear',
-  yScaleType: 'ordinalPoint',
+  yScaleType: 'point',
   data: linearOrdinalScatterplotData
 }
 
@@ -47,8 +47,8 @@ const chartProps3 = {
     ])
   },
   className: 'scatter4',
-  xScaleType: 'ordinalPoint',
-  yScaleType: 'ordinalPoint',
+  xScaleType: 'point',
+  yScaleType: 'point',
   data: ordinalOrdinalScatterplotData
 }
 
@@ -59,7 +59,7 @@ const chartProps4 = {
     ])
   },
   className: 'scatter3',
-  xScaleType: 'ordinalPoint',
+  xScaleType: 'point',
   yScaleType: 'linear',
   data: ordinalLinearScatterplotData
 }

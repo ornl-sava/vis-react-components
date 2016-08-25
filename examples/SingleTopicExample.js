@@ -83,7 +83,7 @@ const onBarClick = function (clickEvent) {
 const chartProps4 = {
   title: 'Topic Frequency',
   data: linearOrdinalHeatmapData,
-  xScaleType: 'ordinalBand',
+  xScaleType: 'band',
   yScaleType: 'linear',
   yAxis: {
     type: 'y',

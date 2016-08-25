@@ -65,8 +65,8 @@ class TopicFlow extends React.Component {
       selectedTopics: [],
       selectedT: []
     }
-    this.xScale = setScale('ordinalBand')
-    this.yScale = setScale('ordinalBand')
+    this.xScale = setScale('band')
+    this.yScale = setScale('band')
     this.prefScale = d3.scaleOrdinal(d3.schemeCategory20)
 
     this.updateDomain = this.updateDomain.bind(this)

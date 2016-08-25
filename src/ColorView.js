@@ -66,8 +66,8 @@ class ColorView extends React.Component {
       currentID: []
     }
     if (this.props.spread === 'vertical') {
-      this.xScale = setScale('ordinalBand')
-      this.yScale = setScale('ordinalBand')
+      this.xScale = setScale('band')
+      this.yScale = setScale('band')
     } else {
       this.xScale = setScale('ordinal')
       this.yScale = setScale('ordinal')

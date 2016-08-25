@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react'
 import { ascending, descending } from 'd3'
 
-import { setScale } from '../util/d3'
+import { setScale, isOrdinalScale } from '../util/d3'
 import { spreadRelated } from '../util/react'
 import Chart from '../Chart'
 import Axis from '../Axis'
@@ -130,13 +130,13 @@ class HistogramChart extends React.Component {
       let yDomain = [0.00001, this.getMaxCount(props.data) * 1.1]
       let xDomain = domainData[0].bins.map((bin) => bin[props.xAccessor])
 
-      if (this.xScale.type === 'linear' || this.xScaleType === 'log' || this.xScale.type === 'power') {
+      if (this.xScale.type === 'linear' || this.xScaleType === 'log' || this.xScale.type === 'pow') {
         this.interval = xDomain[1] - xDomain[0]
         xDomain = [
           xDomain[0],
           xDomain[xDomain.length - 1] + this.interval
         ]
-      } else if (this.xScale.type === 'time' || this.xScale.type === 'timeUtc') {
+      } else if (this.xScale.type === 'time' || this.xScale.type === 'utc') {
         let interval = xDomain[1].getTime() - xDomain[0].getTime()
         this.interval = interval
         // Add one more interval to the domain so all bins can be rendered property
@@ -162,20 +162,20 @@ class HistogramChart extends React.Component {
 
   updateRange (props, state) {
     this.yScale.range([this.refs.chart.chartHeight, 0])
-    if (props.yAxis.innerPadding && /ordinal/.test(this.yScale.type)) {
+    if (props.yAxis.innerPadding && isOrdinalScale(this.yScale.type)) {
       this.yScale.paddingInner(props.yAxis.innerPadding)
     }
 
-    if (props.yAxis.outerPadding && /ordinal/.test(this.yScale.type)) {
+    if (props.yAxis.outerPadding && isOrdinalScale(this.yScale.type)) {
       this.yScale.paddingOuter(props.yAxis.outerPadding)
     }
 
     this.xScale.range([0, this.refs.chart.chartWidth])
-    if (props.xAxis.innerPadding && /ordinal/.test(this.xScale.type)) {
+    if (props.xAxis.innerPadding && isOrdinalScale(this.xScale.type)) {
       this.xScale.paddingInner(props.xAxis.innerPadding)
     }
 
-    if (props.xAxis.outerPadding && /ordinal/.test(this.xScale.type)) {
+    if (props.xAxis.outerPadding && isOrdinalScale(this.xScale.type)) {
       this.xScale.paddingOuter(props.xAxis.outerPadding)
     }
   }
@@ -227,7 +227,7 @@ HistogramChart.defaultProps = {
   xDomain: [],
   yDomain: [],
   yScaleType: 'linear',
-  xScaleType: 'ordinalBand',
+  xScaleType: 'band',
   sortBy: null,
   sortOrder: null,
   sortTypes: [],

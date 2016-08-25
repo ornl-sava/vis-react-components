@@ -18,7 +18,7 @@ class HybridScatterHeatmapChart extends React.Component {
     this.syScale = setScale(props.yScaleType) // Scatterplot scale
     this.hyScale = setScale('linear') // Heatmap scale
     this.scatterColorScale = setScale('linear')
-    this.heatmapColorScale = setScale('qunatile')
+    this.heatmapColorScale = setScale('quantile')
 
     this.scatterSet = set()
 
