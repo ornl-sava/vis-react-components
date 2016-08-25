@@ -58,7 +58,10 @@ class Chart extends React.Component {
     let top = props.margin.top
     return (
       <div ref='rootElement' className={props.className} style={{position: 'relative'}}>
-        <Header chart={this} components={this.props.header} />
+        {(this.chartWidth === 0 || this.chartHeight === 0)
+          ? undefined
+          : <Header chart={this} components={this.props.header} />
+        }
         <svg ref='svgRoot' width={width} height={height}>
           <defs>
             <clipPath id='clip'>
