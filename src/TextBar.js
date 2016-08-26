@@ -48,7 +48,7 @@ class TextBar extends React.Component {
       console.log('next', nextProps.barStyle)
       console.log('this', this.props.barStyle)
       console.log('stylC', styleChange)
-    }*/
+    } */
     // if (selected) { console.log('updated') }
     return styleChange || selected
     // return selected

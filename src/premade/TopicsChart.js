@@ -81,7 +81,7 @@ class TopicsChart extends React.Component {
     this.sort(props)
     return (
       <div className='row' >
-        <text className='top'></text>
+        <text className='top' />
         <Chart className='colorView col-md-2' ref='updateChart2'
           {...spreadRelated(Chart, props)}
           yAxis={false} xAxis={false} xScaleType='linear' height={600}>
@@ -92,7 +92,7 @@ class TopicsChart extends React.Component {
           yAxis={false} xAxis={false} xScaleType='linear' height={this.height} margin={{top: 20, right: 20, bottom: 10, left: 20}} >
           <TopicFlow {...props} clickArray={this.state.clickArray} onEnter={this.onBarEnter} onLeave={this.onBarLeave} />
         </Chart>
-        <text className='bottom'></text>
+        <text className='bottom' />
       </div>
     )
   }

@@ -70,7 +70,7 @@ const toolTipFunction = (tooltipData) => {
 
 /* const color = d3.scaleLinear()
 .domain([0, 100])
-.range(['#E4E4E4', '#5D5D5D'])*/
+.range(['#E4E4E4', '#5D5D5D']) */
 
 const onBarClick = function (clickEvent) {
   console.groupCollapsed('Bar ' + this.props.data.x)

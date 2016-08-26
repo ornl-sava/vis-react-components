@@ -286,7 +286,7 @@ class StoryViewer extends React.Component {
         let key = 'line-' + index + i
         return (
           <g key={key}>
-            <path className={' lineMatch -' + index + i} d={array} style={{stroke: 'grey'}} ></path>
+            <path className={' lineMatch -' + index + i} d={array} style={{stroke: 'grey'}} />
           </g>
         )
       })

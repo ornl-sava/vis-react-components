@@ -243,7 +243,7 @@ class TopicFlow extends React.Component {
       let lineInfo = []
       if (data.line != null) {
         lineInfo = (
-          <path className={'lineMatch ' + data.bar.className + ' barTopic'} d={data.line} style={data.bar.barStyle} ></path>
+          <path className={'lineMatch ' + data.bar.className + ' barTopic'} d={data.line} style={data.bar.barStyle} />
         )
       }
       return (
@@ -278,7 +278,7 @@ class TopicFlow extends React.Component {
     let renderEl = null
     if (this.props.timeBins.length <= 0) {
       console.log('probably no data')
-      renderEl = <g></g>
+      renderEl = <g />
     } else {
       renderEl = this.topics = this.renderTopics(this.props)
       // renderEl = this.moveTopics()
