@@ -43,7 +43,7 @@ class ColorView extends React.Component {
   _onClick (toolTipData) {
     // console.log('clicked', toolTipData)
     let index = toolTipData.label
-    let newClickArray = this.props.clickArray
+    let newClickArray = Object.assign({}, this.clickArray)
     if (index === 'CLEAR') {
       for (let i in newClickArray) {
         newClickArray[i] = false
@@ -66,8 +66,8 @@ class ColorView extends React.Component {
       currentID: []
     }
     if (this.props.spread === 'vertical') {
-      this.xScale = setScale('ordinalBand')
-      this.yScale = setScale('ordinalBand')
+      this.xScale = setScale('band')
+      this.yScale = setScale('band')
     } else {
       this.xScale = setScale('ordinal')
       this.yScale = setScale('ordinal')
@@ -75,16 +75,17 @@ class ColorView extends React.Component {
 
     this.updateDR = this.updateDR.bind(this)
 
-    this.data = props.colorDomain
-
     this.onEnter = this._onEnter.bind(this)
     this.onLeave = this._onLeave.bind(this)
     this.prefScale = scaleOrdinal(schemeCategory20)
     this.onClick = this._onClick.bind(this)
 
     this.rData = []
-    this.colorDomain = JSON.parse(JSON.stringify(this.props.colorDomain))
-    this.colorDomain.push('CLEAR')
+    // this.colorDomain = JSON.parse(JSON.stringify(this.props.colorDomain))
+    // this.colorDomain.push('CLEAR')
+
+    this.colorDomain = this.props.colorDomain.concat(['OTHER', 'CLEAR'])
+    this.clickArray = Object.assign(props.clickArray, {OTHER: true})
 
     this.updateDR(props)
   }
@@ -98,7 +99,12 @@ class ColorView extends React.Component {
   componentWillUpdate (nextProps) {
   }
   componentWillReceiveProps (nextProps) {
-    this.data = nextProps.colorDomain
+    if (nextProps.colorDomain !== this.props.colorDomain) {
+      this.colorDomain = nextProps.colorDomain.concat(['OTHER', 'CLEAR'])
+      this.clickArray = Object.assign(nextProps.clickArray, {OTHER: true})
+    } else {
+      this.clickArray = Object.assign(nextProps.clickArray)
+    }
     this.updateDR(nextProps)
   }
   componentWillMount () {
@@ -245,34 +251,10 @@ class ColorView extends React.Component {
       </g>
     )
   }
-
-  // gives text if loading data
-  renderLoadAnimation (props) {
-    let {chartWidth, chartHeight} = props
-    let xPos = Math.floor(chartWidth / 2)
-    let yPos = Math.floor(chartHeight / 2)
-    let messageText = 'Loading data...'
-    if (!props.loading) {
-      if (props.status === 'Failed to fetch') {
-        messageText = 'Can\'t connect to API URL'
-      } else if (props.status !== 'OK') {
-        messageText = 'Error retrieving data: ' + props.status
-      } else {
-        messageText = 'No data returned!'
-      }
-    }
-    return (
-      <g className='loading-message'>
-        <text x={xPos} y={yPos}>{messageText}</text>
-      </g>
-    )
-  }
-
   render () {
     let renderEl = null
     if (this.props.colorDomain.length <= 0) {
       console.log('no data')
-      renderEl = this.renderLoadAnimation(this.props)
     } else {
       renderEl = this.renderTopics(this.props)
     }
@@ -301,8 +283,7 @@ ColorView.propTypes = {
   chartHeight: PropTypes.number.isRequired,
   chartWidth: PropTypes.number.isRequired,
   xScale: PropTypes.any,
-  yScale: PropTypes.any,
-  status: PropTypes.string
+  yScale: PropTypes.any
 }
 
 export default ColorView

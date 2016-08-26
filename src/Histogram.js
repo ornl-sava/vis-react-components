@@ -3,7 +3,7 @@ import ReactTransitionGroup from 'react-addons-transition-group'
 import { select } from 'd3'
 
 import Bar from './Bar'
-import { setEase } from './util/d3'
+import { setEase, isOrdinalScale } from './util/d3'
 import SVGComponent from './SVGComponent'
 import BrushX from './BrushX'
 
@@ -106,7 +106,7 @@ class Histogram extends React.Component {
   renderBars () {
     let {chartWidth, chartHeight, ...props} = this.props
     let numBins = props.data[0].bins.length
-    let barWidth = /ordinal/.test(props.xScale.type)
+    let barWidth = isOrdinalScale(props.xScale.type)
       ? props.xScale.bandwidth()
       : chartWidth / numBins
 
@@ -143,7 +143,7 @@ class Histogram extends React.Component {
               func: (transition, props) => {
                 transition
                   .delay(0)
-                  .duration(750)
+                  .duration(500)
                   .ease(setEase('linear'))
                   .attr('height', props.height)
                   .attr('width', props.width)
@@ -209,6 +209,9 @@ Histogram.defaultProps = {
   onLeave: () => {}
 }
 
+// xScale - tested to work with linear, time, and ordinal band scales
+// yScale - tested to work with continous linear, log, and power scales
+// type - 'stacked' does not work with tested log or power scales
 Histogram.propTypes = {
   addOverlay: PropTypes.bool,
   brushed: PropTypes.bool,

@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react'
-import { scaleLinear, scaleQuantile, scaleTime, timeSecond, select, timeFormat, interpolateHcl, range, axisBottom, axisLeft } from 'd3'
+import { easeLinear, scaleLinear, scaleQuantile, scaleTime, timeSecond, select, timeFormat, interpolateHcl, range, axisBottom, axisLeft } from 'd3'
 
 const binByNumeric = (data, accessor, range, numBins) => {
   let bins = []
@@ -179,7 +179,7 @@ export class HybridScatterHeatmap extends React.Component {
         .on('click.scatter.' + this.props.clsName, (d, i) => this.props.scatterOnClick(d, i))
         .on('mouseover.scatter.' + this.props.clsName, (d, i) => this.props.scatterOnMouseOver(d, i))
         .on('mouseout.scatter.' + this.props.clsName, (d, i) => this.props.scatterOnMouseOut(d, i))
-      .merge(points)
+      .merge(points).transition().duration(100).ease(easeLinear)
         .style('fill', (d, i) => this.state.scatterColorScale(d[this.props.yAccessor]))
         .attr('cx', (d) => this.state.xScale(d[this.props.xAccessor]))
   }
@@ -263,7 +263,7 @@ export class HybridScatterHeatmap extends React.Component {
         .on('mouseover.heatmap.' + this.props.clsName, (d, i) => this.props.heatmapOnMouseOver(d, i))
         .on('mouseout.heatmap.' + this.props.clsName, (d, i) => this.props.heatmapOnMouseOut(d, i))
       .merge(bins)
-        .transition().duration(100)
+        .transition().duration(400).ease(easeLinear)
         .attr('opacity', (d, i) => {
           return heatmap[d.rowIndex][i].active ? 0 : 1
         })
@@ -328,7 +328,7 @@ export class HybridScatterHeatmap extends React.Component {
             })
           }
         })
-      .merge(columnMarkers).transition().duration(100)
+      .merge(columnMarkers).transition().duration(400).ease(easeLinear)
         .attr('x', (d, i) => {
           return this.state.xScale(this.endTime + d.key)
         })
@@ -390,13 +390,13 @@ export class HybridScatterHeatmap extends React.Component {
       .domain(props.yDomain)
 
     // Update heatmap color scale
-    let colorDomain = [0, 8]
+    let colorDomain = [0, 1]
     if (typeof heatmap !== 'undefined') {
-      colorDomain.concat(heatmap.reduce((a, b) => {
-        return a.concat(b)
-      }, []).map((d) => {
-        return d.length
-      }))
+      for (let i = 0; i < heatmap.length; i++) {
+        for (let j = 0; j < heatmap.length; j++) {
+          colorDomain.push(heatmap[i][j].count)
+        }
+      }
     }
 
     this.state.heatmapColorScale
@@ -545,11 +545,11 @@ HybridScatterHeatmap.defaultProps = {
   heatmapVertDivisions: 4,
   heatmapHorzDivisions: 4,
   updateInterval: 0,
-  minHeatmapColor: '#ffffff',
-  maxHeatmapColor: '#08306b',
+  minHeatmapColor: '#eff3ff',
+  maxHeatmapColor: '#2171b5',
   numColorCat: 11,
-  minScatterColor: '#e5f5e0',
-  maxScatterColor: '#00441b',
+  minScatterColor: '#F1F5E9',
+  maxScatterColor: '#7C9B27',
   margin: {top: 30, right: 5, bottom: 20, left: 50},
   width: 400,
   height: 250,

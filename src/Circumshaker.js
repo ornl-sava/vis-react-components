@@ -30,6 +30,7 @@ class Circumshaker extends React.Component {
     this.generateGraph(nextProps)
   }
 
+  // NOTE: Changes will beed to be made here once API is created
   generateGraph (props) {
     if (Object.keys(props.data).length > 0) {
       let graph = this.graph
@@ -41,10 +42,13 @@ class Circumshaker extends React.Component {
       // Helper to generate graph's links and nodes
       const generateGraph = (data, depth = 0, parent = null) => {
         // Create node
-        // TODO: Used some passed down prop to determine key, value used
-        let node = (depth !== 0)
-          ? {key: data.key_as_string, value: data.doc_count, depth: depth}
-          : {key: data.source_ip, value: data.dest_ip.length, depth: 0}
+        let node = {
+          key: data[props.keyAccessor],
+          value: data[props.valueAccessor],
+          depth: depth
+        }
+
+        // Bind all of data to node
         node.data = data
 
         // Find possible duplicates
@@ -70,18 +74,9 @@ class Circumshaker extends React.Component {
           graph.links.push(link)
         }
 
-        // To ensure next alternating path is taken during traversal
-        // TODO: used some passed down prop to determine alternation
-        let prop = null
-        if (data.hasOwnProperty('dest_ip')) {
-          prop = 'dest_ip'
-        } else if (data.hasOwnProperty('source_ip')) {
-          prop = 'source_ip'
-        }
-
         // Continue traversing data
-        if (prop !== null) {
-          data[prop].forEach((d) => {
+        if (props.childAccessor in data) {
+          data[props.childAccessor].forEach((d) => {
             generateGraph(d, depth + 1, node)
           })
         }
@@ -332,7 +327,7 @@ class Circumshaker extends React.Component {
                     y += radius * Math.sin(degree * (Math.PI / 180))
                     transition
                       .delay(0)
-                      .duration(1000)
+                      .duration(500)
                       .ease(setEase('linear'))
                       .attrTween('r', () => {
                         return interpolate(0, props.r)
@@ -350,7 +345,7 @@ class Circumshaker extends React.Component {
                   func: (transition, props) => {
                     transition
                       .delay(0)
-                      .duration(1000)
+                      .duration(500)
                       .ease(setEase('linear'))
                       .attr('r', props.r)
                       .attr('cx', props.cx)
@@ -368,7 +363,7 @@ class Circumshaker extends React.Component {
                     y += radius * Math.sin(degree * (Math.PI / 180))
                     transition
                       .delay(0)
-                      .duration(1000)
+                      .duration(500)
                       .ease(setEase('linear'))
                       .attr('r', 0)
                       .attr('cx', x)
@@ -390,21 +385,26 @@ class Circumshaker extends React.Component {
 }
 
 Circumshaker.defaultProps = {
+  keyAccessor: 'key',
+  valueAccessor: 'value',
+  childAccessor: 'children',
   nodeMinSize: 8,
   nodeMaxSize: null,
   maxDepth: 3,
-  labelField: 'label',
   data: {},
   onClick: () => {},
   onEnter: () => {},
   onLeave: () => {}
 }
 
+// nodeMaxSize defaults to using largest fit possible space
 Circumshaker.propTypes = {
+  keyAccessor: PropTypes.string,
+  valueAccessor: PropTypes.string,
+  childAccessor: PropTypes.string,
   nodeMinSize: PropTypes.number,
   nodeMaxSize: PropTypes.number,
   maxDepth: PropTypes.number,
-  labelField: PropTypes.string,
   chartHeight: PropTypes.number,
   chartWidth: PropTypes.number,
   className: PropTypes.string,

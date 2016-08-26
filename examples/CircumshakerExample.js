@@ -4,13 +4,15 @@ import { format } from 'd3'
 import { CircumshakerChart } from '../src'
 
 const data1 = {
-  'source_ip': '124.83.248.123',
-  'dest_ip': [
+  'key': 2085877883,
+  'key_as_string': '124.83.248.123',
+  'doc_count': 5,
+  'children': [
     {
       'key': 2751196930,
       'key_as_string': '163.251.239.2',
       'doc_count': 5,
-      'source_ip': [
+      'children': [
         {
           'key': 1755075020,
           'key_as_string': '104.156.81.204',
@@ -47,7 +49,7 @@ const data1 = {
       'key': 2751196932,
       'key_as_string': '163.251.239.4',
       'doc_count': 3,
-      'source_ip': [
+      'children': [
         {
           'key': 1747283813,
           'key_as_string': '104.37.111.101',
@@ -79,7 +81,7 @@ const data1 = {
       'key': 2751196931,
       'key_as_string': '163.251.239.3',
       'doc_count': 2,
-      'source_ip': [
+      'children': [
         {
           'key': 1753361025,
           'key_as_string': '104.130.42.129',
@@ -106,25 +108,27 @@ const data1 = {
       'key': 2751135764,
       'key_as_string': '163.251.0.20',
       'doc_count': 1,
-      'source_ip': []
+      'children': []
     },
     {
       'key': 3444397697,
       'key_as_string': '205.77.86.129',
       'doc_count': 1,
-      'source_ip': []
+      'children': []
     }
   ]
 }
 
 const data2 = {
-  'source_ip': '124.83.248.123',
-  'dest_ip': [
+  'key': 2085877883,
+  'key_as_string': '124.83.248.123',
+  'doc_count': 5,
+  'children': [
     {
       'key': 2751196930,
       'key_as_string': '163.251.239.2',
       'doc_count': 5,
-      'source_ip': [
+      'children': [
         {
           'key': 1755075020,
           'key_as_string': '104.156.81.204',
@@ -168,6 +172,9 @@ const toolTipFunction = (d) => {
 }
 
 const chartProps = {
+  keyAccessor: 'key_as_string',
+  valueAccessor: 'doc_count',
+  childAccessor: 'children',
   tipFunction: toolTipFunction,
   height: 800
 }

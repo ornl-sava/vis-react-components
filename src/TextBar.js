@@ -1,23 +1,17 @@
 import React, { PropTypes } from 'react'
-import ReactDom from 'react-dom'
+// import ReactDom from 'react-dom'
 // import Bar from './Bar'
 
 class TextBar extends React.Component {
-  _onMouseEnter () {
-    if (this.props.tooltipData) {
-      let thisNode = ReactDom.findDOMNode(this)
-      this.props.onEnter(this.props.tooltipData, thisNode)
-    }
+  _onMouseEnter (event) {
+    this.props.onEnter(event, this.props.data)
   }
-  _onMouseLeave () {
-    if (this.props.tooltipData) {
-      let thisNode = ReactDom.findDOMNode(this)
-      this.props.onLeave(this.props.tooltipData, thisNode)
-    }
+  _onMouseLeave (event) {
+    this.props.onLeave(event, this.props.data)
   }
-  _onClick () {
+  _onClick (event) {
     // console.log('toolTip', this.props.tooltipData)
-    this.props.onClick(this.props.tooltipData)
+    this.props.onClick(event, this.props.data)
   }
   _onDoubleClick () {
     // not used
@@ -48,12 +42,13 @@ class TextBar extends React.Component {
   shouldComponentUpdate (nextProps, nextState) {
     // if I put the styleChange check back in, things bog down....
     let styleChange = nextProps.barStyle !== this.props.barStyle
+    // console.log('TB', styleChange)
     let selected = nextProps.sel
     /* if (this.props.text.indexOf('IC') >= 0) {
       console.log('next', nextProps.barStyle)
       console.log('this', this.props.barStyle)
       console.log('stylC', styleChange)
-    }*/
+    } */
     // if (selected) { console.log('updated') }
     return styleChange || selected
     // return selected

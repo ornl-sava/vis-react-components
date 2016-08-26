@@ -86,7 +86,7 @@ class Choropleth extends React.Component {
         }
       })
       let datum = this.props.data[index]
-      let color = this.props.unselectedMinColor
+      let color = this.props.unselectedColorScale.range()[0]
       if (typeof datum !== 'undefined') {
         color = datum[this.props.selectedField] === this.props.selectedValue
           ? this.props.selectedColorScale(datum[this.props.valueField])
@@ -108,10 +108,10 @@ class Choropleth extends React.Component {
                   func: (transition, props) => {
                     transition
                       .delay(0)
-                      .duration(1000)
+                      .duration(500)
                       .ease(setEase('linear'))
                       .attrTween('fill', () => {
-                        return interpolate(this.props.selectedMinColor, props.fill)
+                        return interpolate(this.props.unselectedColorScale.range()[0], props.fill)
                       })
                     return transition
                   }
@@ -120,7 +120,7 @@ class Choropleth extends React.Component {
                   func: (transition, props) => {
                     transition
                       .delay(0)
-                      .duration(1000)
+                      .duration(500)
                       .ease(setEase('linear'))
                       .attr('fill', props.fill)
                       .attr('d', props.d)
@@ -141,7 +141,7 @@ class Choropleth extends React.Component {
               func: (transition, props) => {
                 transition
                   .delay(0)
-                  .duration(1000)
+                  .duration(500)
                   .ease(setEase('linear'))
                   .attr('d', props.d)
                 return transition
@@ -157,11 +157,6 @@ class Choropleth extends React.Component {
 }
 
 Choropleth.defaultProps = {
-  selectedMinColor: '#eff3ff',
-  selectedMaxColor: '#2171b5',
-  unselectedMinColor: '#f7f7f7',
-  unselectedMaxColor: '#636363',
-  numColorCat: 20,
   data: [],
   keyField: 'key',
   valueField: 'value',
@@ -176,11 +171,6 @@ Choropleth.defaultProps = {
 Choropleth.propTypes = {
   selectedColorScale: PropTypes.func,
   unselectedColorScale: PropTypes.func,
-  selectedMinColor: PropTypes.string,
-  selectedMaxColor: PropTypes.string,
-  unselectedMinColor: PropTypes.string,
-  unselectedMaxColor: PropTypes.string,
-  numColorCat: PropTypes.number,
   map: PropTypes.object.isRequired,
   data: PropTypes.array,
   chartWidth: PropTypes.number,
@@ -193,14 +183,6 @@ Choropleth.propTypes = {
   onEnter: PropTypes.func,
   onLeave: PropTypes.func,
   onMove: PropTypes.func
-}
-
-// Only required for REST calls
-Choropleth.contextTypes = {
-  filterField: PropTypes.string,
-  filterString: PropTypes.string,
-  filterType: PropTypes.string,
-  updateFilter: PropTypes.func
 }
 
 export default Choropleth

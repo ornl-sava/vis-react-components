@@ -11,14 +11,13 @@ import Legend from '../Legend'
 class ChoroplethChart extends React.Component {
   constructor (props) {
     super(props)
-    this.selectedColorScale = setScale('qunatile')
-    this.unselectedColorScale = setScale('qunatile')
+    this.selectedColorScale = setScale('quantile')
+    this.unselectedColorScale = setScale('quantile')
 
     this.onClick = this.onClick.bind(this)
     this.onEnter = this.onEnter.bind(this)
     this.onLeave = this.onLeave.bind(this)
     this.onMove = this.onMove.bind(this)
-    this.onResize = this.onResize.bind(this)
 
     this.updateColorScales = this.updateColorScales.bind(this)
 
@@ -30,7 +29,9 @@ class ChoroplethChart extends React.Component {
   }
 
   componentWillUnmount () {
-    this.tip.destroy()
+    if (this.props.tipFunction) {
+      this.tip.destroy()
+    }
   }
 
   componentWillReceiveProps (nextProps) {
@@ -97,12 +98,10 @@ class ChoroplethChart extends React.Component {
     this.props.onEnter(event, data)
   }
 
-  onResize () {}
-
   render () {
     let props = this.props
     return (
-      <Chart ref='chart' {...spreadRelated(Chart, props)} resizeHandler={this.onResize}>
+      <Chart ref='chart' {...spreadRelated(Chart, props)}>
         <Choropleth className='circumshaker' {...spreadRelated(Choropleth, props)}
           onEnter={this.onEnter} onLeave={this.onLeave} onClick={this.onClick} onMove={this.onMove}
           unselectedColorScale={this.unselectedColorScale} selectedColorScale={this.selectedColorScale} />
@@ -115,13 +114,23 @@ class ChoroplethChart extends React.Component {
 ChoroplethChart.defaultProps = {
   // Premade default
   data: [],
+  selectedMinColor: '#eff3ff',
+  selectedMaxColor: '#2171b5',
+  unselectedMinColor: '#f7f7f7',
+  unselectedMaxColor: '#636363',
+  numColorCat: 20,
   // Spread chart default
   ...Chart.defaultProps,
-  // Spread heatmap default
+  // Spread choropleth default
   ...Choropleth.defaultProps
 }
 
 ChoroplethChart.propTypes = {
+  selectedMinColor: PropTypes.string,
+  selectedMaxColor: PropTypes.string,
+  unselectedMinColor: PropTypes.string,
+  unselectedMaxColor: PropTypes.string,
+  numColorCat: PropTypes.number,
   ...Choropleth.propTypes,
   ...Chart.propTypes,
   onClick: PropTypes.func,

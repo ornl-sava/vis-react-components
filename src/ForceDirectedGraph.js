@@ -18,7 +18,7 @@ class ForceDirectedGraph extends React.Component {
     }
 
     this.colScale = d3.scaleOrdinal(d3.schemeCategory10)
-    this.xScale = setScale('ordinalBand')
+    this.xScale = setScale('band')
 
     this.updateDR = this.updateDR.bind(this)
     this.updateDR(props)
@@ -140,7 +140,8 @@ class ForceDirectedGraph extends React.Component {
 
     let target = this.getDatum(event.target)
     this.node = target
-    if (true) {
+    let test = true
+    if (test) {
     // if (target.events.indexOf('parent-') >= 0) {
       this.remNodes(target, this.props)
       this.reSet(this.props)

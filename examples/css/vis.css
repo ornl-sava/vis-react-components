@@ -387,7 +387,7 @@ nav ul li .active {
 }
 
 .ScatterHeatmapHybrid .markerCol {
-  stroke: #5B5B5B;
+  stroke: #fefefe;
   stroke-width: 1px;
   shape-rendering: crispEdges;
   cursor: cell;
@@ -398,19 +398,17 @@ nav ul li .active {
 }
 
 .ScatterHeatmapHybrid .bin {
-  stroke: #5B5B5B;
-  stroke-width : px;
+	stroke: #fefefe;
   shape-rendering: crispEdges;
 }
 
 .ScatterHeatmapHybrid .point {
-  stroke: #FFF;
-  stroke-width: 1px;
+	shape-rendering: geometricPrecision;
 }
 
 .ScatterHeatmapHybrid .point:hover {
-  stroke: #000;
-  stroke-width : px;
+	stroke: #676;
+	stroke-width: 2px;
 }
 
 .ScatterHeatmapHybrid .label {
@@ -495,9 +493,9 @@ nav ul li .active {
 	fill-opacity: 0;
   stroke-width: 3;
 }
-.barTopic.Selected{
+.selected.barTopic{
   stroke-width: 6;
-  stroke: #00ccff;
+  /*stroke: #00ccff;*/
 }
 
 .lineMatch{
@@ -505,9 +503,10 @@ nav ul li .active {
   stroke-width: 4;
 	shape-rendering: geometricPrecision;
 }
-.lineMatch.Selected{
+.lineMatch.selected{
   fill: none;
-  stroke-width: 10;
+  stroke-width: 6;
+	/*stroke: #00ccff;*/
 }
 .text{
   alignment-baseline: middle;
@@ -563,4 +562,26 @@ button.disabled {
 	fill: #edf8b1;
 	stroke: #2c7fb8;
 	stroke-width: 2px;
+}
+
+.Hybrid .columnMarker {
+	stroke: #fff;
+	cursor: cell;
+}
+
+.Hybrid rect {
+	stroke: #fff;
+}
+
+.Hybrid circle {
+	shape-rendering: geometricPrecision;
+}
+
+.Hybrid circle:hover {
+	stroke: #676;
+	stroke-width: 2px;
+}
+
+rect {
+	shape-rendering: crispEdges;
 }

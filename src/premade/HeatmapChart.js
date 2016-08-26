@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react'
 import { extent, max, interpolateHcl } from 'd3'
 
-import { setScale } from '../util/d3'
+import { setScale, isOrdinalScale } from '../util/d3'
 import { spreadRelated } from '../util/react'
 import Chart from '../Chart'
 import Axis from '../Axis'
@@ -14,7 +14,7 @@ class HeatmapChart extends React.Component {
     super(props)
     this.xScale = setScale(props.xScaleType)
     this.yScale = setScale(props.yScaleType)
-    this.colorScale = setScale('qunatile')
+    this.colorScale = setScale('quantile')
 
     this.xDomain = this.props.xDomain
     this.yDomain = this.props.yDomain
@@ -32,14 +32,18 @@ class HeatmapChart extends React.Component {
       : props.tipFunction
 
     this.updateDomain(props, this.state)
+    this.updateColorScales(props, this.state)
   }
 
   componentWillReceiveProps (nextProps) {
     this.updateDomain(nextProps, this.state)
+    this.updateColorScales(nextProps, this.state)
   }
 
   componentWillUnmount () {
-    this.tip.destroy()
+    if (this.props.tipFunction) {
+      this.tip.destroy()
+    }
   }
 
   updateDomain (props, state) {
@@ -54,7 +58,7 @@ class HeatmapChart extends React.Component {
         // must be taken into consideration
         let offset = props.data[0].bins[1][props.xAccessor.key] -
           props.data[0].bins[0][props.xAccessor.key]
-        if (this.xScale.type === 'ordinalBand') {
+        if (this.xScale.type === 'band') {
           xDomain = props.data[0].bins.map((d) => d[props.xAccessor.key])
         } else {
           xDomain = extent(props.data[0].bins, (d) => d[props.xAccessor.key])
@@ -70,7 +74,7 @@ class HeatmapChart extends React.Component {
         // must be taken into consideration
         // let offset = props.data[1][props.yAccessor.key] -
           // props.data[0][props.yAccessor.key]
-        if (this.yScale.type === 'ordinalBand') {
+        if (this.yScale.type === 'band') {
           yDomain = props.data.map((d) => d[props.yAccessor.key])
         } else {
           yDomain = [0.000001, max(props.data, (d) => d[props.yAccessor.key])]
@@ -88,8 +92,15 @@ class HeatmapChart extends React.Component {
         this.yScale.domain(yDomain)
         this.yDomain = yDomain
       }
+    }
+  }
 
-      // Generate color scale
+  updateColorScales (props, state) {
+    // Generate color scale
+    let colorDomain = []
+    let colorRange = []
+
+    if (props.data.length > 0 && props.data[0].bins.length > 0) {
       let yMax = max(props.data, (d, i) => {
         return max(d.bins, (e, j) => e[props.xAccessor.value])
       })
@@ -99,8 +110,8 @@ class HeatmapChart extends React.Component {
         .range([props.minColor, props.maxColor])
         .interpolate(interpolateHcl)
 
-      let colorDomain = [0, 1]
-      let colorRange = [props.minColor]
+      colorDomain = [0, 1]
+      colorRange = [props.minColor]
       let colorDomainBand = yMax / (props.numColorCat - 1)
       for (var i = 2; i < props.numColorCat + 1; i++) {
         let value = colorDomain[i - 1] + colorDomainBand
@@ -108,49 +119,49 @@ class HeatmapChart extends React.Component {
         colorDomain.push(value)
         colorRange.push(tempColorScale(value))
       }
-
-      this.colorScale
-        .domain(colorDomain)
-        .range(colorRange)
     }
+
+    this.colorScale
+      .domain(colorDomain)
+      .range(colorRange)
   }
 
   updateRange (props, state) {
     this.yScale.range([this.refs.chart.chartHeight, 0])
-    if (props.yAxis.innerPadding && /ordinal/.test(this.yScale.type)) {
+    if (props.yAxis.innerPadding && isOrdinalScale(this.yScale.type)) {
       this.yScale.paddingInner(props.yAxis.innerPadding)
     }
 
-    if (props.yAxis.outerPadding && /ordinal/.test(this.yScale.type)) {
+    if (props.yAxis.outerPadding && isOrdinalScale(this.yScale.type)) {
       this.yScale.paddingOuter(props.yAxis.outerPadding)
     }
 
     this.xScale.range([0, this.refs.chart.chartWidth])
-    if (props.xAxis.innerPadding && /ordinal/.test(this.xScale.type)) {
+    if (props.xAxis.innerPadding && isOrdinalScale(this.xScale.type)) {
       this.xScale.paddingInner(props.xAxis.innerPadding)
     }
 
-    if (props.xAxis.outerPadding && /ordinal/.test(this.xScale.type)) {
+    if (props.xAxis.outerPadding && isOrdinalScale(this.xScale.type)) {
       this.xScale.paddingOuter(props.xAxis.outerPadding)
     }
   }
 
-  onClick (event, data) {
-    this.props.onClick(event, data)
+  onClick (event, data, index) {
+    this.props.onClick(event, data, index)
   }
 
-  onEnter (event, data) {
+  onEnter (event, data, index) {
     if (data && this.tip) {
-      this.tip.show(event, data)
+      this.tip.show(event, data, index)
     }
-    this.props.onEnter(event, data)
+    this.props.onEnter(event, data, index)
   }
 
-  onLeave (event, data) {
+  onLeave (event, data, index) {
     if (data && this.tip) {
-      this.tip.hide(event, data)
+      this.tip.hide(event, data, index)
     }
-    this.props.onLeave(event, data)
+    this.props.onLeave(event, data, index)
   }
 
   onResize () {
@@ -177,6 +188,9 @@ HeatmapChart.defaultProps = {
   data: [],
   xDomain: [],
   yDomain: [],
+  minColor: '#eff3ff',
+  maxColor: '#2171b5',
+  numColorCat: 11,
   // Spread chart default
   ...Chart.defaultProps,
   // Spread heatmap default
@@ -185,17 +199,22 @@ HeatmapChart.defaultProps = {
     type: 'x',
     orient: 'bottom',
     innerPadding: null,
-    outerPadding: null
+    outerPadding: null,
+    animationDuration: 500
   },
   yAxis: {
     type: 'y',
     orient: 'left',
     innerPadding: null,
-    outerPadding: null
+    outerPadding: null,
+    animationDuration: 500
   }
 }
 
 HeatmapChart.propTypes = {
+  minColor: PropTypes.string,
+  maxColor: PropTypes.string,
+  numColorCat: PropTypes.number,
   ...Heatmap.propTypes,
   ...Chart.propTypes,
   onClick: PropTypes.func,

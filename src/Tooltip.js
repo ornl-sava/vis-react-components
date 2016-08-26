@@ -1,5 +1,7 @@
 import { functor, getWidth, scrollTop, scrollLeft } from './util/common'
 
+// Based on d3-tip(https://github.com/Caged/d3-tip)
+
 export default class Tooltip {
   constructor () {
     // Init tooltip
@@ -22,9 +24,9 @@ export default class Tooltip {
     document.body.removeChild(this.tooltip)
   }
 
-  show (event, data) {
+  show (event, ...args) {
     this.tooltip.className = this._baseClass
-    this.tooltip.innerHTML = this._html(data)
+    this.tooltip.innerHTML = this._html(...args)
     this.tooltip.style.display = 'block'
     let bbox = this.getScreenBBox(event)
     let direction = this._direction
@@ -114,17 +116,23 @@ export default class Tooltip {
   // NOTE: Currently assumes a default direction of 'N'
   // Mutates coords and return corrected direction
   getAutoDirection (bbox, coords) {
+    let dir = 'n'
     if (coords.left < 0) {
-      coords.left = bbox.ne.x - bbox.width
-      coords.top = bbox.ne.y
-      return 'ne'
+      dir += 'e'
+      coords.left = bbox[dir].x - bbox.width
+      coords.top = bbox[dir].y
     } else if (coords.left + this.tooltip.offsetWidth > getWidth()) {
-      coords.left = bbox.nw.x + bbox.width
-      coords.top = bbox.nw.y
-      return 'nw'
-    } else {
-      return 'n'
+      dir += 'w'
+      coords.left = bbox[dir].x + bbox.width
+      coords.top = bbox[dir].y
     }
+
+    if (coords.top < 0) {
+      dir = dir.replace('n', 's')
+      coords.top += this.tooltip.offsetHeight + bbox.height
+    }
+
+    return dir
   }
 
   getScreenBBox (event = null) {

@@ -34,7 +34,7 @@ class ForceDirectedGraph extends React.Component {
     this.setTree(props)
 
     this.colScale = d3.scaleOrdinal(d3.schemeCategory10)
-    this.xScale = setScale('ordinalBand')
+    this.xScale = setScale('band')
 
     this.updateDR = this.updateDR.bind(this)
     this.updateDR(props)
@@ -211,8 +211,8 @@ class ForceDirectedGraph extends React.Component {
         'cx': d.x,
         'cy': d.y,
         'fill': this.colScale(d.data.hour),
-        'events': d.events,
-        'hour': d.hour
+        'data-events': d.events,
+        'data-hour': d.hour
       }
       let key = d.key
       if (key == null) { key = 'root' }

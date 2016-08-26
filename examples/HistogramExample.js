@@ -71,7 +71,7 @@ class HistogramExample extends React.Component {
       sortBy: (sortBy === 'Default') ? null : sortBy,
       sortOrder: (sortOrder === 'Default') ? null : sortOrder,
       sortTypes: ['two'],
-      yScaleType: (yScaleType === 'Default') ? null : yScaleType,
+      yScaleType: (yScaleType === 'Default' || !yScaleType) ? 'linear' : yScaleType,
       chart1xAxis: {
         type: 'x',
         orient: 'bottom'
@@ -86,7 +86,7 @@ class HistogramExample extends React.Component {
           type: 'dropdown',
           label: 'Scale Type: ',
           options: [
-            'Default', 'Linear', 'Log', 'Power'
+            'Default', 'Linear', 'Log', 'Pow'
           ],
           defaultSelected: () => {
             let defaultValue = this.state.yScaleType
@@ -234,7 +234,12 @@ class HistogramExample extends React.Component {
               type: 'x',
               orient: 'bottom',
               innerPadding: 0.2,
-              outerPadding: 0.4
+              outerPadding: 0.4,
+              tickStyle: (tick, d, i) => {
+                if (d === 'Bin 5') {
+                  tick.style('fill', 'orange')
+                }
+              }
             }}
             data={stackedHistogramData} tipFunction={toolTipFunction}
             type='stacked' addOverlay
