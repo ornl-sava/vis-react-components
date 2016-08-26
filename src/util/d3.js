@@ -1,6 +1,9 @@
 import * as d3Scale from 'd3-scale'
 
 const setScale = (scaleType) => {
+  if (!scaleType) {
+    console.error('scaleType was not defined')
+  }
   let scaling = 'scale' + scaleType.charAt(0).toUpperCase() + scaleType.slice(1)
   let scale = d3Scale[scaling]()
   scale.type = scaleType

@@ -71,7 +71,7 @@ class HistogramExample extends React.Component {
       sortBy: (sortBy === 'Default') ? null : sortBy,
       sortOrder: (sortOrder === 'Default') ? null : sortOrder,
       sortTypes: ['two'],
-      yScaleType: (yScaleType === 'Default') ? null : yScaleType,
+      yScaleType: (yScaleType === 'Default' || !yScaleType) ? 'linear' : yScaleType,
       chart1xAxis: {
         type: 'x',
         orient: 'bottom'
