@@ -33,8 +33,8 @@ class Bar extends React.Component {
   _onMouseDown (event) {
     if (this.props.tooltipData) {
       // console.log('Bar :: mousedown')
-      let newEvent = new MouseEvent('mousedown', event)
       if (this.props.brushed) {
+        let newEvent = new MouseEvent('mousedown', event)
         let target = select('.selection')
         let leftMargin = select('.overlay').node().getBoundingClientRect().left
         let selectionWidth = parseFloat(target.attr('width'))
