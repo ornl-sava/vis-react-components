@@ -34,8 +34,8 @@ class Histogram extends React.Component {
   _onMouseDown (event, data, index) {
     if (data) {
       // console.log('Bar :: mousedown')
-      let newEvent = new MouseEvent('mousedown', event)
       if (this.props.brushed) {
+        let newEvent = new MouseEvent('mousedown', event)
         let target = select('.selection')
         let leftMargin = select('.overlay').node().getBoundingClientRect().left
         let selectionWidth = parseFloat(target.attr('width'))
