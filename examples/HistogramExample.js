@@ -31,6 +31,7 @@ const getTemporalSelection = (selection) => {
 }
 
 const toolTipFunction = (d) => {
+  if (!d || !d.stackCounts) return null
   let total = d.stackCounts.reduce((prev, count) => {
     return prev + count
   }, 0)

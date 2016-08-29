@@ -23,12 +23,12 @@ class Tester extends React.Component {
     left: 420px;
     right: -420px;
     bottom: -191px;
-  }*/
+  } */
   render () {
     let buttonProps = {width: '100%', height: '50px'}
     /* console.log('storyLength', storyData.length)
     console.log('eTopics00,01', eTopics[0], eTopics[1])
-    console.log('hrTopics00,01', hrTopics[0], hrTopics[1])*/
+    console.log('hrTopics00,01', hrTopics[0], hrTopics[1]) */
     // transform={'translate(' + (800) + ',' + 50 + ')'}
     return (
       <div className={this.props.className} >

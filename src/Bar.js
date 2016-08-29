@@ -1,6 +1,24 @@
 import React, { PropTypes } from 'react'
 import { select } from 'd3'
 
+const mouseEventPollyFill = (event) => {
+  let newEvent = null
+  if (typeof window.Event === 'function') {
+    newEvent = new MouseEvent('mousedown', event)
+    // console.log(Object.keys(event))
+    // console.log(event)
+  } else {
+    newEvent = document.createEvent('MouseEvent')
+    newEvent.initMouseEvent('mousedown', true, true, window, event.detail,
+     event.screenX, event.screenY,
+     event.clientX, event.clientY,
+     event.ctrlKey, event.altKey, event.shiftKey, event.metaKey,
+     event.button, event.relatedTarget
+    )
+  }
+  return (newEvent)
+}
+
 class Bar extends React.Component {
   constructor (props) {
     super(props)
@@ -34,7 +52,9 @@ class Bar extends React.Component {
     if (this.props.tooltipData) {
       // console.log('Bar :: mousedown')
       if (this.props.brushed) {
-        let newEvent = new MouseEvent('mousedown', event)
+        let newEvent = mouseEventPollyFill(event)
+        // let newEvent = document.createEvent('MouseEvent')
+        // newEvent.initMouseEvent(event)
         let target = select('.selection')
         let leftMargin = select('.overlay').node().getBoundingClientRect().left
         let selectionWidth = parseFloat(target.attr('width'))

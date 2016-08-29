@@ -12,7 +12,7 @@ import topics from './data/topic-lane-sample/topics-sample_v01.json'
 // GETTING TOPIC MEMBER DATA OVER TIME
 const topicN = Math.floor(Math.random() * topics.length)
 // VARIABLE FOR DESIRED DATA AVERAGE
-let avgMem = new Array(4).fill(0)
+let avgMem = [0, 0, 0, 0]
 let temporalData = []
 let bins = []
 for (let i = 0; i < 4; i++) { bins.push([]) }

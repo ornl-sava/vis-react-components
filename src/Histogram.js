@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react'
 import ReactTransitionGroup from 'react-addons-transition-group'
-import { select } from 'd3'
+// import { select } from 'd3'
 
 import Bar from './Bar'
 import { setEase, isOrdinalScale } from './util/d3'
@@ -19,7 +19,7 @@ class Histogram extends React.Component {
     super(props)
     this.onMouseLeave = this._onMouseLeave.bind(this)
     this.onMouseEnter = this._onMouseEnter.bind(this)
-    this.onMouseDown = this._onMouseDown.bind(this)
+    // this.onMouseDown = this._onMouseDown.bind(this)
 
     this.renderBars = this.renderBars.bind(this)
   }
@@ -31,27 +31,27 @@ class Histogram extends React.Component {
       this.props.onEnter(event, this.props.data)
     }
   }
-  _onMouseDown (event, data, index) {
-    if (data) {
-      // console.log('Bar :: mousedown')
-      if (this.props.brushed) {
-        let newEvent = new MouseEvent('mousedown', event)
-        let target = select('.selection')
-        let leftMargin = select('.overlay').node().getBoundingClientRect().left
-        let selectionWidth = parseFloat(target.attr('width'))
-        let min = parseFloat(target.attr('x')) + leftMargin
-        let max = parseFloat(target.attr('x')) + selectionWidth + leftMargin
-        // console.log('min: ' + min + ', max: ' + max)
-        if (target.style('display') === 'none' ||
-        event.pageX < min || event.pageX > max) {
-          target = select('.overlay').node()
-        } else {
-          target = target.node()
-        }
-        target.dispatchEvent(newEvent)
-      }
-    }
-  }
+  // _onMouseDown (event, data, index) {
+  //   if (data) {
+  //     // console.log('Bar :: mousedown')
+  //     if (this.props.brushed) {
+  //       let newEvent = new MouseEvent('mousedown', event)
+  //       let target = select('.selection')
+  //       let leftMargin = select('.overlay').node().getBoundingClientRect().left
+  //       let selectionWidth = parseFloat(target.attr('width'))
+  //       let min = parseFloat(target.attr('x')) + leftMargin
+  //       let max = parseFloat(target.attr('x')) + selectionWidth + leftMargin
+  //       // console.log('min: ' + min + ', max: ' + max)
+  //       if (target.style('display') === 'none' ||
+  //       event.pageX < min || event.pageX > max) {
+  //         target = select('.overlay').node()
+  //       } else {
+  //         target = target.node()
+  //       }
+  //       target.dispatchEvent(newEvent)
+  //     }
+  //   }
+  // }
   getOverlay (barData) {
     let props = this.props
     let overlayData = []
