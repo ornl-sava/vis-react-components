@@ -81,7 +81,8 @@ class Settings extends React.Component {
     }, 0)
 
     // Requires approximate character length (assuming 11px here)
-    let minWidth = longestLen * 11
+    // bumped to 12px to handle IE
+    let minWidth = longestLen * 12
 
     let containerProps = {
       className: 'settings-container',
