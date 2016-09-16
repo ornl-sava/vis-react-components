@@ -170,8 +170,8 @@ class TopicFlow extends React.Component {
       let y = 0
       dataArr.topics.map((data, index) => {
         let events = data.events
-        if (events[0] == null) {
-          events[0] = 'EMPTY'
+        if (events == null) {
+          events = ['EMPTY']
         }
         y = (barHeight + barBuff) * index
         let posX = this.xScale(i)
