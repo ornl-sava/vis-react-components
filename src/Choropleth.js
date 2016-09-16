@@ -59,6 +59,8 @@ class Choropleth extends React.Component {
 
   render () {
     // Get map bounds and scaling
+    console.log(topojson)
+    console.log(Object.keys(topojson))
     let mapBounds = this.path.bounds(topojson.feature(this.props.map, this.props.map.objects.countries))
     let mapScale = this.projection.scale()
 
