@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react'
 import ReactTransitionGroup from 'react-addons-transition-group'
 import { interpolate, geoPath, geoEquirectangular } from 'd3'
-import topojson from 'topojson'
+import * as topojson from 'topojson'
 
 import { setEase } from './util/d3'
 import SVGComponent from './SVGComponent'
