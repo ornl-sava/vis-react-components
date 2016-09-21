@@ -23,6 +23,7 @@ class Chart extends React.Component {
   }
 
   resizeChart () {
+    if (!this.refs.rootElement) return
     let props = this.props
     let rootRect = this.refs.rootElement.getBoundingClientRect()
     let svg = select(this.refs.svgRoot)
