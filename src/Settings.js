@@ -81,8 +81,8 @@ class Settings extends React.Component {
     }, 0)
 
     // Requires approximate character length (assuming 11px here)
-    // bumped to 12px to handle IE
-    let minWidth = longestLen * 12
+    // bumped to 14px to handle new field names
+    let minWidth = Math.ceil(longestLen * 14)
 
     let containerProps = {
       className: 'settings-container',
