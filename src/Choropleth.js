@@ -88,9 +88,15 @@ class Choropleth extends React.Component {
       let datum = this.props.data[index]
       let color = this.props.unselectedColorScale.range()[0]
       if (typeof datum !== 'undefined') {
-        color = datum[this.props.selectedField] === this.props.selectedValue
-          ? this.props.selectedColorScale(datum[this.props.valueField])
-          : this.props.unselectedColorScale(datum[this.props.valueField])
+        if (datum[this.props.selectedField] === this.props.selectedValue) {
+          color = datum[this.props.valueField] === 0
+            ? this.props.selectedColorScale.range()[0]
+            : this.props.selectedColorScale(datum[this.props.valueField])
+        } else {
+          color = datum[this.props.valueField] === 0
+            ? this.props.unselectedColorScale.range()[0]
+            : this.props.unselectedColorScale(datum[this.props.valueField])
+        }
       }
       return color
     }
