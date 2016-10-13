@@ -391,9 +391,9 @@ export class HybridScatterHeatmap extends React.Component {
 
     // Update heatmap color scale
     let colorDomain = [0, 1]
-    if (typeof heatmap !== 'undefined') {
+    if (typeof heatmap !== 'undefined' && heatmap) {
       for (let i = 0; i < heatmap.length; i++) {
-        for (let j = 0; j < heatmap.length; j++) {
+        for (let j = 0; j < heatmap[i].length; j++) {
           colorDomain.push(heatmap[i][j].count)
         }
       }

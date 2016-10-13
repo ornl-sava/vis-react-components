@@ -24,7 +24,7 @@
     "autoprefixer": "^6.5.0",
     "babel-cli": "^6.16.0",
     "babel-core": "^6.17.0",
-    "babel-loader": "^6.2.4",
+    "babel-loader": "^6.2.5",
     "babel-plugin-syntax-object-rest-spread": "^6.5.0",
     "babel-plugin-transform-object-assign": "^6.5.0",
     "babel-plugin-transform-object-rest-spread": "^6.16.0",
