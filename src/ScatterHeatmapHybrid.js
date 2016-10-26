@@ -294,13 +294,17 @@ export class HybridScatterHeatmap extends React.Component {
       .enter().append('rect')
         .attr('class', 'markerCol')
         .on('click.markerCol', (d, i) => {
-          if (event.shiftKey) {
+          //Normal click: toggle expansion and activity
+          //Shift click: just toggle expansion
+          //Ctrl click: just toggle activity
+          if (event.ctrlKey || !event.shiftKey) {
             // Iterate over the columns corresponding bins and flip their activity
             for (let row = 0; row < this.props.heatmapVertDivisions; row++) {
               heatmap[row][i].active = 1 - heatmap[row][i].active
             }
             self.updateChart()
-          } else {
+          } 
+          if (event.shiftKey || !event.ctrlKey) {
             let index = this.state.expandedSectionNumbers.indexOf(i)
             let toExpand = null
             if (index > -1) {
