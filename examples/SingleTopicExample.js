@@ -297,7 +297,7 @@ class SingleTopicExample extends React.Component {
           </div>
         </div>
       </div>
-      )
+    )
   }
 }
 
