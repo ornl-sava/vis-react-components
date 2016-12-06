@@ -6,6 +6,10 @@ import { setAxis, isOrdinalScale } from './util/d3'
 // Truncate labels based on maximum allowable characters, where
 // characters should be estimated at 8-10 pixels per character.
 const truncateLabel = (d, maxChars) => {
+  if (d == null) {
+    console.warn('No label to truncate, check and makes sure the container has the correct accessor.key specified')
+    return ''
+  }
   let replacementString = '...'
   if (d.length > maxChars + replacementString.length) {
     return d.substring(0, maxChars) + '...'
