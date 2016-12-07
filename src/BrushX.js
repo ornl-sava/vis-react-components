@@ -91,7 +91,7 @@ class BrushX extends React.Component {
   render () {
     // console.log('brush selection is : ' + this.state.selection)
     return (
-      <g className='brush'>{this.props.children}</g>
+      <g className='brush' id={'brush-' + this.props.brushID}>{this.props.children}</g>
     )
   }
 }
@@ -101,6 +101,7 @@ BrushX.defaultProps = {
 }
 
 BrushX.propTypes = {
+  brushID: PropTypes.string.isRequired,
   children: PropTypes.node,
   width: PropTypes.number.isRequired,
   height: PropTypes.number.isRequired,
