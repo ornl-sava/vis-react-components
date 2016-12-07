@@ -212,6 +212,7 @@ class HistogramChart extends React.Component {
     return (
       <Chart ref='chart' {...spreadRelated(Chart, props)} resizeHandler={this.onResize}>
         <Histogram className='histogram' {...spreadRelated(Histogram, props)}
+          brushID={props.brushed ? props.endpoint : null}
           xScale={this.xScale} yScale={this.yScale}
           onEnter={this.onEnter} onLeave={this.onLeave} onClick={this.onClick} onBrush={this.onBrush} />
         <Axis className='x axis' {...props.xAxis} scale={this.xScale} />

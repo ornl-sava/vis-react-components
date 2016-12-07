@@ -1,4 +1,5 @@
 import React, { PropTypes } from 'react'
+import { findDOMNode } from 'react-dom'
 import { select } from 'd3'
 
 const mouseEventPollyFill = (event) => {
@@ -53,16 +54,15 @@ class Bar extends React.Component {
       // console.log('Bar :: mousedown')
       if (this.props.brushed) {
         let newEvent = mouseEventPollyFill(event)
-        // let newEvent = document.createEvent('MouseEvent')
-        // newEvent.initMouseEvent(event)
-        let target = select('.selection')
-        let leftMargin = select('.overlay').node().getBoundingClientRect().left
+        let brushID = '#brush-' + findDOMNode(this).getAttribute('data-name')
+        let target = select(brushID).select('.selection')
+        let leftMargin = select(brushID).select('.overlay').node().getBoundingClientRect().left
         let selectionWidth = parseFloat(target.attr('width'))
         let min = parseFloat(target.attr('x')) + leftMargin
         let max = parseFloat(target.attr('x')) + selectionWidth + leftMargin
         if (target.style('display') === 'none' ||
         event.pageX < min || event.pageX > max) {
-          target = select('.overlay').node()
+          target = select(brushID).select('.overlay').node()
         } else {
           target = target.node()
         }
