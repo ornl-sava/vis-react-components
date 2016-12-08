@@ -285,7 +285,7 @@ class Circumshaker extends React.Component {
           {range(1, this.depth + 1, 1).map((d, i) => {
             return (
               <circle
-                className='cocentricCircle'
+                className='concentricCircle'
                 key={i}
                 r={this.radius * d}
                 cx={chartWidth / 2}
