@@ -55,7 +55,12 @@ class Bar extends React.Component {
       if (this.props.brushed) {
         let newEvent = mouseEventPollyFill(event)
         let brushID = '#brush-' + findDOMNode(this).getAttribute('data-name')
+
         let target = select(brushID).select('.selection')
+        if (target.empty()) {
+          brushID = '#brush-default'
+          target = select(brushID).select('.selection')
+        }
         let leftMargin = select(brushID).select('.overlay').node().getBoundingClientRect().left
         let selectionWidth = parseFloat(target.attr('width'))
         let min = parseFloat(target.attr('x')) + leftMargin

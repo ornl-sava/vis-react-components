@@ -38,7 +38,7 @@ export const histogramData = [
 ]
 export const temporalHistogramData = [
   {
-    name: 'Temporal Histogram',
+    name: 'temporal',
     type: 'temporal',
     bins: [
       {
