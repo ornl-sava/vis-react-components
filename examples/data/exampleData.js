@@ -1699,3 +1699,26 @@ export const ordinalOrdinalScatterplotData = [
     'y': 'e'
   }
 ]
+
+export const treemapData = [
+  {
+    label: 'China',
+    value: 1364
+  },
+  {
+    label: 'India',
+    value: 1296
+  },
+  {
+    label: 'United States',
+    value: 318
+  },
+  {
+    label: 'Indonesia',
+    value: 251
+  },
+  {
+    label: 'Brazil',
+    value: 203
+  }
+]
