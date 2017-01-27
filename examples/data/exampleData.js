@@ -1702,23 +1702,21 @@ export const ordinalOrdinalScatterplotData = [
 
 export const treemapData = [
   {
-    label: 'China',
-    value: 1364
+    id: 'a'
   },
   {
-    label: 'India',
-    value: 1296
+    id: 'a.b'
   },
   {
-    label: 'United States',
-    value: 318
+    id: 'a.b.c',
+    value: 1
   },
   {
-    label: 'Indonesia',
-    value: 251
+    id: 'a.b.d',
+    value: 2
   },
   {
-    label: 'Brazil',
-    value: 203
+    id: 'a.e',
+    value: 3
   }
 ]

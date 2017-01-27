@@ -28,7 +28,7 @@ const reactRouterRoutes = (
       <Route path='/id' component={SingleTopicExample} />
       <Route path='/forceDirected' component={ForceDirectedGraphExample} />
       <Route path='/forceDirectedTree' component={ForceDirectedTreeGraphExample} />
-// <Route path='/treemap' component={TreemapExample} />
+      <Route path='/treemap' component={TreemapExample} />
     </Route>
   </Router>
 )

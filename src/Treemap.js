@@ -1,4 +1,4 @@
-// partly inspired by https://github.com/yang-wei/rd3/blob/master/src/treemap
+// partly inspired by https://bl.ocks.org/mbostock/6bbb0a7ff7686b124d80
 
 import React, { PropTypes } from 'react'
 import ReactTransitionGroup from 'react-addons-transition-group'
@@ -31,37 +31,77 @@ class Treemap extends React.Component {
   render () {
     const treemap = d3.treemap()
       .size([this.props.width, this.props.height])
+      .round(true)
+      .padding(1)
 
-    const tree = treemap(this.props.data)
+    const getParent = (id) => { return id.substring(0, id.lastIndexOf('.')) }
+
+    const stratify = d3.stratify()
+      .parentId(d => { return getParent(d.id) })
+
+    const root = stratify(this.props.data)
+      .sum(d => { return d.value })
+      .sort((a, b) => { return b.height - a.height || b.value - a.value })
+
+    const colors = d3.scaleOrdinal(d3.schemeCategory20)
+
+    treemap(root)
 
     return (
-      <ReactTransitionGroup component='g' className={this.props.className}>
-        {tree.map((d, i) => {
+      <ReactTransitionGroup component='g'>
+        {root.leaves().map((d, i) => {
           return (
-            <SVGComponent Component='rect'
-              key={i}
-              onMouseEnter={this.onEnter}
-              onMouseLeave={this.onLeave}
-              onClick={this.onClick}
-              onUpdate={{
-                func: (transition, props) => {
-                  transition
-                    .delay(0)
-                    .duration(500)
-                    .ease(setEase('linear'))
-                    .attr('height', props.height)
-                    .attr('width', props.width)
-                    .attr('y', props.y)
-                    .attr('x', props.x)
-                  return transition
-                }
-              }}
-              x={d.x}
-              y={d.y}
-              width={d.dx}
-              height={d.dy}
-              fill={this.props.colors(i)}
-            />
+            <g key={d.id}>
+              <SVGComponent Component='rect'
+                key={d.id}
+                onMouseEnter={this.onEnter}
+                onMouseLeave={this.onLeave}
+                onClick={this.onClick}
+                onUpdate={{
+                  func: (transition, props) => {
+                    transition
+                      .delay(0)
+                      .duration(500)
+                      .ease(setEase('linear'))
+                      .attr('height', props.height)
+                      .attr('width', props.width)
+                      .attr('y', props.y)
+                      .attr('x', props.x)
+                    return transition
+                  }
+                }}
+                x={d.x0 + 'px'}
+                y={d.y0 + 'px'}
+                width={d.x1 - d.x0 + 'px'}
+                height={d.y1 - d.y0 + 'px'}
+                fill={colors(getParent(d.id))}
+              />
+              <SVGComponent Component='text'
+                key={d.id + ' value'}
+                onMouseEnter={this.onEnter}
+                onMouseLeave={this.onLeave}
+                onClick={this.onClick}
+                onUpdate={{
+                  func: (transition, props) => {
+                    transition
+                      .delay(0)
+                      .duration(500)
+                      .ease(setEase('linear'))
+                      .attr('height', props.height)
+                      .attr('width', props.width)
+                      .attr('y', props.y)
+                      .attr('x', props.x)
+                    return transition
+                  }
+                }}
+                x={d.x0 + (d.x1 - d.x0) / 2 + 'px'}
+                y={d.y0 + (d.y1 - d.y0) / 2 + 'px'}
+                width={(d.x1 - d.x0) / 2 + 'px'}
+                height={(d.y1 - d.y0) / 2 + 'px'}
+                fill={'black'}>
+                {d.id}
+              </SVGComponent>
+            </g>
           )
         })}
       </ReactTransitionGroup>
@@ -74,7 +114,7 @@ Treemap.defaultProps = {
   onEnter: () => {},
   onLeave: () => {},
   data: [],
-  colors: d3.scaleOrdinal(d3.schemeCategory20)
+  className: 'Treemap'
 }
 
 Treemap.propTypes = {
@@ -82,7 +122,6 @@ Treemap.propTypes = {
   onEnter: PropTypes.func,
   onLeave: PropTypes.func,
   data: PropTypes.array,
-  colors: PropTypes.func,
   width: PropTypes.number,
   height: PropTypes.number,
   className: PropTypes.string
