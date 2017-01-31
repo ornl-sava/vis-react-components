@@ -7,6 +7,7 @@ import * as d3 from 'd3'
 
 import { setEase } from './util/d3'
 import SVGComponent from './SVGComponent'
+import Tooltip from './Tooltip'
 
 class Treemap extends React.Component {
   constructor (props) {
@@ -14,6 +15,9 @@ class Treemap extends React.Component {
     this.onClick = this.onClick.bind(this)
     this.onEnter = this.onEnter.bind(this)
     this.onLeave = this.onLeave.bind(this)
+    this.tip = props.tipFunction
+      ? new Tooltip().attr('className', 'd3-tip').html(props.tipFunction)
+      : props.tipFunction
   }
 
   onClick (event, data, index) {
@@ -21,11 +25,25 @@ class Treemap extends React.Component {
   }
 
   onEnter (event, data, index) {
+    console.log('asdf')
+    if (data && this.tip) {
+      this.tip.show(event, data, index)
+    }
     this.props.onEnter(event, data, index)
   }
 
   onLeave (event, data, index) {
+    console.log('fdsa')
+    if (data && this.tip) {
+      this.tip.hide(event, data, index)
+    }
     this.props.onLeave(event, data, index)
+  }
+
+  componentWillUnmount () {
+    if (this.props.tipFunction) {
+      this.tip.destroy()
+    }
   }
 
   render () {
@@ -54,6 +72,7 @@ class Treemap extends React.Component {
             <g key={d.id}>
               <SVGComponent Component='rect'
                 key={d.id}
+                data={d}
                 onMouseEnter={this.onEnter}
                 onMouseLeave={this.onLeave}
                 onClick={this.onClick}
@@ -67,6 +86,7 @@ class Treemap extends React.Component {
                       .attr('width', props.width)
                       .attr('y', props.y)
                       .attr('x', props.x)
+                      .attr('fill', props.fill)
                     return transition
                   }
                 }}
@@ -121,6 +141,7 @@ Treemap.propTypes = {
   onClick: PropTypes.func,
   onEnter: PropTypes.func,
   onLeave: PropTypes.func,
+  tipFunction: PropTypes.func,
   data: PropTypes.array,
   width: PropTypes.number,
   height: PropTypes.number,

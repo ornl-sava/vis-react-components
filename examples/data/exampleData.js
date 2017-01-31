@@ -1720,3 +1720,21 @@ export const treemapData = [
     value: 3
   }
 ]
+
+export const treemapUpdateData = [
+  {
+    id: 'a.f',
+    value: 2
+  },
+  {
+    id: 'a.g'
+  },
+  {
+    id: 'a.g.h',
+    value: 4
+  },
+  {
+    id: 'a.g.i',
+    value: 1
+  }
+]
