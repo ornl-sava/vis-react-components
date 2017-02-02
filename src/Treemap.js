@@ -25,7 +25,6 @@ class Treemap extends React.Component {
   }
 
   onEnter (event, data, index) {
-    console.log('asdf')
     if (data && this.tip) {
       this.tip.show(event, data, index)
     }
@@ -33,7 +32,6 @@ class Treemap extends React.Component {
   }
 
   onLeave (event, data, index) {
-    console.log('fdsa')
     if (data && this.tip) {
       this.tip.hide(event, data, index)
     }
@@ -50,7 +48,7 @@ class Treemap extends React.Component {
     const treemap = d3.treemap()
       .size([this.props.width, this.props.height])
       .round(true)
-      .padding(1)
+      .padding(2)
 
     const getParent = (id) => { return id.substring(0, id.lastIndexOf('.')) }
 
@@ -58,7 +56,7 @@ class Treemap extends React.Component {
       .parentId(d => { return getParent(d.id) })
 
     const root = stratify(this.props.data)
-      .sum(d => { return d.value })
+      .sum(d => { return this.props.sizeFunction(d) })
       .sort((a, b) => { return b.height - a.height || b.value - a.value })
 
     const colors = d3.scaleOrdinal(d3.schemeCategory20)
@@ -119,7 +117,7 @@ class Treemap extends React.Component {
                 width={(d.x1 - d.x0) / 2 + 'px'}
                 height={(d.y1 - d.y0) / 2 + 'px'}
                 fill={'black'}>
-                {d.id}
+                { this.props.idDisplayFunction(d) }
               </SVGComponent>
             </g>
           )
@@ -134,6 +132,8 @@ Treemap.defaultProps = {
   onEnter: () => {},
   onLeave: () => {},
   data: [],
+  sizeFunction: (d) => { return d.value },
+  idDisplayFunction: (d) => { return d.id },
   className: 'Treemap'
 }
 
@@ -142,6 +142,8 @@ Treemap.propTypes = {
   onEnter: PropTypes.func,
   onLeave: PropTypes.func,
   tipFunction: PropTypes.func,
+  sizeFunction: PropTypes.func,
+  idDisplayFunction: PropTypes.func,
   data: PropTypes.array,
   width: PropTypes.number,
   height: PropTypes.number,

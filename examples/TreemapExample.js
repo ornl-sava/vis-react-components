@@ -7,8 +7,16 @@ const toolTipFunction = (d) => {
   let toolTip = '<span> No Data </span>'
 
   toolTip =
-    '<span class="title">' + d.id + '</span>' + (d.value)
+    '<span class="title">' + idDisplay(d) + '</span>' + (d.value)
   return toolTip
+}
+
+const standardSize = (d) => {
+  return d.value
+}
+
+const idDisplay = (d) => {
+  return d.id
 }
 
 class TreemapExample extends React.Component {
@@ -33,7 +41,7 @@ class TreemapExample extends React.Component {
     return (
       <div width={600} height={450}>
         <svg width={600} height={400}>
-          <Treemap data={this.data} width={600} height={400} tipFunction={toolTipFunction} />
+          <Treemap data={this.data} width={600} height={400} tipFunction={toolTipFunction} sizeFunction={standardSize} idDisplayFunction={idDisplay} />
         </svg>
         <button onClick={this.doUpdate}>Update</button>
       </div>
