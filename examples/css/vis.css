@@ -478,7 +478,7 @@ nav ul li .active {
   stroke: #000;
   stroke-width: 1.5px;
 }
-.cocentricCircle{
+.concentricCircle{
   stroke: #7f7f7f;
   stroke-width: 3;
   fill: none;
