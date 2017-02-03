@@ -22,3 +22,7 @@ To build (minification, etc.) the source for running in production, run: `npm ru
 To lint the code, run: `npm run lint`.
 
 To view [webpack](https://webpack.github.io/) stats, run `npm run stats`, and then open the `stats.json` file in https://webpack.github.io/analyse/.
+
+## Development
+
+Make sure you've turned off cacheing in your browser.  Otherwise you run the risk of not being able to see updates to the code.
