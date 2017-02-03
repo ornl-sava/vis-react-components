@@ -38,7 +38,7 @@ export const histogramData = [
 ]
 export const temporalHistogramData = [
   {
-    name: 'Temporal Histogram',
+    name: 'temporal',
     type: 'temporal',
     bins: [
       {
@@ -1697,5 +1697,44 @@ export const ordinalOrdinalScatterplotData = [
   {
     'x': 'v',
     'y': 'e'
+  }
+]
+
+export const treemapData = [
+  {
+    id: 'a'
+  },
+  {
+    id: 'a.b'
+  },
+  {
+    id: 'a.b.c',
+    value: 1
+  },
+  {
+    id: 'a.b.d',
+    value: 2
+  },
+  {
+    id: 'a.e',
+    value: 3
+  }
+]
+
+export const treemapUpdateData = [
+  {
+    id: 'a.f',
+    value: 2
+  },
+  {
+    id: 'a.g'
+  },
+  {
+    id: 'a.g.h',
+    value: 4
+  },
+  {
+    id: 'a.g.i',
+    value: 1
   }
 ]

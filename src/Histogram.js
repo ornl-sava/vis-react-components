@@ -195,6 +195,10 @@ class Histogram extends React.Component {
   }
 
   render () {
+    if (this.props.brushed && this.props.brushID === 'default') {
+      console.warn('Histogram is set to be be brushed, but no brushID is provided!')
+      console.warn('brushID should be set to the data-name of the underlying bar')
+    }
     if (this.props.data.length > 0) {
       return this.renderBars()
     } else {
@@ -208,6 +212,7 @@ Histogram.defaultProps = {
   data: [],
   xAccessor: 'x',
   yAccessor: 'y',
+  brushID: 'default',
   onBrush: () => {},
   onClick: () => {},
   onEnter: () => {},
