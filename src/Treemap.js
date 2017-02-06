@@ -45,8 +45,11 @@ class Treemap extends React.Component {
   }
 
   render () {
+    const w = this.props.chartWidth ? this.props.chartWidth : this.props.width
+    const h = this.props.chartHeight ? this.props.chartHeight : this.props.height
+
     const treemap = d3.treemap()
-      .size([this.props.width, this.props.height])
+      .size([w, h])
       .round(true)
       .padding(2)
 
@@ -147,6 +150,8 @@ Treemap.propTypes = {
   data: PropTypes.array,
   width: PropTypes.number,
   height: PropTypes.number,
+  chartWidth: PropTypes.number,
+  chartHeight: PropTypes.number,
   className: PropTypes.string
 }
 
