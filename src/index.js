@@ -15,7 +15,7 @@ export { default as TopicFlow } from './TopicFlow'
 export { default as TextBar } from './TextBar'
 export { default as ColorView } from './ColorView'
 export { default as StoryViewer } from './StoryViewer'
-// export { default as Treemap } from './Treemap'
+export { default as Treemap } from './Treemap'
 
 // Export premades
 export * from './premade'
