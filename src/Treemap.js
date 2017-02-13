@@ -70,7 +70,26 @@ class Treemap extends React.Component {
       <ReactTransitionGroup component='g'>
         {root.leaves().map((d, i) => {
           return (
-            <g key={d.id}>
+            <SVGComponent Component='svg'
+              key={d.id}
+              x={d.x0 + 'px'}
+              y={d.y0 + 'px'}
+              width={d.x1 - d.x0 + 'px'}
+              height={d.y1 - d.y0 + 'px'}
+              onUpdate={{
+                func: (transition, props) => {
+                  transition
+                    .delay(0)
+                    .duration(500)
+                    .ease(setEase('linear'))
+                    .attr('height', props.height)
+                    .attr('width', props.width)
+                    .attr('y', props.y)
+                    .attr('x', props.x)
+                    .attr('fill', props.fill)
+                  return transition
+                }
+              }}>
               <SVGComponent Component='rect'
                 key={d.id}
                 data={d}
@@ -91,8 +110,8 @@ class Treemap extends React.Component {
                     return transition
                   }
                 }}
-                x={d.x0 + 'px'}
-                y={d.y0 + 'px'}
+                x={'0px'}
+                y={'0px'}
                 width={d.x1 - d.x0 + 'px'}
                 height={d.y1 - d.y0 + 'px'}
                 fill={colors(getParent(d.id))}
@@ -115,14 +134,13 @@ class Treemap extends React.Component {
                     return transition
                   }
                 }}
-                x={d.x0 + (d.x1 - d.x0) / 2 + 'px'}
-                y={d.y0 + (d.y1 - d.y0) / 2 + 'px'}
-                width={(d.x1 - d.x0) / 2 + 'px'}
-                height={(d.y1 - d.y0) / 2 + 'px'}
-                fill={'black'}>
+                x={'5px'}
+                y={5 + this.props.fontSize + 'px'}
+                fill={'black'}
+                fontSize={this.props.fontSize + 'px'}>
                 { this.props.idDisplayFunction(d) }
               </SVGComponent>
-            </g>
+            </SVGComponent>
           )
         })}
       </ReactTransitionGroup>
@@ -137,6 +155,7 @@ Treemap.defaultProps = {
   data: [],
   sizeFunction: (d) => { return d.value },
   idDisplayFunction: (d) => { return d.id },
+  fontSize: 12,
   className: 'Treemap'
 }
 
@@ -152,7 +171,8 @@ Treemap.propTypes = {
   height: PropTypes.number,
   chartWidth: PropTypes.number,
   chartHeight: PropTypes.number,
-  className: PropTypes.string
+  className: PropTypes.string,
+  fontSize: PropTypes.number
 }
 
 export default Treemap
