@@ -18,9 +18,13 @@ class Treemap extends React.Component {
     this.tip = props.tipFunction
       ? new Tooltip().attr('className', 'd3-tip').html(props.tipFunction)
       : props.tipFunction
+    this.state = {}
   }
 
   onClick (event, data, index) {
+    if (this.props.zoom && data.children) {
+      this.setState({selectedId: data.id})
+    }
     this.props.onClick(event, data, index)
   }
 
@@ -53,12 +57,29 @@ class Treemap extends React.Component {
       .round(true)
       .padding(2)
 
-    const getParent = (id) => { return id.substring(0, id.lastIndexOf('.')) }
+    const getParent = (id) => {
+      if (this.props.zoom && this.state.selectedId === id) {
+        return ''
+      }
+      return id.substring(0, id.lastIndexOf('.'))
+    }
 
     const stratify = d3.stratify()
       .parentId(d => { return getParent(d.id) })
 
-    const root = stratify(this.props.data)
+    let activeData = this.props.data
+
+    if (this.props.zoom && this.state.selectedId) {
+      activeData = []
+      // let startIndex = getParent(this.state.selectedId).length + 1
+      this.props.data.map((d) => {
+        if (d.id.includes(this.state.selectedId)) {
+          activeData.push(d)
+        }
+      })
+    }
+
+    const root = stratify(activeData)
       .sum(d => { return this.props.sizeFunction(d) })
       .sort((a, b) => { return b.height - a.height || b.value - a.value })
 
@@ -66,9 +87,16 @@ class Treemap extends React.Component {
 
     treemap(root)
 
+    let visibleNodes = null
+    if (this.props.zoom) {
+      visibleNodes = root.children
+    } else {
+      visibleNodes = root.leaves()
+    }
+
     return (
       <ReactTransitionGroup component='g'>
-        {root.leaves().map((d, i) => {
+        {visibleNodes.map((d, i) => {
           return (
             <SVGComponent Component='svg'
               key={d.id}
@@ -156,6 +184,7 @@ Treemap.defaultProps = {
   sizeFunction: (d) => { return d.value },
   idDisplayFunction: (d) => { return d.id },
   fontSize: 12,
+  zoom: true,
   className: 'Treemap'
 }
 
@@ -172,7 +201,8 @@ Treemap.propTypes = {
   chartWidth: PropTypes.number,
   chartHeight: PropTypes.number,
   className: PropTypes.string,
-  fontSize: PropTypes.number
+  fontSize: PropTypes.number,
+  zoom: PropTypes.bool
 }
 
 export default Treemap
