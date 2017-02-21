@@ -1712,7 +1712,14 @@ export const treemapData = [
     value: 1
   },
   {
-    id: 'a.b.d',
+    id: 'a.b.d'
+  },
+  {
+    id: 'a.b.d.y',
+    value: 1
+  },
+  {
+    id: 'a.b.d.z',
     value: 2
   },
   {

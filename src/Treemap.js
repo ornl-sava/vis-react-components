@@ -24,8 +24,9 @@ class Treemap extends React.Component {
   onClick (event, data, index) {
     if (this.props.zoom && data.children) {
       this.setState({selectedId: data.id})
+    } else {
+      this.props.onClick(event, data, index)
     }
-    this.props.onClick(event, data, index)
   }
 
   onEnter (event, data, index) {
@@ -49,16 +50,30 @@ class Treemap extends React.Component {
   }
 
   render () {
-    const w = this.props.chartWidth ? this.props.chartWidth : this.props.width
-    const h = this.props.chartHeight ? this.props.chartHeight : this.props.height
+    let w = this.props.chartWidth ? this.props.chartWidth : this.props.width
+    let h = this.props.chartHeight ? this.props.chartHeight : this.props.height
+
+    const barPadding = 2
+    let barOffset = 0
+    if (this.props.zoom) {
+      barOffset = this.props.fontSize + 10 + 2 * barPadding
+    }
+    h = h - barOffset
+
+    const manualPadding = this.props.stretch ? 2 : 0
+
+    const ratio = this.props.stretch ? 4 : 1
 
     const treemap = d3.treemap()
-      .size([w, h])
+      .size([w / ratio, h])
       .round(true)
-      .padding(2)
 
-    const getParent = (id) => {
-      if (this.props.zoom && this.state.selectedId === id) {
+    if (!this.props.stretch) {
+      treemap.padding(2)
+    }
+
+    const getParent = (id, zoomOut) => {
+      if (this.props.zoom && this.state.selectedId === id && !zoomOut) {
         return ''
       }
       return id.substring(0, id.lastIndexOf('.'))
@@ -87,84 +102,117 @@ class Treemap extends React.Component {
 
     treemap(root)
 
-    let visibleNodes = null
+    let visibleNodes = []
+    let overlayNodes = []
     if (this.props.zoom) {
-      visibleNodes = root.children
+      root.children.map((d) => {
+        if (d.children) {
+          visibleNodes = visibleNodes.concat(d.children)
+        } else {
+          visibleNodes.push(d)
+        }
+        overlayNodes.push(d)
+      })
     } else {
       visibleNodes = root.leaves()
+      overlayNodes = root.leaves()
     }
+
+    let transitionFunc = {func: (transition, props) => {
+      transition
+        .delay(0)
+        .duration(500)
+        .ease(setEase('linear'))
+        .attr('height', props.height)
+        .attr('width', props.width)
+        .attr('y', props.y)
+        .attr('x', props.x)
+        .attr('fill', props.fill)
+      return transition
+    }}
 
     return (
       <ReactTransitionGroup component='g'>
+        {this.props.zoom &&
+          <SVGComponent Component='rect'
+            x={barPadding + 'px'}
+            y={barPadding + 'px'}
+            width={w - 2 * barPadding + 'px'}
+            height={barOffset - 2 * barPadding + 'px'}
+            fill={'orange'}
+            onClick={() => {
+              if (this.state.selectedId) {
+                this.setState({selectedId: getParent(this.state.selectedId, true)})
+              }
+            }}
+            onUpdate={transitionFunc}
+          />
+        }
+        {this.props.zoom &&
+          <SVGComponent Component='text'
+            x={barPadding + 5 + 'px'}
+            y={barPadding + 5 + this.props.fontSize + 'px'}
+            fill={'black'}
+            fontSize={this.props.fontSize + 'px'}
+            onUpdate={transitionFunc}
+          >
+            {this.props.idDisplayFunction(root)}
+          </SVGComponent>
+        }
         {visibleNodes.map((d, i) => {
           return (
             <SVGComponent Component='svg'
               key={d.id}
-              x={d.x0 + 'px'}
-              y={d.y0 + 'px'}
-              width={d.x1 - d.x0 + 'px'}
-              height={d.y1 - d.y0 + 'px'}
-              onUpdate={{
-                func: (transition, props) => {
-                  transition
-                    .delay(0)
-                    .duration(500)
-                    .ease(setEase('linear'))
-                    .attr('height', props.height)
-                    .attr('width', props.width)
-                    .attr('y', props.y)
-                    .attr('x', props.x)
-                    .attr('fill', props.fill)
-                  return transition
-                }
-              }}>
+              x={d.x0 * ratio + manualPadding + 'px'}
+              y={barOffset + d.y0 + manualPadding + 'px'}
+              width={(d.x1 - d.x0) * ratio - manualPadding + 'px'}
+              height={d.y1 - d.y0 - manualPadding + 'px'}
+              onUpdate={transitionFunc}>
+              <SVGComponent Component='rect'
+                key={d.id}
+                data={d}
+                onUpdate={transitionFunc}
+                x={'0px'}
+                y={'0px'}
+                width={(d.x1 - d.x0) * ratio - manualPadding + 'px'}
+                height={d.y1 - d.y0 - manualPadding + 'px'}
+                fill={colors(getParent(d.id))}
+              />
+            </SVGComponent>
+          )
+        })}
+        {overlayNodes.map((d) => {
+          return (
+            <SVGComponent Component='svg'
+              key={d.id}
+              x={d.x0 * ratio + manualPadding + 'px'}
+              y={barOffset + d.y0 + manualPadding + 'px'}
+              width={(d.x1 - d.x0) * ratio - manualPadding + 'px'}
+              height={d.y1 - d.y0 - manualPadding + 'px'}
+              onUpdate={transitionFunc}>
               <SVGComponent Component='rect'
                 key={d.id}
                 data={d}
                 onMouseEnter={this.onEnter}
                 onMouseLeave={this.onLeave}
                 onClick={this.onClick}
-                onUpdate={{
-                  func: (transition, props) => {
-                    transition
-                      .delay(0)
-                      .duration(500)
-                      .ease(setEase('linear'))
-                      .attr('height', props.height)
-                      .attr('width', props.width)
-                      .attr('y', props.y)
-                      .attr('x', props.x)
-                      .attr('fill', props.fill)
-                    return transition
-                  }
-                }}
+                onUpdate={transitionFunc}
                 x={'0px'}
                 y={'0px'}
-                width={d.x1 - d.x0 + 'px'}
-                height={d.y1 - d.y0 + 'px'}
-                fill={colors(getParent(d.id))}
+                width={(d.x1 - d.x0) * ratio - manualPadding + 'px'}
+                height={d.y1 - d.y0 - manualPadding + 'px'}
+                opacity={'0.0'}
               />
               <SVGComponent Component='text'
                 key={d.id + ' value'}
                 onMouseEnter={this.onEnter}
                 onMouseLeave={this.onLeave}
                 onClick={this.onClick}
-                onUpdate={{
-                  func: (transition, props) => {
-                    transition
-                      .delay(0)
-                      .duration(500)
-                      .ease(setEase('linear'))
-                      .attr('height', props.height)
-                      .attr('width', props.width)
-                      .attr('y', props.y)
-                      .attr('x', props.x)
-                    return transition
-                  }
-                }}
-                x={'5px'}
+                onUpdate={transitionFunc}
+                x={5 * ratio + 'px'}
                 y={5 + this.props.fontSize + 'px'}
                 fill={'black'}
+                data={d}
                 fontSize={this.props.fontSize + 'px'}>
                 { this.props.idDisplayFunction(d) }
               </SVGComponent>
@@ -184,7 +232,8 @@ Treemap.defaultProps = {
   sizeFunction: (d) => { return d.value },
   idDisplayFunction: (d) => { return d.id },
   fontSize: 12,
-  zoom: true,
+  zoom: false,
+  stretch: false,
   className: 'Treemap'
 }
 
@@ -202,7 +251,8 @@ Treemap.propTypes = {
   chartHeight: PropTypes.number,
   className: PropTypes.string,
   fontSize: PropTypes.number,
-  zoom: PropTypes.bool
+  zoom: PropTypes.bool,
+  stretch: PropTypes.bool
 }
 
 export default Treemap

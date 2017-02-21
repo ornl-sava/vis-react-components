@@ -1,6 +1,7 @@
 import React from 'react'
 
 import Treemap from '../src/Treemap'
+import Chart from '../src/Chart'
 import { treemapData, treemapUpdateData } from './data/exampleData'
 
 const toolTipFunction = (d) => {
@@ -17,6 +18,11 @@ const standardSize = (d) => {
 
 const idDisplay = (d) => {
   return d.id
+}
+
+const chartCommon = {
+  margin: {top: 5, right: 5, bottom: 50, left: 50},
+  height: 300
 }
 
 class TreemapExample extends React.Component {
@@ -39,10 +45,31 @@ class TreemapExample extends React.Component {
 
   render () {
     return (
-      <div width={600} height={450}>
-        <svg width={600} height={400}>
-          <Treemap data={this.data} width={600} height={400} tipFunction={toolTipFunction} sizeFunction={standardSize} idDisplayFunction={idDisplay} />
-        </svg>
+      <div className='col-md-12'>
+        <div className='row'>
+          <div className='col-md-6'>
+            <Chart {...chartCommon}>
+              <Treemap data={this.data} tipFunction={toolTipFunction} sizeFunction={standardSize} idDisplayFunction={idDisplay} />
+            </Chart>
+          </div>
+          <div className='col-md-6'>
+            <Chart {...chartCommon}>
+              <Treemap data={this.data} tipFunction={toolTipFunction} sizeFunction={standardSize} idDisplayFunction={idDisplay} stretch />
+            </Chart>
+          </div>
+        </div>
+        <div className='row'>
+          <div className='col-md-6'>
+            <Chart {...chartCommon}>
+              <Treemap data={this.data} tipFunction={toolTipFunction} sizeFunction={standardSize} idDisplayFunction={idDisplay} zoom />
+            </Chart>
+          </div>
+          <div className='col-md-6'>
+            <Chart {...chartCommon}>
+              <Treemap data={this.data} tipFunction={toolTipFunction} sizeFunction={standardSize} idDisplayFunction={idDisplay} stretch zoom />
+            </Chart>
+          </div>
+        </div>
         <button onClick={this.doUpdate}>Update</button>
       </div>
     )
