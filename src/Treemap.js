@@ -86,12 +86,22 @@ class Treemap extends React.Component {
 
     if (this.props.zoom && this.state.selectedId) {
       activeData = []
-      // let startIndex = getParent(this.state.selectedId).length + 1
+
+      var stillThere = false
+
       this.props.data.map((d) => {
-        if (d.id.includes(this.state.selectedId)) {
+        if (d.id === this.state.selectedId || d.id.includes(this.state.selectedId + '.')) {
           activeData.push(d)
         }
+        if (d.id === this.state.selectedId) {
+          stillThere = true
+        }
       })
+
+      if (!stillThere) {
+        this.state.selectedId = null
+        activeData = this.props.data
+      }
     }
 
     const root = stratify(activeData)
@@ -209,8 +219,8 @@ class Treemap extends React.Component {
                 onMouseLeave={this.onLeave}
                 onClick={this.onClick}
                 onUpdate={transitionFunc}
-                x={5 * ratio + 'px'}
-                y={5 + this.props.fontSize + 'px'}
+                x={5 + 'px'}
+                y={2 + this.props.fontSize + 'px'}
                 fill={'black'}
                 data={d}
                 fontSize={this.props.fontSize + 'px'}>
