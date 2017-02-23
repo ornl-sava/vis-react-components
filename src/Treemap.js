@@ -170,13 +170,15 @@ class Treemap extends React.Component {
           </SVGComponent>
         }
         {visibleNodes.map((d, i) => {
+          let w = Math.max((d.x1 - d.x0) * ratio - manualPadding, 0)
+          let h = Math.max(d.y1 - d.y0 - manualPadding, 0)
           return (
             <SVGComponent Component='svg'
               key={d.id}
               x={d.x0 * ratio + manualPadding + 'px'}
               y={barOffset + d.y0 + manualPadding + 'px'}
-              width={(d.x1 - d.x0) * ratio - manualPadding + 'px'}
-              height={d.y1 - d.y0 - manualPadding + 'px'}
+              width={w + 'px'}
+              height={h + 'px'}
               onUpdate={transitionFunc}>
               <SVGComponent Component='rect'
                 key={d.id}
@@ -184,21 +186,23 @@ class Treemap extends React.Component {
                 onUpdate={transitionFunc}
                 x={'0px'}
                 y={'0px'}
-                width={(d.x1 - d.x0) * ratio - manualPadding + 'px'}
-                height={d.y1 - d.y0 - manualPadding + 'px'}
+                width={w + 'px'}
+                height={h + 'px'}
                 fill={colors(getParent(d.id))}
               />
             </SVGComponent>
           )
         })}
         {overlayNodes.map((d) => {
+          let w = Math.max((d.x1 - d.x0) * ratio - manualPadding, 0)
+          let h = Math.max(d.y1 - d.y0 - manualPadding, 0)
           return (
             <SVGComponent Component='svg'
               key={d.id}
               x={d.x0 * ratio + manualPadding + 'px'}
               y={barOffset + d.y0 + manualPadding + 'px'}
-              width={(d.x1 - d.x0) * ratio - manualPadding + 'px'}
-              height={d.y1 - d.y0 - manualPadding + 'px'}
+              width={w + 'px'}
+              height={h + 'px'}
               onUpdate={transitionFunc}>
               <SVGComponent Component='rect'
                 key={d.id}
@@ -209,8 +213,8 @@ class Treemap extends React.Component {
                 onUpdate={transitionFunc}
                 x={'0px'}
                 y={'0px'}
-                width={(d.x1 - d.x0) * ratio - manualPadding + 'px'}
-                height={d.y1 - d.y0 - manualPadding + 'px'}
+                width={w + 'px'}
+                height={h + 'px'}
                 opacity={'0.0'}
               />
               <SVGComponent Component='text'
