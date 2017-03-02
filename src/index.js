@@ -16,6 +16,7 @@ export { default as TextBar } from './TextBar'
 export { default as ColorView } from './ColorView'
 export { default as StoryViewer } from './StoryViewer'
 export { default as Treemap } from './Treemap'
+export { default as HorizonGraph } from './HorizonGraph'
 
 // Export premades
 export * from './premade'
