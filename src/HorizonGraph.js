@@ -14,31 +14,41 @@ class HorizonGraph extends React.Component {
   render () {
     let data = this.props.data
     let numBands = this.props.numBands
-    let access = this.props.accessor
+    let xAccess = this.props.xAccessor
+    let yAccess = this.props.yAccessor
 
     let w = this.props.chartWidth ? this.props.chartWidth : this.props.width
     let h = this.props.chartHeight ? this.props.chartHeight : this.props.height
 
+    var xmin = Infinity
+    var xmax = -Infinity
     var ymax = -Infinity
 
-    data.map((d) => {
-      let val = access(d)
-      if (Math.abs(val) > ymax) {
-        ymax = Math.abs(val)
+    data.map((d, i) => {
+      let x = xAccess(d, i)
+      let y = yAccess(d)
+      if (x < xmin) {
+        xmin = x
+      }
+      if (x > xmax) {
+        xmax = x
+      }
+      if (Math.abs(y) > ymax) {
+        ymax = Math.abs(y)
       }
     })
 
-    let xScale = d3.scaleLinear().domain([0, data.length - 1]).range([0, w])
+    let xScale = d3.scaleLinear().domain([xmin, xmax]).range([0, w])
     let yScale = d3.scaleLinear().domain([0, ymax]).range([0, h * numBands])
 
     let points = d3.area()
       .curve(d3.curveLinear)
       .x((d, i) => {
-        return xScale(i)
+        return xScale(xAccess(d, i))
       })
       .y0(h * numBands)
       .y1((d) => {
-        return h * numBands - yScale(access(d))
+        return h * numBands - yScale(yAccess(d))
       })(data)
 
     let levels = d3.range(-1, -numBands - 1, -1).concat(d3.range(1, numBands + 1))
@@ -62,6 +72,19 @@ class HorizonGraph extends React.Component {
       return transition
     }}
 
+    let boxTransition = {func: (transition, props) => {
+      transition
+        .delay(0)
+        .duration(500)
+        .ease(setEase('linear'))
+        .attr('x', props.x)
+        .attr('y', props.y)
+        .attr('width', props.width)
+        .attr('height', props.height)
+        .attr('fill', props.fill)
+      return transition
+    }}
+
     return (
       <ReactTransitionGroup component='g'>
         <SVGComponent Component='svg'
@@ -69,6 +92,8 @@ class HorizonGraph extends React.Component {
           y={'0px'}
           width={w + 'px'}
           height={h + 'px'}
+          key='horizonSvg'
+          onUpdate={boxTransition}
         >
           <SVGComponent Component='rect'
             x={'0px'}
@@ -76,6 +101,8 @@ class HorizonGraph extends React.Component {
             width={w + 'px'}
             height={h + 'px'}
             fill={this.props.bgColor}
+            key='horizonBackground'
+            onUpdate={boxTransition}
             />
           {
             levels.map((d) => {
@@ -102,7 +129,8 @@ HorizonGraph.defaultProps = {
   data: [],
   colors: ['#bdd7e7', '#08519c', '#006d2c', '#bae4b3'],
   bgColor: 'white',
-  accessor: (d) => { return d }
+  xAccessor: (d, i) => { return i },
+  yAccessor: (d) => { return d }
 }
 
 HorizonGraph.propTypes = {
@@ -115,7 +143,8 @@ HorizonGraph.propTypes = {
   data: PropTypes.array,
   colors: PropTypes.array,
   bgColor: PropTypes.string,
-  accessor: PropTypes.func
+  xAccessor: PropTypes.func,
+  yAccessor: PropTypes.func
 }
 
 export default HorizonGraph
