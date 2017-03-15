@@ -59,30 +59,8 @@ class Settings extends React.Component {
   }
 
   render () {
-    let props = this.props
-    let settings = props.settings
-    let chart = props.chart
-
-    // Find longest string in options
-    let longestLen = settings.options.reduce((a, b) => {
-      let aStringLen = 0
-      let bStringLen = 0
-      if (typeof a.label !== 'undefined') {
-        aStringLen = a.label.length + a.options.reduce((f, g) => {
-          return f.length > g.length ? f.length : g.length
-        }, 0)
-      }
-      if (typeof b.label !== 'undefined') {
-        bStringLen = b.label.length + b.options.reduce((f, g) => {
-          return f.length > g.length ? f.length : g.length
-        }, 0)
-      }
-      return aStringLen > bStringLen ? aStringLen : bStringLen
-    }, 0)
-
-    // Requires approximate character length (assuming 11px here)
-    // bumped to 14px to handle new field names
-    let minWidth = Math.ceil(longestLen * 14)
+    let settings = this.props.settings
+    let chart = this.props.chart
 
     let containerProps = {
       className: 'settings-container',
@@ -95,7 +73,7 @@ class Settings extends React.Component {
     }
 
     let iconProps = {
-      className: props.icon + ' settings-icon',
+      className: this.props.icon + ' settings-icon',
       style: {
         zIndex: 103,
         top: 0
@@ -109,9 +87,9 @@ class Settings extends React.Component {
         position: 'absolute',
         display: this.state.menuDisplay,
         zIndex: -100,
-        width: minWidth,
+        width: this.props.width,
         top: 0,
-        transform: 'translate(' + -minWidth + 'px,0px)'
+        transform: 'translate(' + -this.props.width + 'px,0px)'
       }
     }
 
@@ -134,12 +112,14 @@ class Settings extends React.Component {
 Settings.defaultProps = {
   settings: {},
   chart: null,
+  width: 200,
   icon: 'fa fa-cogs'
 }
 
 Settings.propTypes = {
   settings: PropTypes.object,
   chart: PropTypes.object,
+  width: PropTypes.number.isRequired,
   icon: PropTypes.string
 }
 
