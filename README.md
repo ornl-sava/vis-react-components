@@ -25,4 +25,7 @@ To view [webpack](https://webpack.github.io/) stats, run `npm run stats`, and th
 
 ## Development
 
-Make sure you've turned off cacheing in your browser.  Otherwise you run the risk of not being able to see updates to the code.
+Make sure you've turned off cacheing in your browser.  Otherwise you run the risk of not being able to see updates to the code.  
+
+Before committing a change to the repository run: `npm run build`
+This will transpile the source code in the `src` directory from es2015 / es6 to es5 compatible source code in the `lib` directory
