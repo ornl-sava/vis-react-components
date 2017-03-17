@@ -114,6 +114,13 @@ class Axis extends React.Component {
           props.tickStyle(tick, tickPreformatValues[i], i)
         })
     }
+
+    if (props.onLabelClick) {
+      selection.selectAll('.tick').style('cursor', 'pointer')
+      selection.selectAll('.tick').on('click', (d) => {
+        props.onLabelClick(d)
+      })
+    }
   }
 
   render () {
@@ -168,6 +175,7 @@ Axis.propTypes = {
     React.PropTypes.bool
   ]),
   label: PropTypes.string,
-  scale: PropTypes.any
+  scale: PropTypes.any,
+  onLabelClick: PropTypes.func
 }
 export default Axis
