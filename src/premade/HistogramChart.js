@@ -38,6 +38,13 @@ class HistogramChart extends React.Component {
   }
 
   componentWillReceiveProps (nextProps) {
+    if (this.props.xScaleType !== nextProps.xScaleType) {
+      console.log('Updating scale from : ' + this.props.xScaleType + ' ==> ' + nextProps.xScaleType)
+      this.xScale = setScale(nextProps.xScaleType)
+    }
+    if (this.props.yScaleType !== nextProps.yScaleType) {
+      this.yScale = setScale(nextProps.yScaleType)
+    }
     this.updateDomain(nextProps, this.state)
   }
 
@@ -209,10 +216,11 @@ class HistogramChart extends React.Component {
 
   render () {
     let props = this.props
+
     return (
       <Chart ref='chart' {...spreadRelated(Chart, props)} resizeHandler={this.onResize}>
         <Histogram className='histogram' {...spreadRelated(Histogram, props)}
-          brushID={props.brushed ? props.endpoint : null}
+          brushID={props.brushID}
           xScale={this.xScale} yScale={this.yScale}
           onEnter={this.onEnter} onLeave={this.onLeave} onClick={this.onClick} onBrush={this.onBrush} />
         <Axis className='x axis' {...props.xAxis} scale={this.xScale} />
