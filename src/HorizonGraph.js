@@ -24,9 +24,11 @@ class HorizonGraph extends React.Component {
     var xmax = -Infinity
     var ymax = -Infinity
 
+    let mid = this.props.mid ? this.props.mid : 0
+
     data.map((d, i) => {
       let x = xAccess(d, i)
-      let y = yAccess(d)
+      let y = yAccess(d) - mid
       if (x < xmin) {
         xmin = x
       }
@@ -48,7 +50,7 @@ class HorizonGraph extends React.Component {
       })
       .y0(h * numBands)
       .y1((d) => {
-        return h * numBands - yScale(yAccess(d))
+        return h * numBands - yScale(yAccess(d) - mid)
       })(data)
 
     let levels = d3.range(-1, -numBands - 1, -1).concat(d3.range(1, numBands + 1))
@@ -144,7 +146,8 @@ HorizonGraph.propTypes = {
   colors: PropTypes.array,
   bgColor: PropTypes.string,
   xAccessor: PropTypes.func,
-  yAccessor: PropTypes.func
+  yAccessor: PropTypes.func,
+  mid: PropTypes.number
 }
 
 export default HorizonGraph

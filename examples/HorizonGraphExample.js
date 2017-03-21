@@ -9,7 +9,7 @@ const yAccess = (d) => { return d }
 
 const chartCommon = {
   margin: {top: 10, right: 10, bottom: 50, left: 50},
-  height: 200,
+  height: 150,
   xAccessor: xAccess,
   yAccessor: yAccess,
   xScaleType: 'linear',
@@ -48,6 +48,11 @@ class HorizonGraphExample extends React.Component {
         </div>
         <div className='row'>
           <div className='col-md-12'>
+            <HorizonGraphChart {...chartCommon} data={this.data} numBands={2} mid={2} mode='offset' bgColor='black' />
+          </div>
+        </div>
+        <div className='row'>
+          <div className='col-md-12'>
             <HorizonGraphChart {...chartCommon} data={this.data} numBands={3} mode='offset' bgColor='black' />
           </div>
         </div>
@@ -59,6 +64,11 @@ class HorizonGraphExample extends React.Component {
         <div className='row'>
           <div className='col-md-12'>
             <HorizonGraphChart {...chartCommon} data={this.data} numBands={2} mode='mirror' colors={altColors} />
+          </div>
+        </div>
+        <div className='row'>
+          <div className='col-md-12'>
+            <HorizonGraphChart {...chartCommon} data={this.data} numBands={2} mid={2} mode='mirror' colors={altColors} />
           </div>
         </div>
         <div className='row'>
