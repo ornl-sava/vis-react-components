@@ -11,6 +11,7 @@ class HorizonGraph extends React.Component {
     super(props)
 
     this.onMouseMove = this.onMouseMove.bind(this)
+    this.binarySearch = this.binarySearch.bind(this)
 
     this.xScale = null
   }
@@ -19,7 +20,7 @@ class HorizonGraph extends React.Component {
     let bounds = event.target.getBoundingClientRect()
     let x = event.clientX - bounds.left
     let target = this.xScale.invert(x)
-    let index = this.binarySearch(target, 0, this.props.data.length)
+    let index = this.binarySearch(target, 0, this.props.data.length - 1)
     if (index !== this.props.selectedIndex) {
       this.props.handleSelection(index)
     }
