@@ -7,10 +7,42 @@ import { setEase } from './util/d3'
 import SVGComponent from './SVGComponent'
 
 class HorizonGraph extends React.Component {
-/*  constructor (props) {
+  constructor (props) {
     super(props)
+
+    this.onMouseMove = this.onMouseMove.bind(this)
+
+    this.xScale = null
   }
-*/
+
+  onMouseMove (event) {
+    let bounds = event.target.getBoundingClientRect()
+    let x = event.clientX - bounds.left
+    let target = this.xScale.invert(x)
+    let index = this.binarySearch(target, 0, this.props.data.length)
+    if (index !== this.props.selectedIndex) {
+      this.props.handleSelection(index)
+    }
+  }
+
+  binarySearch (target, left, right) {
+    let xAccess = this.props.xAccessor
+    let data = this.props.data
+
+    let mid = Math.floor((left + right) / 2)
+    let min = xAccess(data[left], left)
+    let max = xAccess(data[right], right)
+    let lowDist = target - min
+    let highDist = max - target
+    let goLeft = lowDist <= highDist
+
+    if (left === mid) {
+      return goLeft ? left : right
+    } else {
+      return goLeft ? this.binarySearch(target, left, mid) : this.binarySearch(target, mid, right)
+    }
+  }
+
   render () {
     let data = this.props.data
     let numBands = this.props.numBands
@@ -41,6 +73,7 @@ class HorizonGraph extends React.Component {
     })
 
     let xScale = d3.scaleLinear().domain([xmin, xmax]).range([0, w])
+    this.xScale = xScale
     let yScale = d3.scaleLinear().domain([0, ymax]).range([0, h * numBands])
 
     let points = d3.area()
@@ -63,6 +96,21 @@ class HorizonGraph extends React.Component {
     var color = d3.scaleLinear()
       .domain(numBands > 1 ? [-numBands, -1, 1, numBands] : [-1, 0, 0, 1])
       .range(numBands > 1 ? colors : [colors[1], colors[0], colors[3], colors[2]])
+
+    var selectionX = null
+    var labelX = null
+    var labelText = null
+    let si = this.props.selectedIndex
+    if (si || si === 0) {
+      selectionX = xScale(xAccess(data[si], si))
+      labelText = this.props.labelFormat(yAccess(data[si]))
+      let labelWidth = 7 * labelText.length
+      if (w - selectionX < labelWidth + 5) {
+        labelX = w - labelWidth - 5
+      } else {
+        labelX = selectionX + 5
+      }
+    }
 
     let pathTransition = {func: (transition, props) => {
       transition
@@ -87,6 +135,28 @@ class HorizonGraph extends React.Component {
       return transition
     }}
 
+    let lineTransition = {func: (transition, props) => {
+      transition
+        .delay(0)
+        .duration(0)
+        .ease(setEase('linear'))
+        .attr('x1', props.x1)
+        .attr('y1', props.y1)
+        .attr('x2', props.x2)
+        .attr('y2', props.y2)
+      return transition
+    }}
+
+    let textTransition = {func: (transition, props) => {
+      transition
+        .delay(0)
+        .duration(0)
+        .ease(setEase('linear'))
+        .attr('x', props.x)
+        .attr('y', props.y)
+      return transition
+    }}
+
     return (
       <ReactTransitionGroup component='g'>
         <SVGComponent Component='svg'
@@ -96,6 +166,7 @@ class HorizonGraph extends React.Component {
           height={h + 'px'}
           key='horizonSvg'
           onUpdate={boxTransition}
+          onMouseMove={this.onMouseMove}
         >
           <SVGComponent Component='rect'
             x={'0px'}
@@ -119,6 +190,25 @@ class HorizonGraph extends React.Component {
               )
             })
           }
+          {selectionX !== null &&
+            <SVGComponent Component='g'>
+              <SVGComponent Component='line'
+                key='selectionLine'
+                x1={selectionX}
+                y1={0}
+                x2={selectionX}
+                y2={h}
+                stroke='black'
+                onUpdate={lineTransition}
+              />
+              <SVGComponent Component='text'
+                key='selectionLabel'
+                x={labelX}
+                y={20}
+                onUpdate={textTransition}
+              >{labelText}</SVGComponent>
+            </SVGComponent>
+          }
         </SVGComponent>
       </ReactTransitionGroup>
     )
@@ -132,7 +222,8 @@ HorizonGraph.defaultProps = {
   colors: ['#bdd7e7', '#08519c', '#006d2c', '#bae4b3'],
   bgColor: 'white',
   xAccessor: (d, i) => { return i },
-  yAccessor: (d) => { return d }
+  yAccessor: (d) => { return d },
+  labelFormat: (d) => { return '' + d }
 }
 
 HorizonGraph.propTypes = {
@@ -147,7 +238,10 @@ HorizonGraph.propTypes = {
   bgColor: PropTypes.string,
   xAccessor: PropTypes.func,
   yAccessor: PropTypes.func,
-  mid: PropTypes.number
+  mid: PropTypes.number,
+  selectedIndex: PropTypes.number,
+  handleSelection: PropTypes.func,
+  labelFormat: PropTypes.func
 }
 
 export default HorizonGraph
