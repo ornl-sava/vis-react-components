@@ -3,7 +3,7 @@ import React, { PropTypes } from 'react'
 // TODO: Create other various input types to be used
 
 // Helper to create dropdown options menu
-class Dropdown extends React.Component {
+class Dropdown extends React.PureComponent {
   constructor (props) {
     super(props)
 
