@@ -1,5 +1,5 @@
 const spreadRelated = (component, props) => {
-  console.warn('This function may be deprecated in the future (src/util/react.js::spreadRelated)')
+  // console.warn('This function may be deprecated in the future (src/util/react.js::spreadRelated)')
   let newProps = {}
   for (let p in props) {
     if (p in component.propTypes) {
@@ -10,7 +10,7 @@ const spreadRelated = (component, props) => {
 }
 
 const spreadExclude = (props, exclude) => {
-  console.warn('This function may be deprecated in the future (src/util/react.js::spreadExclude)')
+  // console.warn('This function may be deprecated in the future (src/util/react.js::spreadExclude)')
   let newProps = {}
   for (let p in props) {
     if (!(p in exclude)) {
