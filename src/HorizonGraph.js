@@ -200,12 +200,14 @@ class HorizonGraph extends React.Component {
                 x2={selectionX}
                 y2={h}
                 stroke='black'
+                pointerEvents='none'
                 onUpdate={lineTransition}
               />
               <SVGComponent Component='text'
                 key='selectionLabel'
                 x={labelX}
                 y={20}
+                pointerEvents='none'
                 onUpdate={textTransition}
               >{labelText}</SVGComponent>
             </SVGComponent>
