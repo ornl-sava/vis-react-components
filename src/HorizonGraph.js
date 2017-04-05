@@ -73,6 +73,10 @@ class HorizonGraph extends React.Component {
       }
     })
 
+    if (this.props.domainHeight) {
+      ymax = this.props.domainHeight
+    }
+
     let xScale = d3.scaleLinear().domain([xmin, xmax]).range([0, w])
     this.xScale = xScale
     let yScale = d3.scaleLinear().domain([0, ymax]).range([0, h * numBands])
@@ -242,6 +246,7 @@ HorizonGraph.propTypes = {
   xAccessor: PropTypes.func,
   yAccessor: PropTypes.func,
   mid: PropTypes.number,
+  domainHeight: PropTypes.number,
   selectedIndex: PropTypes.number,
   handleSelection: PropTypes.func,
   labelFormat: PropTypes.func

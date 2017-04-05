@@ -56,7 +56,7 @@ class HorizonGraphExample extends React.Component {
         </div>
         <div className='row'>
           <div className='col-md-12'>
-            <HorizonGraphChart {...chartCommon} data={this.data} numBands={2} mid={2} mode='offset' bgColor='black' />
+            <HorizonGraphChart {...chartCommon} data={this.data} numBands={2} mid={2} domainHeight={12} mode='offset' bgColor='black' />
           </div>
         </div>
         <div className='row'>
@@ -76,7 +76,7 @@ class HorizonGraphExample extends React.Component {
         </div>
         <div className='row'>
           <div className='col-md-12'>
-            <HorizonGraphChart {...chartCommon} data={this.data} numBands={2} mid={2} mode='mirror' colors={altColors} />
+            <HorizonGraphChart {...chartCommon} data={this.data} numBands={2} mid={2} domainHeight={12} mode='mirror' colors={altColors} />
           </div>
         </div>
         <div className='row'>

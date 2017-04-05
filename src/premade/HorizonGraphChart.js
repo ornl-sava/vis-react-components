@@ -55,8 +55,14 @@ class HorizonGraphChart extends React.Component {
           yDomain = props.data.map((d) => props.yAccessor(d))
         } else {
           // only positive domain
-          let args = extent(props.data, (d) => { return props.yAccessor(d) - mid })
-          let height = Math.max(Math.abs(args[0]), Math.abs(args[1])) / props.numBands
+          let height = 0
+          if (props.domainHeight) {
+            height = props.domainHeight / props.numBands
+          } else {
+            let args = extent(props.data, (d) => { return props.yAccessor(d) - mid })
+            height = Math.max(Math.abs(args[0]), Math.abs(args[1])) / props.numBands
+          }
+
           yDomain = [mid, mid + height]
         }
       }
