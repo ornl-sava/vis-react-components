@@ -106,7 +106,7 @@ class HorizonGraph extends React.Component {
     var labelX = null
     var labelText = null
     let si = this.props.selectedIndex
-    if (si || si === 0) {
+    if ((si || si === 0) && si < data.length) {
       selectionX = xScale(xAccess(data[si], si))
       labelText = this.props.labelFormat(data[si])
       let labelWidth = 7 * labelText.length
