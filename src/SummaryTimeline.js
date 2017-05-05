@@ -24,26 +24,29 @@ class SummaryTimeline extends React.Component {
       .rangeRound([height, 0])
 
     var meanLine = d3.line()
+      .curve(d3.curveStepAfter)
       .x((d) => { return x(d.date) })
       .y((d) => { return y(d.mean) })(data)
-    var stdevMinLine = d3.line()
-      .x((d) => { return x(d.date) })
-      .y((d) => { return y(d.stdevMin) })(data)
-    var stdevMaxLine = d3.line()
-      .x((d) => { return x(d.date) })
-      .y((d) => { return y(d.stdevMax) })(data)
-    var maxLine = d3.line()
-      .x((d) => { return x(d.date) })
-      .y((d) => { return y(d.max) })(data)
-    var minLine = d3.line()
-      .x((d) => { return x(d.date) })
-      .y((d) => { return y(d.min) })(data)
+    // var stdevMinLine = d3.line()
+    //   .x((d) => { return x(d.date) })
+    //   .y((d) => { return y(d.stdevMin) })(data)
+    // var stdevMaxLine = d3.line()
+    //   .x((d) => { return x(d.date) })
+    //   .y((d) => { return y(d.stdevMax) })(data)
+    // var maxLine = d3.line()
+    //   .x((d) => { return x(d.date) })
+    //   .y((d) => { return y(d.max) })(data)
+    // var minLine = d3.line()
+    //   .x((d) => { return x(d.date) })
+    //   .y((d) => { return y(d.min) })(data)
 
     var stdevRangeArea = d3.area()
+      .curve(d3.curveStepAfter)
       .x((d) => { return x(d.date) })
       .y0((d) => { return y(d.stdevMin) })
       .y1((d) => { return y(d.stdevMax) })(data)
     var extentRangeArea = d3.area()
+      .curve(d3.curveStepAfter)
       .x((d) => { return x(d.date) })
       .y0((d) => { return y(d.min) })
       .y1((d) => { return y(d.max) })(data)
@@ -82,46 +85,6 @@ class SummaryTimeline extends React.Component {
           d={meanLine}
           onUpdate={pathTransition}
         />
-        <SVGComponent Component='path'
-          key='stdevMin'
-          fill='none'
-          stroke='darkgray'
-          strokeLinejoin='round'
-          strokeLinecap='round'
-          strokeWidth={1.0}
-          d={stdevMinLine}
-          onUpdate={pathTransition}
-        />
-        <SVGComponent Component='path'
-          key='stdevMax'
-          fill='none'
-          stroke='darkgray'
-          strokeLinejoin='round'
-          strokeLinecap='round'
-          strokeWidth={1.0}
-          d={stdevMaxLine}
-          onUpdate={pathTransition}
-        />
-        <SVGComponent Component='path'
-          key='max'
-          fill='none'
-          stroke='darkgray'
-          strokeLinejoin='round'
-          strokeLinecap='round'
-          strokeWidth={1.0}
-          d={maxLine}
-          onUpdate={pathTransition}
-        />
-        <SVGComponent Component='path'
-          key='min'
-          fill='none'
-          stroke='darkgray'
-          strokeLinejoin='round'
-          strokeLinecap='round'
-          strokeWidth={1.0}
-          d={minLine}
-          onUpdate={pathTransition}
-        />
       </ReactTransitionGroup>
     )
   }
@@ -136,4 +99,3 @@ SummaryTimeline.propTypes = {
 }
 
 export default SummaryTimeline
-
