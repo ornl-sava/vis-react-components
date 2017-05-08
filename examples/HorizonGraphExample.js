@@ -7,15 +7,6 @@ let startData = [-6, -4, -2, -1, 0, 1, 2, 4, 5, 8, 6, 4, 2, 0, -1, -2, -4]
 const xAccess = (d, i) => { return i }
 const yAccess = (d) => { return d }
 
-const chartCommon = {
-  margin: {top: 10, right: 10, bottom: 50, left: 50},
-  height: 150,
-  xAccessor: xAccess,
-  yAccessor: yAccess,
-  xScaleType: 'linear',
-  yScaleType: 'linear'
-}
-
 // extreme negative, common negative, common postive, extreme positive
 const altColors = ['#ed9797', '#840000', '#08519c', '#bdd7e7']
 
@@ -25,6 +16,8 @@ class HorizonGraphExample extends React.Component {
     this.data = startData
     this.position = 0
     this.update = this.update.bind(this)
+    this.state = {}
+    this.handleSelection = this.handleSelection.bind(this)
   }
 
   update () {
@@ -33,7 +26,22 @@ class HorizonGraphExample extends React.Component {
     this.setState({data: this.data})
   }
 
+  handleSelection (index) {
+    this.setState({selectedIndex: index})
+  }
+
   render () {
+    const chartCommon = {
+      margin: {top: 10, right: 10, bottom: 50, left: 50},
+      height: 150,
+      xAccessor: xAccess,
+      yAccessor: yAccess,
+      xScaleType: 'linear',
+      yScaleType: 'linear',
+      handleSelection: this.handleSelection,
+      selectedIndex: this.state.selectedIndex
+    }
+
     return (
       <div className='col-md-12'>
         <div className='row'>
@@ -48,7 +56,7 @@ class HorizonGraphExample extends React.Component {
         </div>
         <div className='row'>
           <div className='col-md-12'>
-            <HorizonGraphChart {...chartCommon} data={this.data} numBands={2} mid={2} mode='offset' bgColor='black' />
+            <HorizonGraphChart {...chartCommon} data={this.data} numBands={2} mid={2} domainHeight={12} mode='offset' bgColor='black' />
           </div>
         </div>
         <div className='row'>
@@ -68,7 +76,7 @@ class HorizonGraphExample extends React.Component {
         </div>
         <div className='row'>
           <div className='col-md-12'>
-            <HorizonGraphChart {...chartCommon} data={this.data} numBands={2} mid={2} mode='mirror' colors={altColors} />
+            <HorizonGraphChart {...chartCommon} data={this.data} numBands={2} mid={2} domainHeight={12} mode='mirror' colors={altColors} />
           </div>
         </div>
         <div className='row'>
