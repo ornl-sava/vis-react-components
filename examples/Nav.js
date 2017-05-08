@@ -16,6 +16,7 @@ class Nav extends React.Component {
           <li><Link to='/forceDirected' activeClassName='active'>Force-Directed</Link></li>
           <li><Link to='/treemap' activeClassName='active'>Treemap</Link></li>
           <li><Link to='/horizonGraph' activeClassName='active'>Horizon Graph</Link></li>
+          <li><Link to='/summaryTimeline' activeClassName='active'>Summary Timeline</Link></li>
         </ul>
       </nav>
     )

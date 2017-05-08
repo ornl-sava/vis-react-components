@@ -17,6 +17,7 @@ export { default as ColorView } from './ColorView'
 export { default as StoryViewer } from './StoryViewer'
 export { default as Treemap } from './Treemap'
 export { default as HorizonGraph } from './HorizonGraph'
+export { default as SummaryTimeline } from './SummaryTimeline'
 
 // Export premades
 export * from './premade'

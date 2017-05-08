@@ -14,6 +14,7 @@ import ForceDirectedGraphExample from './ForceDirectedGraphExample'
 import ForceDirectedTreeGraphExample from './ForceDirectedTreeGraphExample'
 import TreemapExample from './TreemapExample'
 import HorizonGraphExample from './HorizonGraphExample'
+import SummaryTimelineExample from './SummaryTimelineExample'
 
 const reactRouterRoutes = (
   <Router history={browserHistory}>
@@ -31,6 +32,7 @@ const reactRouterRoutes = (
       <Route path='/forceDirectedTree' component={ForceDirectedTreeGraphExample} />
       <Route path='/treemap' component={TreemapExample} />
       <Route path='/horizonGraph' component={HorizonGraphExample} />
+      <Route path='/summaryTimeline' component={SummaryTimelineExample} />
     </Route>
   </Router>
 )
