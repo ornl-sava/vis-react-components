@@ -136,7 +136,6 @@ TextBar.propTypes = {
 TextBar.contextTypes = {
   filterField: PropTypes.string,
   filterString: PropTypes.string,
-  filterType: PropTypes.string,
   updateFilter: PropTypes.func
 }
 
