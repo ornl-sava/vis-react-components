@@ -14,6 +14,7 @@ class Dropdown extends React.PureComponent {
   onChange (event) {
     let value = event.target.value
     this.defaultValue = value
+    this.forceUpdate()
     this.props.onChange(value, this.props.chart)
   }
 
