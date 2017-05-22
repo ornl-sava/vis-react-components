@@ -27,5 +27,16 @@ To view [webpack](https://webpack.github.io/) stats, run `npm run stats`, and th
 
 Make sure you've turned off cacheing in your browser.  Otherwise you run the risk of not being able to see updates to the code.  
 
-Before committing a change to the repository run: `npm run build`
-This will transpile the source code in the `src` directory from es2015 / es6 to es5 compatible source code in the `lib` directory
+When ready to use the changes in another project do the following to transpile the src/ directory:
+
+```
+npm run buildLib
+git commit -a -m "<Message descrbibing changes here>"
+git push
+```
+
+In the repository from which you are using `components/vis` run:
+
+```
+npm update visualizations
+```
