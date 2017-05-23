@@ -1,6 +1,7 @@
 import React from 'react'
 
 import HorizonGraphChart from '../src/premade/HorizonGraphChart'
+import Settings from '../src/Settings'
 
 let startData = [-6, -4, -2, -1, 0, 1, 2, 4, 5, 8, 6, 4, 2, 0, -1, -2, -4]
 
@@ -18,6 +19,35 @@ class HorizonGraphExample extends React.Component {
     this.update = this.update.bind(this)
     this.state = {}
     this.handleSelection = this.handleSelection.bind(this)
+
+    this.header = () => {
+      return ([
+        <span className='options'>
+          {this.settings !== null
+            ? <Settings settings={this.settings} />
+            : undefined
+          }
+        </span>
+      ])
+    }
+
+    this.settings = {
+      options: [
+        {
+          type: 'input',
+          label: 'Midpoint',
+          onChange: (value) => {
+            let n = Number(value)
+            if (isNaN(n)) {
+              n = null
+            }
+            this.setState({
+              mid: n
+            })
+          }
+        }
+      ]
+    }
   }
 
   update () {
@@ -51,7 +81,7 @@ class HorizonGraphExample extends React.Component {
         </div>
         <div className='row'>
           <div className='col-md-12'>
-            <HorizonGraphChart {...chartCommon} data={this.data} numBands={2} mode='offset' bgColor='black' />
+            <HorizonGraphChart {...chartCommon} data={this.data} numBands={2} mode='offset' bgColor='black' header={this.header} mid={this.state.mid} />
           </div>
         </div>
         <div className='row'>

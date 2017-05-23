@@ -39,6 +39,35 @@ Dropdown.propTypes = {
   chart: PropTypes.object
 }
 
+class Input extends React.PureComponent {
+  constructor (props) {
+    super(props)
+
+    this.onKeyPress = this.onKeyPress.bind(this)
+  }
+
+  onKeyPress (event) {
+    if (event.key === 'Enter') {
+      this.props.onChange(event.target.value)
+    }
+  }
+
+  render () {
+    let props = this.props
+    return (
+      <div className='settings-option'>
+        <label>{props.label}</label>
+        <input onKeyPress={this.onKeyPress} />
+      </div>
+    )
+  }
+}
+
+Input.propTypes = {
+  onChange: PropTypes.any,
+  chart: PropTypes.object
+}
+
 class Settings extends React.Component {
   constructor (props) {
     super(props)
@@ -102,6 +131,9 @@ class Settings extends React.Component {
           {settings.options.map((d, i) => {
             if (d.type === 'dropdown') {
               return (<Dropdown key={i} chart={chart} {...d} />)
+            }
+            if (d.type === 'input') {
+              return (<Input key={i} chart={chart} {...d} />)
             } // Check for render other types of input here
           })}
         </div>
