@@ -56,12 +56,16 @@ class HistogramChart extends React.Component {
 
   sortData (data, props, state) {
     let sortArr = []
+    let sortOrder = props.sortOrder === 'ascending' || props.sortOrder === 'asc' || props.sortOrder == null ? 'ascending' : 'descending'
+    let sortBy = props.sortBy === 'x' || props.sortBy == null ? 'x' : 'y'
     data[0].bins.sort((a, b) => {
       let i = 0
-      if (props.sortBy === 'x' || props.sortBy == null) {
-        i = props.sortOrder === 'ascending' || props.sortOrder == null
-          ? ascending(a[props.xAccessor], b[props.xAccessor])
-          : descending(a[props.xAccessor], b[props.xAccessor])
+      if (sortBy === 'x' || sortBy == null) {
+        if (sortOrder) {
+          i = ascending(a[props.xAccessor], b[props.xAccessor])
+        } else {
+          i = descending(a[props.xAccessor], b[props.xAccessor])
+        }
       } else {
         let useBin = (props.sortTypes.indexOf(data[0].type) > -1 || props.sortTypes.length === 0)
         let ya = useBin ? a[props.yAccessor] : 0
@@ -79,7 +83,7 @@ class HistogramChart extends React.Component {
             })
           }
         }
-        i = props.sortOrder === 'ascending'
+        i = sortOrder === 'ascending'
           ? ya - yb
           : yb - ya
       }
