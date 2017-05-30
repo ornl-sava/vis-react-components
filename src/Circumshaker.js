@@ -375,7 +375,8 @@ class Circumshaker extends React.Component {
                   return g.source === d || g.target === d
                 }).length)}
                 cx={d.x}
-                cy={d.y} />
+                cy={d.y}
+                fill={this.props.colorFunction ? this.props.colorFunction(d) : null} />
             )
           })}
         </ReactTransitionGroup>
@@ -411,7 +412,8 @@ Circumshaker.propTypes = {
   data: PropTypes.object,
   onClick: PropTypes.func,
   onEnter: PropTypes.func,
-  onLeave: PropTypes.func
+  onLeave: PropTypes.func,
+  colorFunction: PropTypes.func
 }
 
 export default Circumshaker
