@@ -58,8 +58,8 @@ class HistogramChart extends React.Component {
     let sortArr = []
     data[0].bins.sort((a, b) => {
       let i = 0
-      if (props.sortBy === 'x') {
-        i = props.sortOrder === 'ascending'
+      if (props.sortBy === 'x' || props.sortBy == null) {
+        i = props.sortOrder === 'ascending' || props.sortOrder == null
           ? ascending(a[props.xAccessor], b[props.xAccessor])
           : descending(a[props.xAccessor], b[props.xAccessor])
       } else {
@@ -123,7 +123,7 @@ class HistogramChart extends React.Component {
       let domainData = props.data
 
       // Do sorting if set
-      if (props.sortBy !== null && props.sortOrder !== null) {
+      if (props.sortBy !== null || props.sortOrder !== null) {
         // Simple deep copy of data to prevent mutation of props
         domainData = this.sortData(JSON.parse(JSON.stringify(props.data)), props, state)
       }
