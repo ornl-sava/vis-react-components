@@ -40,8 +40,8 @@ class SummaryTimelineChart extends React.Component {
   updateDomain (props, state) {
     if (props.data.length > 0) {
       this.xDomain = extent(props.data, (d) => { return d.date })
-      let yMin = min(props.data, (d) => { return d.min })
-      let yMax = max(props.data, (d) => { return d.max })
+      let yMin = min(props.data, (d) => { return Math.min(d.innerRangeMin, d.outerRangeMin) })
+      let yMax = max(props.data, (d) => { return Math.max(d.innerRangeMax, d.outerRangeMax) })
       this.yDomain = [yMin, yMax]
 
       this.xScale.domain(this.xDomain)
