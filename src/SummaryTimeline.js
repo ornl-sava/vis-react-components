@@ -25,10 +25,17 @@ class SummaryTimeline extends React.Component {
       .domain([yMin, yMax])
       .rangeRound([height, 0])
 
-    var meanLine = d3.line()
-      .curve(d3.curveStepAfter)
-      .x((d) => { return x(d.date) })
-      .y((d) => { return y(d.avg) })(data)
+    var avgMin = d3.min(data, (d) => { return d.avg })
+    var avgMax = d3.max(data, (d) => { return d.avg })
+
+    var opacityScale = d3.scaleLinear()
+      .domain([avgMin, avgMax])
+      .range([0.20, 0.90])
+
+    // var meanLine = d3.line()
+    //   .curve(d3.curveStepAfter)
+    //   .x((d) => { return x(d.date) })
+    //   .y((d) => { return y(d.avg) })(data)
     // var stdevMinLine = d3.line()
     //   .x((d) => { return x(d.date) })
     //   .y((d) => { return y(d.stdevMin) })(data)
@@ -63,6 +70,8 @@ class SummaryTimeline extends React.Component {
       return transition
     }}
 
+    let { keyFunction, ...props } = this.props
+
     return (
       <ReactTransitionGroup component='g'>
         <SVGComponent Component='path'
@@ -77,19 +86,51 @@ class SummaryTimeline extends React.Component {
           d={stdevRangeArea}
           onUpdate={pathTransition}
         />
-        <SVGComponent Component='path'
-          key='mean'
-          fill='none'
-          stroke='black'
-          strokeLinejoin='round'
-          strokeLinecap='round'
-          strokeWidth={1.5}
-          d={meanLine}
-          onUpdate={pathTransition}
-        />
+        {this.props.data.map((d, i) => {
+          return (
+            <SVGComponent Component='circle' key={keyFunction(d, i)}
+              data={d}
+              index={i}
+              onUpdate={{
+                func: (transition, props) => {
+                  transition
+                    .delay(0)
+                    .duration(500)
+                    .ease(setEase('linear'))
+                    .attr('r', props.r)
+                    .attr('cx', props.cx)
+                    .attr('cy', props.cy)
+                    .style('fill-opacity', props.fillOpacity)
+                  return transition
+                }
+              }}
+              r={props.radius}
+              cx={x(d.date)}
+              cy={y(d.avg)}
+              fillOpacity={opacityScale(d.avg)}
+              fill='black'
+              stroke='none' />
+          )
+        })}
       </ReactTransitionGroup>
     )
   }
+}
+
+// <SVGComponent Component='path'
+//   key='mean'
+//   fill='none'
+//   stroke='darkgray'
+//   strokeLinejoin='round'
+//   strokeLinecap='round'
+//   strokeWidth={1.5}
+//   d={meanLine}
+//   onUpdate={pathTransition}
+// />
+
+SummaryTimeline.defaultProps = {
+  keyFunction: (d, i) => i,
+  radius: 1.0
 }
 
 SummaryTimeline.propTypes = {
@@ -97,7 +138,8 @@ SummaryTimeline.propTypes = {
   height: PropTypes.number,
   chartWidth: PropTypes.number,
   chartHeight: PropTypes.number,
-  data: PropTypes.array
+  data: PropTypes.array,
+  keyFunction: PropTypes.func
 }
 
 export default SummaryTimeline
