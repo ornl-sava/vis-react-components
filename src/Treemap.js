@@ -1,6 +1,7 @@
 // partly inspired by https://bl.ocks.org/mbostock/6bbb0a7ff7686b124d80
 
-import React, { PropTypes } from 'react'
+import React from 'react'
+import PropTypes from 'prop-types'
 import ReactTransitionGroup from 'react-addons-transition-group'
 
 import * as d3 from 'd3'

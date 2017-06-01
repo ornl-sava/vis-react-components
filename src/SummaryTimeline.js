@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react'
+import React from 'react'
+import PropTypes from 'prop-types'
 import ReactTransitionGroup from 'react-addons-transition-group'
 
 import * as d3 from 'd3'
