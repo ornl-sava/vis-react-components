@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import ReactTransitionGroup from 'react-addons-transition-group'
+import { TransitionGroup } from 'react-transition-group'
 
 import { setEase } from './util/d3'
 import SVGComponent from './SVGComponent'
@@ -28,7 +28,7 @@ class Scatterplot extends React.Component {
   render () {
     let { keyFunction, ...props } = this.props
     return (
-      <ReactTransitionGroup component='g' className={props.className}>
+      <TransitionGroup component='g' className={props.className}>
         {this.props.data.map((d, i) => {
           return (
             <SVGComponent Component='circle' key={keyFunction(d, i)}
@@ -55,7 +55,7 @@ class Scatterplot extends React.Component {
               onClick={this.onClick} />
           )
         })}
-      </ReactTransitionGroup>
+      </TransitionGroup>
     )
   }
 }

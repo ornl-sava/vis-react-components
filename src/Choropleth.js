@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import ReactTransitionGroup from 'react-addons-transition-group'
+import { TransitionGroup } from 'react-transition-group'
 import { interpolate, geoPath, geoEquirectangular } from 'd3'
 import * as topojson from 'topojson'
 
@@ -104,7 +104,7 @@ class Choropleth extends React.Component {
 
     return (
       <g>
-        <ReactTransitionGroup component='g'>
+        <TransitionGroup component='g'>
           {topojson.feature(this.props.map, this.props.map.objects.countries).features.map((d, i) => {
             return (
               <SVGComponent Component='path' key={i}
@@ -140,7 +140,7 @@ class Choropleth extends React.Component {
                 onMouseMove={this.onMove} />
             )
           })}
-        </ReactTransitionGroup>
+        </TransitionGroup>
         <g>
           <SVGComponent Component='path'
             className='boundary'
