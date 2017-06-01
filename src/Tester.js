@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react'
+import React from 'react'
+import PropTypes from 'prop-types'
 import storyData from '../examples/data/for-hci/stories.json'
 import eTopics from '../examples/data/for-hci/enduring-topics-listed.json'
 import hrTopics from '../examples/data/for-hci/hourly-topics-listed.json'

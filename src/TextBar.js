@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react'
+import React from 'react'
+import PropTypes from 'prop-types'
 // import ReactDom from 'react-dom'
 // import Bar from './Bar'
 
@@ -136,7 +137,6 @@ TextBar.propTypes = {
 TextBar.contextTypes = {
   filterField: PropTypes.string,
   filterString: PropTypes.string,
-  filterType: PropTypes.string,
   updateFilter: PropTypes.func
 }
 

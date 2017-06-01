@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react'
+import React from 'react'
+import PropTypes from 'prop-types'
 import { ascending, descending } from 'd3'
 
 import { setScale, isOrdinalScale } from '../util/d3'
@@ -38,6 +39,13 @@ class HistogramChart extends React.Component {
   }
 
   componentWillReceiveProps (nextProps) {
+    if (this.props.xScaleType !== nextProps.xScaleType) {
+      console.log('Updating scale from : ' + this.props.xScaleType + ' ==> ' + nextProps.xScaleType)
+      this.xScale = setScale(nextProps.xScaleType)
+    }
+    if (this.props.yScaleType !== nextProps.yScaleType) {
+      this.yScale = setScale(nextProps.yScaleType)
+    }
     this.updateDomain(nextProps, this.state)
   }
 
@@ -49,12 +57,16 @@ class HistogramChart extends React.Component {
 
   sortData (data, props, state) {
     let sortArr = []
+    let sortOrder = props.sortOrder === 'ascending' || props.sortOrder === 'asc' || props.sortOrder == null ? 'ascending' : 'descending'
+    let sortBy = props.sortBy === 'x' || props.sortBy == null ? 'x' : 'y'
     data[0].bins.sort((a, b) => {
       let i = 0
-      if (props.sortBy === 'x') {
-        i = props.sortOrder === 'ascending'
-          ? ascending(a[props.xAccessor], b[props.xAccessor])
-          : descending(a[props.xAccessor], b[props.xAccessor])
+      if (sortBy === 'x' || sortBy == null) {
+        if (sortOrder) {
+          i = ascending(a[props.xAccessor], b[props.xAccessor])
+        } else {
+          i = descending(a[props.xAccessor], b[props.xAccessor])
+        }
       } else {
         let useBin = (props.sortTypes.indexOf(data[0].type) > -1 || props.sortTypes.length === 0)
         let ya = useBin ? a[props.yAccessor] : 0
@@ -72,7 +84,7 @@ class HistogramChart extends React.Component {
             })
           }
         }
-        i = props.sortOrder === 'ascending'
+        i = sortOrder === 'ascending'
           ? ya - yb
           : yb - ya
       }
@@ -116,7 +128,7 @@ class HistogramChart extends React.Component {
       let domainData = props.data
 
       // Do sorting if set
-      if (props.sortBy !== null && props.sortOrder !== null) {
+      if (props.sortBy !== null || props.sortOrder !== null) {
         // Simple deep copy of data to prevent mutation of props
         domainData = this.sortData(JSON.parse(JSON.stringify(props.data)), props, state)
       }
@@ -209,10 +221,11 @@ class HistogramChart extends React.Component {
 
   render () {
     let props = this.props
+
     return (
       <Chart ref='chart' {...spreadRelated(Chart, props)} resizeHandler={this.onResize}>
         <Histogram className='histogram' {...spreadRelated(Histogram, props)}
-          brushID={props.brushed ? props.endpoint : null}
+          brushID={props.brushID}
           xScale={this.xScale} yScale={this.yScale}
           onEnter={this.onEnter} onLeave={this.onLeave} onClick={this.onClick} onBrush={this.onBrush} />
         <Axis className='x axis' {...props.xAxis} scale={this.xScale} />

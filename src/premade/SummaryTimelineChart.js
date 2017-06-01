@@ -1,15 +1,14 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { extent } from 'd3'
+import { extent, min, max } from 'd3'
 
 import { setScale, isOrdinalScale } from '../util/d3'
 import { spreadRelated } from '../util/react'
 import Chart from '../Chart'
 import Axis from '../Axis'
-import Tooltip from '../Tooltip'
-import Scatterplot from '../Scatterplot'
+import SummaryTimeline from '../SummaryTimeline'
 
-class ScatterplotChart extends React.Component {
+class SummaryTimelineChart extends React.Component {
   constructor (props) {
     super(props)
     this.xScale = setScale(props.xScaleType)
@@ -26,10 +25,6 @@ class ScatterplotChart extends React.Component {
     this.updateDomain = this.updateDomain.bind(this)
     this.updateRange = this.updateRange.bind(this)
 
-    this.tip = props.tipFunction
-      ? new Tooltip().attr('className', 'd3-tip').html(props.tipFunction)
-      : props.tipFunction
-
     this.updateDomain(props, this.state)
   }
 
@@ -45,26 +40,13 @@ class ScatterplotChart extends React.Component {
 
   updateDomain (props, state) {
     if (props.data.length > 0) {
-      let xDomain = this.xDomain
-      if (xDomain.length === 0) {
-        if (this.xScale.type === 'band') {
-          xDomain = props.data.map((d) => d[props.xAccessor])
-        } else {
-          xDomain = extent(props.data, (d) => d[props.xAccessor])
-        }
-      }
+      this.xDomain = extent(props.data, (d) => { return d.date })
+      let yMin = min(props.data, (d) => { return d.min })
+      let yMax = max(props.data, (d) => { return d.max })
+      this.yDomain = [yMin, yMax]
 
-      let yDomain = this.yDomain
-      if (yDomain.length === 0) {
-        if (this.yScale.type === 'band') {
-          yDomain = props.data.map((d) => d[props.yAccessor])
-        } else {
-          yDomain = extent(props.data, (d) => d[props.yAccessor])
-        }
-      }
-
-      this.xScale.domain(xDomain)
-      this.yScale.domain(yDomain)
+      this.xScale.domain(this.xDomain)
+      this.yScale.domain(this.yDomain)
     }
   }
 
@@ -114,9 +96,7 @@ class ScatterplotChart extends React.Component {
     let props = this.props
     return (
       <Chart ref='chart' {...spreadRelated(Chart, props)} resizeHandler={this.onResize}>
-        <Scatterplot className='scatterplot' {...spreadRelated(Scatterplot, props)}
-          xScale={this.xScale} yScale={this.yScale}
-          onEnter={this.onEnter} onLeave={this.onLeave} />
+        <SummaryTimeline className='summaryTimeline' {...spreadRelated(SummaryTimeline, props)} />
         <Axis className='x axis' {...props.xAxis} scale={this.xScale} />
         <Axis className='y axis' {...props.yAxis} scale={this.yScale} />
       </Chart>
@@ -124,7 +104,7 @@ class ScatterplotChart extends React.Component {
   }
 }
 
-ScatterplotChart.defaultProps = {
+SummaryTimelineChart.defaultProps = {
   // Premade default
   data: [],
   xDomain: [],
@@ -132,7 +112,7 @@ ScatterplotChart.defaultProps = {
   // Spread chart default
   ...Chart.defaultProps,
   // Spread scatterplot default
-  ...Scatterplot.defaultProps,
+  ...SummaryTimeline.defaultProps,
   xAxis: {
     type: 'x',
     orient: 'bottom',
@@ -146,11 +126,13 @@ ScatterplotChart.defaultProps = {
     innerPadding: null,
     outerPadding: null,
     animationDuration: 500
-  }
+  },
+  xScaleType: 'time',
+  yScaleType: 'linear'
 }
 
-ScatterplotChart.propTypes = {
-  ...Scatterplot.propTypes,
+SummaryTimelineChart.propTypes = {
+  ...SummaryTimeline.propTypes,
   ...Chart.propTypes,
   onClick: PropTypes.func,
   onEnter: PropTypes.func,
@@ -166,4 +148,4 @@ ScatterplotChart.propTypes = {
   yAxis: PropTypes.object
 }
 
-export default ScatterplotChart
+export default SummaryTimelineChart

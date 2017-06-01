@@ -1,9 +1,10 @@
-import React, { PropTypes } from 'react'
+import React from 'react'
+import PropTypes from 'prop-types'
 
 // TODO: Create other various input types to be used
 
 // Helper to create dropdown options menu
-class Dropdown extends React.Component {
+class Dropdown extends React.PureComponent {
   constructor (props) {
     super(props)
 
@@ -14,6 +15,7 @@ class Dropdown extends React.Component {
   onChange (event) {
     let value = event.target.value
     this.defaultValue = value
+    this.forceUpdate()
     this.props.onChange(value, this.props.chart)
   }
 
@@ -34,6 +36,35 @@ class Dropdown extends React.Component {
 
 Dropdown.propTypes = {
   defaultSelected: PropTypes.any,
+  onChange: PropTypes.any,
+  chart: PropTypes.object
+}
+
+class Input extends React.PureComponent {
+  constructor (props) {
+    super(props)
+
+    this.onKeyPress = this.onKeyPress.bind(this)
+  }
+
+  onKeyPress (event) {
+    if (event.key === 'Enter') {
+      this.props.onChange(event.target.value)
+    }
+  }
+
+  render () {
+    let props = this.props
+    return (
+      <div className='settings-option'>
+        <label>{props.label}</label>
+        <input onKeyPress={this.onKeyPress} />
+      </div>
+    )
+  }
+}
+
+Input.propTypes = {
   onChange: PropTypes.any,
   chart: PropTypes.object
 }
@@ -59,30 +90,8 @@ class Settings extends React.Component {
   }
 
   render () {
-    let props = this.props
-    let settings = props.settings
-    let chart = props.chart
-
-    // Find longest string in options
-    let longestLen = settings.options.reduce((a, b) => {
-      let aStringLen = 0
-      let bStringLen = 0
-      if (typeof a.label !== 'undefined') {
-        aStringLen = a.label.length + a.options.reduce((f, g) => {
-          return f.length > g.length ? f.length : g.length
-        }, 0)
-      }
-      if (typeof b.label !== 'undefined') {
-        bStringLen = b.label.length + b.options.reduce((f, g) => {
-          return f.length > g.length ? f.length : g.length
-        }, 0)
-      }
-      return aStringLen > bStringLen ? aStringLen : bStringLen
-    }, 0)
-
-    // Requires approximate character length (assuming 11px here)
-    // bumped to 14px to handle new field names
-    let minWidth = Math.ceil(longestLen * 14)
+    let settings = this.props.settings
+    let chart = this.props.chart
 
     let containerProps = {
       className: 'settings-container',
@@ -95,7 +104,7 @@ class Settings extends React.Component {
     }
 
     let iconProps = {
-      className: props.icon + ' settings-icon',
+      className: this.props.icon + ' settings-icon',
       style: {
         zIndex: 103,
         top: 0
@@ -109,9 +118,9 @@ class Settings extends React.Component {
         position: 'absolute',
         display: this.state.menuDisplay,
         zIndex: -100,
-        width: minWidth,
+        width: this.props.width,
         top: 0,
-        transform: 'translate(' + -minWidth + 'px,0px)'
+        transform: 'translate(' + -this.props.width + 'px,0px)'
       }
     }
 
@@ -123,6 +132,9 @@ class Settings extends React.Component {
           {settings.options.map((d, i) => {
             if (d.type === 'dropdown') {
               return (<Dropdown key={i} chart={chart} {...d} />)
+            }
+            if (d.type === 'input') {
+              return (<Input key={i} chart={chart} {...d} />)
             } // Check for render other types of input here
           })}
         </div>
@@ -134,12 +146,14 @@ class Settings extends React.Component {
 Settings.defaultProps = {
   settings: {},
   chart: null,
+  width: 200,
   icon: 'fa fa-cogs'
 }
 
 Settings.propTypes = {
   settings: PropTypes.object,
   chart: PropTypes.object,
+  width: PropTypes.number.isRequired,
   icon: PropTypes.string
 }
 

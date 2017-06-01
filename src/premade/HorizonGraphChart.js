@@ -6,10 +6,9 @@ import { setScale, isOrdinalScale } from '../util/d3'
 import { spreadRelated } from '../util/react'
 import Chart from '../Chart'
 import Axis from '../Axis'
-import Tooltip from '../Tooltip'
-import Scatterplot from '../Scatterplot'
+import HorizonGraph from '../HorizonGraph'
 
-class ScatterplotChart extends React.Component {
+class HorizonGraphChart extends React.Component {
   constructor (props) {
     super(props)
     this.xScale = setScale(props.xScaleType)
@@ -25,10 +24,6 @@ class ScatterplotChart extends React.Component {
 
     this.updateDomain = this.updateDomain.bind(this)
     this.updateRange = this.updateRange.bind(this)
-
-    this.tip = props.tipFunction
-      ? new Tooltip().attr('className', 'd3-tip').html(props.tipFunction)
-      : props.tipFunction
 
     this.updateDomain(props, this.state)
   }
@@ -48,18 +43,28 @@ class ScatterplotChart extends React.Component {
       let xDomain = this.xDomain
       if (xDomain.length === 0) {
         if (this.xScale.type === 'band') {
-          xDomain = props.data.map((d) => d[props.xAccessor])
+          xDomain = props.data.map((d, i) => props.xAccessor(d, i))
         } else {
-          xDomain = extent(props.data, (d) => d[props.xAccessor])
+          xDomain = extent(props.data, (d, i) => props.xAccessor(d, i))
         }
       }
 
+      let mid = props.mid ? props.mid : 0
       let yDomain = this.yDomain
       if (yDomain.length === 0) {
         if (this.yScale.type === 'band') {
-          yDomain = props.data.map((d) => d[props.yAccessor])
+          yDomain = props.data.map((d) => props.yAccessor(d))
         } else {
-          yDomain = extent(props.data, (d) => d[props.yAccessor])
+          // only positive domain
+          let height = 0
+          if (props.domainHeight) {
+            height = props.domainHeight / props.numBands
+          } else {
+            let args = extent(props.data, (d) => { return props.yAccessor(d) - mid })
+            height = Math.max(Math.abs(args[0]), Math.abs(args[1])) / props.numBands
+          }
+
+          yDomain = [mid, mid + height]
         }
       }
 
@@ -114,9 +119,7 @@ class ScatterplotChart extends React.Component {
     let props = this.props
     return (
       <Chart ref='chart' {...spreadRelated(Chart, props)} resizeHandler={this.onResize}>
-        <Scatterplot className='scatterplot' {...spreadRelated(Scatterplot, props)}
-          xScale={this.xScale} yScale={this.yScale}
-          onEnter={this.onEnter} onLeave={this.onLeave} />
+        <HorizonGraph className='horizonGraph' {...spreadRelated(HorizonGraph, props)} />
         <Axis className='x axis' {...props.xAxis} scale={this.xScale} />
         <Axis className='y axis' {...props.yAxis} scale={this.yScale} />
       </Chart>
@@ -124,7 +127,7 @@ class ScatterplotChart extends React.Component {
   }
 }
 
-ScatterplotChart.defaultProps = {
+HorizonGraphChart.defaultProps = {
   // Premade default
   data: [],
   xDomain: [],
@@ -132,7 +135,7 @@ ScatterplotChart.defaultProps = {
   // Spread chart default
   ...Chart.defaultProps,
   // Spread scatterplot default
-  ...Scatterplot.defaultProps,
+  ...HorizonGraph.defaultProps,
   xAxis: {
     type: 'x',
     orient: 'bottom',
@@ -146,11 +149,13 @@ ScatterplotChart.defaultProps = {
     innerPadding: null,
     outerPadding: null,
     animationDuration: 500
-  }
+  },
+  xScaleType: 'linear',
+  yScaleType: 'linear'
 }
 
-ScatterplotChart.propTypes = {
-  ...Scatterplot.propTypes,
+HorizonGraphChart.propTypes = {
+  ...HorizonGraph.propTypes,
   ...Chart.propTypes,
   onClick: PropTypes.func,
   onEnter: PropTypes.func,
@@ -166,4 +171,4 @@ ScatterplotChart.propTypes = {
   yAxis: PropTypes.object
 }
 
-export default ScatterplotChart
+export default HorizonGraphChart

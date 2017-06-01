@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react'
+import React from 'react'
+import PropTypes from 'prop-types'
 import ReactTransitionGroup from 'react-addons-transition-group'
 // import { select } from 'd3'
 
@@ -55,6 +56,7 @@ class Histogram extends React.Component {
   getOverlay (barData) {
     let props = this.props
     let overlayData = []
+
     for (let i = 0; i < barData.length; i++) {
       let overlayObj = Object.assign({}, barData[i][0])
       overlayObj.className = '_overlay'
@@ -78,7 +80,7 @@ class Histogram extends React.Component {
       // let yPos = 0
       // let xPos = props.xScale(barData[i][0].data[props.xAccessor])
       return (
-        <g className='overlay-bin' key={'overlay-' + i}>
+        <g className='overlay-bin' key={overlayObj.name + '-overlay-' + i}>
           <Bar {...overlayObj} onClick={props.onClick} onEnter={props.onEnter} onLeave={props.onLeave} />
         </g>
       )
@@ -199,6 +201,7 @@ class Histogram extends React.Component {
       console.warn('Histogram is set to be be brushed, but no brushID is provided!')
       console.warn('brushID should be set to the data-name of the underlying bar')
     }
+
     if (this.props.data.length > 0) {
       return this.renderBars()
     } else {

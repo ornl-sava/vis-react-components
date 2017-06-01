@@ -25,4 +25,18 @@ To view [webpack](https://webpack.github.io/) stats, run `npm run stats`, and th
 
 ## Development
 
-Make sure you've turned off cacheing in your browser.  Otherwise you run the risk of not being able to see updates to the code.
+Make sure you've turned off cacheing in your browser.  Otherwise you run the risk of not being able to see updates to the code.  
+
+When ready to use the changes in another project do the following to transpile the src/ directory:
+
+```
+npm run buildLib
+git commit -a -m "<Message descrbibing changes here>"
+git push
+```
+
+In the repository from which you are using `components/vis` run:
+
+```
+npm update visualizations
+```

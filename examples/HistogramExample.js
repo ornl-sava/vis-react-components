@@ -21,8 +21,8 @@ const getTemporalSelection = (selection) => {
         selected = false
       }
       return {
-        x: dateX,
         y: bin.y,
+        x: dateX,
         className: selected ? 'selected' : null
       }
     })
