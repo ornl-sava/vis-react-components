@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import ReactTransitionGroup from 'react-addons-transition-group'
+import { TransitionGroup } from 'react-transition-group'
 
 import * as d3 from 'd3'
 
@@ -63,7 +63,7 @@ class SummaryTimeline extends React.Component {
     }}
 
     return (
-      <ReactTransitionGroup component='g'>
+      <TransitionGroup component='g'>
         <SVGComponent Component='path'
           key='extentRange'
           fill='#c6dbef'
@@ -86,7 +86,7 @@ class SummaryTimeline extends React.Component {
           d={meanLine}
           onUpdate={pathTransition}
         />
-      </ReactTransitionGroup>
+      </TransitionGroup>
     )
   }
 }

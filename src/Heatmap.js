@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import ReactTransitionGroup from 'react-addons-transition-group'
+import { TransitionGroup } from 'react-transition-group'
 import { interpolate } from 'd3'
 
 import { setEase } from './util/d3'
@@ -29,7 +29,7 @@ class Heatmap extends React.Component {
   render () {
     let props = this.props
     return (
-      <ReactTransitionGroup component='g' className={props.className}>
+      <TransitionGroup component='g' className={props.className}>
         {props.data.map((d, i) => {
           let height = (i === 0) ? props.chartHeight : props.yScale(props.data[i - 1][props.yAccessor.key])
           height -= props.yScale(d[props.yAccessor.key])
@@ -78,7 +78,7 @@ class Heatmap extends React.Component {
             )
           })
         })}
-      </ReactTransitionGroup>
+      </TransitionGroup>
     )
   }
 }
