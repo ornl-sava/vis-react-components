@@ -4059,6 +4059,15 @@ const chartCommon = {
   height: 150
 }
 
+const chartProps1 = {
+  header: () => {
+    return ([
+      <span className='chart-title'>Summary Timeline</span>
+    ])
+  },
+  data: testData
+}
+
 class SummaryTimelineExample extends React.Component {
   constructor (props) {
     super()
@@ -4070,7 +4079,7 @@ class SummaryTimelineExample extends React.Component {
       <div className='col-md-12'>
         <div className='row'>
           <div className='col-md-12'>
-            <SummaryTimelineChart {...chartCommon} data={this.data} />
+            <SummaryTimelineChart {...chartCommon} {...chartProps1} data={this.data} />
           </div>
         </div>
       </div>
