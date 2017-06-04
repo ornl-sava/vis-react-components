@@ -1,5 +1,5 @@
 import React from 'react'
-import { IndexRedirect, Route, Router, browserHistory } from 'react-router'
+import { IndexRedirect, Route, Router, browserHistory } from 'react-router-dom'
 
 import App from './App'
 import HistogramExample from './HistogramExample'
