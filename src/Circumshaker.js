@@ -1,5 +1,6 @@
-import React, { PropTypes } from 'react'
-import ReactTransitionGroup from 'react-addons-transition-group'
+import React from 'react'
+import PropTypes from 'prop-types'
+import { TransitionGroup } from 'react-transition-group'
 import { interpolate, extent, max, min, range, ascending, set } from 'd3'
 
 import SVGComponent from './SVGComponent'
@@ -305,7 +306,7 @@ class Circumshaker extends React.Component {
               } />
           )
         })}
-        <ReactTransitionGroup component='g'>
+        <TransitionGroup component='g'>
           {this.graph.nodes.map((d, i) => {
             return (
               <SVGComponent ref={'node-' + i}
@@ -379,7 +380,7 @@ class Circumshaker extends React.Component {
                 fill={this.props.colorFunction ? this.props.colorFunction(d) : null} />
             )
           })}
-        </ReactTransitionGroup>
+        </TransitionGroup>
       </g>
     )
   }

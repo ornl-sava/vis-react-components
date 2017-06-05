@@ -1,5 +1,6 @@
-import React, { PropTypes } from 'react'
-import ReactTransitionGroup from 'react-addons-transition-group'
+import React from 'react'
+import PropTypes from 'prop-types'
+import { TransitionGroup } from 'react-transition-group'
 
 import * as d3 from 'd3'
 
@@ -163,7 +164,7 @@ class HorizonGraph extends React.Component {
     }}
 
     return (
-      <ReactTransitionGroup component='g'>
+      <TransitionGroup component='g'>
         <SVGComponent Component='svg'
           x={'0px'}
           y={'0px'}
@@ -217,7 +218,7 @@ class HorizonGraph extends React.Component {
             </SVGComponent>
           }
         </SVGComponent>
-      </ReactTransitionGroup>
+      </TransitionGroup>
     )
   }
 }
@@ -253,4 +254,3 @@ HorizonGraph.propTypes = {
 }
 
 export default HorizonGraph
-

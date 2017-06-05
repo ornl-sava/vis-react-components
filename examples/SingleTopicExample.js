@@ -1,5 +1,6 @@
 // import React from 'react'
-import React, { PropTypes } from 'react'
+import React from 'react'
+import PropTypes from 'prop-types'
 import { format, scaleLinear, scaleOrdinal, schemeCategory20, select } from 'd3'
 import cloud from '../examples/data/for-hci/cloud2'
 import { HeatmapChart, HistogramChart } from '../src'

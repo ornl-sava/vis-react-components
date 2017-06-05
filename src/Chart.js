@@ -1,4 +1,5 @@
-import React, { PropTypes, Children, cloneElement } from 'react'
+import React, { Children, cloneElement } from 'react'
+import PropTypes from 'prop-types'
 import debounce from 'lodash.debounce'
 import { select } from 'd3'
 

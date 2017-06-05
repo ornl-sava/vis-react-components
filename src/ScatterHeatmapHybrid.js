@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react'
+import React from 'react'
+import PropTypes from 'prop-types'
 import { easeLinear, scaleLinear, scaleQuantile, scaleTime, timeSecond, select, timeFormat, interpolateHcl, range, axisBottom, axisLeft } from 'd3'
 
 const binByNumeric = (data, accessor, range, numBins) => {

@@ -1,7 +1,8 @@
 // partly inspired by https://bl.ocks.org/mbostock/6bbb0a7ff7686b124d80
 
-import React, { PropTypes } from 'react'
-import ReactTransitionGroup from 'react-addons-transition-group'
+import React from 'react'
+import PropTypes from 'prop-types'
+import { TransitionGroup } from 'react-transition-group'
 
 import * as d3 from 'd3'
 
@@ -150,7 +151,7 @@ class Treemap extends React.Component {
     }}
 
     return (
-      <ReactTransitionGroup component='g'>
+      <TransitionGroup component='g'>
         {this.props.zoom &&
           <SVGComponent Component='rect'
             x={barPadding + 'px'}
@@ -241,7 +242,7 @@ class Treemap extends React.Component {
             </SVGComponent>
           )
         })}
-      </ReactTransitionGroup>
+      </TransitionGroup>
     )
   }
 }

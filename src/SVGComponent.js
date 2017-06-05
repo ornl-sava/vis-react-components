@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react'
+import React from 'react'
+import PropTypes from 'prop-types'
 import { select } from 'd3'
 
 import { spreadExclude } from './util/react'

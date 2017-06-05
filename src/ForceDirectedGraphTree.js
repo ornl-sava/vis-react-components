@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react'
+import React from 'react'
+import PropTypes from 'prop-types'
 import { setScale } from './util/d3'
 import * as d3 from 'd3'
 import Tooltip from './Tooltip'

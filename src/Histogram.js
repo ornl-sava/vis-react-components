@@ -1,6 +1,6 @@
-import React, { PropTypes } from 'react'
-import ReactTransitionGroup from 'react-addons-transition-group'
-// import { select } from 'd3'
+import React from 'react'
+import PropTypes from 'prop-types'
+import { TransitionGroup } from 'react-transition-group'
 
 import Bar from './Bar'
 import { setEase, isOrdinalScale } from './util/d3'
@@ -20,7 +20,10 @@ class Histogram extends React.Component {
     this.onMouseLeave = this._onMouseLeave.bind(this)
     this.onMouseEnter = this._onMouseEnter.bind(this)
     // this.onMouseDown = this._onMouseDown.bind(this)
-
+    if (props.brushed && props.brushID === 'default') {
+      console.warn('Histogram is set to be be brushed, but no brushID is provided!')
+      console.warn('brushID should be set to the data-name of the underlying bar')
+    }
     this.renderBars = this.renderBars.bind(this)
   }
   _onMouseLeave (event, data, index) {
@@ -168,9 +171,9 @@ class Histogram extends React.Component {
 
     let el =
       <g onMouseLeave={this.onMouseLeave}>
-        <ReactTransitionGroup component='g'>
+        <TransitionGroup component='g'>
           {svgBins}
-        </ReactTransitionGroup>
+        </TransitionGroup>
         {overlayBins}
       </g>
     // let el = <g>{svgBins}</g>
@@ -185,9 +188,9 @@ class Histogram extends React.Component {
             interval={interval}
             scale={props.xScale}
             onBrush={props.onBrush}>
-            <ReactTransitionGroup component='g'>
+            <TransitionGroup component='g'>
               {svgBins}
-            </ReactTransitionGroup>
+            </TransitionGroup>
           </BrushX>
           {overlayBins}
         </g>
@@ -196,11 +199,6 @@ class Histogram extends React.Component {
   }
 
   render () {
-    if (this.props.brushed && this.props.brushID === 'default') {
-      console.warn('Histogram is set to be be brushed, but no brushID is provided!')
-      console.warn('brushID should be set to the data-name of the underlying bar')
-    }
-
     if (this.props.data.length > 0) {
       return this.renderBars()
     } else {

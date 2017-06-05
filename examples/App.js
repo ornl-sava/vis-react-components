@@ -1,5 +1,6 @@
 import React from 'react'
 
+import Main from './Main'
 import Nav from './Nav'
 
 class App extends React.Component {
@@ -7,14 +8,10 @@ class App extends React.Component {
     return (
       <div>
         <Nav />
-        {this.props.children}
+        <Main />
       </div>
     )
   }
-}
-
-App.propTypes = {
-  children: React.PropTypes.element.isRequired
 }
 
 export default App
