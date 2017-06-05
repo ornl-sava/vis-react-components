@@ -33,6 +33,7 @@ class SummaryTimeline extends React.Component {
       .domain([avgMin, avgMax])
       .range([0.20, 0.90])
 
+    console.log('bgColor: ' + this.props.bgColor)
     // var meanLine = d3.line()
     //   .curve(d3.curveStepAfter)
     //   .x((d) => { return x(d.date) })
@@ -75,15 +76,16 @@ class SummaryTimeline extends React.Component {
 
     return (
       <TransitionGroup component='g'>
+
         <SVGComponent Component='path'
-          key='extentRange'
-          fill='#c6dbef'
+          key='extentRange2'
+          fill={this.props.range2FillColor}
           d={extentRangeArea}
           onUpdate={pathTransition}
         />
         <SVGComponent Component='path'
-          key='stdevRange'
-          fill='#9ecae1'
+          key='extentRange1'
+          fill={this.props.range1FillColor}
           d={stdevRangeArea}
           onUpdate={pathTransition}
         />
@@ -105,15 +107,15 @@ class SummaryTimeline extends React.Component {
                   return transition
                 }
               }}
-              r={props.radius}
+              r={props.meanCircleRadius}
               cx={x(d.date)}
               cy={y(d.avg)}
               fillOpacity={opacityScale(d.avg)}
-              fill='black'
+              fill={this.props.meanFillColor}
               stroke='none' />
           )
         })}
-      </ReactTransitionGroup>
+      </TransitionGroup>
     )
   }
 }
@@ -131,10 +133,20 @@ class SummaryTimeline extends React.Component {
 
 SummaryTimeline.defaultProps = {
   keyFunction: (d, i) => i,
-  radius: 1.0
+  bgColor: 'cyan',
+  range1FillColor: '#9ecae1',
+  range2FillColor: 'c6dbef',
+  // range2FillColor: 'orange',
+  meanFillColor: 'black',
+  meanCircleRadius: 1.0
 }
 
 SummaryTimeline.propTypes = {
+  bgColor: PropTypes.string,
+  range1FillColor: PropTypes.string,
+  range2FillColor: PropTypes.string,
+  meanCircleRadius: PropTypes.number,
+  meanFillColor: PropTypes.string,
   width: PropTypes.number,
   height: PropTypes.number,
   chartWidth: PropTypes.number,

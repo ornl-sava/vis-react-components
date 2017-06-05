@@ -4065,7 +4065,26 @@ const chartProps1 = {
       <span className='chart-title'>Summary Timeline</span>
     ])
   },
-  data: testData
+  data: testData,
+  bgColor: 'green',
+  range1FillColor: 'orange',
+  range2FillColor: 'red',
+  meanFillColor: 'blue',
+  meanCircleRadius: 1.5
+}
+
+const chartProps2 = {
+  header: () => {
+    return ([
+      <span className='chart-title'>Summary Timeline Variant Style</span>
+    ])
+  },
+  data: testData,
+  bgColor: 'green',
+  range1FillColor: '#9ecae1',
+  range2FillColor: '#c6dbef',
+  meanFillColor: 'black',
+  meanCircleRadius: 1.0
 }
 
 class SummaryTimelineExample extends React.Component {
@@ -4080,6 +4099,11 @@ class SummaryTimelineExample extends React.Component {
         <div className='row'>
           <div className='col-md-12'>
             <SummaryTimelineChart {...chartCommon} {...chartProps1} data={this.data} />
+          </div>
+        </div>
+        <div className='row'>
+          <div className='col-md-12'>
+            <SummaryTimelineChart {...chartCommon} {...chartProps2} data={this.data} />
           </div>
         </div>
       </div>
