@@ -4052,7 +4052,10 @@ let testData =
 // ]
 
 var parseTime = timeParse('%Y-%m-%dT%H:%M:%SZ')
-testData.map((d) => { d.date = parseTime(d.date) })
+testData.map((d) => {
+  d.date = parseTime(d.date)
+  d.opacityValue = d.avg
+})
 
 const chartCommon = {
   margin: {top: 10, right: 10, bottom: 50, left: 50},

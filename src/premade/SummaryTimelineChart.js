@@ -13,6 +13,7 @@ class SummaryTimelineChart extends React.Component {
     super(props)
     this.xScale = setScale(props.xScaleType)
     this.yScale = setScale(props.yScaleType)
+    this.opacityScale = setScale('linear')
 
     this.xDomain = this.props.xDomain
     this.yDomain = this.props.yDomain
@@ -26,16 +27,41 @@ class SummaryTimelineChart extends React.Component {
     this.updateRange = this.updateRange.bind(this)
 
     this.updateDomain(props, this.state)
+    this.updateColorScales(props, this.state)
   }
 
   componentWillReceiveProps (nextProps) {
     this.updateDomain(nextProps, this.state)
+    this.updateColorScales(nextProps, this.state)
   }
 
   componentWillUnmount () {
     if (this.props.tipFunction) {
       this.tip.destroy()
     }
+  }
+
+  updateColorScales (props, state) {
+    // var opacityScale = d3.scaleLinear()
+    //   .domain([avgMin, avgMax])
+    //   .range([0.20, 0.90])
+    let opacityDomain = []
+    let opacityRange = []
+
+    if (props.data.length > 0) {
+      var domainMin = min(props.data, (d) => { return d.opacityValue })
+      var domainMax = max(props.data, (d) => { return d.opacityValue })
+      opacityDomain = [domainMin, domainMax]
+      opacityRange = [0.20, 0.90]
+    }
+
+    this.opacityScale
+      .domain(opacityDomain)
+      .range(opacityRange)
+
+    // console.log('SummaryTimelineChart.updateColorScales()')
+    // console.log('opacityDomain: ' + opacityDomain)
+    // console.log('opacityScale: ' + this.opacityScale)
   }
 
   updateDomain (props, state) {
@@ -96,7 +122,8 @@ class SummaryTimelineChart extends React.Component {
     let props = this.props
     return (
       <Chart ref='chart' {...spreadRelated(Chart, props)} resizeHandler={this.onResize}>
-        <SummaryTimeline className='summaryTimeline' {...spreadRelated(SummaryTimeline, props)} />
+        <SummaryTimeline className='summaryTimeline' {...spreadRelated(SummaryTimeline, props)}
+          opacityScale={this.opacityScale} />
         <Axis className='x axis' {...props.xAxis} scale={this.xScale} />
         <Axis className='y axis' {...props.yAxis} scale={this.yScale} />
       </Chart>

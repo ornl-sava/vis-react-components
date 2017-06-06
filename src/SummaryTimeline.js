@@ -26,14 +26,16 @@ class SummaryTimeline extends React.Component {
       .domain([yMin, yMax])
       .rangeRound([height, 0])
 
-    var avgMin = d3.min(data, (d) => { return d.avg })
-    var avgMax = d3.max(data, (d) => { return d.avg })
+    // console.log('SummaryTimeline.render()')
+    // console.log('opacityScale: ' + this.props.opacityScale)
+    // var avgMin = d3.min(data, (d) => { return d.avg })
+    // var avgMax = d3.max(data, (d) => { return d.avg })
+    //
+    // var opacityScale = d3.scaleLinear()
+    //   .domain([avgMin, avgMax])
+    //   .range([0.20, 0.90])
 
-    var opacityScale = d3.scaleLinear()
-      .domain([avgMin, avgMax])
-      .range([0.20, 0.90])
-
-    console.log('bgColor: ' + this.props.bgColor)
+    // console.log('bgColor: ' + this.props.bgColor)
     // var meanLine = d3.line()
     //   .curve(d3.curveStepAfter)
     //   .x((d) => { return x(d.date) })
@@ -110,7 +112,7 @@ class SummaryTimeline extends React.Component {
               r={props.meanCircleRadius}
               cx={x(d.date)}
               cy={y(d.avg)}
-              fillOpacity={opacityScale(d.avg)}
+              fillOpacity={props.opacityScale(d.avg)}
               fill={this.props.meanFillColor}
               stroke='none' />
           )
@@ -152,7 +154,8 @@ SummaryTimeline.propTypes = {
   chartWidth: PropTypes.number,
   chartHeight: PropTypes.number,
   data: PropTypes.array,
-  keyFunction: PropTypes.func
+  keyFunction: PropTypes.func,
+  opacityScale: PropTypes.any
 }
 
 export default SummaryTimeline
