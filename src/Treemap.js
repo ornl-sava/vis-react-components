@@ -2,7 +2,7 @@
 
 import React from 'react'
 import PropTypes from 'prop-types'
-import { TransitionGroup } from 'react-transition-group'
+// import { TransitionGroup } from 'react-transition-group'
 
 import * as d3 from 'd3'
 
@@ -151,9 +151,11 @@ class Treemap extends React.Component {
     }}
 
     return (
-      <TransitionGroup component='g'>
+      // There used to be a TransitionGroup in place of the top SVGComponent, but that caused a strange bug. May need to add it back.
+      <SVGComponent Component='g'>
         {this.props.zoom &&
           <SVGComponent Component='rect'
+            key={'zoom rect'}
             x={barPadding + 'px'}
             y={barPadding + 'px'}
             width={w - 2 * barPadding + 'px'}
@@ -169,6 +171,7 @@ class Treemap extends React.Component {
         }
         {this.props.zoom &&
           <SVGComponent Component='text'
+            key={'zoom text'}
             x={barPadding + 5 + 'px'}
             y={barPadding + 5 + this.props.fontSize + 'px'}
             fill={'black'}
@@ -183,14 +186,14 @@ class Treemap extends React.Component {
           let h = Math.max(d.y1 - d.y0 - manualPadding, 0)
           return (
             <SVGComponent Component='svg'
-              key={d.id}
+              key={d.id + ' svg'}
               x={d.x0 * ratio + manualPadding + 'px'}
               y={barOffset + d.y0 + manualPadding + 'px'}
               width={w + 'px'}
               height={h + 'px'}
               onUpdate={transitionFunc}>
               <SVGComponent Component='rect'
-                key={d.id}
+                key={d.id + ' rect'}
                 data={d}
                 onUpdate={transitionFunc}
                 x={'0px'}
@@ -207,14 +210,14 @@ class Treemap extends React.Component {
           let h = Math.max(d.y1 - d.y0 - manualPadding, 0)
           return (
             <SVGComponent Component='svg'
-              key={d.id}
+              key={d.id + ' svg'}
               x={d.x0 * ratio + manualPadding + 'px'}
               y={barOffset + d.y0 + manualPadding + 'px'}
               width={w + 'px'}
               height={h + 'px'}
               onUpdate={transitionFunc}>
               <SVGComponent Component='rect'
-                key={d.id}
+                key={d.id + ' rect'}
                 data={d}
                 onMouseEnter={this.onEnter}
                 onMouseLeave={this.onLeave}
@@ -227,7 +230,7 @@ class Treemap extends React.Component {
                 opacity={'0.0'}
               />
               <SVGComponent Component='text'
-                key={d.id + ' value'}
+                key={d.id + ' text'}
                 onMouseEnter={this.onEnter}
                 onMouseLeave={this.onLeave}
                 onClick={this.onClick}
@@ -242,7 +245,7 @@ class Treemap extends React.Component {
             </SVGComponent>
           )
         })}
-      </TransitionGroup>
+      </SVGComponent>
     )
   }
 }
