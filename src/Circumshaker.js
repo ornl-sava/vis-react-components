@@ -22,18 +22,11 @@ class Circumshaker extends React.Component {
     this.onClick = this.onClick.bind(this)
     this.onEnter = this.onEnter.bind(this)
     this.onLeave = this.onLeave.bind(this)
-
-    this.generateGraph(props)
-  }
-
-  // Update the domain for the shared scale
-  componentWillReceiveProps (nextProps) {
-    this.generateGraph(nextProps)
   }
 
   // NOTE: Changes will beed to be made here once API is created
-  generateGraph (props) {
-    if (Object.keys(props.data).length > 0) {
+  generateGraph () {
+    if (Object.keys(this.props.data).length > 0) {
       let graph = this.graph
 
       // Instantiate nodes and links
@@ -44,8 +37,8 @@ class Circumshaker extends React.Component {
       const generateGraph = (data, depth = 0, parent = null) => {
         // Create node
         let node = {
-          key: data[props.keyAccessor],
-          value: data[props.valueAccessor],
+          key: data[this.props.keyAccessor],
+          value: data[this.props.valueAccessor],
           depth: depth
         }
 
@@ -76,15 +69,15 @@ class Circumshaker extends React.Component {
         }
 
         // Continue traversing data
-        if (props.childAccessor in data) {
-          data[props.childAccessor].forEach((d) => {
+        if (this.props.childAccessor in data) {
+          data[this.props.childAccessor].forEach((d) => {
             generateGraph(d, depth + 1, node)
           })
         }
       }
 
       // Populate graph
-      generateGraph(props.data)
+      generateGraph(this.props.data)
 
       // Sort nodes and set parents to null
       graph.nodes
@@ -148,11 +141,11 @@ class Circumshaker extends React.Component {
       })
 
       // Determine maximum depth allowed for rendering
-      this.depth = Math.min(max(this.graph.nodes, (d) => d.depth), props.maxDepth)
+      this.depth = Math.min(max(this.graph.nodes, (d) => d.depth), this.props.maxDepth)
 
       // Determine radius
       // NOTE: This is used as more of a radius 'band'
-      this.radius = min([props.chartWidth, props.chartHeight]) /
+      this.radius = min([this.props.chartWidth, this.props.chartHeight]) /
         (this.depth) / 2
 
       // Determine properties used for each node during drawing
@@ -163,8 +156,8 @@ class Circumshaker extends React.Component {
       // wedge - degree 'space' allotted for a node
       // radius - radius used for drawing node
       graph.nodes.forEach((d, i) => {
-        d.x = props.chartWidth / 2
-        d.y = props.chartHeight / 2
+        d.x = this.props.chartWidth / 2
+        d.y = this.props.chartHeight / 2
         d.degree = 0
         d.startAngle = 0
         d.wedge = 360
@@ -203,8 +196,8 @@ class Circumshaker extends React.Component {
       })
 
       // Find max node size if not predefined
-      let maxSize = props.nodeMaxSize !== null
-      ? props.nodeMaxSize
+      let maxSize = this.props.nodeMaxSize !== null
+      ? this.props.nodeMaxSize
       : Math.min(graph.nodes.reduce((prev, curr) => {
         let r = this.radius * curr.depth
         let theta = curr.startAngle > curr.degree
@@ -217,7 +210,7 @@ class Circumshaker extends React.Component {
 
       // Create scale that determines node size
       this.nodeSizeScale
-        .range([props.nodeMinSize, maxSize])
+        .range([this.props.nodeMinSize, maxSize])
         .domain(extent(this.graph.nodes, (d) => {
           return this.graph.links.filter((g) => {
             return g.source === d || g.target === d
@@ -257,7 +250,7 @@ class Circumshaker extends React.Component {
 
   render () {
     let {chartWidth, chartHeight} = this.props
-
+    this.generateGraph()
     const det = (a, b, c) => {
       return ((b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x))
     }

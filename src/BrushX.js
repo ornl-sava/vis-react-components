@@ -108,7 +108,6 @@ BrushX.propTypes = {
   height: PropTypes.number.isRequired,
   interval: PropTypes.number.isRequired,
   scale: PropTypes.func.isRequired,
-  showHandles: PropTypes.bool.isRequired,
   onBrush: PropTypes.func
 }
 
