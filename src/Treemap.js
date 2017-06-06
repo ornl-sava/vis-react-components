@@ -2,7 +2,7 @@
 
 import React from 'react'
 import PropTypes from 'prop-types'
-// import { TransitionGroup } from 'react-transition-group'
+import { TransitionGroup } from 'react-transition-group'
 
 import * as d3 from 'd3'
 
@@ -24,7 +24,10 @@ class Treemap extends React.Component {
 
   onClick (event, data, index) {
     if (this.props.zoom && data.children) {
-      this.setState({selectedId: data.id})
+      // the first setState is to make sure every component is properly initialized, to avoid a TransitionGroup error when that component tries to exit
+      this.setState(this.state, () => {
+        this.setState({selectedId: data.id})
+      })
     } else {
       this.props.onClick(event, data, index)
     }
@@ -152,7 +155,7 @@ class Treemap extends React.Component {
 
     return (
       // There used to be a TransitionGroup in place of the top SVGComponent, but that caused a strange bug. May need to add it back.
-      <SVGComponent Component='g'>
+      <TransitionGroup component='g'>
         {this.props.zoom &&
           <SVGComponent Component='rect'
             key={'zoom rect'}
@@ -245,7 +248,7 @@ class Treemap extends React.Component {
             </SVGComponent>
           )
         })}
-      </SVGComponent>
+      </TransitionGroup>
     )
   }
 }
