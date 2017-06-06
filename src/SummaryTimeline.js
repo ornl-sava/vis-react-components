@@ -78,20 +78,27 @@ class SummaryTimeline extends React.Component {
 
     return (
       <TransitionGroup component='g'>
-
-        <SVGComponent Component='path'
-          key='extentRange2'
-          fill={this.props.range2FillColor}
-          d={extentRangeArea}
-          onUpdate={pathTransition}
-        />
-        <SVGComponent Component='path'
-          key='extentRange1'
-          fill={this.props.range1FillColor}
-          d={stdevRangeArea}
-          onUpdate={pathTransition}
-        />
+        {this.props.showRange2Area &&
+          <SVGComponent Component='path'
+            key='extentRange2'
+            fill={this.props.range2FillColor}
+            d={extentRangeArea}
+            onUpdate={pathTransition}
+          />
+        }
+        {this.props.showRange1Area &&
+          <SVGComponent Component='path'
+            key='extentRange1'
+            fill={this.props.range1FillColor}
+            d={stdevRangeArea}
+            onUpdate={pathTransition}
+          />
+        }
         {this.props.data.map((d, i) => {
+          let opacityValue = 1.0
+          if (props.useOpacityScale && d.opacityValue !== undefined) {
+            opacityValue = props.opacityScale(d.opacityValue)
+          }
           return (
             <SVGComponent Component='circle' key={keyFunction(d, i)}
               data={d}
@@ -112,7 +119,7 @@ class SummaryTimeline extends React.Component {
               r={props.meanCircleRadius}
               cx={x(d.date)}
               cy={y(d.avg)}
-              fillOpacity={props.opacityScale(d.avg)}
+              fillOpacity={opacityValue}
               fill={this.props.meanFillColor}
               stroke='none' />
           )
@@ -140,10 +147,16 @@ SummaryTimeline.defaultProps = {
   range2FillColor: 'c6dbef',
   // range2FillColor: 'orange',
   meanFillColor: 'black',
-  meanCircleRadius: 1.0
+  meanCircleRadius: 1.0,
+  useOpacityScale: true,
+  showRange1Area: false,
+  showRange2Area: true
 }
 
 SummaryTimeline.propTypes = {
+  useOpacityScale: PropTypes.bool,
+  showRange1Area: PropTypes.bool,
+  showRange2Area: PropTypes.bool,
   bgColor: PropTypes.string,
   range1FillColor: PropTypes.string,
   range2FillColor: PropTypes.string,

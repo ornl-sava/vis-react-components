@@ -1,7 +1,5 @@
 import React from 'react'
 
-import { timeParse } from 'd3'
-
 import SummaryTimelineChart from '../src/premade/SummaryTimelineChart'
 
 let testData =
@@ -4051,9 +4049,8 @@ let testData =
 //   }
 // ]
 
-var parseTime = timeParse('%Y-%m-%dT%H:%M:%SZ')
 testData.map((d) => {
-  d.date = parseTime(d.date)
+  d.date = new Date(d.date)
   d.opacityValue = d.avg
 })
 
@@ -4073,7 +4070,10 @@ const chartProps1 = {
   range1FillColor: 'orange',
   range2FillColor: 'red',
   meanFillColor: 'blue',
-  meanCircleRadius: 1.5
+  meanCircleRadius: 1.5,
+  useOpacityScale: false,
+  showRange2Area: false,
+  showRange1Area: true
 }
 
 const chartProps2 = {
@@ -4087,7 +4087,9 @@ const chartProps2 = {
   range1FillColor: '#9ecae1',
   range2FillColor: '#c6dbef',
   meanFillColor: 'black',
-  meanCircleRadius: 1.0
+  meanCircleRadius: 1.0,
+  showRange1Area: true,
+  showRange2Area: true
 }
 
 class SummaryTimelineExample extends React.Component {
