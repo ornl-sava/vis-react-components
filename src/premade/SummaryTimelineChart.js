@@ -65,10 +65,51 @@ class SummaryTimelineChart extends React.Component {
   }
 
   updateDomain (props, state) {
+    console.log('SummaryTimelineChart.updateDomain()')
     if (props.data.length > 0) {
       this.xDomain = extent(props.data, (d) => { return d.date })
-      let yMin = min(props.data, (d) => { return Math.min(d.innerRangeMin, d.outerRangeMin) })
-      let yMax = max(props.data, (d) => { return Math.max(d.innerRangeMax, d.outerRangeMax) })
+
+      let yMin = Infinity
+      let yMax = -Infinity
+
+      if (props.showRange1Area && props.showRange2Area) {
+        console.log('Showing both ranges')
+        yMin = min(props.data, (d) => {
+          return Math.min(d.avg, Math.min(d.innerRangeMin, d.outerRangeMin))
+        })
+        yMax = max(props.data, (d) => {
+          return Math.max(d.avg, Math.max(d.innerRangeMax, d.outerRangeMax))
+        })
+      } else if (props.showRange1Area && !props.showRange2Area) {
+        console.log('Showing only range 1 area')
+        yMin = min(props.data, (d) => {
+          return Math.min(d.avg, d.innerRangeMin)
+        })
+        yMax = max(props.data, (d) => {
+          return Math.max(d.avg, d.innerRangeMax)
+          // return d.innerRangeMax
+        })
+      } else if (!props.showRange1Area && props.showRange2Area) {
+        console.log('Showing only range 2 area')
+        yMin = min(props.data, (d) => {
+          return Math.min(d.avg, d.outerRangeMin)
+          // return d.outerRangeMin
+        })
+        yMax = max(props.data, (d) => {
+          return Math.max(d.avg, d.outerRangeMax)
+          // return d.outerRangeMax
+        })
+      } else {
+        console.log('Showing neither range, just avg points')
+        yMin = min(props.data, (d) => {
+          return d.avg
+        })
+        yMax = max(props.data, (d) => {
+          return d.avg
+        })
+      }
+      // let yMin = min(props.data, (d) => { return Math.min(d.innerRangeMin, d.outerRangeMin) })
+      // let yMax = max(props.data, (d) => { return Math.max(d.innerRangeMax, d.outerRangeMax) })
       this.yDomain = [yMin, yMax]
 
       this.xScale.domain(this.xDomain)
@@ -123,7 +164,8 @@ class SummaryTimelineChart extends React.Component {
     return (
       <Chart ref='chart' {...spreadRelated(Chart, props)} resizeHandler={this.onResize}>
         <SummaryTimeline className='summaryTimeline' {...spreadRelated(SummaryTimeline, props)}
-          opacityScale={this.opacityScale} />
+          opacityScale={this.opacityScale}
+          xScale={this.xScale} yScale={this.yScale} />
         <Axis className='x axis' {...props.xAxis} scale={this.xScale} />
         <Axis className='y axis' {...props.yAxis} scale={this.yScale} />
       </Chart>

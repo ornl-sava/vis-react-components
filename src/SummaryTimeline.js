@@ -11,20 +11,20 @@ class SummaryTimeline extends React.Component {
   render () {
     let data = this.props.data
 
-    let width = this.props.chartWidth ? this.props.chartWidth : this.props.width
-    let height = this.props.chartHeight ? this.props.chartHeight : this.props.height
+    // let width = this.props.chartWidth ? this.props.chartWidth : this.props.width
+    // let height = this.props.chartHeight ? this.props.chartHeight : this.props.height
 
-    var x = d3.scaleTime()
-      .domain(d3.extent(data, (d) => { return d.date }))
-      .rangeRound([0, width])
+    // var x = d3.scaleTime()
+    //   .domain(d3.extent(data, (d) => { return d.date }))
+    //   .rangeRound([0, width])
 
     // var yMin = d3.min(data, (d) => { return d.min })
-    var yMin = d3.min(data, (d) => { return Math.min(d.innerRangeMin, d.outerRangeMin) })
-    // var yMax = d3.max(data, (d) => { return d.max })
-    var yMax = d3.max(data, (d) => { return Math.max(d.innerRangeMax, d.outerRangeMax) })
-    var y = d3.scaleLinear()
-      .domain([yMin, yMax])
-      .rangeRound([height, 0])
+    // var yMin = d3.min(data, (d) => { return Math.min(d.innerRangeMin, d.outerRangeMin) })
+    // // var yMax = d3.max(data, (d) => { return d.max })
+    // var yMax = d3.max(data, (d) => { return Math.max(d.innerRangeMax, d.outerRangeMax) })
+    // var y = d3.scaleLinear()
+    //   .domain([yMin, yMax])
+    //   .rangeRound([height, 0])
 
     // console.log('SummaryTimeline.render()')
     // console.log('opacityScale: ' + this.props.opacityScale)
@@ -53,17 +53,22 @@ class SummaryTimeline extends React.Component {
     //   .x((d) => { return x(d.date) })
     //   .y((d) => { return y(d.min) })(data)
 
-    var stdevRangeArea = d3.area()
-      .curve(d3.curveStepAfter)
-      .x((d) => { return x(d.date) })
-      .y0((d) => { return y(d.innerRangeMin) })
-      .y1((d) => { return y(d.innerRangeMax) })(data)
-    var extentRangeArea = d3.area()
-      .curve(d3.curveStepAfter)
-      .x((d) => { return x(d.date) })
-      .y0((d) => { return y(d.outerRangeMin) })
-      .y1((d) => { return y(d.outerRangeMax) })(data)
-
+    if (this.props.showRange1Area) {
+      var stdevRangeArea = d3.area()
+        .curve(d3.curveStepAfter)
+        // .x((d) => { return x(d.date) })
+        .x((d) => { return this.props.xScale(d.date) })
+        .y0((d) => { return this.props.yScale(d.innerRangeMin) })
+        .y1((d) => { return this.props.yScale(d.innerRangeMax) })(data)
+    }
+    if (this.props.showRange2Area) {
+      var extentRangeArea = d3.area()
+        .curve(d3.curveStepAfter)
+        // .x((d) => { return x(d.date) })
+        .x((d) => { return this.props.xScale(d.date) })
+        .y0((d) => { return this.props.yScale(d.outerRangeMin) })
+        .y1((d) => { return this.props.yScale(d.outerRangeMax) })(data)
+    }
     let pathTransition = {func: (transition, props) => {
       transition
         .delay(0)
@@ -117,8 +122,8 @@ class SummaryTimeline extends React.Component {
                 }
               }}
               r={props.meanCircleRadius}
-              cx={x(d.date)}
-              cy={y(d.avg)}
+              cx={props.xScale(d.date)}
+              cy={props.yScale(d.avg)}
               fillOpacity={opacityValue}
               fill={this.props.meanFillColor}
               stroke='none' />
@@ -142,14 +147,12 @@ class SummaryTimeline extends React.Component {
 
 SummaryTimeline.defaultProps = {
   keyFunction: (d, i) => i,
-  bgColor: 'cyan',
   range1FillColor: '#9ecae1',
-  range2FillColor: 'c6dbef',
-  // range2FillColor: 'orange',
+  range2FillColor: '#c6dbef',
   meanFillColor: 'black',
   meanCircleRadius: 1.0,
   useOpacityScale: true,
-  showRange1Area: false,
+  showRange1Area: true,
   showRange2Area: true
 }
 
@@ -168,7 +171,9 @@ SummaryTimeline.propTypes = {
   chartHeight: PropTypes.number,
   data: PropTypes.array,
   keyFunction: PropTypes.func,
-  opacityScale: PropTypes.any
+  opacityScale: PropTypes.any,
+  xScale: PropTypes.any,
+  yScale: PropTypes.any
 }
 
 export default SummaryTimeline

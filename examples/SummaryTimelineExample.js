@@ -4059,10 +4059,19 @@ const chartCommon = {
   height: 150
 }
 
+const chartProps0 = {
+  header: () => {
+    return ([
+      <span className='chart-title'>Summary Timeline Default Settings</span>
+    ])
+  },
+  data: testData
+}
+
 const chartProps1 = {
   header: () => {
     return ([
-      <span className='chart-title'>Summary Timeline</span>
+      <span className='chart-title'>Summary Timeline Variant 2</span>
     ])
   },
   data: testData,
@@ -4079,7 +4088,7 @@ const chartProps1 = {
 const chartProps2 = {
   header: () => {
     return ([
-      <span className='chart-title'>Summary Timeline Variant Style</span>
+      <span className='chart-title'>Summary Timeline Variant 1</span>
     ])
   },
   data: testData,
@@ -4101,6 +4110,11 @@ class SummaryTimelineExample extends React.Component {
   render () {
     return (
       <div className='col-md-12'>
+        <div className='row'>
+          <div className='col-md-12'>
+            <SummaryTimelineChart {...chartCommon} {...chartProps0} data={this.data} />
+          </div>
+        </div>
         <div className='row'>
           <div className='col-md-12'>
             <SummaryTimelineChart {...chartCommon} {...chartProps1} data={this.data} />
