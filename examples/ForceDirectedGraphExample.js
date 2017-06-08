@@ -2,7 +2,7 @@ import React from 'react'
 // import { format } from 'd3'
 import * as d3 from 'd3'
 import Chart from '../src/Chart'
-import { Link } from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
 
 import ForceDirectedGraph from '../src/ForceDirectedGraph.js'
 
@@ -325,7 +325,7 @@ class TopicsContainer extends React.Component {
         <Chart className='col-md-11' tipFunction={toolTipFunction} yAxis={false} xAxis={false} height={1000} margin={{top: 40, right: 10, bottom: 10, left: 80}}>
           <ForceDirectedGraph {...this.state.chartData} />
         </Chart>
-        <li><Link to='/forceDirectedTree' activeClassName='active'>SingleTopic</Link></li>
+        <li><NavLink to='/forceDirectedTree' activeClassName='active'>SingleTopic</NavLink></li>
       </div>
     )
   }

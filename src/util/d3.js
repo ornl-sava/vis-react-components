@@ -1,4 +1,6 @@
 import * as d3Scale from 'd3-scale'
+import * as d3Ease from 'd3-ease'
+import * as d3Axis from 'd3-axis'
 
 const setScale = (scaleType) => {
   if (!scaleType) {
@@ -17,14 +19,10 @@ export const isOrdinalScale = (scaleType) => {
   return scaleType === 'band' || scaleType === 'point' || scaleType === 'ordinal'
 }
 
-import * as d3Ease from 'd3-ease'
-
 const setEase = (easeType) => {
   let easing = 'ease' + easeType.charAt(0).toUpperCase() + easeType.slice(1)
   return d3Ease[easing]
 }
-
-import * as d3Axis from 'd3-axis'
 
 const setAxis = (orientationType) => {
   let orientation = 'axis' + orientationType.charAt(0).toUpperCase() + orientationType.slice(1)

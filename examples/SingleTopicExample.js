@@ -1,6 +1,6 @@
 // import React from 'react'
 import React from 'react'
-import PropTypes from 'prop-types'
+// import PropTypes from 'prop-types'
 import { format, scaleLinear, scaleOrdinal, schemeCategory20, select } from 'd3'
 import cloud from '../examples/data/for-hci/cloud2'
 import { HeatmapChart, HistogramChart } from '../src'
@@ -303,12 +303,8 @@ class SingleTopicExample extends React.Component {
 }
 
 SingleTopicExample.defaultProps = {
-  url: '',
-  className: 'col-md-12'
 }
 SingleTopicExample.propTypes = {
-  className: PropTypes.string,
-  url: PropTypes.string
 }
 
 export default SingleTopicExample

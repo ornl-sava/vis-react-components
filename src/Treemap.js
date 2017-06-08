@@ -256,8 +256,7 @@ Treemap.defaultProps = {
   idDisplayFunction: (d) => { return d.id },
   fontSize: 12,
   zoom: false,
-  stretch: false,
-  className: 'Treemap'
+  stretch: false
 }
 
 Treemap.propTypes = {
@@ -272,7 +271,6 @@ Treemap.propTypes = {
   height: PropTypes.number,
   chartWidth: PropTypes.number,
   chartHeight: PropTypes.number,
-  className: PropTypes.string,
   fontSize: PropTypes.number,
   zoom: PropTypes.bool,
   stretch: PropTypes.bool

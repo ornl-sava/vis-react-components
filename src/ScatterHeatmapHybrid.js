@@ -247,8 +247,6 @@ export class HybridScatterHeatmap extends React.Component {
     var bins = rows.selectAll('.bin')
       .data((d) => d, (d, i) => i)
 
-    let self = this
-
     // Exit Bins
     bins.exit().remove()
 
@@ -257,9 +255,9 @@ export class HybridScatterHeatmap extends React.Component {
       .enter().append('rect')
         .attr('class', 'bin')
         .on('click.heatmap.' + this.props.clsName, function (d, i) { // Need to have reference to dynamic scope for access to d3 element, so no es6
-          self.props.heatmapOnClick(d, i)
+          this.props.heatmapOnClick(d, i)
           heatmap[d.rowIndex][i].active = 1 - heatmap[d.rowIndex][i].active
-          self.updateChart()
+          this.updateChart()
         })
         .on('mouseover.heatmap.' + this.props.clsName, (d, i) => this.props.heatmapOnMouseOver(d, i))
         .on('mouseout.heatmap.' + this.props.clsName, (d, i) => this.props.heatmapOnMouseOut(d, i))
@@ -303,7 +301,7 @@ export class HybridScatterHeatmap extends React.Component {
             for (let row = 0; row < this.props.heatmapVertDivisions; row++) {
               heatmap[row][i].active = 1 - heatmap[row][i].active
             }
-            self.updateChart()
+            this.updateChart()
           }
           if (event.shiftKey || !event.altKey) {
             let index = this.state.expandedSectionNumbers.indexOf(i)
@@ -329,7 +327,7 @@ export class HybridScatterHeatmap extends React.Component {
             this.setState({
               expandedSectionNumbers: toExpand
             }, () => {
-              self.resizeChart()
+              this.resizeChart()
             })
           }
         })
@@ -516,7 +514,6 @@ export class HybridScatterHeatmap extends React.Component {
 HybridScatterHeatmap.propTypes = {
   clsName: PropTypes.string.isRequired,
   margin: PropTypes.object,
-  width: PropTypes.number,
   height: PropTypes.number,
   xLabel: PropTypes.string,
   yLabel: PropTypes.string,
@@ -539,8 +536,7 @@ HybridScatterHeatmap.propTypes = {
   startTime: PropTypes.number,
   timeWindow: PropTypes.number,
   heatmapVertDivisions: PropTypes.number,
-  heatmapHorzDivisions: PropTypes.number,
-  updateInterval: PropTypes.number
+  heatmapHorzDivisions: PropTypes.number
 }
 
 // Set default props
@@ -549,14 +545,12 @@ HybridScatterHeatmap.defaultProps = {
   timeWindow: 20 * 1000,
   heatmapVertDivisions: 4,
   heatmapHorzDivisions: 4,
-  updateInterval: 0,
   minHeatmapColor: '#eff3ff',
   maxHeatmapColor: '#2171b5',
   numColorCat: 11,
   minScatterColor: '#F1F5E9',
   maxScatterColor: '#7C9B27',
   margin: {top: 30, right: 5, bottom: 20, left: 50},
-  width: 400,
   height: 250,
   idAccessor: 'uuid',
   xLabel: 'x',

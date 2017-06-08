@@ -272,19 +272,29 @@ ForceDirectedGraph.defaultProps = {
   childAccessors: []
 }
 
+// The following proptyes are needed for the linter
+// They have been commented out for expediency
+// ForceDirectedGraph.propTypes = {
+//   chartHeight: PropTypes.number,
+//   chartWidth: PropTypes.number,
+//   className: PropTypes.string,
+//   radius: PropTypes.number,
+//   tipFunction: PropTypes.func,
+//   xScale: PropTypes.any,
+//   yScale: PropTypes.any,
+//   data: PropTypes.object,
+//   onClick: PropTypes.func,
+//   onEnter: PropTypes.func,
+//   onLeave: PropTypes.func,
+//   isCurved: PropTypes.bool,
+//   childAccessors: PropTypes.array
+// }
+
 ForceDirectedGraph.propTypes = {
-  chartHeight: PropTypes.number,
-  chartWidth: PropTypes.number,
-  className: PropTypes.string,
-  radius: PropTypes.number,
   tipFunction: PropTypes.func,
-  xScale: PropTypes.any,
-  yScale: PropTypes.any,
   data: PropTypes.object,
-  onClick: PropTypes.func,
   onEnter: PropTypes.func,
   onLeave: PropTypes.func,
-  isCurved: PropTypes.bool,
   childAccessors: PropTypes.array
 }
 

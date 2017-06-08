@@ -39,38 +39,38 @@ class Axis extends React.Component {
 
   // Re-calculate postions of the chart based on the currently rendered position
   resizeAxis () {
-    let props = this.props
+    // let props = this.props
     let thisNode = ReactDom.findDOMNode(this)
     let parentNode = thisNode.parentNode
-    let selector = '.' + props.className.replace(/ /g, '.')
+    let selector = '.' + this.props.className.replace(/ /g, '.')
     let selection = select(parentNode).select(selector)
 
     let tickCount = 0
-    let tickValues = props.tickValues
+    let tickValues = this.props.tickValues
     let tickPreformatValues = []
     let tickFormatter = null
 
-    if (props.scale.domain().length > 0) {
+    if (this.props.scale.domain().length > 0) {
       // Use custom tick count if it exist
-      if (props.tickCount) {
-        tickCount = props.tickCount
+      if (this.props.tickCount) {
+        tickCount = this.props.tickCount
       } else {
-        tickCount = props.type === 'y' ? 3 : props.scale.domain().length
+        tickCount = this.props.type === 'y' ? 3 : this.props.scale.domain().length
       }
 
       // Set tickFormatter to be used
-      if (isOrdinalScale(props.scale.type)) {
+      if (isOrdinalScale(this.props.scale.type)) {
         let maxWidth = 0
         let fontSize = 12
 
-        if (props.orient === 'top' || props.orient === 'bottom') {
-          let binWidth = Math.floor((props.scale.step()))
+        if (this.props.orient === 'top' || this.props.orient === 'bottom') {
+          let binWidth = Math.floor((this.props.scale.step()))
           maxWidth = Math.floor(binWidth / fontSize)
         } else {
-          if (props.orient === 'left') {
-            maxWidth = props.margin.left
+          if (this.props.orient === 'left') {
+            maxWidth = this.props.margin.left
           } else {
-            maxWidth = props.margin.right
+            maxWidth = this.props.margin.right
           }
         }
 
@@ -78,18 +78,18 @@ class Axis extends React.Component {
           tickPreformatValues.push(d)
           return truncateLabel(d, maxWidth)
         }
-      } else if (props.tickFormat) {
+      } else if (this.props.tickFormat) {
         tickFormatter = (d, i) => {
           tickPreformatValues.push(d)
-          return props.tickFormat(d, i)
+          return this.props.tickFormat(d, i)
         }
       } else {
         tickFormatter = (d, i) => {
           // Default d3 method of formatting
           // Allows obtaining the real value for styling before it's formatted
           tickPreformatValues.push(d)
-          let tick = (typeof props.scale.tickFormat === 'function')
-            ? props.scale.tickFormat()(d)
+          let tick = (typeof this.props.scale.tickFormat === 'function')
+            ? this.props.scale.tickFormat()(d)
             : d
           return tick
         }
@@ -104,39 +104,39 @@ class Axis extends React.Component {
 
     // Create and animate axis
     selection
-      .transition().duration(props.animationDuration)
+      .transition().duration(this.props.animationDuration)
       .call(this.axis)
 
     // Add styling to axis
-    if (props.tickStyle) {
+    if (this.props.tickStyle) {
+      let tickStyle = this.props.tickStyle
       selection.selectAll('.tick text')
         .each(function (d, i) {
           let tick = select(this)
-          props.tickStyle(tick, tickPreformatValues[i], i)
+          tickStyle(tick, tickPreformatValues[i], i)
         })
     }
 
-    if (props.onLabelClick) {
+    if (this.props.onLabelClick) {
       selection.selectAll('.tick').style('cursor', 'pointer')
       selection.selectAll('.tick').on('click', (d) => {
-        props.onLabelClick(d)
+        this.props.onLabelClick(d)
       })
     }
   }
 
   render () {
-    let props = this.props
     let transform = ''
-    if (props.orient === 'bottom') {
-      transform = 'translate(0,' + props.chartHeight + ')'
-    } else if (props.orient === 'right') {
-      transform = 'translate(' + props.chartWidth + ',0)'
+    if (this.props.orient === 'bottom') {
+      transform = 'translate(0,' + this.props.chartHeight + ')'
+    } else if (this.props.orient === 'right') {
+      transform = 'translate(' + this.props.chartWidth + ',0)'
     }
 
     return (
-      <g className={props.className} transform={transform}>
-        {props.label != null
-          ? <text className='label'>{props.label}</text>
+      <g className={this.props.className} transform={transform}>
+        {this.props.label != null
+          ? <text className='label'>{this.props.label}</text>
           : undefined
         }
       </g>
@@ -156,7 +156,11 @@ Axis.defaultProps = {
 }
 
 Axis.propTypes = {
+  chartHeight: PropTypes.number,
+  chartWidth: PropTypes.number,
+  className: PropTypes.string,
   orient: PropTypes.string.isRequired,
+  margin: PropTypes.object,
   type: PropTypes.string.isRequired,
   animationDuration: PropTypes.number,
   tickStyle: React.PropTypes.oneOfType([

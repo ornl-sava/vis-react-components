@@ -65,8 +65,7 @@ class Input extends React.PureComponent {
 }
 
 Input.propTypes = {
-  onChange: PropTypes.any,
-  chart: PropTypes.object
+  onChange: PropTypes.any
 }
 
 class Settings extends React.Component {

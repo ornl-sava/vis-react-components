@@ -1,5 +1,5 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
 
 import TopicsChart from '../src/premade/TopicsChart'
 import StoryViewerExample from './StoryViewerExample'
@@ -179,7 +179,7 @@ class TopicsContainer extends React.Component {
         <div className='row' >
           <StoryViewerExample colorDomain={prefixes} />
         </div>
-        <li><Link to='/id' activeClassName='active'>SingleTopic</Link></li>
+        <li><NavLink to='/id' activeClassName='active'>SingleTopic</NavLink></li>
       </div>
     )
   }
