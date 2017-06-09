@@ -198,7 +198,7 @@ class ColorView extends React.Component {
         } else if (data === 'ALL') {
           posY = this.yScale(index + 1)
           color = 'green'
-        } else if (this.props.clickArray[data]) {
+        } else if (this.this.props.clickArray[data]) {
           color = this.prefScale(data)
         }
         let barStyle = {fill: color, fillOpacity: 0.5}

@@ -81,7 +81,7 @@ class SVGComponent extends React.Component {
   }
 
   componentWillLeave (callback) {
-    this.animate(callback, this.props, 'onExit')
+    // this.animate(callback, this.props, 'onExit')
   }
 
   componentDidUpdate () {
