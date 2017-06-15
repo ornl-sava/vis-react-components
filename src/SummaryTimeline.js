@@ -1,11 +1,11 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { TransitionGroup } from 'react-transition-group'
-
 import * as d3 from 'd3'
 
 import { setEase } from './util/d3'
 import SVGComponent from './SVGComponent'
+import BrushX from './BrushX'
 
 class SummaryTimeline extends React.Component {
   render () {
@@ -81,9 +81,18 @@ class SummaryTimeline extends React.Component {
 
     let { keyFunction, ...props } = this.props
 
+    let interval = Math.abs(data[1].date - data[0].date)
+
     return (
-      <TransitionGroup component='g'>
-        {this.props.showRange2Area &&
+      <BrushX
+        brushID={props.brushID}
+        width={props.xScale.range()[1]}
+        height={props.yScale.range()[0]}
+        interval={interval}
+        scale={props.xScale}
+        onBrush={props.onBrush}>
+        <TransitionGroup component='g'>
+          {this.props.showRange2Area &&
           <SVGComponent Component='path'
             key='extentRange2'
             fill={this.props.range2FillColor}
@@ -91,7 +100,7 @@ class SummaryTimeline extends React.Component {
             onUpdate={pathTransition}
           />
         }
-        {this.props.showRange1Area &&
+          {this.props.showRange1Area &&
           <SVGComponent Component='path'
             key='extentRange1'
             fill={this.props.range1FillColor}
@@ -99,18 +108,18 @@ class SummaryTimeline extends React.Component {
             onUpdate={pathTransition}
           />
         }
-        {this.props.data.map((d, i) => {
-          let opacityValue = 1.0
-          if (props.useOpacityScale && d.opacityValue !== undefined) {
-            opacityValue = props.opacityScale(d.opacityValue)
-          }
-          return (
-            <SVGComponent Component='circle' key={keyFunction(d, i)}
-              data={d}
-              index={i}
-              onUpdate={{
-                func: (transition, props) => {
-                  transition
+          {this.props.data.map((d, i) => {
+            let opacityValue = 1.0
+            if (props.useOpacityScale && d.opacityValue !== undefined) {
+              opacityValue = props.opacityScale(d.opacityValue)
+            }
+            return (
+              <SVGComponent Component='circle' key={keyFunction(d, i)}
+                data={d}
+                index={i}
+                onUpdate={{
+                  func: (transition, props) => {
+                    transition
                     .delay(0)
                     .duration(500)
                     .ease(setEase('linear'))
@@ -118,18 +127,19 @@ class SummaryTimeline extends React.Component {
                     .attr('cx', props.cx)
                     .attr('cy', props.cy)
                     .style('fill-opacity', props.fillOpacity)
-                  return transition
-                }
-              }}
-              r={props.meanCircleRadius}
-              cx={props.xScale(d.date)}
-              cy={props.yScale(d.avg)}
-              fillOpacity={opacityValue}
-              fill={this.props.meanFillColor}
-              stroke='none' />
-          )
-        })}
-      </TransitionGroup>
+                    return transition
+                  }
+                }}
+                r={props.meanCircleRadius}
+                cx={props.xScale(d.date)}
+                cy={props.yScale(d.avg)}
+                fillOpacity={opacityValue}
+                fill={this.props.meanFillColor}
+                stroke='none' />
+            )
+          })}
+        </TransitionGroup>
+      </BrushX>
     )
   }
 }
@@ -153,7 +163,9 @@ SummaryTimeline.defaultProps = {
   meanCircleRadius: 1.0,
   useOpacityScale: true,
   showRange1Area: true,
-  showRange2Area: true
+  showRange2Area: true,
+  brushID: 'default',
+  onBrush: () => {}
 }
 
 SummaryTimeline.propTypes = {
@@ -173,7 +185,10 @@ SummaryTimeline.propTypes = {
   keyFunction: PropTypes.func,
   opacityScale: PropTypes.any,
   xScale: PropTypes.any,
-  yScale: PropTypes.any
+  yScale: PropTypes.any,
+  brushed: PropTypes.bool,
+  brushID: PropTypes.string,
+  onBrush: PropTypes.func
 }
 
 export default SummaryTimeline
