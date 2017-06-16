@@ -182,7 +182,7 @@ class HorizonGraph extends React.Component {
             fill={this.props.bgColor}
             key='horizonBackground'
             onUpdate={boxTransition}
-            />
+          />
           {
             levels.map((d) => {
               return (

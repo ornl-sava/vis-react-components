@@ -3,7 +3,7 @@ import { format } from 'd3'
 
 import { CircumshakerChart } from '../src'
 
-const data1 = {
+const data = [{
   'key': 2085877883,
   'key_as_string': '124.83.248.123',
   'doc_count': 5,
@@ -116,10 +116,8 @@ const data1 = {
       'doc_count': 1,
       'children': []
     }
-  ]
-}
-
-const data2 = {
+  ]},
+{
   'key': 2085877883,
   'key_as_string': '124.83.248.123',
   'doc_count': 5,
@@ -162,7 +160,7 @@ const data2 = {
       ]
     }
   ]
-}
+}]
 
 const toolTipFunction = (d) => {
   var toolTip =
@@ -171,49 +169,34 @@ const toolTipFunction = (d) => {
   return toolTip
 }
 
-const chartProps = {
-  keyAccessor: 'key_as_string',
-  valueAccessor: 'doc_count',
-  childAccessor: 'children',
-  tipFunction: toolTipFunction,
-  height: 800
-}
-
 class CircumshakerExample extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
-      swapData: data1
+      swapDataIndex: 0
     }
   }
   componentDidMount () {
-    this.swapData = () => {
-      setTimeout(() => {
-        if (this.swap !== null) {
-          this.setState({
-            swapData: (this.swap)
-              ? data2
-              : data1
-          }, () => {
-            if (this.swap !== null) {
-              this.swap = !this.swap
-              this.swapData()
-            }
-          })
-        }
-      }, 2500)
-    }
-    this.swap = true
-    this.swapData()
+    this.swapData = setInterval(() => {
+      let nextIndex = this.state.swapDataIndex === 0 ? 1 : 0
+      this.setState({
+        swapDataIndex: nextIndex
+      })
+    }, 2500)
   }
 
   componentWillUnmount () {
-    this.swap = null
+    clearInterval(this.swapData)
   }
 
   render () {
     return (
-      <CircumshakerChart {...chartProps} data={this.state.swapData} />
+      <CircumshakerChart
+        keyAccessor='key_as_string'
+        valueAccessor='doc_count'
+        tipFunction={toolTipFunction}
+        height={800}
+        data={data[this.state.swapDataIndex]} />
     )
   }
 }

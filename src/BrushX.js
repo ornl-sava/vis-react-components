@@ -63,7 +63,7 @@ class BrushX extends React.Component {
     let domain = this.calculateSelection(d3Event.selection.map(this.props.scale.invert))
     let thisNode = findDOMNode(this)
     select(thisNode)
-        .call(this.brush.move, domain.map(this.props.scale))
+      .call(this.brush.move, domain.map(this.props.scale))
     this.brushSelection = domain
   }
   calculateSelection (domain) {
@@ -108,7 +108,6 @@ BrushX.propTypes = {
   height: PropTypes.number.isRequired,
   interval: PropTypes.number.isRequired,
   scale: PropTypes.func.isRequired,
-  showHandles: PropTypes.bool.isRequired,
   onBrush: PropTypes.func
 }
 

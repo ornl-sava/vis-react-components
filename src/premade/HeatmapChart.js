@@ -74,7 +74,7 @@ class HeatmapChart extends React.Component {
         // Nth bin has a start time of it's key; so it's 'end time'
         // must be taken into consideration
         // let offset = props.data[1][props.yAccessor.key] -
-          // props.data[0][props.yAccessor.key]
+        // props.data[0][props.yAccessor.key]
         if (this.yScale.type === 'band') {
           yDomain = props.data.map((d) => d[props.yAccessor.key])
         } else {

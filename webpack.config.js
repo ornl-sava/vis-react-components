@@ -5,7 +5,7 @@ const HtmlPlugin = require('html-webpack-plugin')
 const merge = require('webpack-merge')
 
 const PATHS = {
-  lib: path.join(__dirname, 'src'),
+  src: path.join(__dirname, 'src'),
   example: path.join(__dirname, 'examples')
 }
 const EXTERNALS = {
@@ -20,9 +20,7 @@ const EXTERNALS = {
     commonjs: 'react-dom',
     commonjs2: 'react-dom',
     amd: 'react-dom'
-  },
-  d3: 'd3',
-  'd3-tip': 'd3-tip'
+  }
 }
 
 // `npm run build` to build dist or `npm start` to run dev server.
@@ -32,7 +30,6 @@ var env = process.env.NODE_ENV || 'development'
 var isDev = env === 'development'
 // Common to both starting dev server and building for production.
 const common = {
-  debug: isDev,
   devtool: isDev ? 'eval' : false,
   plugins: [
     new webpack.DefinePlugin({
@@ -44,45 +41,54 @@ const common = {
         BABEL_ENV: JSON.stringify(env)
       }
     }),
-    new webpack.NoErrorsPlugin()
+    new webpack.NoEmitOnErrorsPlugin()
   ],
   module: {
-    preLoaders: [
+    rules: [
       {
         test: /\.jsx?$/,
-        loader: 'eslint',
+        enforce: 'pre',
+        loader: 'eslint-loader',
         include: [
-          PATHS.example,
-          PATHS.lib
+          PATHS.src,
+          PATHS.example
         ]
-      }
-    ],
-    loaders: [
+      },
       {
         test: /\.css$/,
-        loader: 'style!css'
+        exclude: /node_modules/,
+        use: [
+          'style-loader',
+          // Using source maps breaks urls in the CSS loader
+          // https://github.com/webpack/css-loader/issues/232
+          // This comment solves it, but breaks testing from a local network
+          // https://github.com/webpack/css-loader/issues/232#issuecomment-240449998
+          // 'css-loader?sourceMap',
+          'css-loader'
+        ]
       },
       {
         test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-        loader: 'url?limit=10000&mimetype=application/font-woff'
+        use: [
+          {
+            loader: 'url-loader',
+            options: {
+              limit: 10000,
+              mimetype: 'application/font-woff'
+            }
+          }
+        ]
       },
       {
         test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-        loader: 'file'
+        loader: 'file-loader'
       },
       {
-        test: /\.json$/,
-        loader: 'json'
-      },
-      {
-        test: /\.js$/,
+        test: /\.(js|jsx)$/,
         exclude: /node_modules/,
-        loader: 'babel-loader'
-      },
-      {
-        test: /\.jsx?$/,
-        loader: 'babel-loader',
-        exclude: /node_modules/
+        use: [
+          'babel-loader'
+        ]
       }
     ]
   }
@@ -101,7 +107,6 @@ if (TARGET === 'start' || !TARGET) {
       hot: true,
       compress: true,
       inline: true,
-      progress: true,
       stats: 'errors-only',
       host: process.env.HOST || '0.0.0.0',
       port: process.env.PORT || 8080
@@ -118,18 +123,16 @@ if (TARGET === 'start' || !TARGET) {
 } else if (TARGET === 'buildDist' || TARGET === 'build') {
   module.exports = merge(common, {
     entry: {
-      'vis.min': PATHS.lib
+      'vis.min': PATHS.src
     },
     output: {
-      libary: 'ornl-sava-vis',
-      path: 'dist',
+      library: 'ornl-sava-vis',
+      path: path.join(__dirname, '/dist'),
       libraryTarget: 'umd',
       filename: '[name].js',
       publicPath: '/'
     },
     plugins: [
-      new webpack.optimize.DedupePlugin(),
-      new webpack.optimize.OccurenceOrderPlugin(),
       new webpack.optimize.MinChunkSizePlugin({
         minChunkSize: 51200 // ~50kb
       }),

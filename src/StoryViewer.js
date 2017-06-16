@@ -373,24 +373,32 @@ StoryViewer.defaultProps = {
   onEnter: () => null,
   onLeave: () => null
 }
+// These properties need to be declared for the linter
+// Commenting out until we need to use it
+// StoryViewer.propTypes = {
+//   loading: PropTypes.bool,
+//   padding: PropTypes.number.isRequired,
+//   outerPadding: PropTypes.number.isRequired,
+//   data: PropTypes.any,
+//   status: PropTypes.string,
+//   chartHeight: PropTypes.number.isRequired,
+//   chartWidth: PropTypes.number.isRequired,
+//   barHeight: PropTypes.number.isRequired,
+//   maxTopics: PropTypes.number.isRequired,
+//   colorDomain: PropTypes.array,
+//   lineType: PropTypes.string.isRequired,
+//   storyData: PropTypes.any,
+//   hrTopics: PropTypes.any,
+//   eTopics: PropTypes.any,
+//   onEnter: PropTypes.func,
+//   onLeave: PropTypes.func
+// }
 
 StoryViewer.propTypes = {
-  loading: PropTypes.bool,
-  padding: PropTypes.number.isRequired,
-  outerPadding: PropTypes.number.isRequired,
-  data: PropTypes.any,
-  status: PropTypes.string,
   chartHeight: PropTypes.number.isRequired,
-  chartWidth: PropTypes.number.isRequired,
-  barHeight: PropTypes.number.isRequired,
-  maxTopics: PropTypes.number.isRequired,
-  colorDomain: PropTypes.array,
-  lineType: PropTypes.string.isRequired,
   storyData: PropTypes.any,
   hrTopics: PropTypes.any,
-  eTopics: PropTypes.any,
-  onEnter: PropTypes.func,
-  onLeave: PropTypes.func
+  eTopics: PropTypes.any
 }
 
 export default StoryViewer
