@@ -7,12 +7,12 @@ import TextBar from './TextBar'
 
 const lineMaker = (d) => {
   d3.line()
-  .x((d) => {
-    return d.x
-  })
-  .y((d) => {
-    return d.y
-  })
+    .x((d) => {
+      return d.x
+    })
+    .y((d) => {
+      return d.y
+    })
 }
 
 const diagMaker = (d) => {
@@ -302,26 +302,35 @@ TopicFlow.defaultProps = {
   onLeave: () => {},
   onBarClick: () => {}
 }
-
+// These Properties need to be declared for the linter
+// When we start using this we will revisit
+// TopicFlow.propTypes = {
+//   loading: PropTypes.bool,
+//   padding: PropTypes.number.isRequired,
+//   outerPadding: PropTypes.number.isRequired,
+//   data: PropTypes.any.isRequired,
+//   status: PropTypes.string,
+//   chartHeight: PropTypes.number.isRequired,
+//   chartWidth: PropTypes.number.isRequired,
+//   numTData: PropTypes.number.isRequired,
+//   barHeight: PropTypes.number.isRequired,
+//   maxTopics: PropTypes.number.isRequired,
+//   colorDomain: PropTypes.array,
+//   lineType: PropTypes.string.isRequired,
+//   clickArray: PropTypes.any.isRequired,
+//   onEnter: PropTypes.func,
+//   onLeave: PropTypes.func,
+//   onBarClick: PropTypes.func,
+//   timeBins: PropTypes.array,
+//   links: PropTypes.array
+// }
 TopicFlow.propTypes = {
-  loading: PropTypes.bool,
-  padding: PropTypes.number.isRequired,
-  outerPadding: PropTypes.number.isRequired,
-  data: PropTypes.any.isRequired,
-  status: PropTypes.string,
-  chartHeight: PropTypes.number.isRequired,
-  chartWidth: PropTypes.number.isRequired,
-  numTData: PropTypes.number.isRequired,
-  barHeight: PropTypes.number.isRequired,
-  maxTopics: PropTypes.number.isRequired,
-  colorDomain: PropTypes.array,
   lineType: PropTypes.string.isRequired,
   clickArray: PropTypes.any.isRequired,
   onEnter: PropTypes.func,
   onLeave: PropTypes.func,
   onBarClick: PropTypes.func,
-  timeBins: PropTypes.array,
-  links: PropTypes.array
+  timeBins: PropTypes.array
 }
 
 export default TopicFlow

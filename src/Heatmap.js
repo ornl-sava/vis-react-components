@@ -27,25 +27,24 @@ class Heatmap extends React.Component {
   }
 
   render () {
-    let props = this.props
     return (
-      <TransitionGroup component='g' className={props.className}>
-        {props.data.map((d, i) => {
-          let height = (i === 0) ? props.chartHeight : props.yScale(props.data[i - 1][props.yAccessor.key])
-          height -= props.yScale(d[props.yAccessor.key])
+      <TransitionGroup component='g' className={this.props.className}>
+        {this.props.data.map((d, i) => {
+          let height = (i === 0) ? this.props.chartHeight : this.props.yScale(this.props.data[i - 1][this.props.yAccessor.key])
+          height -= this.props.yScale(d[this.props.yAccessor.key])
           return d.bins.map((e, j) => {
-            let width = (j + 1 < d.bins.length) ? props.xScale(d.bins[j + 1][props.xAccessor.key]) : props.chartWidth
-            width -= props.xScale(e[props.xAccessor.key])
+            let width = (j + 1 < d.bins.length) ? this.props.xScale(d.bins[j + 1][this.props.xAccessor.key]) : this.props.chartWidth
+            width -= this.props.xScale(e[this.props.xAccessor.key])
             return (
               <SVGComponent Component='rect'
                 key={i + '-' + j}
                 data={e}
                 index={i + '-' + j}
-                x={props.xScale(e[props.xAccessor.key])}
-                y={props.yScale(d[props.yAccessor.key])}
+                x={this.props.xScale(e[this.props.xAccessor.key])}
+                y={this.props.yScale(d[this.props.yAccessor.key])}
                 width={width}
                 height={height}
-                fill={props.colorScale(e[props.xAccessor.value])}
+                fill={this.props.colorScale(e[this.props.xAccessor.value])}
                 onEnter={{
                   func: (transition, props) => {
                     transition
