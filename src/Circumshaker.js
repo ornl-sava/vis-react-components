@@ -199,16 +199,16 @@ class Circumshaker extends React.Component {
 
     // Find max node size if not predefined
     let maxSize = this.props.nodeMaxSize !== null
-    ? this.props.nodeMaxSize
-    : Math.min(this.graph.nodes.reduce((prev, curr) => {
-      let r = this.radius * curr.depth
-      let theta = curr.startAngle > curr.degree
-        ? curr.startAngle - curr.degree
-        : curr.degree - curr.startAngle
-      theta *= (Math.PI / 180)
-      let arcLength = r * theta
-      return prev < arcLength || arcLength === 0 ? prev : arcLength
-    }, Math.Infinity), this.radius / 2)
+      ? this.props.nodeMaxSize
+      : Math.min(this.graph.nodes.reduce((prev, curr) => {
+        let r = this.radius * curr.depth
+        let theta = curr.startAngle > curr.degree
+          ? curr.startAngle - curr.degree
+          : curr.degree - curr.startAngle
+        theta *= (Math.PI / 180)
+        let arcLength = r * theta
+        return prev < arcLength || arcLength === 0 ? prev : arcLength
+      }, Math.Infinity), this.radius / 2)
 
     // Create scale that determines node size
     this.nodeSizeScale

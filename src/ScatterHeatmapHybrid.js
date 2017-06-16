@@ -70,30 +70,30 @@ export class HybridScatterHeatmap extends React.Component {
 
     // Create title
     let header = chart.append('g')
-        .attr('class', 'header')
+      .attr('class', 'header')
 
     header.append('text')
-        .attr('class', 'label time')
-        .text('Displaying events from ' + timeFormat('%x %X')(new Date(this.endTime)) + ' to ' +
+      .attr('class', 'label time')
+      .text('Displaying events from ' + timeFormat('%x %X')(new Date(this.endTime)) + ' to ' +
           timeFormat('%x %X')(new Date(this.props.startTime)))
 
     header.append('text')
-        .attr('class', 'label reset')
-        .text('reset')
-        .on('click', () => {
-          // Set heatmap data to inactive
-          for (let i = 0; i < this.props.heatmapHorzDivisions; i++) {
-            for (let j = 0; j < this.props.heatmapVertDivisions; j++) {
-              heatmap[j][i].active = 0
-            }
+      .attr('class', 'label reset')
+      .text('reset')
+      .on('click', () => {
+        // Set heatmap data to inactive
+        for (let i = 0; i < this.props.heatmapHorzDivisions; i++) {
+          for (let j = 0; j < this.props.heatmapVertDivisions; j++) {
+            heatmap[j][i].active = 0
           }
-          // Remove expanded columns
-          this.setState({
-            expandedSectionNumbers: []
-          }, () => {
-            this.resizeChart()
-          })
+        }
+        // Remove expanded columns
+        this.setState({
+          expandedSectionNumbers: []
+        }, () => {
+          this.resizeChart()
         })
+      })
 
     // Create container for heatmap bins
     chart.append('g')
@@ -101,17 +101,17 @@ export class HybridScatterHeatmap extends React.Component {
 
     // Create x axis
     chart.append('g')
-        .attr('class', 'x axis')
+      .attr('class', 'x axis')
       .append('text')
-        .attr('class', 'label')
-        .text(this.props.xLabel)
+      .attr('class', 'label')
+      .text(this.props.xLabel)
 
     // Create y axis
     chart.append('g')
-        .attr('class', 'y axis')
+      .attr('class', 'y axis')
       .append('text')
-        .attr('class', 'label')
-        .text(this.props.yLabel)
+      .attr('class', 'label')
+      .text(this.props.yLabel)
 
     // Create data container for scatter points
     chart.append('g')
@@ -172,17 +172,17 @@ export class HybridScatterHeatmap extends React.Component {
     // Enter + Update
     points
       .enter().append('circle')
-        .attr('class', 'point')
-        .attr('r', 4)
-        .attr('cy', (d) => this.state.yScale(d[this.props.yAccessor]))
-        .attr('cx', (d) => this.state.xScale(d[this.props.xAccessor]))
-        .style('fill', (d, i) => this.state.scatterColorScale(d[this.props.yAccessor]))
-        .on('click.scatter.' + this.props.clsName, (d, i) => this.props.scatterOnClick(d, i))
-        .on('mouseover.scatter.' + this.props.clsName, (d, i) => this.props.scatterOnMouseOver(d, i))
-        .on('mouseout.scatter.' + this.props.clsName, (d, i) => this.props.scatterOnMouseOut(d, i))
+      .attr('class', 'point')
+      .attr('r', 4)
+      .attr('cy', (d) => this.state.yScale(d[this.props.yAccessor]))
+      .attr('cx', (d) => this.state.xScale(d[this.props.xAccessor]))
+      .style('fill', (d, i) => this.state.scatterColorScale(d[this.props.yAccessor]))
+      .on('click.scatter.' + this.props.clsName, (d, i) => this.props.scatterOnClick(d, i))
+      .on('mouseover.scatter.' + this.props.clsName, (d, i) => this.props.scatterOnMouseOver(d, i))
+      .on('mouseout.scatter.' + this.props.clsName, (d, i) => this.props.scatterOnMouseOut(d, i))
       .merge(points).transition().duration(100).ease(easeLinear)
-        .style('fill', (d, i) => this.state.scatterColorScale(d[this.props.yAccessor]))
-        .attr('cx', (d) => this.state.xScale(d[this.props.xAccessor]))
+      .style('fill', (d, i) => this.state.scatterColorScale(d[this.props.yAccessor]))
+      .attr('cx', (d) => this.state.xScale(d[this.props.xAccessor]))
   }
 
   updateHeatmap () {
@@ -235,13 +235,13 @@ export class HybridScatterHeatmap extends React.Component {
     // Enter + Update rows
     rows = rows
       .enter().append('g')
-        .attr('class', 'row')
+      .attr('class', 'row')
       .merge(rows)
-        .attr('transform', (d, i) => {
-          let x = 0
-          let y = this.state.yScale(d.key + d.step)
-          return 'translate(' + x + ',' + y + ')'
-        })
+      .attr('transform', (d, i) => {
+        let x = 0
+        let y = this.state.yScale(d.key + d.step)
+        return 'translate(' + x + ',' + y + ')'
+      })
 
     // Bind Bins
     var bins = rows.selectAll('.bin')
@@ -253,34 +253,34 @@ export class HybridScatterHeatmap extends React.Component {
     // Enter + Update Bins
     bins
       .enter().append('rect')
-        .attr('class', 'bin')
-        .on('click.heatmap.' + this.props.clsName, function (d, i) { // Need to have reference to dynamic scope for access to d3 element, so no es6
-          this.props.heatmapOnClick(d, i)
-          heatmap[d.rowIndex][i].active = 1 - heatmap[d.rowIndex][i].active
-          this.updateChart()
-        })
-        .on('mouseover.heatmap.' + this.props.clsName, (d, i) => this.props.heatmapOnMouseOver(d, i))
-        .on('mouseout.heatmap.' + this.props.clsName, (d, i) => this.props.heatmapOnMouseOut(d, i))
+      .attr('class', 'bin')
+      .on('click.heatmap.' + this.props.clsName, function (d, i) { // Need to have reference to dynamic scope for access to d3 element, so no es6
+        this.props.heatmapOnClick(d, i)
+        heatmap[d.rowIndex][i].active = 1 - heatmap[d.rowIndex][i].active
+        this.updateChart()
+      })
+      .on('mouseover.heatmap.' + this.props.clsName, (d, i) => this.props.heatmapOnMouseOver(d, i))
+      .on('mouseout.heatmap.' + this.props.clsName, (d, i) => this.props.heatmapOnMouseOut(d, i))
       .merge(bins)
-        .transition().duration(400).ease(easeLinear)
-        .attr('opacity', (d, i) => {
-          return heatmap[d.rowIndex][i].active ? 0 : 1
-        })
-        .attr('x', (d) => {
-          return this.state.xScale(this.endTime + d.key)
-        })
-        .attr('y', 0)
-        .attr('width', (d) => {
-          return binWidth(d)
-        })
-        .attr('height', (d) => {
-          return binHeight(d)
-        })
-        .attr('fill', (d) => {
-          let color = (d.count) ? this.state.heatmapColorScale(d.count)
-            : this.props.minHeatmapColor
-          return color
-        })
+      .transition().duration(400).ease(easeLinear)
+      .attr('opacity', (d, i) => {
+        return heatmap[d.rowIndex][i].active ? 0 : 1
+      })
+      .attr('x', (d) => {
+        return this.state.xScale(this.endTime + d.key)
+      })
+      .attr('y', 0)
+      .attr('width', (d) => {
+        return binWidth(d)
+      })
+      .attr('height', (d) => {
+        return binHeight(d)
+      })
+      .attr('fill', (d) => {
+        let color = (d.count) ? this.state.heatmapColorScale(d.count)
+          : this.props.minHeatmapColor
+        return color
+      })
 
     let heatmapHeightBand = (this.props.height - this.props.margin.top - this.props.margin.bottom) /
       this.props.heatmapVertDivisions
@@ -291,63 +291,63 @@ export class HybridScatterHeatmap extends React.Component {
 
     columnMarkers
       .enter().append('rect')
-        .attr('class', 'markerCol')
-        .on('click.markerCol', (d, i) => {
-          // Normal click: toggle expansion and activity
-          // Shift click: just toggle expansion
-          // Alt click: just toggle activity
-          if (event.altKey || !event.shiftKey) {
-            // Iterate over the columns corresponding bins and flip their activity
-            for (let row = 0; row < this.props.heatmapVertDivisions; row++) {
-              heatmap[row][i].active = 1 - heatmap[row][i].active
-            }
-            this.updateChart()
-          }
-          if (event.shiftKey || !event.altKey) {
-            let index = this.state.expandedSectionNumbers.indexOf(i)
-            let toExpand = null
-            if (index > -1) {
-              toExpand = this.state.expandedSectionNumbers
-              toExpand.splice(index, 1)
-            } else {
-              let chartWidth = root.offsetWidth - this.props.margin.left - this.props.margin.right
-              let originalBlockSize = chartWidth * (1 / this.props.heatmapHorzDivisions)
-              let expandedBlockSize = originalBlockSize * this.state.rangeExpansionFactor
-              let pending = (this.state.expandedSectionNumbers.length + 1) * expandedBlockSize
-              if (pending >= chartWidth || this.state.expandedSectionNumbers.length + 1 === this.props.heatmapHorzDivisions) {
-                toExpand = this.state.expandedSectionNumbers
-              } else {
-                toExpand = this.state.expandedSectionNumbers
-                  .concat(i)
-                  .sort((a, b) => {
-                    return a - b
-                  })
-              }
-            }
-            this.setState({
-              expandedSectionNumbers: toExpand
-            }, () => {
-              this.resizeChart()
-            })
-          }
-        })
-      .merge(columnMarkers).transition().duration(400).ease(easeLinear)
-        .attr('x', (d, i) => {
-          return this.state.xScale(this.endTime + d.key)
-        })
-        .attr('y', (d, i) => {
-          return -(heatmapHeightBand / 4) - 3
-        })
-        .attr('fill', (d, i) => {
-          let count = 0
+      .attr('class', 'markerCol')
+      .on('click.markerCol', (d, i) => {
+        // Normal click: toggle expansion and activity
+        // Shift click: just toggle expansion
+        // Alt click: just toggle activity
+        if (event.altKey || !event.shiftKey) {
+          // Iterate over the columns corresponding bins and flip their activity
           for (let row = 0; row < this.props.heatmapVertDivisions; row++) {
-            count += heatmap[row][i].count
+            heatmap[row][i].active = 1 - heatmap[row][i].active
           }
-          let color = this.state.heatmapColorScale(count)
-          return color
-        })
-        .attr('width', (d) => binWidth(d))
-        .attr('height', () => heatmapHeightBand / 4)
+          this.updateChart()
+        }
+        if (event.shiftKey || !event.altKey) {
+          let index = this.state.expandedSectionNumbers.indexOf(i)
+          let toExpand = null
+          if (index > -1) {
+            toExpand = this.state.expandedSectionNumbers
+            toExpand.splice(index, 1)
+          } else {
+            let chartWidth = root.offsetWidth - this.props.margin.left - this.props.margin.right
+            let originalBlockSize = chartWidth * (1 / this.props.heatmapHorzDivisions)
+            let expandedBlockSize = originalBlockSize * this.state.rangeExpansionFactor
+            let pending = (this.state.expandedSectionNumbers.length + 1) * expandedBlockSize
+            if (pending >= chartWidth || this.state.expandedSectionNumbers.length + 1 === this.props.heatmapHorzDivisions) {
+              toExpand = this.state.expandedSectionNumbers
+            } else {
+              toExpand = this.state.expandedSectionNumbers
+                .concat(i)
+                .sort((a, b) => {
+                  return a - b
+                })
+            }
+          }
+          this.setState({
+            expandedSectionNumbers: toExpand
+          }, () => {
+            this.resizeChart()
+          })
+        }
+      })
+      .merge(columnMarkers).transition().duration(400).ease(easeLinear)
+      .attr('x', (d, i) => {
+        return this.state.xScale(this.endTime + d.key)
+      })
+      .attr('y', (d, i) => {
+        return -(heatmapHeightBand / 4) - 3
+      })
+      .attr('fill', (d, i) => {
+        let count = 0
+        for (let row = 0; row < this.props.heatmapVertDivisions; row++) {
+          count += heatmap[row][i].count
+        }
+        let color = this.state.heatmapColorScale(count)
+        return color
+      })
+      .attr('width', (d) => binWidth(d))
+      .attr('height', () => heatmapHeightBand / 4)
   }
 
   updateScales () {
@@ -412,7 +412,7 @@ export class HybridScatterHeatmap extends React.Component {
     let chart = svg.select('.chart')
 
     chart.select('.header .time')
-    .text('Displaying events from ' + timeFormat('%x %X')(new Date(this.endTime)) + ' to ' +
+      .text('Displaying events from ' + timeFormat('%x %X')(new Date(this.endTime)) + ' to ' +
       timeFormat('%x %X')(new Date(this.props.startTime)))
 
     chart.select('.x.axis')
@@ -458,9 +458,9 @@ export class HybridScatterHeatmap extends React.Component {
 
     chart
       .select('.header .time')
-        .attr('y', -this.props.margin.top + 1)
-        .attr('dy', '0.71em')
-        .style('text-anchor', 'start')
+      .attr('y', -this.props.margin.top + 1)
+      .attr('dy', '0.71em')
+      .style('text-anchor', 'start')
 
     chart.select('.header .reset')
       .attr('x', chartWidth)
@@ -469,18 +469,18 @@ export class HybridScatterHeatmap extends React.Component {
       .style('text-anchor', 'end')
 
     chart.select('.x.axis')
-        .attr('transform', 'translate(0,' + chartHeight + ')')
-        .call(axisBottom().scale(this.state.xScale))
+      .attr('transform', 'translate(0,' + chartHeight + ')')
+      .call(axisBottom().scale(this.state.xScale))
       .select('.label')
-        .attr('x', chartWidth)
-        .attr('y', -6)
+      .attr('x', chartWidth)
+      .attr('y', -6)
 
     chart.select('.y.axis')
-        .call(axisLeft().scale(this.state.yScale))
+      .call(axisLeft().scale(this.state.yScale))
       .select('.label')
-        .attr('transform', 'rotate(-90)')
-        .attr('y', 6)
-        .attr('dy', '.35em')
+      .attr('transform', 'rotate(-90)')
+      .attr('y', 6)
+      .attr('dy', '.35em')
 
     svg
       .attr('width', chartWidth + this.props.margin.left + this.props.margin.right)

@@ -169,13 +169,13 @@ class ForceDirectedGraph extends React.Component {
       .force('center', d3.forceCenter(props.chartWidth / 2, props.chartHeight / 2))
 
     this.simulation
-        .nodes(this.nodes)
-        .on('tick', (d, i) => {
-          this.simUpdate(d, i)
-        })
+      .nodes(this.nodes)
+      .on('tick', (d, i) => {
+        this.simUpdate(d, i)
+      })
 
     this.simulation.force('link')
-        .links(this.links)
+      .links(this.links)
   }
   simUpdate (d, i) {
     this.setState({nodes: this.nodes, links: this.links})

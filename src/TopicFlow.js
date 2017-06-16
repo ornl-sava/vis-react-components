@@ -7,12 +7,12 @@ import TextBar from './TextBar'
 
 const lineMaker = (d) => {
   d3.line()
-  .x((d) => {
-    return d.x
-  })
-  .y((d) => {
-    return d.y
-  })
+    .x((d) => {
+      return d.x
+    })
+    .y((d) => {
+      return d.y
+    })
 }
 
 const diagMaker = (d) => {

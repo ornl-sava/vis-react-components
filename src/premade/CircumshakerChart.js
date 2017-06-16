@@ -51,7 +51,7 @@ class CircumshakerChart extends React.Component {
         margin={this.props.margin}
         width={this.props.width}
         resizeHandler={this.props.resizeHandler}
-        >
+      >
         <Circumshaker
           chartHeight={this.props.height}
           chartWidth={this.props.width}
