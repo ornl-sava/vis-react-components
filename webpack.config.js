@@ -126,8 +126,8 @@ if (TARGET === 'start' || !TARGET) {
       'vis.min': PATHS.src
     },
     output: {
-      libary: 'ornl-sava-vis',
-      path: 'dist',
+      library: 'ornl-sava-vis',
+      path: path.join(__dirname, '/dist'),
       libraryTarget: 'umd',
       filename: '[name].js',
       publicPath: '/'
