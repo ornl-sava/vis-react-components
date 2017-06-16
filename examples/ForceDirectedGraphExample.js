@@ -198,22 +198,22 @@ class TopicsContainer extends React.Component {
   }
 
   forwardClick () {
-    console.log('fo', this.state)
+    // console.log('fo', this.state)
     let num = this.nData + 1
     if (num >= storyData.length + 1) {
       num = 1
     }
-    console.log('FDGE-fClick', num)
+    // console.log('FDGE-fClick', num)
     this.nData = num
     this.setState({ chartData: this.getData(num) })
   }
   backClick () {
-    console.log('ba', this.state)
+    // console.log('ba', this.state)
     let num = this.nData - 1
     if (num < 1) {
       num = (storyData.length + 1) - 1
     }
-    console.log('FDGE-bClick', num)
+    // console.log('FDGE-bClick', num)
     this.nData = num
     this.setState({ chartData: this.getData(num) })
   }
@@ -286,7 +286,7 @@ class TopicsContainer extends React.Component {
       timeMax: 15 * 1000
       // tickMax: 150
     }
-    console.log('FDGE-nodes', nodes)
+    // console.log('FDGE-nodes', nodes)
     return chartProps
   }
   getText () {

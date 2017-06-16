@@ -303,7 +303,7 @@ class Circumshaker extends React.Component {
         <TransitionGroup component='g'>
           {this.graph.nodes.map((d, i) => {
             return (
-              <SVGComponent ref={'node-' + i}
+              <SVGComponent
                 key={d.key.replace(/\W/g, '')}
                 className='node'
                 Component='circle'

@@ -98,14 +98,14 @@ class ForceDirectedGraph extends React.Component {
 
   onDClick (event) {
     if (this.simOn) {
-      console.log('FDG-onDC-simOn')
+      // console.log('FDG-onDC-simOn')
       this.simOn = false
       // both don't need to be on... play with alpha
       this.setSim(this.props)
       this.simulation.restart()
       this.isDrag = false
     } else {
-      console.log('FDG-onDC-simOff', this.links)
+      // console.log('FDG-onDC-simOff', this.links)
       this.simOn = true
       this.isDrag = false
       this.setState({nodes: this.nodes, links: this.links})
@@ -136,7 +136,7 @@ class ForceDirectedGraph extends React.Component {
   }
 
   onDragStart (event) {
-    console.log('FFG-oDStart-HERE')
+    // console.log('FFG-oDStart-HERE')
     this.isDrag = true
     this.simulation.stop()
 
@@ -276,7 +276,7 @@ class ForceDirectedGraph extends React.Component {
   falseStart (props) {
     let links = []
     let nodes = []
-    console.log('FDG-fS-', props.adjacencyList)
+    // console.log('FDG-fS-', props.adjacencyList)
     props.nodes.map((d, i) => {
       if (d.active || d.active == null) {
         d.x = Math.random() * this.xScale.bandwidth() + this.xScale(d.hour)

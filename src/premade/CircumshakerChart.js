@@ -45,7 +45,6 @@ class CircumshakerChart extends React.Component {
   render () {
     return (
       <Chart
-        ref='chart'
         header={this.props.header}
         height={this.props.height}
         margin={this.props.margin}
