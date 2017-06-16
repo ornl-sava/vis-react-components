@@ -2,7 +2,7 @@ import React from 'react'
 // import { format } from 'd3'
 import * as d3 from 'd3'
 import Chart from '../src/Chart'
-import { Link } from 'react-router'
+import { Link } from 'react-router-dom'
 
 import ForceDirectedGraph from '../src/ForceDirectedGraph.js'
 

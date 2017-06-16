@@ -1,22 +1,22 @@
 import React from 'react'
-import { Link } from 'react-router'
+import { NavLink } from 'react-router-dom'
 
 class Nav extends React.Component {
   render () {
     return (
       <nav role='navigation'>
         <ul>
-          <li><Link to='/histogram' activeClassName='active'>Histogram</Link></li>
-          <li><Link to='/heatmap' activeClassName='active'>Heatmap</Link></li>
-          <li><Link to='/scatterplot' activeClassName='active'>Scatterplot</Link></li>
-          <li><Link to='/choropleth' activeClassName='active'>Choropleth Map</Link></li>
-          <li><Link to='/scatterHeatmap' activeClassName='active'>Scatter Heatmap Hybrid</Link></li>
-          <li><Link to='/circumshaker' activeClassName='active'>Circumshaker</Link></li>
-          <li><Link to='/topics' activeClassName='active'>Topics</Link></li>
-          <li><Link to='/forceDirected' activeClassName='active'>Force-Directed</Link></li>
-          <li><Link to='/treemap' activeClassName='active'>Treemap</Link></li>
-          <li><Link to='/horizonGraph' activeClassName='active'>Horizon Graph</Link></li>
-          <li><Link to='/summaryTimeline' activeClassName='active'>Summary Timeline</Link></li>
+          <li><NavLink to='/histogram' activeClassName='active'>Histogram</NavLink></li>
+          <li><NavLink to='/heatmap' activeClassName='active'>Heatmap</NavLink></li>
+          <li><NavLink to='/scatterplot' activeClassName='active'>Scatterplot</NavLink></li>
+          <li><NavLink to='/choropleth' activeClassName='active'>Choropleth Map</NavLink></li>
+          <li><NavLink to='/scatterHeatmap' activeClassName='active'>Scatter Heatmap Hybrid</NavLink></li>
+          <li><NavLink to='/circumshaker' activeClassName='active'>Circumshaker</NavLink></li>
+          <li><NavLink to='/topics' activeClassName='active'>Topics</NavLink></li>
+          <li><NavLink to='/forceDirected' activeClassName='active'>Force-Directed</NavLink></li>
+          <li><NavLink to='/treemap' activeClassName='active'>Treemap</NavLink></li>
+          <li><NavLink to='/horizonGraph' activeClassName='active'>Horizon Graph</NavLink></li>
+          <li><NavLink to='/summaryTimeline' activeClassName='active'>Summary Timeline</NavLink></li>
         </ul>
       </nav>
     )
