@@ -94,6 +94,7 @@ class SummaryTimeline extends React.Component {
     return (
       <BrushX
         brushID={props.brushID}
+        hideBrushSelection={false}
         width={props.xScale.range()[1]}
         height={props.yScale.range()[0]}
         interval={interval}
