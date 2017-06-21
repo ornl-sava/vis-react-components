@@ -12,10 +12,10 @@ const mouseEventPollyFill = (event) => {
   } else {
     newEvent = document.createEvent('MouseEvent')
     newEvent.initMouseEvent('mousedown', true, true, window, event.detail,
-     event.screenX, event.screenY,
-     event.clientX, event.clientY,
-     event.ctrlKey, event.altKey, event.shiftKey, event.metaKey,
-     event.button, event.relatedTarget
+      event.screenX, event.screenY,
+      event.clientX, event.clientY,
+      event.ctrlKey, event.altKey, event.shiftKey, event.metaKey,
+      event.button, event.relatedTarget
     )
   }
   return (newEvent)
@@ -97,7 +97,7 @@ class Bar extends React.Component {
         onMouseEnter={this.onMouseEnter}
         onMouseLeave={this.onMouseLeave}
         style={style}
-     />)
+      />)
   }
 }
 

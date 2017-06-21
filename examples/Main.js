@@ -37,6 +37,5 @@ class Main extends React.Component {
       </Switch>
     )
   }
-
 }
 export default Main

@@ -26,7 +26,6 @@ const chartCommon = {
 }
 
 class TreemapExample extends React.Component {
-
   constructor (props) {
     super()
     this.data = treemapData
@@ -77,4 +76,3 @@ class TreemapExample extends React.Component {
 }
 
 export default TreemapExample
-

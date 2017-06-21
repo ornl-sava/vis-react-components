@@ -71,7 +71,6 @@ ColumnMarkers.defaultProps = {
   onClick: () => {},
   className: 'columnMarker',
   margin: {top: 0, right: 0, bottom: 0, left: 0},
-  chartHeight: 0,
   chartWidth: 0
 }
 
@@ -83,7 +82,6 @@ ColumnMarkers.propTypes = {
   onClick: PropTypes.func,
   className: PropTypes.string,
   margin: PropTypes.object,
-  chartHeight: PropTypes.number,
   chartWidth: PropTypes.number
 }
 

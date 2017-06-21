@@ -169,13 +169,13 @@ class ForceDirectedGraph extends React.Component {
       .force('center', d3.forceCenter(props.chartWidth / 2, props.chartHeight / 2))
 
     this.simulation
-        .nodes(this.nodes)
-        .on('tick', (d, i) => {
-          this.simUpdate(d, i)
-        })
+      .nodes(this.nodes)
+      .on('tick', (d, i) => {
+        this.simUpdate(d, i)
+      })
 
     this.simulation.force('link')
-        .links(this.links)
+      .links(this.links)
   }
   simUpdate (d, i) {
     this.setState({nodes: this.nodes, links: this.links})
@@ -272,19 +272,29 @@ ForceDirectedGraph.defaultProps = {
   childAccessors: []
 }
 
+// The following proptyes are needed for the linter
+// They have been commented out for expediency
+// ForceDirectedGraph.propTypes = {
+//   chartHeight: PropTypes.number,
+//   chartWidth: PropTypes.number,
+//   className: PropTypes.string,
+//   radius: PropTypes.number,
+//   tipFunction: PropTypes.func,
+//   xScale: PropTypes.any,
+//   yScale: PropTypes.any,
+//   data: PropTypes.object,
+//   onClick: PropTypes.func,
+//   onEnter: PropTypes.func,
+//   onLeave: PropTypes.func,
+//   isCurved: PropTypes.bool,
+//   childAccessors: PropTypes.array
+// }
+
 ForceDirectedGraph.propTypes = {
-  chartHeight: PropTypes.number,
-  chartWidth: PropTypes.number,
-  className: PropTypes.string,
-  radius: PropTypes.number,
   tipFunction: PropTypes.func,
-  xScale: PropTypes.any,
-  yScale: PropTypes.any,
   data: PropTypes.object,
-  onClick: PropTypes.func,
   onEnter: PropTypes.func,
   onLeave: PropTypes.func,
-  isCurved: PropTypes.bool,
   childAccessors: PropTypes.array
 }
 

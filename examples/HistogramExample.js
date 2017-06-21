@@ -244,7 +244,7 @@ class HistogramExample extends React.Component {
             }}
             data={stackedHistogramData} tipFunction={toolTipFunction}
             type='stacked' addOverlay
-            />
+          />
         </div>
         <div>
           <HistogramChart header={this.header3} xScaleType='time'

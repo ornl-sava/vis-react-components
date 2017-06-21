@@ -50,14 +50,15 @@ class SVGComponent extends React.Component {
     this.onMouseOver = this.onMouseOver.bind(this)
   }
 
-  shouldComponentUpdate () {
+  shouldComponentUpdate (nextProps, nextState) {
     // End transition early
     // Fire animation callback
+
     if (this.animating) {
       select(this.refs.node)
         .transition()
         .duration(0)
-      this.callback()
+      // this.callback()
       this.animating = false
     }
 
@@ -100,7 +101,8 @@ class SVGComponent extends React.Component {
       .on('end', () => {
         if (!this.unmounting) {
           this.simpleState = Object.assign(spreadExclude(props, SVGComponentPropTypes))
-          callback()
+          // console.log(callback)
+          // callback()
         }
       })
   }
