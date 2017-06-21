@@ -58,7 +58,7 @@ class SVGComponent extends React.Component {
       select(this.refs.node)
         .transition()
         .duration(0)
-      // this.callback()
+      this.callback()
       this.animating = false
     }
 
@@ -102,7 +102,7 @@ class SVGComponent extends React.Component {
         if (!this.unmounting) {
           this.simpleState = Object.assign(spreadExclude(props, SVGComponentPropTypes))
           // console.log(callback)
-          // callback()
+          callback()
         }
       })
   }
