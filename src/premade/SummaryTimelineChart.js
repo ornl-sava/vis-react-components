@@ -19,6 +19,7 @@ class SummaryTimelineChart extends React.Component {
     this.yDomain = this.props.yDomain
 
     this.onClick = this.onClick.bind(this)
+    this.onBrush = this._onBrush.bind(this)
     this.onEnter = this.onEnter.bind(this)
     this.onLeave = this.onLeave.bind(this)
     this.onResize = this.onResize.bind(this)
@@ -65,7 +66,7 @@ class SummaryTimelineChart extends React.Component {
   }
 
   updateDomain (props, state) {
-    console.log('SummaryTimelineChart.updateDomain()')
+    // console.log('SummaryTimelineChart.updateDomain()')
     if (props.data.length > 0) {
       this.xDomain = extent(props.data, (d) => { return d.date })
 
@@ -73,7 +74,7 @@ class SummaryTimelineChart extends React.Component {
       let yMax = -Infinity
 
       if (props.showRange1Area && props.showRange2Area) {
-        console.log('Showing both ranges')
+        // console.log('Showing both ranges')
         yMin = min(props.data, (d) => {
           return Math.min(d.avg, Math.min(d.innerRangeMin, d.outerRangeMin))
         })
@@ -81,7 +82,7 @@ class SummaryTimelineChart extends React.Component {
           return Math.max(d.avg, Math.max(d.innerRangeMax, d.outerRangeMax))
         })
       } else if (props.showRange1Area && !props.showRange2Area) {
-        console.log('Showing only range 1 area')
+        // console.log('Showing only range 1 area')
         yMin = min(props.data, (d) => {
           return Math.min(d.avg, d.innerRangeMin)
         })
@@ -90,7 +91,7 @@ class SummaryTimelineChart extends React.Component {
           // return d.innerRangeMax
         })
       } else if (!props.showRange1Area && props.showRange2Area) {
-        console.log('Showing only range 2 area')
+        // console.log('Showing only range 2 area')
         yMin = min(props.data, (d) => {
           return Math.min(d.avg, d.outerRangeMin)
           // return d.outerRangeMin
@@ -100,7 +101,7 @@ class SummaryTimelineChart extends React.Component {
           // return d.outerRangeMax
         })
       } else {
-        console.log('Showing neither range, just avg points')
+        // console.log('Showing neither range, just avg points')
         yMin = min(props.data, (d) => {
           return d.avg
         })
@@ -137,6 +138,12 @@ class SummaryTimelineChart extends React.Component {
     }
   }
 
+  _onBrush (data) {
+    if (data && data.length === 2) {
+      this.props.onBrush(data)
+    }
+  }
+
   onClick (event, data) {
     this.props.onClick(event, data)
   }
@@ -165,7 +172,8 @@ class SummaryTimelineChart extends React.Component {
       <Chart ref='chart' {...spreadRelated(Chart, props)} resizeHandler={this.onResize}>
         <SummaryTimeline className='summaryTimeline' {...spreadRelated(SummaryTimeline, props)}
           opacityScale={this.opacityScale}
-          xScale={this.xScale} yScale={this.yScale} />
+          xScale={this.xScale} yScale={this.yScale}
+          onBrush={this.onBrush} />
         <Axis className='x axis' {...props.xAxis} scale={this.xScale} />
         <Axis className='y axis' {...props.yAxis} scale={this.yScale} />
       </Chart>
@@ -203,6 +211,7 @@ SummaryTimelineChart.defaultProps = {
 SummaryTimelineChart.propTypes = {
   ...SummaryTimeline.propTypes,
   ...Chart.propTypes,
+  onBrush: PropTypes.func,
   onClick: PropTypes.func,
   onEnter: PropTypes.func,
   onLeave: PropTypes.func,

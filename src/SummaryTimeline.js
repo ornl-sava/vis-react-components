@@ -8,6 +8,14 @@ import SVGComponent from './SVGComponent'
 import BrushX from './BrushX'
 
 class SummaryTimeline extends React.Component {
+  constructor (props) {
+    super(props)
+
+    if (props.brushed && props.brushID === 'default') {
+      console.warn('SummaryTimeline is set to be brushed but no brushID is provided! The brushID should be set to the data-name of the underlying class object')
+    }
+  }
+
   render () {
     let data = this.props.data
 
@@ -99,7 +107,7 @@ class SummaryTimeline extends React.Component {
             d={extentRangeArea}
             onUpdate={pathTransition}
           />
-        }
+          }
           {this.props.showRange1Area &&
           <SVGComponent Component='path'
             key='extentRange1'
@@ -107,7 +115,7 @@ class SummaryTimeline extends React.Component {
             d={stdevRangeArea}
             onUpdate={pathTransition}
           />
-        }
+          }
           {this.props.data.map((d, i) => {
             let opacityValue = 1.0
             if (props.useOpacityScale && d.opacityValue !== undefined) {
@@ -120,13 +128,13 @@ class SummaryTimeline extends React.Component {
                 onUpdate={{
                   func: (transition, props) => {
                     transition
-                    .delay(0)
-                    .duration(500)
-                    .ease(setEase('linear'))
-                    .attr('r', props.r)
-                    .attr('cx', props.cx)
-                    .attr('cy', props.cy)
-                    .style('fill-opacity', props.fillOpacity)
+                      .delay(0)
+                      .duration(500)
+                      .ease(setEase('linear'))
+                      .attr('r', props.r)
+                      .attr('cx', props.cx)
+                      .attr('cy', props.cy)
+                      .style('fill-opacity', props.fillOpacity)
                     return transition
                   }
                 }}
