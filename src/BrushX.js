@@ -12,17 +12,19 @@ class BrushX extends React.Component {
   componentDidMount () {
     this.initBrush()
   }
-  shouldComponentUpdate () {
-    if (this.brushPhase === 'brushed' || this.brushPhase === '') {
-      return true
-    }
-    return false
-  }
+  // shouldComponentUpdate () {
+  //   if (this.brushPhase === 'brushed' || this.brushPhase === '') {
+  //     return true
+  //   }
+  //   return false
+  // }
   componentDidUpdate (prevProps, prevState) {
     if (this.props.width !== prevProps.width || this.props.height !== prevProps.height) {
       this.initBrush()
     }
-    this.clearBrush()
+    if (this.props.hideBrushSelection) {
+      this.clearBrush()
+    }
   }
 
   initBrush () {
@@ -98,12 +100,14 @@ class BrushX extends React.Component {
 }
 
 BrushX.defaultProps = {
-  showHandles: false
+  showHandles: false,
+  hideBrushSelection: true
 }
 
 BrushX.propTypes = {
   brushID: PropTypes.string.isRequired,
   children: PropTypes.node,
+  hideBrushSelection: PropTypes.bool,
   width: PropTypes.number.isRequired,
   height: PropTypes.number.isRequired,
   interval: PropTypes.number.isRequired,
