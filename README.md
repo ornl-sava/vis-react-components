@@ -38,5 +38,5 @@ git push
 In the repository from which you are using `components/vis` run:
 
 ```
-npm update visualizations
+npm update vis
 ```
