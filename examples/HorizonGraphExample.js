@@ -24,7 +24,7 @@ class HorizonGraphExample extends React.Component {
       return ([
         <span className='options'>
           {this.settings !== null
-            ? <Settings settings={this.settings} />
+            ? <Settings icon='fa fa-cogs' settings={this.settings} />
             : undefined
           }
         </span>
