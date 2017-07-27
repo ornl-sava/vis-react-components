@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Children, cloneElement } from 'react'
 import PropTypes from 'prop-types'
 
 // TODO: Create other various input types to be used
@@ -101,15 +101,17 @@ class Settings extends React.Component {
         zIndex: 100
       }
     }
+    let iconJSX = this.props.iconFunction ? this.props.iconFunction() : <span />
 
     let iconProps = {
-      className: this.props.icon + ' settings-icon',
+      className: this.props.icon ? this.props.icon + ' settings-icon' : 'settings-icon',
       style: {
         zIndex: 103,
         top: 0
       },
       onClick: this.openMenu
     }
+    iconJSX = cloneElement(Children.only(iconJSX), {...iconProps})
 
     let menuProps = {
       className: 'settings-menu',
@@ -125,7 +127,7 @@ class Settings extends React.Component {
 
     return (
       <div {...containerProps}>
-        <span {...iconProps} />
+        {iconJSX}
         <div {...menuProps}>
           <div className='settings-title'>{settings.title}</div>
           {settings.options.map((d, i) => {
@@ -145,15 +147,15 @@ class Settings extends React.Component {
 Settings.defaultProps = {
   settings: {},
   chart: null,
-  width: 200,
-  icon: 'fa fa-cogs'
+  width: 200
 }
 
 Settings.propTypes = {
   settings: PropTypes.object,
   chart: PropTypes.object,
   width: PropTypes.number.isRequired,
-  icon: PropTypes.string
+  icon: PropTypes.string,
+  iconFunction: PropTypes.func
 }
 
 export default Settings

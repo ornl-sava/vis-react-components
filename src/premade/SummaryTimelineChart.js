@@ -13,11 +13,13 @@ class SummaryTimelineChart extends React.Component {
     super(props)
     this.xScale = setScale(props.xScaleType)
     this.yScale = setScale(props.yScaleType)
+    this.opacityScale = setScale('linear')
 
     this.xDomain = this.props.xDomain
     this.yDomain = this.props.yDomain
 
     this.onClick = this.onClick.bind(this)
+    this.onBrush = this._onBrush.bind(this)
     this.onEnter = this.onEnter.bind(this)
     this.onLeave = this.onLeave.bind(this)
     this.onResize = this.onResize.bind(this)
@@ -26,10 +28,12 @@ class SummaryTimelineChart extends React.Component {
     this.updateRange = this.updateRange.bind(this)
 
     this.updateDomain(props, this.state)
+    this.updateColorScales(props, this.state)
   }
 
   componentWillReceiveProps (nextProps) {
     this.updateDomain(nextProps, this.state)
+    this.updateColorScales(nextProps, this.state)
   }
 
   componentWillUnmount () {
@@ -38,11 +42,75 @@ class SummaryTimelineChart extends React.Component {
     }
   }
 
+  updateColorScales (props, state) {
+    // var opacityScale = d3.scaleLinear()
+    //   .domain([avgMin, avgMax])
+    //   .range([0.20, 0.90])
+    let opacityDomain = []
+    let opacityRange = []
+
+    if (props.data.length > 0) {
+      var domainMin = min(props.data, (d) => { return d.opacityValue })
+      var domainMax = max(props.data, (d) => { return d.opacityValue })
+      opacityDomain = [domainMin, domainMax]
+      opacityRange = [0.20, 0.90]
+    }
+
+    this.opacityScale
+      .domain(opacityDomain)
+      .range(opacityRange)
+
+    // console.log('SummaryTimelineChart.updateColorScales()')
+    // console.log('opacityDomain: ' + opacityDomain)
+    // console.log('opacityScale: ' + this.opacityScale)
+  }
+
   updateDomain (props, state) {
+    // console.log('SummaryTimelineChart.updateDomain()')
     if (props.data.length > 0) {
       this.xDomain = extent(props.data, (d) => { return d.date })
-      let yMin = min(props.data, (d) => { return d.min })
-      let yMax = max(props.data, (d) => { return d.max })
+
+      let yMin = Infinity
+      let yMax = -Infinity
+
+      if (props.showRange1Area && props.showRange2Area) {
+        // console.log('Showing both ranges')
+        yMin = min(props.data, (d) => {
+          return Math.min(d.avg, Math.min(d.innerRangeMin, d.outerRangeMin))
+        })
+        yMax = max(props.data, (d) => {
+          return Math.max(d.avg, Math.max(d.innerRangeMax, d.outerRangeMax))
+        })
+      } else if (props.showRange1Area && !props.showRange2Area) {
+        // console.log('Showing only range 1 area')
+        yMin = min(props.data, (d) => {
+          return Math.min(d.avg, d.innerRangeMin)
+        })
+        yMax = max(props.data, (d) => {
+          return Math.max(d.avg, d.innerRangeMax)
+          // return d.innerRangeMax
+        })
+      } else if (!props.showRange1Area && props.showRange2Area) {
+        // console.log('Showing only range 2 area')
+        yMin = min(props.data, (d) => {
+          return Math.min(d.avg, d.outerRangeMin)
+          // return d.outerRangeMin
+        })
+        yMax = max(props.data, (d) => {
+          return Math.max(d.avg, d.outerRangeMax)
+          // return d.outerRangeMax
+        })
+      } else {
+        // console.log('Showing neither range, just avg points')
+        yMin = min(props.data, (d) => {
+          return d.avg
+        })
+        yMax = max(props.data, (d) => {
+          return d.avg
+        })
+      }
+      // let yMin = min(props.data, (d) => { return Math.min(d.innerRangeMin, d.outerRangeMin) })
+      // let yMax = max(props.data, (d) => { return Math.max(d.innerRangeMax, d.outerRangeMax) })
       this.yDomain = [yMin, yMax]
 
       this.xScale.domain(this.xDomain)
@@ -67,6 +135,12 @@ class SummaryTimelineChart extends React.Component {
 
     if (props.xAxis.outerPadding && isOrdinalScale(this.xScale.type)) {
       this.xScale.paddingOuter(props.xAxis.outerPadding)
+    }
+  }
+
+  _onBrush (data) {
+    if (data && data.length === 2) {
+      this.props.onBrush(data)
     }
   }
 
@@ -96,7 +170,10 @@ class SummaryTimelineChart extends React.Component {
     let props = this.props
     return (
       <Chart ref='chart' {...spreadRelated(Chart, props)} resizeHandler={this.onResize}>
-        <SummaryTimeline className='summaryTimeline' {...spreadRelated(SummaryTimeline, props)} />
+        <SummaryTimeline className='summaryTimeline' {...spreadRelated(SummaryTimeline, props)}
+          opacityScale={this.opacityScale}
+          xScale={this.xScale} yScale={this.yScale}
+          onBrush={this.onBrush} />
         <Axis className='x axis' {...props.xAxis} scale={this.xScale} />
         <Axis className='y axis' {...props.yAxis} scale={this.yScale} />
       </Chart>
@@ -134,6 +211,7 @@ SummaryTimelineChart.defaultProps = {
 SummaryTimelineChart.propTypes = {
   ...SummaryTimeline.propTypes,
   ...Chart.propTypes,
+  onBrush: PropTypes.func,
   onClick: PropTypes.func,
   onEnter: PropTypes.func,
   onLeave: PropTypes.func,

@@ -163,21 +163,21 @@ Axis.propTypes = {
   margin: PropTypes.object,
   type: PropTypes.string.isRequired,
   animationDuration: PropTypes.number,
-  tickStyle: React.PropTypes.oneOfType([
-    React.PropTypes.func,
-    React.PropTypes.bool
+  tickStyle: PropTypes.oneOfType([
+    PropTypes.func,
+    PropTypes.bool
   ]),
-  tickValues: React.PropTypes.oneOfType([
-    React.PropTypes.array,
-    React.PropTypes.bool
+  tickValues: PropTypes.oneOfType([
+    PropTypes.array,
+    PropTypes.bool
   ]),
-  tickCount: React.PropTypes.oneOfType([
-    React.PropTypes.number,
-    React.PropTypes.bool
+  tickCount: PropTypes.oneOfType([
+    PropTypes.number,
+    PropTypes.bool
   ]),
-  tickFormat: React.PropTypes.oneOfType([
-    React.PropTypes.func,
-    React.PropTypes.bool
+  tickFormat: PropTypes.oneOfType([
+    PropTypes.func,
+    PropTypes.bool
   ]),
   label: PropTypes.string,
   scale: PropTypes.any,

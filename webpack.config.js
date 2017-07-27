@@ -3,7 +3,7 @@ const path = require('path')
 const webpack = require('webpack')
 const HtmlPlugin = require('html-webpack-plugin')
 const merge = require('webpack-merge')
-
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
 const PATHS = {
   src: path.join(__dirname, 'src'),
   example: path.join(__dirname, 'examples')
@@ -120,7 +120,21 @@ if (TARGET === 'start' || !TARGET) {
       new webpack.HotModuleReplacementPlugin()
     ]
   })
-} else if (TARGET === 'buildDist' || TARGET === 'build') {
+} else if (TARGET === 'buildDist' || TARGET === 'build' || TARGET === 'analyze') {
+  let plugins = [
+    new webpack.optimize.MinChunkSizePlugin({
+      minChunkSize: 51200 // ~50kb
+    }),
+    new webpack.optimize.UglifyJsPlugin({
+      mangle: true,
+      compress: {
+        warnings: false
+      }
+    })
+  ]
+  if (TARGET === 'analyze') {
+    plugins.push(new BundleAnalyzerPlugin())
+  }
   module.exports = merge(common, {
     entry: {
       'vis.min': PATHS.src
@@ -132,17 +146,7 @@ if (TARGET === 'start' || !TARGET) {
       filename: '[name].js',
       publicPath: '/'
     },
-    plugins: [
-      new webpack.optimize.MinChunkSizePlugin({
-        minChunkSize: 51200 // ~50kb
-      }),
-      new webpack.optimize.UglifyJsPlugin({
-        mangle: true,
-        compress: {
-          warnings: false
-        }
-      })
-    ],
+    plugins: plugins,
     externals: EXTERNALS
   })
 }
