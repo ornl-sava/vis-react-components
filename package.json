@@ -1,5 +1,5 @@
 {
-  "name": "vis",
+  "name": "vis-components",
   "version": "1.0.1",
   "description": "A set of React component for building visualizations.",
   "main": "lib/index.js",
