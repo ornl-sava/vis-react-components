@@ -1,6 +1,6 @@
 {
   "name": "vis-react-components",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "description": "A set of React component for building visualizations.",
   "main": "lib/index.js",
   "author": "Dave Richadson <richardsongd@ornl.gov>",
