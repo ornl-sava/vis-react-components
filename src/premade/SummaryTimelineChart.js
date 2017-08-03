@@ -43,9 +43,6 @@ class SummaryTimelineChart extends React.Component {
   }
 
   updateColorScales (props, state) {
-    // var opacityScale = d3.scaleLinear()
-    //   .domain([avgMin, avgMax])
-    //   .range([0.20, 0.90])
     let opacityDomain = []
     let opacityRange = []
 
@@ -59,10 +56,6 @@ class SummaryTimelineChart extends React.Component {
     this.opacityScale
       .domain(opacityDomain)
       .range(opacityRange)
-
-    // console.log('SummaryTimelineChart.updateColorScales()')
-    // console.log('opacityDomain: ' + opacityDomain)
-    // console.log('opacityScale: ' + this.opacityScale)
   }
 
   updateDomain (props, state) {
@@ -186,10 +179,6 @@ SummaryTimelineChart.defaultProps = {
   data: [],
   xDomain: [],
   yDomain: [],
-  // Spread chart default
-  ...Chart.defaultProps,
-  // Spread scatterplot default
-  ...SummaryTimeline.defaultProps,
   xAxis: {
     type: 'x',
     orient: 'bottom',
@@ -205,7 +194,11 @@ SummaryTimelineChart.defaultProps = {
     animationDuration: 500
   },
   xScaleType: 'time',
-  yScaleType: 'linear'
+  yScaleType: 'linear',
+  // Spread chart default
+  ...Chart.defaultProps,
+  // Spread scatterplot default
+  ...SummaryTimeline.defaultProps
 }
 
 SummaryTimelineChart.propTypes = {

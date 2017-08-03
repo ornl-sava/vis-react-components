@@ -36,13 +36,12 @@ const chartProps0 = {
       <span className='chart-title'>Summary Timeline Default Settings</span>
     ])
   }
-  // data: testData
 }
 
 const chartProps1 = {
   header: () => {
     return ([
-      <span className='chart-title'>Summary Timeline Variant 2</span>
+      <span className='chart-title'>Summary Timeline Variant 1</span>
     ])
   },
   // data: testData,
@@ -59,7 +58,7 @@ const chartProps1 = {
 const chartProps2 = {
   header: () => {
     return ([
-      <span className='chart-title'>Summary Timeline Variant 1</span>
+      <span className='chart-title'>Summary Timeline Variant 2</span>
     ])
   },
   // data: testData,
