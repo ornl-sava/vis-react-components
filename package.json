@@ -1,6 +1,6 @@
 {
   "name": "@ornl-sava/vis-react-components",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "A set of React component for building visualizations.",
   "repository": {
     "type": "git",
@@ -10,16 +10,23 @@
     "url": "https://github.com/ornl-sava/vis-react-components/issues"
   },
   "homepage": "https://github.com/ornl-sava/vis-react-components",
+  "unpkg": "dist/vis-react-components.min.js",
   "main": "lib/index.js",
   "author": "Dave Richadson <richardsongd@ornl.gov>",
   "contributors": [
     {
-      "name": "Andrew Pachuilo",
-      "email": "pachuiloar@ornl.gov"
+      "name": "Andrew Pachuilo"
     },
     {
       "name": "John Goodall",
       "email": "jgoodall@ornl.gov"
+    },
+    {
+      "name": "James Senter"
+    },
+    {
+      "name": "Chad Steed",
+      "email": "csteed@acm.org"
     }
   ],
   "dependencies": {
@@ -65,10 +72,11 @@
   },
   "scripts": {
     "start": "webpack-dev-server --progress --colors",
-    "analyze": "NODE_ENV=production webpack --progress --colors",
+    "prepublish": "npm run build",
     "buildLib": "rm -rf ./lib && BABEL_ENV=production ./node_modules/.bin/babel src/ --out-dir ./lib",
-    "buildDist": "rm -rf ./dist && NODE_ENV=production webpack --progress --colors",
-    "build": "npm run buildDist && npm run buildLib",
+    "build": "rm -rf ./dist && NODE_ENV=production webpack --progress --colors",
+    "publish": "npm publish --access=public",
+    "analyze": "NODE_ENV=production webpack --progress --colors",
     "lint": "eslint src --ext .js --ext .jsx --ignore-path .gitignore"
   }
 }
