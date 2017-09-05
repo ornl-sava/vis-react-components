@@ -6,6 +6,7 @@ import * as d3 from 'd3'
 
 import { setEase } from './util/d3'
 import SVGComponent from './SVGComponent'
+import BrushX from './BrushX'
 
 class HorizonGraph extends React.Component {
   constructor (props) {
@@ -163,7 +164,7 @@ class HorizonGraph extends React.Component {
       return transition
     }}
 
-    return (
+    let result =
       <TransitionGroup component='g'>
         <SVGComponent Component='svg'
           x={'0px'}
@@ -219,7 +220,24 @@ class HorizonGraph extends React.Component {
           }
         </SVGComponent>
       </TransitionGroup>
-    )
+
+    if (this.props.brushed && data.length > 1) {
+      let interval = Math.abs(xAccess(data[1]) - xAccess(data[0]))
+      return (
+        <BrushX
+          brushID={this.props.brushID}
+          hideBrushSelection
+          width={w}
+          height={h}
+          interval={interval}
+          scale={xScale}
+          onBrush={(values) => { console.log(values) }} >
+          {result}
+        </BrushX>
+      )
+    }
+
+    return result
   }
 }
 
@@ -231,7 +249,9 @@ HorizonGraph.defaultProps = {
   bgColor: 'white',
   xAccessor: (d, i) => { return i },
   yAccessor: (d) => { return d },
-  labelFormat: (d) => { return '' + d }
+  labelFormat: (d) => { return '' + d },
+  brushed: true,
+  brushID: 'default'
 }
 
 HorizonGraph.propTypes = {
@@ -250,7 +270,9 @@ HorizonGraph.propTypes = {
   domainHeight: PropTypes.number,
   selectedIndex: PropTypes.number,
   handleSelection: PropTypes.func,
-  labelFormat: PropTypes.func
+  labelFormat: PropTypes.func,
+  brushed: PropTypes.bool,
+  brushID: PropTypes.string
 }
 
 export default HorizonGraph
