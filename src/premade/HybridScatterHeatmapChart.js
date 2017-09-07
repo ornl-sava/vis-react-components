@@ -3,7 +3,6 @@ import PropTypes from 'prop-types'
 import { set, interpolateHcl } from 'd3'
 
 import { setScale } from '../util/d3'
-import { spreadRelated } from '../util/react'
 import Chart from '../Chart'
 import Axis from '../Axis'
 import Tooltip from '../Tooltip'
@@ -190,8 +189,8 @@ class HybridScatterHeatmapChart extends React.Component {
   }
 
   updateRange (props, state) {
-    let chartWidth = this.refs.chart.chartWidth
-    let chartHeight = this.refs.chart.chartHeight
+    let chartWidth = this.refs.chart.width
+    let chartHeight = this.refs.chart.height
     let horzLength = props.data[0].bins.length
 
     let originalBlockSize = chartWidth * (1 / horzLength)
@@ -247,7 +246,7 @@ class HybridScatterHeatmapChart extends React.Component {
         toExpand = this.state.expandedSectionNumbers
         toExpand.splice(i, 1)
       } else {
-        let chartWidth = this.refs.chart.chartWidth
+        let chartWidth = this.refs.chart.width
         let horzLength = this.props.data[0].bins.length
 
         let originalBlockSize = chartWidth * (1 / horzLength)

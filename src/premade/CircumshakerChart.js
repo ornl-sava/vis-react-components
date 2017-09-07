@@ -1,7 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
-// import { spreadRelated } from '../util/react'
 import Chart from '../Chart'
 import Tooltip from '../Tooltip'
 import Circumshaker from '../Circumshaker'

@@ -30,10 +30,10 @@ class Heatmap extends React.Component {
     return (
       <TransitionGroup component='g' className={this.props.className}>
         {this.props.data.map((d, i) => {
-          let height = (i === 0) ? this.props.chartHeight : this.props.yScale(this.props.data[i - 1][this.props.yAccessor.key])
+          let height = (i === 0) ? this.props.height : this.props.yScale(this.props.data[i - 1][this.props.yAccessor.key])
           height -= this.props.yScale(d[this.props.yAccessor.key])
           return d.bins.map((e, j) => {
-            let width = (j + 1 < d.bins.length) ? this.props.xScale(d.bins[j + 1][this.props.xAccessor.key]) : this.props.chartWidth
+            let width = (j + 1 < d.bins.length) ? this.props.xScale(d.bins[j + 1][this.props.xAccessor.key]) : this.props.width
             width -= this.props.xScale(e[this.props.xAccessor.key])
             return (
               <SVGComponent Component='rect'

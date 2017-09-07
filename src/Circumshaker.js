@@ -147,7 +147,7 @@ class Circumshaker extends React.Component {
 
     // Determine radius
     // NOTE: This is used as more of a radius 'band'
-    this.radius = min([this.props.chartWidth, this.props.chartHeight]) /
+    this.radius = min([this.props.width, this.props.height]) /
       (this.depth) / 2
 
     // Determine properties used for each node during drawing
@@ -158,8 +158,8 @@ class Circumshaker extends React.Component {
     // wedge - degree 'space' allotted for a node
     // radius - radius used for drawing node
     this.graph.nodes.forEach((d, i) => {
-      d.x = this.props.chartWidth / 2
-      d.y = this.props.chartHeight / 2
+      d.x = this.props.width / 2
+      d.y = this.props.height / 2
       d.degree = 0
       d.startAngle = 0
       d.wedge = 360
@@ -316,8 +316,8 @@ class Circumshaker extends React.Component {
                   func: (transition, props) => {
                     let radius = this.radius * (this.depth + 1)
                     let degree = props.data.degree
-                    let x = this.props.chartWidth / 2
-                    let y = this.props.chartHeight / 2
+                    let x = this.props.width / 2
+                    let y = this.props.height / 2
                     x += radius * Math.cos(degree * (Math.PI / 180))
                     y += radius * Math.sin(degree * (Math.PI / 180))
                     transition
@@ -352,8 +352,8 @@ class Circumshaker extends React.Component {
                   func: (transition, props) => {
                     let radius = this.radius * (this.depth + 1)
                     let degree = props.data.degree
-                    let x = this.props.chartWidth / 2
-                    let y = this.props.chartHeight / 2
+                    let x = this.props.width / 2
+                    let y = this.props.height / 2
                     x += radius * Math.cos(degree * (Math.PI / 180))
                     y += radius * Math.sin(degree * (Math.PI / 180))
                     transition

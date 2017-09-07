@@ -64,14 +64,14 @@ class Choropleth extends React.Component {
     let mapScale = this.projection.scale()
 
     // Get possible scales based on width / height
-    let hscale = mapScale * this.props.chartWidth / (mapBounds[1][0] - mapBounds[0][0])
-    let vscale = mapScale * this.props.chartHeight / (mapBounds[1][1] - mapBounds[0][1])
+    let hscale = mapScale * this.props.width / (mapBounds[1][0] - mapBounds[0][0])
+    let vscale = mapScale * this.props.height / (mapBounds[1][1] - mapBounds[0][1])
 
     // Determine which scaling to use
     mapScale = (hscale < vscale) ? hscale : vscale
     this.projection
       .scale(mapScale)
-      .translate([this.props.chartWidth / 2, this.props.chartHeight / 2])
+      .translate([this.props.width / 2, this.props.height / 2])
 
     this.path
       .projection(this.projection)

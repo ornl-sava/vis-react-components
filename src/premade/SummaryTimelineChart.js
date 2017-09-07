@@ -3,7 +3,6 @@ import PropTypes from 'prop-types'
 import { extent, min, max } from 'd3'
 
 import { setScale, isOrdinalScale } from '../util/d3'
-import { spreadRelated } from '../util/react'
 import Chart from '../Chart'
 import Axis from '../Axis'
 import SummaryTimeline from '../SummaryTimeline'
@@ -112,7 +111,7 @@ class SummaryTimelineChart extends React.Component {
   }
 
   updateRange (props, state) {
-    this.yScale.range([this.refs.chart.chartHeight, 0])
+    this.yScale.range([this.refs.chart.height, 0])
     if (props.yAxis.innerPadding && isOrdinalScale(this.yScale.type)) {
       this.yScale.paddingInner(props.yAxis.innerPadding)
     }
@@ -121,7 +120,7 @@ class SummaryTimelineChart extends React.Component {
       this.yScale.paddingOuter(props.yAxis.outerPadding)
     }
 
-    this.xScale.range([0, this.refs.chart.chartWidth])
+    this.xScale.range([0, this.refs.chart.width])
     if (props.xAxis.innerPadding && isOrdinalScale(this.xScale.type)) {
       this.xScale.paddingInner(props.xAxis.innerPadding)
     }

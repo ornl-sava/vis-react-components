@@ -51,8 +51,8 @@ class HorizonGraph extends React.Component {
     let xAccess = this.props.xAccessor
     let yAccess = this.props.yAccessor
 
-    let w = this.props.chartWidth ? this.props.chartWidth : this.props.width
-    let h = this.props.chartHeight ? this.props.chartHeight : this.props.height
+    let w = this.props.width ? this.props.width : this.props.width
+    let h = this.props.height ? this.props.height : this.props.height
 
     var xmin = Infinity
     var xmax = -Infinity

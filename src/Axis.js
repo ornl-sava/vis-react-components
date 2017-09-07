@@ -128,9 +128,9 @@ class Axis extends React.Component {
   render () {
     let transform = ''
     if (this.props.orient === 'bottom') {
-      transform = 'translate(0,' + this.props.chartHeight + ')'
+      transform = 'translate(0,' + this.props.height + ')'
     } else if (this.props.orient === 'right') {
-      transform = 'translate(' + this.props.chartWidth + ',0)'
+      transform = 'translate(' + this.props.width + ',0)'
     }
 
     return (

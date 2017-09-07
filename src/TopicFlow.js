@@ -114,11 +114,11 @@ class TopicFlow extends React.Component {
   }
   updateRange (props) {
     this.xScale
-      .range([0, props.chartWidth])
+      .range([0, props.width])
       .paddingInner(props.padding)
       .paddingOuter(props.outerPadding)
     this.yScale
-      .range([0, props.chartHeight])
+      .range([0, props.height])
   }
   buildABar (bin, cName, text, height, width, x, y, barStyle, txtStyle, id) {
     return {

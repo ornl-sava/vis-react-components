@@ -201,7 +201,7 @@ class ForceDirectedGraph extends React.Component {
     this.colScale.domain(d3.range(0, props.numTData, 1))
     this.xScale
       .domain(d3.range(0, props.numTData, 1))
-      .range([0, props.chartWidth])
+      .range([0, props.width])
       .padding(0.2)
   }
 
@@ -223,7 +223,7 @@ class ForceDirectedGraph extends React.Component {
       .alphaMin(props.alphaMin)
       .force('link', d3.forceLink().id(function (d, i) { return i }))
       .force('charge', d3.forceManyBody().strength(-100).distanceMax(500).distanceMin(5))
-      .force('center', d3.forceCenter(props.chartWidth / 2, props.chartHeight / 2))
+      .force('center', d3.forceCenter(props.width / 2, props.height / 2))
 
     this.simulation
       .nodes(this.nodes)
@@ -280,7 +280,7 @@ class ForceDirectedGraph extends React.Component {
     props.nodes.map((d, i) => {
       if (d.active || d.active == null) {
         d.x = Math.random() * this.xScale.bandwidth() + this.xScale(d.hour)
-        d.y = Math.random() * props.chartHeight
+        d.y = Math.random() * props.height
         d.active = true
         if (props.adjacencyList[i].length !== null) {
           props.adjacencyList[i].map((data, index) => {

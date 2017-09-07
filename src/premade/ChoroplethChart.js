@@ -3,7 +3,6 @@ import PropTypes from 'prop-types'
 import { range, interpolateHcl } from 'd3'
 
 import { setScale } from '../util/d3'
-import { spreadRelated } from '../util/react'
 import Chart from '../Chart'
 import Tooltip from '../Tooltip'
 import Choropleth from '../Choropleth'

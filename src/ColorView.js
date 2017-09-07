@@ -109,11 +109,11 @@ class ColorView extends React.Component {
     // this.updateDR(nextProps)
   }
   componentWillMount () {
-    // console.log('willMountChartHeight', this.props.chartHeight)
+    // console.log('willMountChartHeight', this.props.height)
   }
   // React LifeCycle method - called after initial render
   componentDidMount () {
-    // console.log('didMountChartHeight', this.props.chartHeight)
+    // console.log('didMountChartHeight', this.props.height)
     if (this.props.colorDomain == null) {
       console.log('probNoDataDidMount')
     }
@@ -126,11 +126,11 @@ class ColorView extends React.Component {
       this.xScale.domain([0, 1])
       this.yScale
         .domain(range(this.props.colorDomain.length + 2, -1, -1))
-        .range([this.props.chartHeight, 0])
+        .range([this.props.height, 0])
     } else {
       this.rData = layout(2, 10, this.props.colorDomain)
       this.yScale.domain(Object.keys(this.rData))
-      this.yScale.rangeRoundBands([0, this.props.chartHeight], this.props.padding, this.props.outerPadding)
+      this.yScale.rangeRoundBands([0, this.props.height], this.props.padding, this.props.outerPadding)
     }
   }
   // add tool tip data here later so I don't have to call it in set up
@@ -175,21 +175,21 @@ class ColorView extends React.Component {
     let colorBars = []
     if (this.props.spread === 'vertical') {
       let barHeight = this.yScale(1) - this.yScale(0)
-      let barWidth = this.props.chartWidth * 0.9
+      let barWidth = this.props.width * 0.9
       let fontSize = barHeight * 0.8
       let barTxtStyle = this.buildAText(fontSize.toString() + 'px', 'black')
       // checking if ordinal or not
       if (typeof this.xScale.rangePoints === 'function') {
-        this.xScale.rangeRoundBands([0, this.props.chartWidth], this.props.padding, this.props.outerPadding)
+        this.xScale.rangeRoundBands([0, this.props.width], this.props.padding, this.props.outerPadding)
       } else {
-        this.xScale.range([0, this.props.chartWidth])
+        this.xScale.range([0, this.props.width])
       }
       colorBars = this.colorDomain.map((data, index) => {
         if (data[0] == null) {
           data[0] = 'EMPTY'
         }
         let posY = this.yScale(index)
-        let posX = (this.props.chartWidth - barWidth) / 2
+        let posX = (this.props.width - barWidth) / 2
         let cName = data + '-' + index.toString()
         let color = '#ecf2f9'
         if (data === 'CLEAR') {
@@ -210,14 +210,14 @@ class ColorView extends React.Component {
         )
       })
     } else {
-      let paddedHeight = this.props.chartHeight * (1.0 - this.props.padding).toFixed(2)
+      let paddedHeight = this.props.height * (1.0 - this.props.padding).toFixed(2)
       let barHeight = Math.floor(paddedHeight / (this.rData.length + (this.props.outerPadding * 2)))
       let fontSize = barHeight * 0.4
       let barTxtStyle = this.buildAText(fontSize.toString() + 'px', 'black')
       colorBars = this.rData.map((arr, index) => {
         this.xScale.domain(Object.keys(arr))
-        this.xScale.rangeRoundBands([0, this.props.chartWidth], this.props.padding, this.props.outerPadding)
-        let paddedWidth = this.props.chartWidth * (1.0 - this.props.padding).toFixed(2)
+        this.xScale.rangeRoundBands([0, this.props.width], this.props.padding, this.props.outerPadding)
+        let paddedWidth = this.props.width * (1.0 - this.props.padding).toFixed(2)
         let barWidth = Math.floor(paddedWidth / (arr.length + (this.props.outerPadding * 2)))
         return arr.map((title, i) => {
           let posY = this.yScale(index)

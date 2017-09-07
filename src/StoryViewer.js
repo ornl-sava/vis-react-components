@@ -100,7 +100,7 @@ class StoryViewer extends React.Component {
     this.initTopics(nextProps, 0)
   }
   componentWillMount () {
-    // console.log('willMountChartHeight', this.props.chartHeight)
+    // console.log('willMountChartHeight', this.props.height)
   }
   // React LifeCycle method - called after initial render
   componentDidMount () {
@@ -112,10 +112,10 @@ class StoryViewer extends React.Component {
     // let xDomain = [0, 1, 2, 3]
     this.xScale
       .domain(d3.range(0, 4, 1))
-      .range([0, props.chartWidth])
+      .range([0, props.width])
     this.yScale
       .domain(d3.range(props.maxTopics + 2, -1, -1))
-      .range([0, props.chartHeight])
+      .range([0, props.height])
     this.prefScale.domain(props.colorDomain)
   }
 
@@ -157,9 +157,9 @@ class StoryViewer extends React.Component {
   }
 
   initTopics (props, storyInd) {
-    this.xScale.rangeRound([0, props.chartWidth])
+    this.xScale.rangeRound([0, props.width])
     this.xScale.padding(props.padding)
-    let paddedWidth = props.chartWidth * (1 - props.padding).toFixed(2)
+    let paddedWidth = props.width * (1 - props.padding).toFixed(2)
     let barWidth = Math.ceil(paddedWidth / (4 + (props.outerPadding * 2)))
     barWidth = this.xScale.bandwidth()
     let barHeight = 10
@@ -180,7 +180,7 @@ class StoryViewer extends React.Component {
         if (data[0] == null) {
           data[0] = 'EMPTY'
         }
-        let posY = this.props.chartHeight / Object.keys(this.currData[k]).length * i
+        let posY = this.props.height / Object.keys(this.currData[k]).length * i
         let posX = this.xScale(k + 1)
         let fontSize = 12
         let cName = this.tType[k] + (storyInd + 1).toString() + '-index-' + i
@@ -294,7 +294,7 @@ class StoryViewer extends React.Component {
     })
     let svgInfo = []
     for (let i = 0; i < 3; i++) {
-      let startPos = 100 + (this.props.chartHeight - 100) / 3 * i
+      let startPos = 100 + (this.props.height - 100) / 3 * i
       let type = this.tType[i].toString().split(/-/, 1)
       if (i === 0 || i === 1) {
         type = type + (this.state.storyInd + 1).toString() + ': '

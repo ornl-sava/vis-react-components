@@ -62,8 +62,8 @@ class Treemap extends React.Component {
       ? new Tooltip().attr('className', 'd3-tip').html(this.props.tipFunction)
       : this.props.tipFunction
 
-    let w = this.props.chartWidth ? this.props.chartWidth : this.props.width
-    let h = this.props.chartHeight ? this.props.chartHeight : this.props.height
+    let w = this.props.width ? this.props.width : this.props.width
+    let h = this.props.height ? this.props.height : this.props.height
 
     const barPadding = 2
     let barOffset = 0

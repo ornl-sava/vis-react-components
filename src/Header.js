@@ -6,7 +6,7 @@ class Header extends React.Component {
     let { chart, ...props } = this.props
     let containerStyle = {
       style: {
-        width: chart.chartWidth,
+        width: chart.width,
         marginLeft: chart.props.margin.left,
         marginRight: chart.props.margin.right
       }
