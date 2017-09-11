@@ -94,7 +94,7 @@ class BrushX extends React.Component {
   render () {
     // console.log('brush selection is : ' + this.state.selection)
     return (
-      <g className='brush' id={'brush-' + this.props.brushID}>{this.props.children}</g>
+      <g className='brush' id={'brush-' + this.props.brushID} width={this.props.width} height={this.props.height}>{this.props.children}</g>
     )
   }
 }

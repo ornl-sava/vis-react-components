@@ -157,6 +157,7 @@ HorizonGraphChart.defaultProps = {
 HorizonGraphChart.propTypes = {
   ...HorizonGraph.propTypes,
   ...Chart.propTypes,
+  brushID: PropTypes.any,
   onClick: PropTypes.func,
   onEnter: PropTypes.func,
   onLeave: PropTypes.func,

@@ -17,9 +17,12 @@ class HorizonGraphExample extends React.Component {
     this.data = startData
     this.position = 0
     this.update = this.update.bind(this)
+    this.onBrush = this._onBrush.bind(this)
     this.state = {}
     this.handleSelection = this.handleSelection.bind(this)
-
+    this.state = {
+      data: startData
+    }
     this.header = () => {
       return ([
         <span className='options'>
@@ -49,6 +52,29 @@ class HorizonGraphExample extends React.Component {
       ]
     }
   }
+  _onBrush (selection) {
+    console.log('onBrush')
+    console.log(selection)
+
+    let d = this.state.data.sort()
+    console.log(d)
+    let low = -1
+    let high = -1
+    for (let i = 0; i < d.length - 1; i++) {
+      if (d[i] <= selection[0] && d[i + 1] >= selection[0]) {
+        low = i
+      }
+      if (d[i] <= selection[1] && d[i + 1] >= selection[1]) {
+        high = i
+      }
+    }
+    let data = d.slice(low, high)
+
+    console.log(data)
+    this.setState({
+      data
+    })
+  }
 
   update () {
     this.data.push(this.data[this.position])
@@ -76,42 +102,50 @@ class HorizonGraphExample extends React.Component {
       <div className='col-md-12'>
         <div className='row'>
           <div className='col-md-12'>
-            <HorizonGraphChart {...chartCommon} data={this.data} numBands={1} mode='offset' bgColor='black' />
+            <HorizonGraphChart
+              brushID='0'
+              {...chartCommon}
+              data={this.state.data}
+              numBands={1}
+              mode='offset'
+              bgColor='black'
+              onBrush={this.onBrush}
+            />
           </div>
         </div>
         <div className='row'>
           <div className='col-md-12'>
-            <HorizonGraphChart {...chartCommon} data={this.data} numBands={2} mode='offset' bgColor='black' header={this.header} mid={this.state.mid} />
+            <HorizonGraphChart brushID='1' {...chartCommon} data={this.state.data} numBands={2} mode='offset' bgColor='black' header={this.header} mid={this.state.mid} />
           </div>
         </div>
         <div className='row'>
           <div className='col-md-12'>
-            <HorizonGraphChart {...chartCommon} data={this.data} numBands={2} mid={2} domainHeight={12} mode='offset' bgColor='black' />
+            <HorizonGraphChart brushID='2' {...chartCommon} data={this.state.data} numBands={2} mid={2} domainHeight={12} mode='offset' bgColor='black' />
           </div>
         </div>
         <div className='row'>
           <div className='col-md-12'>
-            <HorizonGraphChart {...chartCommon} data={this.data} numBands={3} mode='offset' bgColor='black' />
+            <HorizonGraphChart brushID='3' {...chartCommon} data={this.state.data} numBands={3} mode='offset' bgColor='black' />
           </div>
         </div>
         <div className='row'>
           <div className='col-md-12'>
-            <HorizonGraphChart {...chartCommon} data={this.data} numBands={1} mode='mirror' colors={altColors} />
+            <HorizonGraphChart brushID='4' {...chartCommon} data={this.state.data} numBands={1} mode='mirror' colors={altColors} />
           </div>
         </div>
         <div className='row'>
           <div className='col-md-12'>
-            <HorizonGraphChart {...chartCommon} data={this.data} numBands={2} mode='mirror' colors={altColors} />
+            <HorizonGraphChart brushID='5' {...chartCommon} data={this.state.data} numBands={2} mode='mirror' colors={altColors} />
           </div>
         </div>
         <div className='row'>
           <div className='col-md-12'>
-            <HorizonGraphChart {...chartCommon} data={this.data} numBands={2} mid={2} domainHeight={12} mode='mirror' colors={altColors} />
+            <HorizonGraphChart brushID='6' {...chartCommon} data={this.state.data} numBands={2} mid={2} domainHeight={12} mode='mirror' colors={altColors} />
           </div>
         </div>
         <div className='row'>
           <div className='col-md-12'>
-            <HorizonGraphChart {...chartCommon} data={this.data} numBands={3} mode='mirror' colors={altColors} />
+            <HorizonGraphChart brushID='7' {...chartCommon} data={this.state.data} numBands={3} mode='mirror' colors={altColors} />
           </div>
         </div>
         <button onClick={this.update}>Update</button>
