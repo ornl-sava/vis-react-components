@@ -1,17 +1,32 @@
 {
-  "name": "vis-react-components",
-  "version": "1.1.0",
+  "name": "@ornl-sava/vis-react-components",
+  "version": "1.1.6",
   "description": "A set of React component for building visualizations.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ornl-sava/vis-react-components.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ornl-sava/vis-react-components/issues"
+  },
+  "homepage": "https://github.com/ornl-sava/vis-react-components",
+  "unpkg": "dist/vis-react-components.min.js",
   "main": "lib/index.js",
   "author": "Dave Richadson <richardsongd@ornl.gov>",
   "contributors": [
     {
-      "name": "Andrew Pachuilo",
-      "email": "pachuiloar@ornl.gov"
+      "name": "Andrew Pachuilo"
     },
     {
       "name": "John Goodall",
       "email": "jgoodall@ornl.gov"
+    },
+    {
+      "name": "James Senter"
+    },
+    {
+      "name": "Chad Steed",
+      "email": "csteed@acm.org"
     }
   ],
   "dependencies": {
@@ -19,7 +34,7 @@
     "lodash.debounce": ">=4.0.8",
     "react": ">=15.0 <16.0",
     "react-dom": ">=15.0 <16.0",
-    "react-transition-group": "^1.2.0",
+    "react-transition-group": "^2.2.0",
     "topojson": "^3.0.0"
   },
   "devDependencies": {
@@ -34,14 +49,14 @@
     "babel-preset-react": "^6.16.0",
     "babel-preset-react-hmre": "^1.1.0",
     "css-loader": "^0.28.0",
-    "eslint": "^4.0.0",
+    "eslint": "^4.6.1",
     "eslint-config-standard": "10.2.1",
     "eslint-config-standard-react": "5.0.0",
     "eslint-loader": "^1.8.0",
     "eslint-plugin-import": "^2.3.0",
     "eslint-plugin-node": "^5.0.0",
     "eslint-plugin-promise": "^3.4.0",
-    "eslint-plugin-react": "7.1.0",
+    "eslint-plugin-react": "7.3.0",
     "eslint-plugin-standard": "3.0.1",
     "file-loader": "^0.11.2",
     "html-webpack-plugin": "^2.21.0",
@@ -57,10 +72,11 @@
   },
   "scripts": {
     "start": "webpack-dev-server --progress --colors",
-    "analyze": "NODE_ENV=production webpack --progress --colors",
+    "prepare": "npm run build",
+    "build": "npm run buildLib && npm run buildDist",
     "buildLib": "rm -rf ./lib && BABEL_ENV=production ./node_modules/.bin/babel src/ --out-dir ./lib",
     "buildDist": "rm -rf ./dist && NODE_ENV=production webpack --progress --colors",
-    "build": "npm run buildDist && npm run buildLib",
+    "analyze": "NODE_ENV=production webpack --progress --colors",
     "lint": "eslint src --ext .js --ext .jsx --ignore-path .gitignore"
   }
 }

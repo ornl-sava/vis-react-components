@@ -19,52 +19,9 @@ class SummaryTimeline extends React.Component {
   render () {
     let data = this.props.data
 
-    // let width = this.props.chartWidth ? this.props.chartWidth : this.props.width
-    // let height = this.props.chartHeight ? this.props.chartHeight : this.props.height
-
-    // var x = d3.scaleTime()
-    //   .domain(d3.extent(data, (d) => { return d.date }))
-    //   .rangeRound([0, width])
-
-    // var yMin = d3.min(data, (d) => { return d.min })
-    // var yMin = d3.min(data, (d) => { return Math.min(d.innerRangeMin, d.outerRangeMin) })
-    // // var yMax = d3.max(data, (d) => { return d.max })
-    // var yMax = d3.max(data, (d) => { return Math.max(d.innerRangeMax, d.outerRangeMax) })
-    // var y = d3.scaleLinear()
-    //   .domain([yMin, yMax])
-    //   .rangeRound([height, 0])
-
-    // console.log('SummaryTimeline.render()')
-    // console.log('opacityScale: ' + this.props.opacityScale)
-    // var avgMin = d3.min(data, (d) => { return d.avg })
-    // var avgMax = d3.max(data, (d) => { return d.avg })
-    //
-    // var opacityScale = d3.scaleLinear()
-    //   .domain([avgMin, avgMax])
-    //   .range([0.20, 0.90])
-
-    // console.log('bgColor: ' + this.props.bgColor)
-    // var meanLine = d3.line()
-    //   .curve(d3.curveStepAfter)
-    //   .x((d) => { return x(d.date) })
-    //   .y((d) => { return y(d.avg) })(data)
-    // var stdevMinLine = d3.line()
-    //   .x((d) => { return x(d.date) })
-    //   .y((d) => { return y(d.stdevMin) })(data)
-    // var stdevMaxLine = d3.line()
-    //   .x((d) => { return x(d.date) })
-    //   .y((d) => { return y(d.stdevMax) })(data)
-    // var maxLine = d3.line()
-    //   .x((d) => { return x(d.date) })
-    //   .y((d) => { return y(d.max) })(data)
-    // var minLine = d3.line()
-    //   .x((d) => { return x(d.date) })
-    //   .y((d) => { return y(d.min) })(data)
-
     if (this.props.showRange1Area) {
       var stdevRangeArea = d3.area()
         .curve(d3.curveStepAfter)
-        // .x((d) => { return x(d.date) })
         .x((d) => { return this.props.xScale(d.date) })
         .y0((d) => { return this.props.yScale(d.innerRangeMin) })
         .y1((d) => { return this.props.yScale(d.innerRangeMax) })(data)
@@ -72,7 +29,6 @@ class SummaryTimeline extends React.Component {
     if (this.props.showRange2Area) {
       var extentRangeArea = d3.area()
         .curve(d3.curveStepAfter)
-        // .x((d) => { return x(d.date) })
         .x((d) => { return this.props.xScale(d.date) })
         .y0((d) => { return this.props.yScale(d.outerRangeMin) })
         .y1((d) => { return this.props.yScale(d.outerRangeMax) })(data)
@@ -152,17 +108,6 @@ class SummaryTimeline extends React.Component {
     )
   }
 }
-
-// <SVGComponent Component='path'
-//   key='mean'
-//   fill='none'
-//   stroke='darkgray'
-//   strokeLinejoin='round'
-//   strokeLinecap='round'
-//   strokeWidth={1.5}
-//   d={meanLine}
-//   onUpdate={pathTransition}
-// />
 
 SummaryTimeline.defaultProps = {
   keyFunction: (d, i) => i,

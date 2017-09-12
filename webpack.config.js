@@ -137,10 +137,10 @@ if (TARGET === 'start' || !TARGET) {
   }
   module.exports = merge(common, {
     entry: {
-      'vis.min': PATHS.src
+      'vis-react-components.min': PATHS.src
     },
     output: {
-      library: 'ornl-sava-vis',
+      library: 'vis-react-components',
       path: path.join(__dirname, '/dist'),
       libraryTarget: 'umd',
       filename: '[name].js',
