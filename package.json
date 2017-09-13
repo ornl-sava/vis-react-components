@@ -34,7 +34,7 @@
     "lodash.debounce": ">=4.0.8",
     "react": ">=15.0 <16.0",
     "react-dom": ">=15.0 <16.0",
-    "react-transition-group": "^2.2.0",
+    "react-transition-group": "^1.2.0",
     "topojson": "^3.0.0"
   },
   "devDependencies": {
