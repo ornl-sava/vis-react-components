@@ -59,13 +59,13 @@ class HorizonGraphExample extends React.Component {
     let d = this.state.data.sort()
     console.log(d)
     let low = -1
-    let high = -1
+    let high = d.length
     for (let i = 0; i < d.length - 1; i++) {
       if (d[i] <= selection[0] && d[i + 1] >= selection[0]) {
         low = i
       }
       if (d[i] <= selection[1] && d[i + 1] >= selection[1]) {
-        high = i
+        high = i + 1
       }
     }
     let data = d.slice(low, high)
