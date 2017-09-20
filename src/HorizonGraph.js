@@ -6,6 +6,7 @@ import * as d3 from 'd3'
 
 import { setEase } from './util/d3'
 import SVGComponent from './SVGComponent'
+import BrushX from './BrushX'
 
 class HorizonGraph extends React.Component {
   constructor (props) {
@@ -102,7 +103,6 @@ class HorizonGraph extends React.Component {
     var color = d3.scaleLinear()
       .domain(numBands > 1 ? [-numBands, -1, 1, numBands] : [-1, 0, 0, 1])
       .range(numBands > 1 ? colors : [colors[1], colors[0], colors[3], colors[2]])
-
     var selectionX = null
     var labelX = null
     var labelText = null
@@ -163,7 +163,7 @@ class HorizonGraph extends React.Component {
       return transition
     }}
 
-    return (
+    let result =
       <TransitionGroup component='g'>
         <SVGComponent Component='svg'
           x={'0px'}
@@ -187,7 +187,7 @@ class HorizonGraph extends React.Component {
             levels.map((d) => {
               return (
                 <SVGComponent Component='path'
-                  key={'' + d}
+                  key={'level-' + d}
                   d={points}
                   transform={horizonTransform(d)}
                   fill={color(d)}
@@ -214,12 +214,30 @@ class HorizonGraph extends React.Component {
                 y={20}
                 pointerEvents='none'
                 onUpdate={textTransition}
+                stroke='black'
               >{labelText}</SVGComponent>
             </SVGComponent>
           }
         </SVGComponent>
       </TransitionGroup>
-    )
+    if (this.props.brushID && data.length > 1) {
+      let interval = Math.abs(xAccess(data[1]) - xAccess(data[0]))
+      return (
+        <BrushX
+          brushID={this.props.brushID}
+          hideBrushSelection
+          width={w}
+          height={h}
+          interval={interval}
+          scale={xScale}
+          onMouseMove={this.onMouseMove}
+          onBrush={this.props.onBrush} >
+          {result}
+        </BrushX>
+      )
+    }
+
+    return result
   }
 }
 
@@ -231,7 +249,8 @@ HorizonGraph.defaultProps = {
   bgColor: 'white',
   xAccessor: (d, i) => { return i },
   yAccessor: (d) => { return d },
-  labelFormat: (d) => { return '' + d }
+  labelFormat: (d) => { return '' + d },
+  brushID: 'default'
 }
 
 HorizonGraph.propTypes = {
@@ -250,7 +269,9 @@ HorizonGraph.propTypes = {
   domainHeight: PropTypes.number,
   selectedIndex: PropTypes.number,
   handleSelection: PropTypes.func,
-  labelFormat: PropTypes.func
+  labelFormat: PropTypes.func,
+  brushID: PropTypes.string,
+  onBrush: PropTypes.func
 }
 
 export default HorizonGraph

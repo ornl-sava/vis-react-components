@@ -59,25 +59,32 @@ class Chart extends React.Component {
     let left = props.margin.left
     let top = props.margin.top
     return (
-      <div ref='rootElement' className={props.className} style={{position: 'relative'}}>
+      <div ref='rootElement' className={props.className} style={{position: 'relative'}} data-name='chart-root'>
         {(this.chartWidth === 0 || this.chartHeight === 0)
-          ? undefined
+          ? null
           : <Header chart={this} components={this.props.header} />
         }
         <svg ref='svgRoot' width={width} height={height}>
-          <defs>
+          {/* <defs>
             <clipPath id='clip'>
               <rect width={this.chartWidth} height={this.chartHeight} />
             </clipPath>
-          </defs>
-          <g className='vis-container' transform={'translate(' + left + ',' + top + ')'}>
+          </defs> */}
+          {/* <g className='vis-container' transform={'translate(' + left + ',' + top + ')'}>
             <g className='vis-component'>
               {(this.chartWidth === 0 || this.chartHeight === 0)
-                ? undefined
+                ? null
                 : this.renderChildren()
               }
             </g>
           </g>
+          */}
+          {<g className='vis-component' transform={'translate(' + left + ',' + top + ')'}>
+            {(this.chartWidth === 0 || this.chartHeight === 0)
+              ? null
+              : this.renderChildren()
+            }
+          </g>}
         </svg>
       </div>
     )
@@ -86,7 +93,6 @@ class Chart extends React.Component {
 
 Chart.defaultProps = {
   resizeHandler: () => {},
-  header: () => [],
   margin: {top: 0, right: 10, bottom: 20, left: 80},
   width: 0,
   height: 250
