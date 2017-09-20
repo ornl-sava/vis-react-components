@@ -52,16 +52,8 @@ class HorizonGraphExample extends React.Component {
       ]
     }
   }
-  mouseMoveHandler (event) {
-    console.log('mousemove')
-    console.log(this)
-  }
   _onBrush (selection) {
-    console.log('onBrush')
-    console.log(selection)
-
     let d = this.state.data
-    console.log(d)
     let low = -1
     let high = d.length
     for (let i = 0; i < d.length - 1; i++) {
@@ -73,8 +65,6 @@ class HorizonGraphExample extends React.Component {
       }
     }
     let data = d.slice(low, high)
-
-    console.log(data)
     this.setState({
       data
     })

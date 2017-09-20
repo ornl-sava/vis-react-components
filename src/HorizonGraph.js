@@ -23,7 +23,6 @@ class HorizonGraph extends React.Component {
     let x = event.clientX - bounds.left
     let target = this.xScale.invert(x)
     let index = this.binarySearch(target, 0, this.props.data.length - 1)
-    console.log(index)
     if (index !== this.props.selectedIndex) {
       this.props.handleSelection(index)
     }
@@ -104,7 +103,6 @@ class HorizonGraph extends React.Component {
     var color = d3.scaleLinear()
       .domain(numBands > 1 ? [-numBands, -1, 1, numBands] : [-1, 0, 0, 1])
       .range(numBands > 1 ? colors : [colors[1], colors[0], colors[3], colors[2]])
-
     var selectionX = null
     var labelX = null
     var labelText = null
@@ -216,6 +214,7 @@ class HorizonGraph extends React.Component {
                 y={20}
                 pointerEvents='none'
                 onUpdate={textTransition}
+                stroke='black'
               >{labelText}</SVGComponent>
             </SVGComponent>
           }
