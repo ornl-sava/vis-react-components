@@ -3,7 +3,7 @@ import React from 'react'
 import HorizonGraphChart from '../src/premade/HorizonGraphChart'
 import Settings from '../src/Settings'
 
-let startData = [-6, -4, -2, -1, 0, 1, 2, 4, 5, 8, 6, 4, 2, 0, -1, -2, -4]
+let startData = [-6, -4, -2, -1, 0, 1, 2, 4, 5, 8, 6, 4, 2, 0, -1, -2, -4, 10, 3, 7, 11, 5]
 
 const xAccess = (d, i) => { return i }
 const yAccess = (d) => { return d }
@@ -11,17 +11,35 @@ const yAccess = (d) => { return d }
 // extreme negative, common negative, common postive, extreme positive
 const altColors = ['#ed9797', '#840000', '#08519c', '#bdd7e7']
 
+// const mouseEventPollyFill = (event) => {
+//   let newEvent = null
+//   if (typeof window.Event === 'function') {
+//     newEvent = new MouseEvent('mousedown', event)
+//     // console.log(Object.keys(event))
+//     // console.log(event)
+//   } else {
+//     newEvent = document.createEvent('MouseEvent')
+//     newEvent.initMouseEvent('mousedown', true, true, window, event.detail,
+//       event.screenX, event.screenY,
+//       event.clientX, event.clientY,
+//       event.ctrlKey, event.altKey, event.shiftKey, event.metaKey,
+//       event.button, event.relatedTarget
+//     )
+//   }
+//   return (newEvent)
+// }
+
 class HorizonGraphExample extends React.Component {
   constructor (props) {
     super()
-    this.data = startData
+    this.data = startData.sort((a, b) => a - b)
     this.position = 0
     this.update = this.update.bind(this)
     this.onBrush = this._onBrush.bind(this)
     this.state = {}
     this.handleSelection = this.handleSelection.bind(this)
     this.state = {
-      data: startData
+      data: this.data
     }
     this.header = () => {
       return ([
@@ -52,11 +70,15 @@ class HorizonGraphExample extends React.Component {
       ]
     }
   }
+  mouseMoveHandler (event) {
+    console.log('mousemove')
+    console.log(this)
+  }
   _onBrush (selection) {
     console.log('onBrush')
     console.log(selection)
 
-    let d = this.state.data.sort()
+    let d = this.state.data
     console.log(d)
     let low = -1
     let high = d.length
@@ -115,7 +137,7 @@ class HorizonGraphExample extends React.Component {
         </div>
         <div className='row'>
           <div className='col-md-12'>
-            <HorizonGraphChart brushID='1' {...chartCommon} data={this.state.data} numBands={2} mode='offset' bgColor='black' header={this.header} mid={this.state.mid} />
+            <HorizonGraphChart brushID='1' mouseMoveHandler={this.mouseMoveHandler} {...chartCommon} data={this.state.data} numBands={2} mode='offset' bgColor='black' header={this.header} mid={this.state.mid} />
           </div>
         </div>
         <div className='row'>

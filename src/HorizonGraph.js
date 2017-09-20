@@ -220,7 +220,7 @@ class HorizonGraph extends React.Component {
           }
         </SVGComponent>
       </TransitionGroup>
-    if (this.props.brushed && data.length > 1) {
+    if (this.props.brushID && data.length > 1) {
       let interval = Math.abs(xAccess(data[1]) - xAccess(data[0]))
       return (
         <BrushX
@@ -230,6 +230,7 @@ class HorizonGraph extends React.Component {
           height={h}
           interval={interval}
           scale={xScale}
+          onMouseMove={this.props.onMouseMove}
           onBrush={this.props.onBrush} >
           {result}
         </BrushX>
@@ -249,7 +250,6 @@ HorizonGraph.defaultProps = {
   xAccessor: (d, i) => { return i },
   yAccessor: (d) => { return d },
   labelFormat: (d) => { return '' + d },
-  brushed: true,
   brushID: 'default'
 }
 
@@ -270,9 +270,9 @@ HorizonGraph.propTypes = {
   selectedIndex: PropTypes.number,
   handleSelection: PropTypes.func,
   labelFormat: PropTypes.func,
-  brushed: PropTypes.bool,
   brushID: PropTypes.string,
-  onBrush: PropTypes.func
+  onBrush: PropTypes.func,
+  onMouseMove: PropTypes.func
 }
 
 export default HorizonGraph

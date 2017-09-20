@@ -94,7 +94,14 @@ class BrushX extends React.Component {
   render () {
     // console.log('brush selection is : ' + this.state.selection)
     return (
-      <g className='brush' id={'brush-' + this.props.brushID} width={this.props.width} height={this.props.height}>{this.props.children}</g>
+      <g className='brush' id={'brush-' + this.props.brushID}
+        width={this.props.width}
+        height={this.props.height}
+        onMouseMove={this.props.onMouseMove}
+      >
+        {this.props.children}
+
+      </g>
     )
   }
 }
@@ -112,7 +119,8 @@ BrushX.propTypes = {
   height: PropTypes.number.isRequired,
   interval: PropTypes.number.isRequired,
   scale: PropTypes.func.isRequired,
-  onBrush: PropTypes.func
+  onBrush: PropTypes.func,
+  onMouseMove: PropTypes.func
 }
 
 export default BrushX
