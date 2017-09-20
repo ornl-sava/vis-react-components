@@ -65,12 +65,12 @@ class Chart extends React.Component {
           : <Header chart={this} components={this.props.header} />
         }
         <svg ref='svgRoot' width={width} height={height}>
-          <defs>
+          {/* <defs>
             <clipPath id='clip'>
               <rect width={this.chartWidth} height={this.chartHeight} />
             </clipPath>
-          </defs>
-          <g className='vis-container' transform={'translate(' + left + ',' + top + ')'}>
+          </defs> */}
+          {/* <g className='vis-container' transform={'translate(' + left + ',' + top + ')'}>
             <g className='vis-component'>
               {(this.chartWidth === 0 || this.chartHeight === 0)
                 ? null
@@ -78,6 +78,13 @@ class Chart extends React.Component {
               }
             </g>
           </g>
+          */}
+          {<g className='vis-component' transform={'translate(' + left + ',' + top + ')'}>
+            {(this.chartWidth === 0 || this.chartHeight === 0)
+              ? null
+              : this.renderChildren()
+            }
+          </g>}
         </svg>
       </div>
     )

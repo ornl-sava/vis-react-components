@@ -23,6 +23,7 @@ class HorizonGraph extends React.Component {
     let x = event.clientX - bounds.left
     let target = this.xScale.invert(x)
     let index = this.binarySearch(target, 0, this.props.data.length - 1)
+    console.log(index)
     if (index !== this.props.selectedIndex) {
       this.props.handleSelection(index)
     }
@@ -188,7 +189,7 @@ class HorizonGraph extends React.Component {
             levels.map((d) => {
               return (
                 <SVGComponent Component='path'
-                  key={'' + d}
+                  key={'level-' + d}
                   d={points}
                   transform={horizonTransform(d)}
                   fill={color(d)}
@@ -230,7 +231,7 @@ class HorizonGraph extends React.Component {
           height={h}
           interval={interval}
           scale={xScale}
-          onMouseMove={this.props.onMouseMove}
+          onMouseMove={this.onMouseMove}
           onBrush={this.props.onBrush} >
           {result}
         </BrushX>
@@ -271,8 +272,7 @@ HorizonGraph.propTypes = {
   handleSelection: PropTypes.func,
   labelFormat: PropTypes.func,
   brushID: PropTypes.string,
-  onBrush: PropTypes.func,
-  onMouseMove: PropTypes.func
+  onBrush: PropTypes.func
 }
 
 export default HorizonGraph

@@ -21,7 +21,6 @@ class HorizonGraphChart extends React.Component {
     this.onEnter = this.onEnter.bind(this)
     this.onLeave = this.onLeave.bind(this)
     this.onResize = this.onResize.bind(this)
-    props.mouseMoveHandler ? this.onMouseMove = this.onMouseMove = props.mouseMoveHandler.bind(this) : this.onMouseMove = props.mouseMoveHandler
 
     this.updateDomain = this.updateDomain.bind(this)
     this.updateRange = this.updateRange.bind(this)
@@ -122,7 +121,6 @@ class HorizonGraphChart extends React.Component {
       <Chart ref='chart' {...spreadRelated(Chart, props)} resizeHandler={this.onResize}>
         <HorizonGraph className='horizonGraph'
           {...spreadRelated(HorizonGraph, props)}
-          onMouseMove={this.onMouseMove}
         />
         <Axis className='x axis' {...props.xAxis} scale={this.xScale} />
         <Axis className='y axis' {...props.yAxis} scale={this.yScale} />
@@ -154,7 +152,6 @@ HorizonGraphChart.defaultProps = {
     outerPadding: null,
     animationDuration: 500
   },
-  // mouseMoveHandler: () => null,
   xScaleType: 'linear',
   yScaleType: 'linear'
 }
@@ -162,7 +159,6 @@ HorizonGraphChart.defaultProps = {
 HorizonGraphChart.propTypes = {
   ...HorizonGraph.propTypes,
   ...Chart.propTypes,
-  mouseMoveHandler: PropTypes.func,
   brushID: PropTypes.any,
   onClick: PropTypes.func,
   onEnter: PropTypes.func,
