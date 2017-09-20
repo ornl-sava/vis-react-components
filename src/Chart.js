@@ -86,7 +86,6 @@ class Chart extends React.Component {
 
 Chart.defaultProps = {
   resizeHandler: () => {},
-  header: () => [],
   margin: {top: 0, right: 10, bottom: 20, left: 80},
   width: 0,
   height: 250
