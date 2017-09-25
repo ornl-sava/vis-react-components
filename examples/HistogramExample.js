@@ -220,42 +220,34 @@ class HistogramExample extends React.Component {
 
   render () {
     return (
-      <div>
-        <div>
-          <HistogramChart header={this.header1} width={800} height={200}
-            data={histogramData} {...this.state} tipFunction={toolTipFunction}
-            onEnter={this.onChart1Enter} onLeave={this.onChart1Leave}
-            addOverlay xAccessor='key' yAccessor='count' onClick={onBarClick} />
-        </div>
-        <div>
-          <HistogramChart
-            width={800} height={200}
-            sortBy={'y'} sortOrder={'Ascending'}
-            xAxis={{
-              type: 'x',
-              orient: 'bottom',
-              innerPadding: 0.2,
-              outerPadding: 0.4,
-              tickStyle: (tick, d, i) => {
-                if (d === 'Bin 5') {
-                  tick.style('fill', 'orange')
-                }
+      <div data-name='example-root'>
+        <HistogramChart header={this.header1} width={800} height={200}
+          data={histogramData} {...this.state} tipFunction={toolTipFunction}
+          onEnter={this.onChart1Enter} onLeave={this.onChart1Leave}
+          addOverlay xAccessor='key' yAccessor='count' onClick={onBarClick} />
+        <HistogramChart
+          width={800} height={200}
+          sortBy={'y'} sortOrder={'Ascending'}
+          xAxis={{
+            type: 'x',
+            orient: 'bottom',
+            innerPadding: 0.2,
+            outerPadding: 0.4,
+            tickStyle: (tick, d, i) => {
+              if (d === 'Bin 5') {
+                tick.style('fill', 'orange')
               }
-            }}
-            data={stackedHistogramData} tipFunction={toolTipFunction}
-            type='stacked' addOverlay
-          />
-        </div>
-        <div>
-          <HistogramChart header={this.header3} xScaleType='time'
-            width={800} height={200} data={this.temporalData} tipFunction={toolTipFunction}
-            addOverlay brushed onBrush={this.onBrush} />
-        </div>
-        <div>
-          <HistogramChart
-            header={this.header4} width={800} height={200} type='stacked'
-            data={this.state.randomData} tipFunction={toolTipFunction} />
-        </div>
+            }
+          }}
+          data={stackedHistogramData} tipFunction={toolTipFunction}
+          type='stacked' addOverlay
+        />
+        <HistogramChart header={this.header3} xScaleType='time'
+          width={800} height={200} data={this.temporalData} tipFunction={toolTipFunction}
+          addOverlay brushed onBrush={this.onBrush} />
+        <HistogramChart
+          header={this.header4} width={800} height={200} type='stacked'
+          data={this.state.randomData} tipFunction={toolTipFunction} />
       </div>
     )
   }

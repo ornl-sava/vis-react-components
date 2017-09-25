@@ -12,6 +12,7 @@ class Header extends React.Component {
       }
     }
 
+    if (this.props.components == null) return null
     return (
       <div {...containerStyle}>
         {props.components().map((e, i) => {

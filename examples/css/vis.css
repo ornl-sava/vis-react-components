@@ -471,6 +471,7 @@ nav ul li .active {
 
 .node {
   stroke-width: 1.5px;
+  stroke: #000000;
   fill: #648BF7;
 }
 .link {
