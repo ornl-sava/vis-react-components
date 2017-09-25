@@ -53,6 +53,7 @@ class HorizonGraphExample extends React.Component {
     }
   }
   _onBrush (selection) {
+    /*
     let d = this.state.data
     let low = -1
     let high = d.length
@@ -67,7 +68,8 @@ class HorizonGraphExample extends React.Component {
     let data = d.slice(low, high)
     this.setState({
       data
-    })
+    }) */
+    console.log(selection)
   }
 
   update () {
@@ -103,6 +105,7 @@ class HorizonGraphExample extends React.Component {
               numBands={1}
               mode='offset'
               bgColor='black'
+              labelColor='white'
               onBrush={this.onBrush}
             />
           </div>
@@ -116,6 +119,7 @@ class HorizonGraphExample extends React.Component {
               numBands={2}
               mode='offset'
               bgColor='black'
+              labelColor='white'
               header={this.header}
               mid={this.state.mid}
               onBrush={this.onBrush}
@@ -133,6 +137,7 @@ class HorizonGraphExample extends React.Component {
               domainHeight={12}
               mode='offset'
               bgColor='black'
+              labelColor='white'
               onBrush={this.onBrush}
             />
           </div>
@@ -146,6 +151,7 @@ class HorizonGraphExample extends React.Component {
               numBands={3}
               mode='offset'
               bgColor='black'
+              labelColor='white'
               onBrush={this.onBrush}
             />
           </div>

@@ -211,10 +211,12 @@ class HorizonGraph extends React.Component {
               <SVGComponent Component='text'
                 key='selectionLabel'
                 x={labelX}
-                y={20}
+                y={this.props.labelY}
                 pointerEvents='none'
                 onUpdate={textTransition}
-                stroke='black'
+                stroke={this.props.labelColor}
+                fill={this.props.labelColor}
+                fontSize={this.props.labelFontSize}
               >{labelText}</SVGComponent>
             </SVGComponent>
           }
@@ -250,6 +252,9 @@ HorizonGraph.defaultProps = {
   xAccessor: (d, i) => { return i },
   yAccessor: (d) => { return d },
   labelFormat: (d) => { return '' + d },
+  labelColor: 'black',
+  labelFontSize: 16,
+  labelY: 20,
   brushID: 'default'
 }
 
@@ -270,6 +275,9 @@ HorizonGraph.propTypes = {
   selectedIndex: PropTypes.number,
   handleSelection: PropTypes.func,
   labelFormat: PropTypes.func,
+  labelColor: PropTypes.string,
+  labelFontSize: PropTypes.number,
+  labelY: PropTypes.number,
   brushID: PropTypes.string,
   onBrush: PropTypes.func
 }
