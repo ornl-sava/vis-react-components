@@ -59,6 +59,7 @@ class CircumshakerChart extends React.Component {
           childAccessor={this.props.childAccessor}
           keyAccessor={this.props.keyAccessor}
           maxDepth={this.props.maxDepth}
+          forcedSeparation={this.props.forcedSeparation}
           nodeMaxSize={this.props.nodeMaxSize}
           nodeMinSize={this.props.nodeMinSize}
           selectedColorScale={this.selectedColorScale}
@@ -81,6 +82,7 @@ CircumshakerChart.defaultProps = {
   nodeMinSize: 8,
   nodeMaxSize: null,
   maxDepth: 3,
+  forcedSeparation: 10,
   data: {},
   onClick: () => {},
   onEnter: () => {},
@@ -102,7 +104,7 @@ CircumshakerChart.propTypes = {
   nodeMinSize: PropTypes.number,
   nodeMaxSize: PropTypes.number,
   maxDepth: PropTypes.number,
-
+  forcedSeparation: PropTypes.number,
   data: PropTypes.object,
   onClick: PropTypes.func,
   onEnter: PropTypes.func,
