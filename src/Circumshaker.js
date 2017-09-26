@@ -150,6 +150,12 @@ class Circumshaker extends React.Component {
     this.radius = min([this.props.chartWidth, this.props.chartHeight]) /
       (this.depth) / 2
 
+    // will be used to keep track of nodes with same degree
+    let degreeDict = {}
+    for (var i = 0; i <= this.depth; i++) {
+      degreeDict[i] = {}
+    }
+
     // Determine properties used for each node during drawing
     // Properties determined are as follows
     // (x, y) - coordinate of where to palce node
@@ -188,10 +194,27 @@ class Circumshaker extends React.Component {
         }
 
         d.degree = parent.startAngle + d.wedge / 2
+        d.degree = d.degree % 360
+        if (!degreeDict[d.depth][d.degree]) {
+          degreeDict[d.depth][d.degree] = 0
+        }
+        degreeDict[d.depth][d.degree] += 1
         d.startAngle = parent.startAngle
         parent.startAngle += d.wedge
       }
+    })
 
+    this.graph.nodes.forEach((d, i) => {
+      // rotate each node until it's not on top of another node
+      while (degreeDict[d.depth][d.degree] > 1 && this.props.forcedSeparation > 0) {
+        degreeDict[d.depth][d.degree] -= 1
+        d.degree += this.props.forcedSeparation
+        if (!degreeDict[d.depth][d.degree]) {
+          degreeDict[d.depth][d.degree] = 0
+        }
+        degreeDict[d.depth][d.degree] += 1
+      }
+      // calculate final position for each node
       let r = this.radius * d.depth
       d.x += r * Math.cos(d.degree * (Math.PI / 180))
       d.y += r * Math.sin(d.degree * (Math.PI / 180))
@@ -387,6 +410,7 @@ Circumshaker.defaultProps = {
   nodeMinSize: 8,
   nodeMaxSize: null,
   maxDepth: 3,
+  forcedSeparation: 15,
   data: {},
   onClick: () => {},
   onEnter: () => {},
@@ -401,6 +425,7 @@ Circumshaker.propTypes = {
   nodeMinSize: PropTypes.number,
   nodeMaxSize: PropTypes.number,
   maxDepth: PropTypes.number,
+  forcedSeparation: PropTypes.number,
   chartHeight: PropTypes.number,
   chartWidth: PropTypes.number,
   className: PropTypes.string,

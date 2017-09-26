@@ -119,7 +119,9 @@ class HorizonGraphChart extends React.Component {
     let props = this.props
     return (
       <Chart ref='chart' {...spreadRelated(Chart, props)} resizeHandler={this.onResize}>
-        <HorizonGraph className='horizonGraph' {...spreadRelated(HorizonGraph, props)} />
+        <HorizonGraph className='horizonGraph'
+          {...spreadRelated(HorizonGraph, props)}
+        />
         <Axis className='x axis' {...props.xAxis} scale={this.xScale} />
         <Axis className='y axis' {...props.yAxis} scale={this.yScale} />
       </Chart>
@@ -157,6 +159,7 @@ HorizonGraphChart.defaultProps = {
 HorizonGraphChart.propTypes = {
   ...HorizonGraph.propTypes,
   ...Chart.propTypes,
+  brushID: PropTypes.any,
   onClick: PropTypes.func,
   onEnter: PropTypes.func,
   onLeave: PropTypes.func,
