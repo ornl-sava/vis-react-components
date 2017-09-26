@@ -410,7 +410,7 @@ Circumshaker.defaultProps = {
   nodeMinSize: 8,
   nodeMaxSize: null,
   maxDepth: 3,
-  forcedSeparation: 15,
+  forcedSeparation: 10,
   data: {},
   onClick: () => {},
   onEnter: () => {},
