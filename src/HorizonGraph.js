@@ -253,9 +253,10 @@ HorizonGraph.defaultProps = {
   yAccessor: (d) => { return d },
   labelFormat: (d) => { return '' + d },
   labelColor: 'black',
-  labelFontSize: 16,
-  labelY: 20,
-  brushID: 'default'
+  labelFontSize: 12,
+  labelY: 16,
+  brushID: 'default',
+  onBrush: () => {}
 }
 
 HorizonGraph.propTypes = {
