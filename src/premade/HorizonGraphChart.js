@@ -1,6 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { extent } from 'd3'
+import debounce from 'lodash.debounce'
 
 import { setScale, isOrdinalScale } from '../util/d3'
 import { spreadRelated } from '../util/react'
@@ -73,23 +74,23 @@ class HorizonGraphChart extends React.Component {
     }
   }
 
-  updateRange (props, state) {
+  updateRange () {
     this.yScale.range([this.refs.chart.chartHeight, 0])
-    if (props.yAxis.innerPadding && isOrdinalScale(this.yScale.type)) {
-      this.yScale.paddingInner(props.yAxis.innerPadding)
+    if (this.props.yAxis.innerPadding && isOrdinalScale(this.yScale.type)) {
+      this.yScale.paddingInner(this.props.yAxis.innerPadding)
     }
 
-    if (props.yAxis.outerPadding && isOrdinalScale(this.yScale.type)) {
-      this.yScale.paddingOuter(props.yAxis.outerPadding)
+    if (this.props.yAxis.outerPadding && isOrdinalScale(this.yScale.type)) {
+      this.yScale.paddingOuter(this.props.yAxis.outerPadding)
     }
 
     this.xScale.range([0, this.refs.chart.chartWidth])
-    if (props.xAxis.innerPadding && isOrdinalScale(this.xScale.type)) {
-      this.xScale.paddingInner(props.xAxis.innerPadding)
+    if (this.props.xAxis.innerPadding && isOrdinalScale(this.xScale.type)) {
+      this.xScale.paddingInner(this.props.xAxis.innerPadding)
     }
 
-    if (props.xAxis.outerPadding && isOrdinalScale(this.xScale.type)) {
-      this.xScale.paddingOuter(props.xAxis.outerPadding)
+    if (this.props.xAxis.outerPadding && isOrdinalScale(this.xScale.type)) {
+      this.xScale.paddingOuter(this.props.xAxis.outerPadding)
     }
   }
 
@@ -112,7 +113,7 @@ class HorizonGraphChart extends React.Component {
   }
 
   onResize () {
-    this.updateRange(this.props, this.state)
+    debounce(this.updateRange.bind(this), 500, {trailing: true})
   }
 
   render () {
