@@ -11,10 +11,14 @@ class Chart extends React.Component {
 
     this.chartWidth = props.width
     this.chartHeight = props.height
+
+    if (props.addResizeListener) {
+      props.addResizeListener(this.resizeChart.bind(this))
+    }
   }
 
   componentDidMount () {
-    this._handleResize = debounce(this.resizeChart.bind(this), 500)
+    this._handleResize = debounce(this.resizeChart.bind(this), 50)
     window.addEventListener('resize', this._handleResize, false)
     this._handleResize() // Lets call take place after component has mounted
   }
@@ -40,7 +44,7 @@ class Chart extends React.Component {
       .attr('width', props.width === 0 ? rootRect.width : props.width)
       .attr('height', props.height)
 
-    props.resizeHandler()
+    if (props.resizeHandler) props.resizeHandler()
     this.forceUpdate()
   }
 
@@ -92,7 +96,6 @@ class Chart extends React.Component {
 }
 
 Chart.defaultProps = {
-  resizeHandler: () => {},
   margin: {top: 0, right: 10, bottom: 20, left: 80},
   width: 0,
   height: 250
@@ -100,6 +103,7 @@ Chart.defaultProps = {
 
 Chart.propTypes = {
   resizeHandler: PropTypes.func,
+  addResizeListener: PropTypes.func,
   header: PropTypes.func,
   children: PropTypes.any,
   className: PropTypes.string,
