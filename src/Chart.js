@@ -11,6 +11,10 @@ class Chart extends React.Component {
 
     this.chartWidth = props.width
     this.chartHeight = props.height
+
+    if (props.addResizeListener) {
+      props.addResizeListener(this.resizeChart.bind(this))
+    }
   }
 
   componentDidMount () {
@@ -99,6 +103,7 @@ Chart.defaultProps = {
 
 Chart.propTypes = {
   resizeHandler: PropTypes.func,
+  addResizeListener: PropTypes.func,
   header: PropTypes.func,
   children: PropTypes.any,
   className: PropTypes.string,
