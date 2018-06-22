@@ -11,10 +11,10 @@ class Chart extends React.Component {
 
     this.chartWidth = props.width
     this.chartHeight = props.height
-
     if (props.addResizeListener) {
       props.addResizeListener(this.resizeChart.bind(this))
     }
+    this.rootElement = React.createRef()
   }
 
   componentDidMount () {
@@ -28,16 +28,15 @@ class Chart extends React.Component {
   }
 
   resizeChart () {
-    if (!this.refs.rootElement) return
+    if (!this.rootElement.current) return
     let props = this.props
-    let rootRect = this.refs.rootElement.getBoundingClientRect()
+    let rootRect = this.rootElement.current.getBoundingClientRect()
     let svg = select(this.refs.svgRoot)
 
     this.chartWidth = props.width === 0
       ? rootRect.width - props.margin.left - props.margin.right
       : Math.min((rootRect.width - props.margin.left - props.margin.right),
         (props.width - props.margin.left - props.margin.right))
-
     this.chartHeight = props.height - props.margin.top - props.margin.bottom
 
     svg
@@ -63,7 +62,7 @@ class Chart extends React.Component {
     let left = props.margin.left
     let top = props.margin.top
     return (
-      <div ref='rootElement' className={props.className} style={{position: 'relative'}} data-name='chart-root'>
+      <div ref={this.rootElement} className={props.className} style={{position: 'relative'}} data-name='chart-root'>
         {(this.chartWidth === 0 || this.chartHeight === 0)
           ? null
           : <Header chart={this} components={this.props.header} />
