@@ -124,12 +124,6 @@ if (TARGET === 'start' || !TARGET) {
   let plugins = [
     new webpack.optimize.MinChunkSizePlugin({
       minChunkSize: 51200 // ~50kb
-    }),
-    new webpack.optimize.UglifyJsPlugin({
-      mangle: true,
-      compress: {
-        warnings: false
-      }
     })
   ]
   if (TARGET === 'analyze') {
