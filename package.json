@@ -32,8 +32,8 @@
   "dependencies": {
     "d3": "^5.2.0",
     "lodash.debounce": ">=4.0.8",
-    "react": "^16.3.0",
-    "react-dom": "16.3.2",
+    "react": "^16.4.1",
+    "react-dom": "^16.4.1",
     "react-transition-group": "^1.2.1",
     "topojson": "^3.0.0"
   },
