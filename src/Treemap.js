@@ -120,7 +120,7 @@ class Treemap extends React.Component {
       .sum(d => { return this.props.sizeFunction(d) })
       .sort((a, b) => { return b.height - a.height || b.value - a.value })
 
-    const colors = d3.scaleOrdinal(d3.schemeCategory20)
+    const colors = d3.scaleOrdinal(d3.schemeCategory10)
 
     treemap(root)
 
