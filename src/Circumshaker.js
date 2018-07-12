@@ -107,8 +107,6 @@ class Circumshaker extends React.Component {
         // Only count leaves that don't already have parents
         return g.source === rootNode && g.target.parent === null
       })
-      console.log('Iterating over ' + links.length + ' links')
-      console.log(links)
       let debugCount = 0
 
       for (let count = 0; count < links.length; count++) {
@@ -156,7 +154,6 @@ class Circumshaker extends React.Component {
           }
         }
       }
-      console.log(leafs)
       return leafs.size()
     }
 
@@ -186,10 +183,7 @@ class Circumshaker extends React.Component {
     //
     //   return leafs.size()
     // }
-    console.log('nodes')
-    console.log(this.graph.nodes)
-    console.log('links')
-    console.log(this.graph.links)
+
     // Find number of leafs for subtree
     this.graph.nodes.forEach((d) => {
       // Set number of leafs for subtree
