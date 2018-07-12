@@ -101,37 +101,100 @@ class Circumshaker extends React.Component {
         d.parent = null
       })
 
-    // Function to get leafs of a given subtree
-    const getNumLeafs = (_node) => {
+    const iterateLeafs = (rootNode) => {
       let leafs = set()
-
-      const getNumLeafsHelper = (_links) => {
-        _links.forEach((g) => {
-          let children = this.graph.links.filter((h) => {
-            return g.target === h.source
-          })
-
-          if (children.length === 0 && !leafs.has(g.target.key)) {
-            leafs.add(g.target.key)
-          } else {
-            getNumLeafsHelper(children)
-          }
-        })
-      }
-
-      // Count leaves
-      getNumLeafsHelper(this.graph.links.filter((g) => {
+      let links = this.graph.links.filter((g) => {
         // Only count leaves that don't already have parents
-        return g.source === _node && g.target.parent === null
-      }))
+        return g.source === rootNode && g.target.parent === null
+      })
+      console.log('Iterating over ' + links.length + ' links')
+      console.log(links)
+      let debugCount = 0
 
+      for (let count = 0; count < links.length; count++) {
+        let link = links[count]
+        let depth = 0
+        let current = link
+        let stackArr = [{
+          depth: 0,
+          element: link
+        }]
+        let children = []
+        // Need to figure out how to get children from a 'link'
+        // if (stackArr.length > 10) {
+        //     debugger  // eslint-disable-line
+        // }
+        while (stackArr.length > 0) {
+          let node = stackArr[stackArr.length - 1]
+          depth = node.depth
+          current = node.element
+          children = this.graph.links.filter((h) => {
+            return current.target === h.source
+          })
+          if (debugCount++ > 500 ) debugger  // eslint-disable-line
+          if (children.length === 0) {
+            if (!leafs.has(current.target.key)) {
+              leafs.add(current.target.key)
+            }
+          }
+          // if (count === (links.length - 1)) {
+          //   debugger  // eslint-disable-line
+          // }
+          let i = 0
+          for (i; i < children.length; i++) {
+            if (!children[i].visited) {
+              stackArr.push({
+                element: children[i],
+                depth: depth + 1
+              })
+              break
+            }
+          }
+          current.visited = true
+          if (i === children.length) {
+            stackArr.pop()
+          }
+        }
+      }
+      console.log(leafs)
       return leafs.size()
     }
 
+    // Function to get leafs of a given subtree
+    // const getNumLeafs = (_node) => {
+    //   let leafs = set()
+    //
+    //   const getNumLeafsHelper = (_links) => {
+    //     _links.forEach((g) => {
+    //       let children = this.graph.links.filter((h) => {
+    //         return g.target === h.source
+    //       })
+    //
+    //       if (children.length === 0 && !leafs.has(g.target.key)) {
+    //         leafs.add(g.target.key)
+    //       } else {
+    //         getNumLeafsHelper(children)
+    //       }
+    //     })
+    //   }
+    //
+    //   // Count leaves
+    //   getNumLeafsHelper(this.graph.links.filter((g) => {
+    //     // Only count leaves that don't already have parents
+    //     return g.source === _node && g.target.parent === null
+    //   }))
+    //
+    //   return leafs.size()
+    // }
+    console.log('nodes')
+    console.log(this.graph.nodes)
+    console.log('links')
+    console.log(this.graph.links)
     // Find number of leafs for subtree
     this.graph.nodes.forEach((d) => {
       // Set number of leafs for subtree
-      d.leafs = getNumLeafs(d)
+      // d.leafs = getNumLeafs(d)
+      d.leafs = iterateLeafs(d)
 
       // Claim children for node d
       // NOTE: This is ensure propering drawing during render
