@@ -107,7 +107,6 @@ class Circumshaker extends React.Component {
         // Only count leaves that don't already have parents
         return g.source === rootNode && g.target.parent === null
       })
-      let debugCount = 0
 
       for (let count = 0; count < links.length; count++) {
         let link = links[count]
@@ -118,10 +117,6 @@ class Circumshaker extends React.Component {
           element: link
         }]
         let children = []
-        // Need to figure out how to get children from a 'link'
-        // if (stackArr.length > 10) {
-        //     debugger  // eslint-disable-line
-        // }
         while (stackArr.length > 0) {
           let node = stackArr[stackArr.length - 1]
           depth = node.depth
@@ -129,15 +124,11 @@ class Circumshaker extends React.Component {
           children = this.graph.links.filter((h) => {
             return current.target === h.source
           })
-          if (debugCount++ > 500 ) debugger  // eslint-disable-line
           if (children.length === 0) {
             if (!leafs.has(current.target.key)) {
               leafs.add(current.target.key)
             }
           }
-          // if (count === (links.length - 1)) {
-          //   debugger  // eslint-disable-line
-          // }
           let i = 0
           for (i; i < children.length; i++) {
             if (!children[i].visited) {
@@ -149,8 +140,10 @@ class Circumshaker extends React.Component {
             }
           }
           current.visited = true
-          if (i === children.length) {
+          if (children.length === 0) {
             stackArr.pop()
+          } else if (i === children.length) {
+            stackArr.splice(-2)
           }
         }
       }
