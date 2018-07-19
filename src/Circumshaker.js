@@ -140,10 +140,8 @@ class Circumshaker extends React.Component {
             }
           }
           current.visited = true
-          if (children.length === 0) {
+          if (i === children.length) {
             stackArr.pop()
-          } else if (i === children.length) {
-            stackArr.splice(-2)
           }
         }
       }
