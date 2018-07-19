@@ -1,6 +1,6 @@
 {
   "name": "@ornl-sava/vis-react-components",
-  "version": "1.1.17",
+  "version": "1.1.18",
   "description": "A set of React component for building visualizations.",
   "repository": {
     "type": "git",
