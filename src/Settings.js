@@ -8,14 +8,13 @@ class Dropdown extends React.PureComponent {
   constructor (props) {
     super(props)
 
-    this.onChange = this.onChange.bind(this)
+    this.onChange = this._onChange.bind(this)
     this.defaultValue = props.defaultSelected(props.chart)
   }
 
-  onChange (event) {
+  _onChange (event) {
     let value = event.target.value
     this.defaultValue = value
-    this.forceUpdate()
     this.props.onChange(value, this.props.chart)
   }
 
@@ -33,7 +32,6 @@ class Dropdown extends React.PureComponent {
     )
   }
 }
-
 Dropdown.propTypes = {
   defaultSelected: PropTypes.any,
   onChange: PropTypes.any,
@@ -71,11 +69,10 @@ Input.propTypes = {
 class Settings extends React.Component {
   constructor (props) {
     super(props)
-
     this.state = {
       menuDisplay: 'none'
     }
-
+    this.onChange = this._onChange.bind(this)
     this.openMenu = this.openMenu.bind(this)
   }
 
@@ -85,6 +82,14 @@ class Settings extends React.Component {
       : 'none'
     this.setState({
       menuDisplay: display
+    })
+  }
+  _onChange (value, callingFx, chart) {
+    console.log('settings::onUpdate')
+    this.setState({
+      menuDisplay: 'none'
+    }, () => {
+      callingFx(value, chart)
     })
   }
 
@@ -131,11 +136,12 @@ class Settings extends React.Component {
         <div {...menuProps}>
           <div className='settings-title'>{settings.title}</div>
           {settings.options.map((d, i) => {
+            let { onChange, ...rest } = d
             if (d.type === 'dropdown') {
-              return (<Dropdown key={i} chart={chart} {...d} />)
+              return (<Dropdown key={i} chart={chart} {...rest} onChange={(val, chart) => this.onChange(val, onChange, chart)} />)
             }
             if (d.type === 'input') {
-              return (<Input key={i} chart={chart} {...d} />)
+              return (<Input key={i} chart={chart} {...rest} onChange={(val) => this.onChange(val, onChange)} />)
             } // Check for render other types of input here
           })}
         </div>
