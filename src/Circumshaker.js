@@ -196,7 +196,7 @@ class Circumshaker extends React.Component {
     // Determine radius
     // NOTE: This is used as more of a radius 'band'
     this.radius = min([this.props.chartWidth, this.props.chartHeight]) /
-      (this.depth) / 2
+      (Math.max(this.depth, 1)) / 2
 
     // will be used to keep track of nodes with same degree
     let degreeDict = {}
@@ -326,7 +326,7 @@ class Circumshaker extends React.Component {
     const det = (a, b, c) => {
       return ((b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x))
     }
-
+    let rings = range(1, Math.max(this.depth + 1, 3), 1)
     // Helper to create link paths
     const path = (d) => {
       let depth = Math.min(d.source.depth, d.target.depth)
@@ -348,7 +348,7 @@ class Circumshaker extends React.Component {
     return (
       <g className={this.props.className}>
         <g>
-          {range(1, this.depth + 1, 1).map((d, i) => {
+          {rings.map((d, i) => {
             return (
               <circle
                 className='concentricCircle'
@@ -373,6 +373,12 @@ class Circumshaker extends React.Component {
         })}
         <TransitionGroup component='g'>
           {this.graph.nodes.map((d, i) => {
+            let r = this.nodeSizeScale(this.graph.links.filter((g) => {
+              return g.source === d || g.target === d
+            }).length)
+            if (isNaN(r)) {
+              r = '5%'
+            }
             return (
               <SVGComponent
                 key={d.key.replace(/\W/g, '')}
@@ -437,9 +443,7 @@ class Circumshaker extends React.Component {
                     return transition
                   }
                 }}
-                r={this.nodeSizeScale(this.graph.links.filter((g) => {
-                  return g.source === d || g.target === d
-                }).length)}
+                r={r}
                 cx={d.x}
                 cy={d.y}
                 fill={this.props.colorFunction ? this.props.colorFunction(d) : null} />
