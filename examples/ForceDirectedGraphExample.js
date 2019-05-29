@@ -26,8 +26,8 @@ const setUpData = () => {
   newData.push([])
   let firstData = Object.keys(eTopics[0]).map((scrap, index) => {
     let data = eTopics[0][index]
-    newData[0][index] = {events: data, story: [], topicID: index, hour: 0}
-    return {events: data, story: []}
+    newData[0][index] = { events: data, story: [], topicID: index, hour: 0 }
+    return { events: data, story: [] }
   })
   // ADDING REMAINING TIMESTEPS BY USING STORY DATA AS TOPIC FILTER
   let mapData = storyData.map((data, index) => {
@@ -188,7 +188,7 @@ class TopicsContainer extends React.Component {
   }
 
   componentWillMount () {
-    this.setState({chartData: this.getData(this.nData)})
+    this.setState({ chartData: this.getData(this.nData) })
   }
 
   componentWillUpdate (nextState) {
@@ -306,7 +306,7 @@ class TopicsContainer extends React.Component {
         <span className={'info'} ><b>tick count: </b>{tickCount}</span><br />
       </g>
     )
-    this.setState({simInfo: simInfo})
+    this.setState({ simInfo: simInfo })
   }
 
   render () {
@@ -322,7 +322,7 @@ class TopicsContainer extends React.Component {
           {this.getText()}
           {this.state.simInfo}
         </div>
-        <Chart className='col-md-11' tipFunction={toolTipFunction} yAxis={false} xAxis={false} height={1000} margin={{top: 40, right: 10, bottom: 10, left: 80}}>
+        <Chart className='col-md-11' tipFunction={toolTipFunction} yAxis={false} xAxis={false} height={1000} margin={{ top: 40, right: 10, bottom: 10, left: 80 }}>
           <ForceDirectedGraph {...this.state.chartData} />
         </Chart>
         <li><NavLink to='/forceDirectedTree' activeClassName='active'>SingleTopic</NavLink></li>

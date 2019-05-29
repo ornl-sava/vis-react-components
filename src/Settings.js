@@ -116,7 +116,7 @@ class Settings extends React.Component {
       },
       onClick: this.openMenu
     }
-    iconJSX = cloneElement(Children.only(iconJSX), {...iconProps})
+    iconJSX = cloneElement(Children.only(iconJSX), { ...iconProps })
 
     let menuProps = {
       className: 'settings-menu',

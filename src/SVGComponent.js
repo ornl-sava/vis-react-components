@@ -101,7 +101,7 @@ class SVGComponent extends React.Component {
       .on('end', () => {
         if (!this.unmounting) {
           this.simpleState = Object.assign(spreadExclude(props, SVGComponentPropTypes))
-          // console.log(callback)
+          console.log(callback)
           callback()
         }
       })

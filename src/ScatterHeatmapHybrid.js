@@ -550,7 +550,7 @@ HybridScatterHeatmap.defaultProps = {
   numColorCat: 11,
   minScatterColor: '#F1F5E9',
   maxScatterColor: '#7C9B27',
-  margin: {top: 30, right: 5, bottom: 20, left: 50},
+  margin: { top: 30, right: 5, bottom: 20, left: 50 },
   height: 250,
   idAccessor: 'uuid',
   xLabel: 'x',

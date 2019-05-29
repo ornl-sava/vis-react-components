@@ -100,7 +100,7 @@ class Histogram extends React.Component {
       className: 'histogram-bar ' + (bin.className ? type + ' ' + bin.className : type),
       key: keyVal,
       height: height,
-      data: {x: bin[props.xAccessor], y: bin[props.yAccessor], ...bin},
+      data: { x: bin[props.xAccessor], y: bin[props.yAccessor], ...bin },
       width: width,
       y: y,
       x: x
@@ -108,7 +108,7 @@ class Histogram extends React.Component {
   }
 
   renderBars () {
-    let {chartWidth, chartHeight, ...props} = this.props
+    let { chartWidth, chartHeight, ...props } = this.props
     let numBins = props.data[0].bins.length
     let barWidth = isOrdinalScale(props.xScale.type)
       ? props.xScale.bandwidth()

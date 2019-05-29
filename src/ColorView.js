@@ -86,14 +86,14 @@ class ColorView extends React.Component {
     // this.colorDomain.push('CLEAR')
 
     this.colorDomain = props.colorDomain.concat(['OTHER', 'CLEAR'])
-    this.clickArray = Object.assign(props.clickArray, {OTHER: true})
+    this.clickArray = Object.assign(props.clickArray, { OTHER: true })
 
     // this.updateDR(props)
   }
   shouldComponentUpdate (nextProps, nextState) {
     if (this.props.colorDomain == null) {
       console.log('probNoDataWillRProps')
-      this.setState({dataUp: 1})
+      this.setState({ dataUp: 1 })
     }
     return true
   }
@@ -102,7 +102,7 @@ class ColorView extends React.Component {
   componentWillReceiveProps (nextProps) {
     if (nextProps.colorDomain !== this.props.colorDomain) {
       this.colorDomain = nextProps.colorDomain.concat(['OTHER', 'CLEAR'])
-      this.clickArray = Object.assign(nextProps.clickArray, {OTHER: true})
+      this.clickArray = Object.assign(nextProps.clickArray, { OTHER: true })
     } else {
       this.clickArray = Object.assign(nextProps.clickArray)
     }
@@ -201,10 +201,10 @@ class ColorView extends React.Component {
         } else if (this.props.clickArray[data]) {
           color = this.prefScale(data)
         }
-        let barStyle = {fill: color, fillOpacity: 0.5}
+        let barStyle = { fill: color, fillOpacity: 0.5 }
         let text = this.trimText(data, barWidth, fontSize)
         let bar = this.buildABar(cName, text, barHeight, barWidth, posX, posY, barStyle, barTxtStyle)
-        bar.tooltipData = {label: data, counts: index}
+        bar.tooltipData = { label: data, counts: index }
         return (
           <TextBar {...bar} onClick={this.onClick} onEnter={this.onEnter} onLeave={this.onLeave} style={bar.barStyle} />
         )
@@ -228,9 +228,9 @@ class ColorView extends React.Component {
           if (this.props.clickArray[title]) {
             color = this.prefScale(title)
           }
-          let barStyle = {fill: color}
+          let barStyle = { fill: color }
           let bar = this.buildABar(cName, text, barHeight, barWidth, posX, posY, barStyle, barTxtStyle)
-          bar.tooltipData = {label: title, counts: index}
+          bar.tooltipData = { label: title, counts: index }
           return (
             <TextBar {...bar} onClick={this.onClick} onEnter={this.onEnter} onLeave={this.onLeave} style={bar.barStyle} />
           )

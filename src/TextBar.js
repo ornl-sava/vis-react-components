@@ -58,7 +58,7 @@ class TextBar extends React.Component {
     this._onMouseLeave()
   }
   makeRect () {
-    let {className, text, width, height, x, y, barStyle, rx, ry} = this.props
+    let { className, text, width, height, x, y, barStyle, rx, ry } = this.props
     let rectData = {
       className: className + ' barTopic',
       'data-name': text,
@@ -74,10 +74,10 @@ class TextBar extends React.Component {
   }
   // <Bar className={className + ' barTopic'} {...props} onClick={this.onClick} onDoubleClick={this.onDoubleClick} onEnter={this.onEnter} onLeave={this.onLeave} style={this.props.barStyle} />
   render () {
-    let {style, ...rProps} = this.makeRect()
+    let { style, ...rProps } = this.makeRect()
     // console.log('txtBar')
     // console.log('txtBar', this.props.text, this.props.barStyle)
-    let {className, ...props} = this.props
+    let { className, ...props } = this.props
     return (
       <g>
         <text className={className + ' text'} x={this.props.x + this.getTxtAlign()} y={this.props.y + this.props.height / 2} style={this.props.textStyle} > {props.text} </text>
@@ -85,7 +85,7 @@ class TextBar extends React.Component {
           {...rProps}
           style={style}
         />
-        <rect {...rProps} style={{fill: 'black', fillOpacity: 0}} onClick={this.onClick} onMouseEnter={this.onEnter} onMouseLeave={this.onLeave} />
+        <rect {...rProps} style={{ fill: 'black', fillOpacity: 0 }} onClick={this.onClick} onMouseEnter={this.onEnter} onMouseLeave={this.onLeave} />
       </g>
     )
   }

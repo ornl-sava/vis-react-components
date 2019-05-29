@@ -64,7 +64,7 @@ class ForceDirectedGraph extends React.Component {
     this.nodes.map((d, i) => {
       d.key = i
     })
-    this.setState({nodes: this.nodes, links: this.links})
+    this.setState({ nodes: this.nodes, links: this.links })
   }
 
   shouldComponentUpdate (nextProps, nextState) {
@@ -88,7 +88,7 @@ class ForceDirectedGraph extends React.Component {
       console.log('FDG-onDC-simOff')
       this.simOn = true
       this.isDrag = false
-      this.setState({nodes: this.nodes, links: this.links})
+      this.setState({ nodes: this.nodes, links: this.links })
       this.simulation.stop()
       this.setTree(this.props)
     }
@@ -121,7 +121,7 @@ class ForceDirectedGraph extends React.Component {
       // need to fix
       if (this.simOn) {
         this.setTree(this.props)
-        this.setState({nodes: this.nodes, links: this.links})
+        this.setState({ nodes: this.nodes, links: this.links })
       } else {
         this.reSet(this.props)
         this.setSim(this.props)
@@ -132,7 +132,7 @@ class ForceDirectedGraph extends React.Component {
       target._children = null
       if (this.simOn) {
         this.setTree(this.props)
-        this.setState({nodes: this.nodes, links: this.links})
+        this.setState({ nodes: this.nodes, links: this.links })
       } else {
         this.reSet(this.props)
         this.setSim(this.props)
@@ -178,7 +178,7 @@ class ForceDirectedGraph extends React.Component {
       .links(this.links)
   }
   simUpdate (d, i) {
-    this.setState({nodes: this.nodes, links: this.links})
+    this.setState({ nodes: this.nodes, links: this.links })
   }
 
   setTree (props) {
@@ -224,7 +224,7 @@ class ForceDirectedGraph extends React.Component {
     this.state.links.map((data, index) => {
       if (props.isCurved) {
         linkList.push(
-          <path key={'line-id-' + linkList.length} className='lineMatch' d={bezierLine(data.source, data.target)} style={{stroke: '#cdd5e4', strokeWidth: 2}} />
+          <path key={'line-id-' + linkList.length} className='lineMatch' d={bezierLine(data.source, data.target)} style={{ stroke: '#cdd5e4', strokeWidth: 2 }} />
         )
       } else {
         let lineData = {
@@ -232,7 +232,7 @@ class ForceDirectedGraph extends React.Component {
           y1: data.source.y,
           x2: data.target.x,
           y2: data.target.y,
-          style: {stroke: '#cdd5e4', strokeWidth: 2},
+          style: { stroke: '#cdd5e4', strokeWidth: 2 },
           data: data
         }
         linkList.push(

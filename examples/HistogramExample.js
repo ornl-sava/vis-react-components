@@ -13,7 +13,7 @@ import { randomStackedHistogramData, histogramData, temporalHistogramData, stack
 //    yPos: int
 const getTemporalSelection = (selection) => {
   return temporalHistogramData.map((histogram) => {
-    let transformedObj = {name: histogram.name, type: histogram.type}
+    let transformedObj = { name: histogram.name, type: histogram.type }
     transformedObj.bins = histogram.bins.map((bin) => {
       let selected = true
       let dateX = new Date(bin.x)

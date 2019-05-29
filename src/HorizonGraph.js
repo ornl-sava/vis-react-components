@@ -118,7 +118,7 @@ class HorizonGraph extends React.Component {
       }
     }
 
-    let pathTransition = {func: (transition, props) => {
+    let pathTransition = { func: (transition, props) => {
       transition
         .delay(0)
         .duration(500)
@@ -126,9 +126,9 @@ class HorizonGraph extends React.Component {
         .attr('d', props.d)
         .attr('fill', props.fill)
       return transition
-    }}
+    } }
 
-    let boxTransition = {func: (transition, props) => {
+    let boxTransition = { func: (transition, props) => {
       transition
         .delay(0)
         .duration(500)
@@ -139,9 +139,9 @@ class HorizonGraph extends React.Component {
         .attr('height', props.height)
         .attr('fill', props.fill)
       return transition
-    }}
+    } }
 
-    let lineTransition = {func: (transition, props) => {
+    let lineTransition = { func: (transition, props) => {
       transition
         .delay(0)
         .duration(0)
@@ -151,9 +151,9 @@ class HorizonGraph extends React.Component {
         .attr('x2', props.x2)
         .attr('y2', props.y2)
       return transition
-    }}
+    } }
 
-    let textTransition = {func: (transition, props) => {
+    let textTransition = { func: (transition, props) => {
       transition
         .delay(0)
         .duration(0)
@@ -161,7 +161,7 @@ class HorizonGraph extends React.Component {
         .attr('x', props.x)
         .attr('y', props.y)
       return transition
-    }}
+    } }
 
     let result =
       <TransitionGroup component='g'>

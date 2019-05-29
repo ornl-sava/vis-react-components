@@ -40,7 +40,7 @@ class TopicsChart extends React.Component {
   _onGroupClick (toggleList) {
     // takes toggle list and updates clickArray state
     // console.log('toggleList', toggleList)
-    this.setState({clickArray: toggleList})
+    this.setState({ clickArray: toggleList })
   }
   _onBarEnter (event, data) {
     this.tip.show(event, data)
@@ -57,7 +57,7 @@ class TopicsChart extends React.Component {
     for (let i = 0; i < this.props.colorDomain.length; i++) {
       setClickArr[this.props.colorDomain[i]] = true
     }
-    this.setState({clickArray: setClickArr})
+    this.setState({ clickArray: setClickArr })
   }
   shouldComponentUpdate (nextProps, nextState) {
     return true
@@ -90,7 +90,7 @@ class TopicsChart extends React.Component {
         </Chart>
         <Chart className='topicFlow col-md-10' ref='updateChart'
           {...spreadRelated(Chart, props)}
-          yAxis={false} xAxis={false} xScaleType='linear' height={this.height} margin={{top: 20, right: 20, bottom: 10, left: 20}} >
+          yAxis={false} xAxis={false} xScaleType='linear' height={this.height} margin={{ top: 20, right: 20, bottom: 10, left: 20 }} >
           <TopicFlow {...props} clickArray={this.state.clickArray} onEnter={this.onBarEnter} onLeave={this.onBarLeave} />
         </Chart>
         <text className='bottom' />

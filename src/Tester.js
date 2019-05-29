@@ -26,7 +26,7 @@ class Tester extends React.Component {
     bottom: -191px;
   } */
   render () {
-    let buttonProps = {width: '100%', height: '50px'}
+    let buttonProps = { width: '100%', height: '50px' }
     /* console.log('storyLength', storyData.length)
     console.log('eTopics00,01', eTopics[0], eTopics[1])
     console.log('hrTopics00,01', hrTopics[0], hrTopics[1]) */
