@@ -26,7 +26,7 @@ const getTemporalSelection = (selection) => {
 }
 
 const chartCommon = {
-  margin: {top: 10, right: 10, bottom: 50, left: 50},
+  margin: { top: 10, right: 10, bottom: 50, left: 50 },
   height: 150
 }
 

@@ -4,7 +4,7 @@ import React from 'react'
 import { format, scaleLinear, scaleOrdinal, schemeCategory20, select } from 'd3'
 import cloud from '../examples/data/for-hci/cloud2'
 import { HeatmapChart, HistogramChart } from '../src'
-import {linearOrdinalHeatmapData} from './data/exampleData'
+import { linearOrdinalHeatmapData } from './data/exampleData'
 
 import topics from './data/topic-lane-sample/topics-sample_v01.json'
 // import lanes from '../examples/data/topic-lane-sample/sets-sample.json'
@@ -39,9 +39,9 @@ for (let i = 0; i < 4; i++) {
   avgMem[i] /= topics[topicN]._source.bins.length
   let type = 'two'
   if (i === 2) type = 'one'
-  let hData = [{name: 'Topic ' + topicN, type: type, bins: bins[i]}]
+  let hData = [{ name: 'Topic ' + topicN, type: type, bins: bins[i] }]
   hData.map((histogram) => {
-    let transformedObj = {name: histogram.name, type: histogram.type}
+    let transformedObj = { name: histogram.name, type: histogram.type }
     transformedObj.bins = histogram.bins.map((bin) => {
       return {
         x: new Date(bin.x),
@@ -105,7 +105,7 @@ const heatmapProps4 = {
 }
 
 const chartCommon = {
-  margin: {top: 15, right: 5, bottom: 50, left: 15},
+  margin: { top: 15, right: 5, bottom: 50, left: 15 },
   height: 250,
   legend: true
 }
@@ -151,11 +151,11 @@ class SingleTopicExample extends React.Component {
     return true
   }
   componentWillReceiveProps (nextProps) {
-    this.setState({loading: true})
+    this.setState({ loading: true })
     return true
   }
   fetchData (nextProps) {
-    this.setState({loading: false, status: 'OK'})
+    this.setState({ loading: false, status: 'OK' })
   }
   eventList () {
     let data = topics[topicN]._source.common_events
@@ -176,11 +176,11 @@ class SingleTopicExample extends React.Component {
       .domain([40, 100])
       .range(['#2375B9', '#0F2B42'])
     let data = topics[topicN]._source.common_events.map((d) => {
-      return {text: d, freq: Math.random() * 40 + 10}
+      return { text: d, freq: Math.random() * 40 + 10 }
     })
     let eList = []
     for (let i = 0; i < data.length; i++) {
-      eList.push(<text key={'EventListFreq-' + i} className='summaryVal' style={{fontSize: data[i].freq + 'px', fontFamily: 'Impact', color: freqColor(data[i].freq)}}> {data[i].text} </text>)
+      eList.push(<text key={'EventListFreq-' + i} className='summaryVal' style={{ fontSize: data[i].freq + 'px', fontFamily: 'Impact', color: freqColor(data[i].freq) }}> {data[i].text} </text>)
       eList.push(<br key={'breakFreq-' + i} />)
     }
     return (
@@ -219,7 +219,7 @@ class SingleTopicExample extends React.Component {
     let layout = cloud()
       .size([w, h])
       .words(words.map((d) => {
-        return {text: d, size: 10 + Math.random() * 90, test: 'haha'}
+        return { text: d, size: 10 + Math.random() * 90, test: 'haha' }
       }))
       .padding(5)
       .rotate(() => { return ~~0 })

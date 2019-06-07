@@ -21,7 +21,7 @@ const idDisplay = (d) => {
 }
 
 const chartCommon = {
-  margin: {top: 5, right: 5, bottom: 50, left: 50},
+  margin: { top: 5, right: 5, bottom: 50, left: 50 },
   height: 300
 }
 
@@ -35,10 +35,10 @@ class TreemapExample extends React.Component {
   doUpdate () {
     if (this.data.length < 8) {
       this.data = this.data.concat(treemapUpdateData)
-      this.setState({data: this.data})
+      this.setState({ data: this.data })
     } else {
       this.data[2].value += 1
-      this.setState({data: this.data})
+      this.setState({ data: this.data })
     }
   }
 

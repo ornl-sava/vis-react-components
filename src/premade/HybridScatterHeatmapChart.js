@@ -374,7 +374,7 @@ HybridScatterHeatmapChart.defaultProps = {
   onScatterplotLeave: () => {},
   // Spread chart default
   ...Chart.defaultProps,
-  margin: {top: 20, right: 10, bottom: 20, left: 80},
+  margin: { top: 20, right: 10, bottom: 20, left: 80 },
   // Spread scatter & heatmap default
   // ...Heatmap.defaultProps,
   // ...Scatterplot.defaultProps,

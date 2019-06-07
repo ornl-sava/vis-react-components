@@ -75,16 +75,16 @@ class HorizonGraphExample extends React.Component {
   update () {
     this.data.push(this.data[this.position])
     this.position += 1
-    this.setState({data: this.data})
+    this.setState({ data: this.data })
   }
 
   handleSelection (index) {
-    this.setState({selectedIndex: index})
+    this.setState({ selectedIndex: index })
   }
 
   render () {
     const chartCommon = {
-      margin: {top: 10, right: 10, bottom: 50, left: 50},
+      margin: { top: 10, right: 10, bottom: 50, left: 50 },
       height: 150,
       xAccessor: xAccess,
       yAccessor: yAccess,

@@ -116,7 +116,7 @@ const data = [{
       'doc_count': 1,
       'children': []
     }
-  ]},
+  ] },
 {
   'key': 2085877883,
   'key_as_string': '124.83.248.123',
@@ -178,9 +178,9 @@ class CircumshakerExample extends React.Component {
   }
   componentDidMount () {
     this.swapData = setInterval(() => {
-      let nextIndex = this.state.swapDataIndex === 0 ? 1 : 0
+      // let nextIndex = this.state.swapDataIndex === 0 ? 1 : 0
       this.setState({
-        swapDataIndex: nextIndex
+        swapDataIndex: this.state.swapDataIndex === 0 ? 1 : 0
       })
     }, 2500)
   }

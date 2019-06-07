@@ -27,11 +27,11 @@ class TopicFlow extends React.Component {
   _onEnter (event, data) {
     this.props.onEnter(event, data)
     data.bar._barStyle = data.bar.barStyle
-    data.bar.barStyle = {stroke: '#00ccff', strokeWidth: 7}
+    data.bar.barStyle = { stroke: '#00ccff', strokeWidth: 7 }
     data.bar.className = data.bar.className + ' selected '
     data.story.map((d, i) => {
       d.bar._barStyle = d.bar.barStyle
-      d.bar.barStyle = {stroke: '#00ccff', strokeWidth: 7}
+      d.bar.barStyle = { stroke: '#00ccff', strokeWidth: 7 }
       d.bar.className = d.bar.className + ' selected '
     })
     this.forceUpdate()
@@ -180,7 +180,7 @@ class TopicFlow extends React.Component {
         // CLASSNAME NEEDS SIMPLE NAMES
         let prefix = events[0].toString().split(/:|-/, 1)[0]
         let cName = prefix + '-' + i.toString()
-        let barStyle = {stroke: this.prefScale(prefix), strokeWidth: 3}
+        let barStyle = { stroke: this.prefScale(prefix), strokeWidth: 3 }
         // TRIMMING TEXT IF BEYOND BARS
         let text = this.trimText(events[0], barWidth, fontSize)
         // SETTING TEXT STYLE
@@ -201,7 +201,7 @@ class TopicFlow extends React.Component {
     // console.log('TF-.bar', props.timeBins)
     // GETTING CONNECTING LINE INFORMATION (EDGES)
     props.links.map((data, index) => {
-      let coor = [{x: data.source.bar.x + barWidth, y: data.source.bar.y + barHeight / 2}, {x: data.target.bar.x, y: data.target.bar.y + barHeight / 2}]
+      let coor = [{ x: data.source.bar.x + barWidth, y: data.source.bar.y + barHeight / 2 }, { x: data.target.bar.x, y: data.target.bar.y + barHeight / 2 }]
       if (this.props.lineType === 'curved') {
         lineData.push(diagMaker(coor))
         data.lineData = diagMaker(coor)
@@ -227,8 +227,8 @@ class TopicFlow extends React.Component {
         let data = da.bar
         // console.log('ppr', data.prefix)
         if (!props.clickArray[data.prefix]) {
-          data.barStyle = {stroke: '#e2e2eb', strokeOpacity: 0.6, strokeWidth: 3}
-          data.textStyle = {fill: '#e2e2eb', fillOpacity: 0.6}
+          data.barStyle = { stroke: '#e2e2eb', strokeOpacity: 0.6, strokeWidth: 3 }
+          data.textStyle = { fill: '#e2e2eb', fillOpacity: 0.6 }
         } else {
           data.barStyle = data._barStyle
           data.textStyle = data._textStyle

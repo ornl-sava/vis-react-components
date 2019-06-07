@@ -321,7 +321,7 @@ class Circumshaker extends React.Component {
   }
 
   render () {
-    let {chartWidth, chartHeight} = this.props
+    let { chartWidth, chartHeight } = this.props
     this.generateGraph()
     const det = (a, b, c) => {
       return ((b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x))

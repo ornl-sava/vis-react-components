@@ -26,7 +26,7 @@ class Treemap extends React.Component {
     if (this.props.zoom && data.children) {
       // the first setState is to make sure every component is properly initialized, to avoid a TransitionGroup error when that component tries to exit
       this.setState(this.state, () => {
-        this.setState({selectedId: data.id})
+        this.setState({ selectedId: data.id })
       })
     } else {
       this.props.onClick(event, data, index)
@@ -140,7 +140,7 @@ class Treemap extends React.Component {
       overlayNodes = root.leaves()
     }
 
-    let transitionFunc = {func: (transition, props) => {
+    let transitionFunc = { func: (transition, props) => {
       transition
         .delay(0)
         .duration(500)
@@ -151,7 +151,7 @@ class Treemap extends React.Component {
         .attr('x', props.x)
         .attr('fill', props.fill)
       return transition
-    }}
+    } }
 
     return (
       // There used to be a TransitionGroup in place of the top SVGComponent, but that caused a strange bug. May need to add it back.
@@ -166,7 +166,7 @@ class Treemap extends React.Component {
             fill={'orange'}
             onClick={() => {
               if (this.state.selectedId) {
-                this.setState({selectedId: getParent(this.state.selectedId, true)})
+                this.setState({ selectedId: getParent(this.state.selectedId, true) })
               }
             }}
             onUpdate={transitionFunc}

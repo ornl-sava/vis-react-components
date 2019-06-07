@@ -6,7 +6,7 @@ import StoryViewerExample from './StoryViewerExample'
 
 // import {fakePrefixes, fakeData} from '../examples/data/for-hci/hciFakeData'
 // import {prefixes, topData, aList} from '../examples/data/for-hci/hciData'
-import {prefixes} from '../examples/data/for-hci/hciData'
+import { prefixes } from '../examples/data/for-hci/hciData'
 import topics from '../examples/data/topic-lane-sample/topics-sample_v01.json'
 import topics2 from './data/topic-lane-sample/topics-sample_v02.json'
 // import lanes from '../examples/data/topic-lane-sample/sets-sample.json'
@@ -61,11 +61,11 @@ class TopicsContainer extends React.Component {
     // get time steps
     for (let i = 0; i < this.state.initBins.length - 1; i++) {
       if (this.state.initBins[i].start !== this.state.initBins[i + 1].start) {
-        timeBins.push({time: this.state.initBins[i].start, topics: []})
+        timeBins.push({ time: this.state.initBins[i].start, topics: [] })
       }
     }
     // add last time step
-    timeBins.push({time: this.state.initBins[this.state.initBins.length - 1].end, topics: []})
+    timeBins.push({ time: this.state.initBins[this.state.initBins.length - 1].end, topics: [] })
     // sort in case out of order
     timeBins.sort((a, b) => {
       return a.time - b.time
@@ -93,7 +93,7 @@ class TopicsContainer extends React.Component {
           }
         })
         if (target != null) {
-          links.push({source: data, target: target})
+          links.push({ source: data, target: target })
         }
       })
     })
@@ -114,17 +114,17 @@ class TopicsContainer extends React.Component {
       // console.log('TE-binLength', bins.length, '-numData', props.numTData)
       bins.map((d, i) => {
         // console.log('timeSTop', timeStop, '-dStart-', new Date(d.start).getTime())
-        if (index === 0) { timeBins.push({startTime: d.start, topics: []}) }
+        if (index === 0) { timeBins.push({ startTime: d.start, topics: [] }) }
         // CHECKS NEXT TIME STEP FOR CONNECTION
         if (i < (bins.length - 1)) {
           let timeDiff = new Date(bins[i + 1].end) - new Date(d.end)
           if (timeDiff / 1000 / 60 / 60 === 1) {
-            link.push({source: nodes.length, target: nodes.length + 1})
+            link.push({ source: nodes.length, target: nodes.length + 1 })
           }
         }
         tConnect.push(nodes.length)
         story.push(tConnect)
-        nodes.push(Object.assign({}, d, {topicID: data._id, events: data._source.common_events, story: [], fullStory: []}))
+        nodes.push(Object.assign({}, d, { topicID: data._id, events: data._source.common_events, story: [], fullStory: [] }))
       })
     })
     this.links = link.map((data, index) => {

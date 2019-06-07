@@ -33,7 +33,7 @@ class SummaryTimeline extends React.Component {
         .y0((d) => { return this.props.yScale(d.outerRangeMin) })
         .y1((d) => { return this.props.yScale(d.outerRangeMax) })(data)
     }
-    let pathTransition = {func: (transition, props) => {
+    let pathTransition = { func: (transition, props) => {
       transition
         .delay(0)
         .duration(500)
@@ -41,7 +41,7 @@ class SummaryTimeline extends React.Component {
         .attr('d', props.d)
         .attr('fill', props.fill)
       return transition
-    }}
+    } }
 
     let { keyFunction, ...props } = this.props
 

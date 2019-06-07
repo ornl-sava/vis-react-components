@@ -29,7 +29,7 @@ const toolTipFunction2 = (d, index) => {
 }
 
 const chartCommon = {
-  margin: {top: 5, right: 5, bottom: 50, left: 50},
+  margin: { top: 5, right: 5, bottom: 50, left: 50 },
   height: 300
 }
 

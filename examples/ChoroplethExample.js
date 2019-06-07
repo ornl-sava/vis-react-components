@@ -48,7 +48,7 @@ class ChoroplethExample extends React.Component {
   render () {
     return (
       <ChoroplethChart height={600} className='ChoroplethExample'
-        margin={{top: 5, right: 5, bottom: 50, left: 50}}
+        margin={{ top: 5, right: 5, bottom: 50, left: 50 }}
         tipFunction={toolTipFunction} data={this.state.randomData} map={map}
         valueField='y' keyField='x' selectedField='className' selectedValue='selected' />
     )

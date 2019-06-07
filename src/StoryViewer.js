@@ -37,7 +37,7 @@ class StoryViewer extends React.Component {
       newID[sData.dataInd] = parseFloat(sData.index)
     })
     // re-render with new topic info
-    this.setState({currentID: newID})
+    this.setState({ currentID: newID })
   }
   _onMoveClick (tooltipData) {
     //  console.log('moveClick', tooltipData)
@@ -56,7 +56,7 @@ class StoryViewer extends React.Component {
       }
     }
     this.initTopics(this.props, sIndex)
-    this.setState({storyInd: sIndex, currentID: new Array(3)})
+    this.setState({ storyInd: sIndex, currentID: new Array(3) })
   }
   constructor (props) {
     super(props)
@@ -185,18 +185,18 @@ class StoryViewer extends React.Component {
         let fontSize = 12
         let cName = this.tType[k] + (storyInd + 1).toString() + '-index-' + i
         // let topicColor = {stroke: this.prefScale(data[0].split(/:|-/, 1)[0])}
-        let topicColor = {stroke: 'black'}
+        let topicColor = { stroke: 'black' }
         if (k === 0) {
-          topicColor = {stroke: 'green'}
+          topicColor = { stroke: 'green' }
         } else if (k === 2) {
-          topicColor = {stroke: 'purple'}
+          topicColor = { stroke: 'purple' }
         }
         // console.log('tColor', topicColor)
         let text = this.trimText(data[0], barWidth, fontSize)
         let barTxtStyle = this.buildAText(fontSize.toString() + 'px', 'black')
         let bar = this.buildABar(data, cName, text, barHeight, barWidth, posX, posY, topicColor, barTxtStyle)
         // console.log('bData', bar)
-        bar.tooltipData = {label: cName, counts: bar.data.length, dataInd: k, index: i}
+        bar.tooltipData = { label: cName, counts: bar.data.length, dataInd: k, index: i }
         return bar
       })
       // adding bar data to all bar data
@@ -215,18 +215,18 @@ class StoryViewer extends React.Component {
         let dataMatch = []
         if (arr[0] === 0) {
           // enduring (n-1)
-          endCurr.story.push({dataInd: 2, index: arr[1]})
+          endCurr.story.push({ dataInd: 2, index: arr[1] })
           endCurr.barStyle.stroke = 'purple'
           matchBar = timeStepBars[2][arr[1]]
-          dataMatch = [{x: endCurr.x + barWidth, y: endCurr.y + midBar}, {x: matchBar.x, y: matchBar.y + midBar}]
+          dataMatch = [{ x: endCurr.x + barWidth, y: endCurr.y + midBar }, { x: matchBar.x, y: matchBar.y + midBar }]
         } else if (arr[0] === 1) {
           // hr (n)
-          endCurr.story.push({dataInd: 0, index: arr[1]})
+          endCurr.story.push({ dataInd: 0, index: arr[1] })
           endCurr.barStyle.stroke = 'green'
           matchBar = timeStepBars[0][arr[1]]
-          dataMatch = [{x: endCurr.x, y: endCurr.y + midBar}, {x: matchBar.x + barWidth, y: matchBar.y + midBar}]
+          dataMatch = [{ x: endCurr.x, y: endCurr.y + midBar }, { x: matchBar.x + barWidth, y: matchBar.y + midBar }]
         }
-        matchBar.story = [{dataInd: 1, index: parseFloat(i)}]
+        matchBar.story = [{ dataInd: 1, index: parseFloat(i) }]
         if (index !== 0) {
           endCurr.barStyle.stroke = 'black'
           let story = endCurr.story
@@ -248,14 +248,14 @@ class StoryViewer extends React.Component {
       let posY = 20
       let posX = moveStart + i * (moveBW + 20)
       let cName = label
-      let color = {fill: 'grey', stroke: 'black'}
+      let color = { fill: 'grey', stroke: 'black' }
       // console.log('tColor', topicColor)
       let text = ''
       if (label === 'forward') { text = '>' } else { text = '<' }
       let barTxtStyle = this.buildAText(moveFontS.toString() + 'px', 'black')
       let bar = this.buildABar(data, cName, text, moveBH, moveBW, posX, posY, color, barTxtStyle)
       // console.log('bData', bar)
-      bar.tooltipData = {label: cName, counts: 0}
+      bar.tooltipData = { label: cName, counts: 0 }
       return (
         <TextBar key={'move' + label} {...bar} onClick={this.onMoveClick} />
       )
@@ -287,7 +287,7 @@ class StoryViewer extends React.Component {
         let key = 'line-' + index + i
         return (
           <g key={key}>
-            <path className={' lineMatch -' + index + i} d={array} style={{stroke: 'grey'}} />
+            <path className={' lineMatch -' + index + i} d={array} style={{ stroke: 'grey' }} />
           </g>
         )
       })
@@ -310,7 +310,7 @@ class StoryViewer extends React.Component {
       }
       svgInfo[i] = (
         <g key={'view' + i}>
-          <text fontSize='20px' x={this.xScale(0) / 8} y={startPos} style={{fontWeight: 'bold', textDecoration: 'underline'}}>{type}</text>
+          <text fontSize='20px' x={this.xScale(0) / 8} y={startPos} style={{ fontWeight: 'bold', textDecoration: 'underline' }}>{type}</text>
           {info}
         </g>
       )
@@ -329,7 +329,7 @@ class StoryViewer extends React.Component {
 
   // gives text if loading data
   renderLoadAnimation (props) {
-    let {chartWidth, chartHeight} = props
+    let { chartWidth, chartHeight } = props
     let xPos = Math.floor(chartWidth / 2)
     let yPos = Math.floor(chartHeight / 2)
     let messageText = 'Loading data...'
