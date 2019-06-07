@@ -44,7 +44,7 @@ class Chart extends React.Component {
       .attr('height', props.height)
 
     if (props.resizeHandler) props.resizeHandler()
-    // this.forceUpdate()
+    this.forceUpdate()
   }
 
   renderChildren () {
