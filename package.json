@@ -30,7 +30,7 @@
     }
   ],
   "dependencies": {
-    "d3": "^5.9.2",
+    "d3": "^7.6.1",
     "lodash.debounce": ">=4.0.8",
     "react": "^16.4.1",
     "react-dom": "^16.4.1",
